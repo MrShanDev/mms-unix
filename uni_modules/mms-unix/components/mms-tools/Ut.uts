@@ -1,5 +1,5 @@
 /**
- * 工具方法 - 合并自 utils.js 与 ut.uts
+ * 通用工具方法集合
  */
 import { config } from '@/common/config'
 

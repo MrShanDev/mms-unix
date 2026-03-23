@@ -2,7 +2,7 @@ interface RequestConfig {
 	url: string
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
 	data?: any
-	header?: Record<string, string>
+	header?: UTSJSONObject
 	timeout?: number
 }
 

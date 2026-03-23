@@ -24,3 +24,15 @@ export type GlobalColor = {
 	success : string;
 	blue : string;
 }
+
+/**
+ * 会员信息
+ */
+export type StoreMemberVo = {
+	token: string;
+	id?: number;
+	nickname?: string;
+	phone?: string;
+	avatar?: string;
+	[key: string]: any;
+}

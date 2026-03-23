@@ -2,6 +2,12 @@
 import { LoginObject } from '@/uni_modules/mms-unix/components/mms-tools/LoginObject.uts'
 import { R } from '@/uni_modules/mms-unix/components/mms-tools/utype/type.uts'
 import { RunType, HttpStatus } from '@/uni_modules/mms-unix/components/mms-tools/uenum/SysEnum.uts'
+import { authTrigger, notifyAuthChange } from '@/uni_modules/mms-unix/components/mms-tools/AuthNotifier.uts'
+import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
+import { isLoggedIn, checkLogin, needLogin } from '@/uni_modules/mms-unix/components/mms-tools/Auth.uts'
+import { http, request, ApiResult } from '@/uni_modules/mms-unix/components/mms-tools/Request.uts'
+import * as ut from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+import { useAuth } from '@/uni_modules/mms-unix/components/mms-tools/useAuth.uts'
 import { StoreMemberVo } from '@/utype/type.uts'
 import common from '@/common/common.uts'
 type HrefParams = object | boolean | string;
@@ -540,6 +546,40 @@ const tools = {
 			})
 		})
 	},
+
+	// ========== 导出新增工具 ==========
+
+	/** 存储工具 */
+	storage: storage,
+
+	/** 认证工具 */
+	isLoggedIn: isLoggedIn,
+	checkLogin: checkLogin,
+	needLogin: needLogin,
+
+	/** 请求工具 */
+	request: request,
+	http: http,
+
+	/** 通用工具 */
+	jumpTo: ut.jumpTo,
+	checkPhone: ut.checkPhone,
+	get: ut.get,
+	set: ut.set,
+	jslog: ut.jslog,
+	apiStart: ut.apiStart,
+	apiStop: ut.apiStop,
+	isEmpty: ut.isEmpty,
+	checkNumber: ut.checkNumber,
+	changeMoney: ut.changeMoney,
+	timestampToDate: ut.timestampToDate,
+	getTodayStartTimestamp: ut.getTodayStartTimestamp,
+	validateEmail: ut.validateEmail,
+	maskPhoneNumber: ut.maskPhoneNumber,
+	generateOrderNumber: ut.generateOrderNumber,
+
+	/** 响应式登录态 */
+	useAuth: useAuth,
 }
 
 export default tools;

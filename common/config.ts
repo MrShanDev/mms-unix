@@ -1,86 +1,106 @@
 /**
- * 全局配置
+ * mms-unix 全局配置
+ * 组件库核心配置，所有项目通用配置在此定义
  */
 type AppConfig = {
+	/** 基础 API 地址 */
 	baseUrl: string
-	mallBaseUrl: string
+	/** 存储 Key 配置 */
 	storage: StorageConfig
+	/** 需要登录才能访问的页面路径（不含 pages/ 前缀） */
 	loginRequiredPaths: string[]
+	/** API 接口路径配置 */
+	api: ApiConfig
+	/** 应用基础信息 */
 	configInfo: ConfigInfo
 }
 
 type StorageConfig = {
+	/** token 存储 key */
 	token: string
+	/** 用户信息存储 key */
 	userInfo: string
 }
 
+/** API 接口路径配置 - 所有后端接口地址统一在这里配置 */
+type ApiConfig = {
+	/** 登录相关接口 */
+	login: {
+		/** token 自动登录 */
+		tokenLogin: string
+		/** 微信 code 获取 openId 登录 */
+		codeGetOpenIdLogin: string
+		/** 微信 code + 手机号注册/登录 */
+		codeGetPhoneRegisterOrLogin: string
+	}
+	/** 版本更新相关接口 */
+	update: {
+		/** 检查版本更新 */
+		checkUpdate: string
+	}
+}
+
+/** 应用基础信息 - 用于版本更新、关于页面等 */
 export type ConfigInfo = {
+	/** 应用名称 */
 	name: string
+	/** 应用 Logo */
 	logo: string
+	/** 应用描述 */
 	desc: string
-	phone: string
-	qqmapsdkKey: string
-	/** 托管费用（元），固定 198 */
-	hostingFeePrice?: number
-	/** 咨询电话（详情页「咨询了解」拨号） */
-	consultPhone?: string
-	/** 官网地址 */
-	consultWebsite?: string
-	/** 藏品易站 App 下载二维码图片地址 */
-	appQrcodeUrl?: string
-	/** 藏品易站 App 下载页地址（长按识别打开的链接） */
+	/** 当前版本号（用于版本更新检测，整数递增） */
+	versionCode?: number
+	/** 当前版本名称 */
+	versionName?: string
+	/** 腾讯地图 SDK key（可选） */
+	qqmapsdkKey?: string
+	/** App 下载页地址（长按识别打开的链接） */
 	appDownloadUrl?: string
-	/** 藏品易站 App 名称 */
+	/** App 名称（用于版本更新弹窗） */
 	appName?: string
-	/** 藏品易站 App 描述/ slogan */
+	/** App 描述/slogan */
 	appDesc?: string
-	/** 藏品易站 App 图标 */
+	/** App 图标 */
 	appIcon?: string
 	/** 安卓下载地址 */
 	appDownloadUrlAndroid?: string
 	/** iOS App Store 下载地址 */
 	appDownloadUrlIos?: string
-	/** H5 地址（非移动端时展示） */
+	/** H5 地址（非移动端展示） */
 	appH5Url?: string
-	/** 用户协议文章 ID（打开文章详情页） */
+	/** 用户协议文章 ID */
 	userAgreementArticleId?: string
-	/** 隐私政策文章 ID（打开文章详情页） */
+	/** 隐私政策文章 ID */
 	privacyPolicyArticleId?: string
 }
 
 export const config: AppConfig = {
-	// 本地开发地址
+	// 基础 API 地址
 	baseUrl: 'http://localhost:8070',
-	// 线上地址 （如果本地开发，请注释掉）
-	mallBaseUrl: 'https://www.sscacptg.com/mall-api',
-	// 存储 key
+	// 存储 Key
 	storage: {
 		token: 'token',
 		userInfo: 'userInfo',
 	},
 	// 需要登录的页面路径（不含 pages/ 前缀）
 	loginRequiredPaths: ['hosting_records', 'hosting_certificate', 'user_address', 'user_info'],
-	// 应用基础信息（原 utils.js configInfo）
+	// API 接口路径配置
+	api: {
+		login: {
+			tokenLogin: '/api/v1/login/tokenLogin',
+			codeGetOpenIdLogin: '/api/v1/login/codeGetOpenIdLogin',
+			codeGetPhoneRegisterOrLogin: '/api/v1/login/codeGetPhoneRegisterOrLogin',
+		},
+		update: {
+			checkUpdate: '/api/v1/common/checkUpdate',
+		}
+	},
+	// 应用基础信息
 	configInfo: {
-		name: '盛世长安',
+		name: 'mms-unix',
 		logo: 'https://ssca-1364461867.cos.ap-beijing.myqcloud.com/mms/upload/688c17e596d408e1ce66306b.png',
-		desc: '盛世长安托管平台',
-		phone: '16602910408',
-		qqmapsdkKey: 'TDXBZ-ELKYX-OQJ4D-ZTJ4V-K7CR5-TLFN7',
-		hostingFeePrice: 198,
-		consultPhone: '18966608336',
-		consultWebsite: 'https://www.sscacptg.com/',
-		/** App 下载页地址（二维码内容，长按识别打开） */
-		appDownloadUrl: 'https://cpyz.sscacptg.com/app-download.html',
-		appName: '藏品易站',
-		appDesc: '好藏品轻松易',
-		appIcon: '/static/logo.png',
-		appDownloadUrlAndroid: 'https://www.sscacptg.com/app.apk',
-		appDownloadUrlIos: 'https://apps.apple.com/cn/app/藏品易站/id1234567890',
-		appH5Url: 'https://www.sscacptg.com/',
-		/** 用户协议文章 ID */
-		userAgreementArticleId: '1980815793850224641',
-		/** 隐私政策文章 ID */
-		privacyPolicyArticleId: '1980815938721484801',
+		desc: 'uni-app 组件库',
+		versionCode: 1,
+		versionName: '1.0.0',
 	},
 }

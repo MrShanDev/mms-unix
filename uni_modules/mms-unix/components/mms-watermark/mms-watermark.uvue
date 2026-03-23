@@ -62,36 +62,37 @@ export default {
 			query.select('.mms-watermark').boundingClientRect(function(rect) {
 				that.width = rect.width
 				that.height = rect.height
-				const pixelRatio = uni.getSystemInfoSync().pixelRatio
-				const canvas = uni.createCanvasContext(that.canvasId, that)
-				// 如果有图片，先画图片
-				if (that.image) {
-					canvas.drawImage(that.image, 0, 0, that.width, that.height)
-				}
-				// 设置水印文字样式
-				canvas.beginPath()
-				canvas.setFontSize(Number(that.fontSize) * pixelRatio)
-				canvas.setFillStyle(that.color)
-				canvas.rotate(that.rotate * Math.PI / 180)
-				const gapX = that.gap[0] * pixelRatio || 0
-				const gapY = that.gap[1] * pixelRatio || 0
-				const step = Number(that.fontSize) * pixelRatio + gapY
-				let x = 0
-				let y = gapY
+			const pixelRatio = uni.getSystemInfoSync().pixelRatio
+			const canvas = uni.createCanvasContext(that.canvasId, that)
+			// 如果有图片，先画图片
+			if (that.image) {
+				canvas.drawImage(that.image, 0, 0, that.width, that.height)
+			}
+			// 设置水印文字样式
+			canvas.beginPath()
+			canvas.setFontSize(Number(that.fontSize) * pixelRatio)
+			canvas.setFillStyle(that.color as any)
+			const rotateNum = Number(that.rotate) * Math.PI / 180
+			canvas.rotate(rotateNum)
+			const gapX = (that.gap[0] || 0) * pixelRatio
+			const gapY = (that.gap[1] || 0) * pixelRatio
+			const step = Number(that.fontSize) * pixelRatio + gapY
+			let x = 0
+			let y = gapY
 
-				// 平铺绘制水印文字
-				while (y < that.height * pixelRatio + step) {
-					x = 0
-					while (x < that.width * pixelRatio + step) {
-						canvas.fillText(that.content, x, y)
-						x += that.content.length * Number(that.fontSize) * pixelRatio + gapX
-					}
-					y += step
+			// 平铺绘制水印文字
+			while (y < that.height * pixelRatio + step) {
+				x = 0
+				while (x < that.width * pixelRatio + step) {
+					canvas.fillText(that.content, x, y)
+					x += that.content.length * Number(that.fontSize) * pixelRatio + gapX
 				}
-				canvas.stroke()
-				canvas.draw(() => {
-					console.log('水印绘制完成')
-				})
+				y += step
+			}
+			canvas.stroke()
+			canvas.draw(false, () => {
+				console.log('水印绘制完成')
+			})
 			})
 			query.exec()
 		},
@@ -121,7 +122,7 @@ export default {
 						icon: 'none'
 					})
 				}
-			})
+			}, this)
 		}
 	}
 };

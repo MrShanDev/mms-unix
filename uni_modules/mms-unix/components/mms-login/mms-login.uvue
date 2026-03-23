@@ -32,8 +32,8 @@
 </template>
 
 <script lang="uts">
-	import { R } from '@/uni_modules/mms-unix/components/mms-tools/utype/type.uts'
-	import { StoreMemberVo } from '@/utype/type.uts'
+	import { config } from '@/common/config'
+	import { R, StoreMemberVo } from '@/uni_modules/mms-unix/components/mms-tools/utype/type.uts'
 
 	export default {
 
@@ -78,7 +78,7 @@
 		created() {
 			var than = this;
 			than.configInfo = than.$mms.configInfo();
-			than.$mms.httpGet("/api/v1/login/tokenLogin", {}).then((res : StoreMemberVo) => {
+			than.$mms.httpGet(config.api.login.tokenLogin, {}).then((res : StoreMemberVo) => {
 				// Token登录成功
 				this.$mms.login(res);
 				than.hiddenPopup();
@@ -92,7 +92,7 @@
 					provider: 'weixin',
 					success: function (loginRes) {
 						
-						than.$mms.httpGet("/api/v1/login/codeGetOpenIdLogin", {
+						than.$mms.httpGet(config.api.login.codeGetOpenIdLogin, {
 							code: loginRes.code
 						}).then((rese : StoreMemberVo) => {
 							//登录成功
@@ -150,7 +150,7 @@
 						than.weixinInfo.encryptedData = e.encryptedData;
 						let mid = uni.getStorageSync('mId');
 						than.weixinInfo.mId = (mid == undefined || mid == null || mid == '') ? 0 : mid;
-						than.$mms.httpGet("/api/v1/login/codeGetPhoneRegisterOrLogin", than.weixinInfo).then((data:StoreMemberVo) => {
+						than.$mms.httpGet(config.api.login.codeGetPhoneRegisterOrLogin, than.weixinInfo).then((data:StoreMemberVo) => {
 							//登录成功
 							than.$mms.login(data)
 							than.hiddenPopup();

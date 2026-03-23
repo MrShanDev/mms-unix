@@ -3,7 +3,7 @@
  * auth 相关变更会触发 notifyAuthChange，供 useAuth 全局响应
  */
 import { config } from '@/common/config'
-import { notifyAuthChange } from './authNotifier'
+import { notifyAuthChange } from './AuthNotifier.uts'
 
 const tokenKey = config.storage.token
 const userInfoKey = config.storage.userInfo

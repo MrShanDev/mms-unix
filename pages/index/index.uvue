@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<mms-button>Hello</mms-button>
+		<mms-button type="warning">Hello</mms-button>
 	</view>
 </template>
 

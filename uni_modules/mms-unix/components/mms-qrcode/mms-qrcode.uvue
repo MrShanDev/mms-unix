@@ -57,29 +57,33 @@ export default {
 			const canvasHeight = Number(this.size) * size
 			const margin = Number(this.margin) * size
 
-			uni.createCanvasContext('mms-qrcode', this).then(ctx => {
-				// 绘制背景
-				ctx.setBackgroundColor(this.bgColor)
-				ctx.clearRect(0, 0, canvasWidth, canvasHeight)
-				ctx.fill()
+			const ctx = uni.createCanvasContext('mms-qrcode', this)
+			// 绘制背景
+			ctx.setFillStyle(this.bgColor as any)
+			ctx.fillRect(0, 0, canvasWidth, canvasHeight)
+			ctx.fill()
 
-				// 调用uni-app接口绘制二维码
-				uni.makeQrCode({
-					canvas: ctx,
-					text: this.value,
-					width: canvasWidth,
-					height: canvasHeight,
-					color: this.color,
-					background: this.bgColor,
-					errorCorrectLevel: this.errorLevel,
-					success: () => {
-						ctx.draw()
-					},
-					fail: (err: any) => {
-						console.error('二维码生成失败', err)
-					}
-				})
+			// #ifdef MP-WEIXIN
+			// 调用uni-app接口绘制二维码（仅微信小程序支持）
+			uni.makeQrCode({
+				canvas: ctx,
+				text: this.value,
+				width: canvasWidth,
+				height: canvasHeight,
+				color: this.color,
+				background: this.bgColor,
+				errorCorrectLevel: this.errorLevel,
+				success: () => {
+					ctx.draw()
+				},
+				fail: (err: any) => {
+					console.error('二维码生成失败', err)
+				}
 			})
+			// #endif
+			// #ifndef MP-WEIXIN
+			console.warn('二维码生成仅在微信小程序支持')
+			// #endif
 		}
 	}
 };

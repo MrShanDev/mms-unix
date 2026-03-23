@@ -191,25 +191,24 @@
 					b: parseInt(result[3], 16)
 				} : {};
 			},
-			getColorByType(type:string, isText?:boolean, plain?:boolean) {
-				const global:GlobalColor = this.$mms.global();
-				//console.log(global.danger)
-				let color:any = ''
-				const colors = {
-					'primary': (global && global.primary) || '#5677fc',
-					'white': '#fff',
-					'danger': (global && global.danger) || '#EB0909',
-					'warning': (global && global.warning) || '#ff7900',
-					'green': (global && global.success) || '#07c160',
-					'blue': (global && global.blue) || '#007aff',
-					'gray': '#bfbfbf',
-					'black': '#333333',
-					'brown': '#ac9157',
-					'gray-primary': '#f2f2f2',
-					'gray-danger': '#f2f2f2',
-					'gray-warning': '#f2f2f2',
-					'gray-green': '#f2f2f2'
-				}
+		getColorByType(type:string, isText?:boolean, plain?:boolean) {
+			// 默认主题颜色
+			let color:any = ''
+			const colors = {
+				'primary': '#5677fc',
+				'white': '#fff',
+				'danger': '#EB0909',
+				'warning': '#ff7900',
+				'green': '#07c160',
+				'blue': '#007aff',
+				'gray': '#bfbfbf',
+				'black': '#333333',
+				'brown': '#ac9157',
+				'gray-primary': '#f2f2f2',
+				'gray-danger': '#f2f2f2',
+				'gray-warning': '#f2f2f2',
+				'gray-green': '#f2f2f2'
+			}
 				if (isText) {
 					if (type && ~type.indexOf('gray-')) {
 						const tp = type.replace('gray-', '')

@@ -2,7 +2,7 @@
  * 商城/托管 API - 对应 mms-mall-mobile-uni 盛世长安接口
  */
 import { config } from '@/common/config'
-import { storage } from '@/common/utils/storage'
+import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
 
 const base = config.mallBaseUrl != '' ? config.mallBaseUrl : config.baseUrl
 
@@ -221,4 +221,13 @@ export function getContractDetail(id: string) {
 export function downloadContractPdf(id: string) {
 	const base = config.mallBaseUrl != '' ? config.mallBaseUrl : config.baseUrl
 	return base + '/api/mall/contract/download?id=' + id
+}
+
+// ========== 版本更新检测 ==========
+
+/** 检查版本更新 */
+export function checkUpdate(currentVersionCode: number) {
+	return mallRequest(config.api.update.checkUpdate, 'GET', {
+		currentVersionCode: currentVersionCode
+	}, false)
 }

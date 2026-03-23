@@ -71,7 +71,7 @@ export default {
 			})
 		},
 		previewImage(index: number) {
-			const urls = this.files.map(item => item.url)
+			const urls = (this.files as Array<{url: string}>).map(item => item.url)
 			uni.previewImage({
 				urls,
 				current: urls[index]

@@ -31,7 +31,7 @@ export function padZero(num: number): string {
 // 防抖
 export function debounce(func: Function, wait: number = 300): Function {
 	let timeout: number | null = null
-	return function(...args: any[]) {
+	return function(this: any, ...args: any[]) {
 		if (timeout) {
 			clearTimeout(timeout)
 		}
@@ -44,7 +44,7 @@ export function debounce(func: Function, wait: number = 300): Function {
 // 节流
 export function throttle(func: Function, wait: number = 300): Function {
 	let lastTime = 0
-	return function(...args: any[]) {
+	return function(this: any, ...args: any[]) {
 		const now = Date.now()
 		if (now - lastTime >= wait) {
 			func.apply(this, args)

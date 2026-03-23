@@ -1,7 +1,7 @@
 /**
  * 登录拦截与认证逻辑
  */
-import { storage } from './storage'
+import { storage } from './Storage.uts'
 import { config } from '@/common/config'
 
 /** 是否已登录 */

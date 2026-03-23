@@ -15,7 +15,7 @@
 export default {
 	name: 'mmsGrid',
 	emits: ['click'],
-	props:
+	props: {
 		// 宫格列数
 		col: {
 			type: [Number, String],

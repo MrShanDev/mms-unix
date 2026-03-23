@@ -1,7 +1,7 @@
 /**
  * 认证相关 API - 对接后端接口示例
  */
-import { http } from '@/common/utils/request'
+import { http } from '@/uni_modules/mms-unix/components/mms-tools/Request.uts'
 
 /** 快捷登录（验证码） */
 export function loginByCode(phone: string, code: string) {

@@ -2,7 +2,7 @@
  * 接口请求工具 - 支持登录拦截
  */
 import { config } from '@/common/config'
-import { storage } from './storage'
+import { storage } from './Storage.uts'
 
 type RequestOptions = {
 	url: string
@@ -43,7 +43,7 @@ export function request(options: RequestOptions): Promise<ApiResult> {
 			url: fullUrl,
 			method,
 			data,
-				header: reqHeader,
+			header: reqHeader,
 				success(res) {
 					const result = res.data as ApiResult
 				if (result.code === 200) {

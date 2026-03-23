@@ -43,8 +43,9 @@ export default {
 			const percent = (span / 24 * 100) + '%'
 			style.width = this.width || percent
 			// 左侧偏移
-			if (this.offset > 0) {
-				const offsetPercent = (Number(this.offset) / 24 * 100) + '%'
+			const offsetNum = Number(this.offset)
+			if (offsetNum > 0) {
+				const offsetPercent = (offsetNum / 24 * 100) + '%'
 				style.marginLeft = offsetPercent
 			}
 			// 自定义padding
