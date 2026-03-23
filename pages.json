@@ -2,8 +2,7 @@
 	"easycom": {
 		"autoscan": true,
 		"custom": {
-			"^up-(.*)": "@/uni_modules/uview-ultra/components/up-$1/up-$1.uvue",
-			"^mms-login$": "@/components/mms-login/mms-login.uvue"
+			"^mms-(.*)": "@/uni_modules/mms-unix/components/mms-$1/mms-$1.uvue"
 		}
 	},
 	"pages": [

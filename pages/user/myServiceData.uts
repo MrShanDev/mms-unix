@@ -1,0 +1,11 @@
+/**
+ * 服务入口（仅托管相关，无订单/合同）
+ * requireLogin: true 表示需登录才能进入
+ */
+export default [
+	{ icon: '/static/img/read.png', title: '托管记录', pages: '/pages_Hosting/hosting_records/hosting_records', requireLogin: true },
+	{ icon: '/static/img/zhengshu.png', title: '托管证书', pages: '/pages_Hosting/hosting_certificate/hosting_certificate', requireLogin: true },
+	{ icon: '/static/img/group.png', title: '合作机构', pages: '/pages_Hosting/cooperate_institution/cooperate_institution', requireLogin: false },
+	{ icon: '/static/img/address.png', title: '收货地址', pages: '/pages_Me/user_address/index', requireLogin: true },
+	{ icon: '/static/img/about.png', title: '关于我们', pages: '/pages_Me/about_me/about_me', requireLogin: false },
+]
