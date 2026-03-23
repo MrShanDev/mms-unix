@@ -149,7 +149,7 @@
 						than.weixinInfo.iv = e.iv;
 						than.weixinInfo.encryptedData = e.encryptedData;
 						let mid = uni.getStorageSync('mId');
-						than.weixinInfo.mId = (mid == undefined || mid == null || mid == '') ? 0 : mid;
+						than.weixinInfo.mId = (mid == null || mid == '') ? 0 : mid;
 						than.$mms.httpGet(config.api.login.codeGetPhoneRegisterOrLogin, than.weixinInfo).then((data:StoreMemberVo) => {
 							//登录成功
 							than.$mms.login(data)

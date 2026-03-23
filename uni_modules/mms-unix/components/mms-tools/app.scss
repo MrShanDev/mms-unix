@@ -1,42 +1,27 @@
-/*app.wxss*/
+/* app.scss - ucss 兼容版本 */
 /* #ifndef APP-NVUE */
+
 page {
 	background-color: #fafafa;
 	font-size: 32rpx;
-	font-family: -apple-system-font, Helvetica Neue, Helvetica, sans-serif;
-}
-
-::-webkit-scrollbar {
-	width: 0 !important;
-	height: 0 !important;
-	color: transparent !important;
-	display: none;
-}
-
-button::after {
-	border: none;
 }
 
 .container {
 	display: flex;
-	box-sizing: border-box;
 	flex-direction: column;
 }
 
 .mms-phcolor {
-	color: #ccc;
+	color: #cccccc;
 	font-size: 32rpx;
-	overflow: visible;
 }
-
-
 
 .mms-opcity {
 	opacity: 0.5;
 }
 
 .mms-hover {
-	background-color: #f7f7f9 !important;
+	background-color: #f7f7f9;
 }
 
 .mms-ellipsis {
@@ -45,63 +30,25 @@ button::after {
 	text-overflow: ellipsis;
 }
 
-
-
-/*按钮样式*/
-
-/*列表统一样式 */
-.mms-list-item {
-	position: relative;
-}
-
-.mms-list-item::after {
-	content: '';
-	position: absolute;
-	border-bottom: 1px solid #eaeef1;
-	-webkit-transform: scaleY(0.5);
-	transform: scaleY(0.5);
-	bottom: 0;
-	right: 0;
-	left: 30rpx;
-}
-
-.mms-last::after {
-	border-bottom: 0 !important;
-}
-
+/* 按钮样式 */
 .mms-button-primary {
 	width: 100%;
 	height: 90rpx;
 	line-height: 90rpx;
-	background: linear-gradient(-90deg, #5677fc, #5c8dff);
+	background-color: #5677fc;
 	border-radius: 45rpx;
-	color: #fff;
+	color: #ffffff;
 	font-size: 36rpx;
 }
 
-.mms-button-hover {
-	color: #d5d4d9;
-	background: linear-gradient(-90deg, #4a67d6, #4e77d9);
-}
-
 .mms-button-gray {
-	background: #ededed;
-	color: #999 !important;
-}
-
-.mms-button-gray_hover {
-	background: #d5d5d5 !important;
-	color: #898989;
+	background-color: #ededed;
+	color: #999999;
 }
 
 .mms-button-white {
-	background: #fff;
-	color: #333 !important;
-}
-
-.mms-button-white_hover {
-	background: #e5e5e5 !important;
-	color: #2e2e2e !important;
+	background-color: #ffffff;
+	color: #333333;
 }
 
 /* #endif */
@@ -110,22 +57,8 @@ button::after {
 checkbox {
 	width: 44rpx;
 	height: 44rpx;
-	margin-right: 0 !important;
-	border-radius: 50% !important;
+	border-radius: 50%;
 	transform: scale(0.8);
-	border-color: #d1d1d1 !important;
 }
 
-/*单选按钮选中后内部样式*/
-
-/* checkbox-checked {
-	background: #eb0909;
-	width: 44rpx !important;
-	height: 44rpx !important;
-	border: none;
-} */
-
 /* #endif */
-
-
-

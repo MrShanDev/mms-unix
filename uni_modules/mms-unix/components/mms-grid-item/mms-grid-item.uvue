@@ -1,0 +1,107 @@
+<template>
+	<view class="mms-grid-item" :class="{'mms-grid-item--border': border}" @click="handleClick">
+		<view class="mms-grid-item__content">
+			<slot name="icon">
+				<view v-if="icon" class="mms-grid-item__icon">
+					<mms-icon :name="icon" :size="iconSize" :color="iconColor"></mms-icon>
+				</view>
+			</slot>
+			<slot name="text">
+				<text class="mms-grid-item__text">{{ text }}</text>
+			</slot>
+			<slot></slot>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsGridItem',
+	emits: ['click'],
+	props: {
+		// 图标名称
+		icon: {
+			type: String,
+			default: ''
+		},
+		// 文字
+		text: {
+			type: String,
+			default: ''
+		},
+		// 图标大小
+		iconSize: {
+			type: String,
+			default: '48rpx'
+		},
+		// 图标颜色
+		iconColor: {
+			type: String,
+			default: '#333333'
+		},
+		// 是否显示边框
+		border: {
+			type: Boolean,
+			default: true
+		},
+		// 跳转链接
+		url: {
+			type: String,
+			default: ''
+		},
+		// 跳转类型
+		linkType: {
+			type: String,
+			default: 'navigateTo'
+		}
+	},
+	methods: {
+		handleClick() {
+			this.$emit('click')
+			if (this.url) {
+				if (this.linkType === 'navigateTo') {
+					uni.navigateTo({ url: this.url })
+				} else if (this.linkType === 'redirectTo') {
+					uni.redirectTo({ url: this.url })
+				} else if (this.linkType === 'switchTab') {
+					uni.switchTab({ url: this.url })
+				}
+			}
+		}
+	}
+}
+</script>
+
+<style scoped lang="scss">
+.mms-grid-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 24rpx 16rpx;
+	box-sizing: border-box;
+
+	.mms-grid-item__content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.mms-grid-item__icon {
+		margin-bottom: 12rpx;
+	}
+
+	.mms-grid-item__text {
+		font-size: 24rpx;
+		color: #333333;
+		line-height: 1.4;
+		text-align: center;
+	}
+
+	&.mms-grid-item--border {
+		border-right: 1rpx solid #ebedf0;
+		border-bottom: 1rpx solid #ebedf0;
+	}
+}
+</style>

@@ -1,20 +1,25 @@
 <template>
 	<view class="mms-cell" :class="{'mms-cell--center': center, 'mms-cell--border': border}" @click="handleClick">
 		<view class="mms-cell__left">
-			<slot name="icon"></slot>
+			<slot name="icon">
+				<view v-if="icon" class="mms-cell__icon">
+					<mms-icon :name="icon" size="40rpx"></mms-icon>
+				</view>
+			</slot>
 			<view class="mms-cell__content">
 				<view class="mms-cell__title" :class="{'mms-cell__title--disabled': disabled}">
 					<slot></slot>
-					<text v-if="label" class="mms-cell__label">{{ label }}</text>
+					<text v-if="actualTitle" class="mms-cell__title-text">{{ actualTitle }}</text>
+					<text v-if="actualLabel" class="mms-cell__label">{{ actualLabel }}</text>
 				</view>
 				<view v-if="brief" class="mms-cell__brief">{{ brief }}</view>
 			</view>
 		</view>
 		<view class="mms-cell__right">
 			<slot name="right"></slot>
-			<text class="mms-cell__value" :class="{'mms-cell__value--disabled': disabled}">{{ value }}</text>
+			<text v-if="value" class="mms-cell__value" :class="{'mms-cell__value--disabled': disabled}">{{ value }}</text>
 			<view v-if="isLink" class="mms-cell__arrow">
-				<icon name="right-arrow"></icon>
+				<mms-icon name="arrow-right" size="28rpx" color="#c0c4cc"></mms-icon>
 			</view>
 		</view>
 	</view>
@@ -25,7 +30,12 @@ export default {
 	name: 'mmsCell',
 	emits: ['click'],
 	props: {
-		// 左侧标题
+		// 左侧标题（支持 title 和 label 两种写法）
+		title: {
+			type: String,
+			default: ''
+		},
+		// 左侧标题（别名）
 		label: {
 			type: String,
 			default: ''
@@ -60,20 +70,52 @@ export default {
 			type: Boolean,
 			default: false
 		},
+		// 链接跳转类型
+		linkType: {
+			type: String,
+			default: 'navigateTo'
+		},
+		// 跳转地址
+		url: {
+			type: String,
+			default: ''
+		},
+		// 左侧图标
+		icon: {
+			type: String,
+			default: ''
+		},
 		// 自定义样式
 		customStyle: {
 			type: Object as PropType<UTSJSONObject>,
 			default: () => ({})
 		}
 	},
+	computed: {
+		actualTitle(): string {
+			return this.title || this.label
+		},
+		actualLabel(): string {
+			return this.brief
+		}
+	},
 	methods: {
 		handleClick(event: any) {
 			if (!this.disabled) {
 				this.$emit('click', event)
+				if (this.url && this.isLink) {
+					if (this.linkType === 'navigateTo') {
+						uni.navigateTo({ url: this.url })
+					} else if (this.linkType === 'redirectTo') {
+						uni.redirectTo({ url: this.url })
+					} else if (this.linkType === 'switchTab') {
+						uni.switchTab({ url: this.url })
+					}
+				}
 			}
 		}
 	}
-};
+}
 </script>
 
 <style scoped lang="scss">
@@ -90,22 +132,42 @@ export default {
 		display: flex;
 		align-items: center;
 		flex: 1;
+		min-width: 0;
+
+		.mms-cell__icon {
+			margin-right: 16rpx;
+		}
 
 		.mms-cell__content {
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
+			flex: 1;
+			min-width: 0;
 
 			.mms-cell__title {
 				display: flex;
-				align-items: center;
-				font-size: 30rpx;
-				line-height: 1.5;
-				color: #303133;
+				flex-direction: column;
+				justify-content: center;
+
+				.mms-cell__title-text {
+					font-size: 30rpx;
+					line-height: 1.5;
+					color: #303133;
+				}
 
 				&.mms-cell__title--disabled {
-					color: #c0c4cc;
+					.mms-cell__title-text {
+						color: #c0c4cc;
+					}
 				}
+			}
+
+			.mms-cell__label {
+				font-size: 24rpx;
+				color: #909399;
+				margin-top: 4rpx;
+				line-height: 1.5;
 			}
 
 			.mms-cell__brief {

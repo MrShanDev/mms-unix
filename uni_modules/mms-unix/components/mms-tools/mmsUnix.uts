@@ -5,7 +5,7 @@ import { RunType, HttpStatus } from '@/uni_modules/mms-unix/components/mms-tools
 import { authTrigger, notifyAuthChange } from '@/uni_modules/mms-unix/components/mms-tools/AuthNotifier.uts'
 import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
 import { isLoggedIn, checkLogin, needLogin } from '@/uni_modules/mms-unix/components/mms-tools/Auth.uts'
-import { http, request, ApiResult } from '@/uni_modules/mms-unix/components/mms-tools/Request.uts'
+import { http, request, ApiResponse } from '@/uni_modules/mms-unix/components/mms-tools/Request.uts'
 import * as ut from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 import { useAuth } from '@/uni_modules/mms-unix/components/mms-tools/useAuth.uts'
 import { StoreMemberVo } from '@/utype/type.uts'

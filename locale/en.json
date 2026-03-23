@@ -1,0 +1,58 @@
+{
+	"app.name": "MMS-UNIX",
+	"app.desc": "uni-app Component Library",
+
+	"tabbar.home": "Home",
+	"tabbar.user": "Me",
+
+	"page.home": "Home",
+	"page.user": "Me",
+	"page.login": "Login",
+	"page.register": "Register",
+	"page.forgotPassword": "Forgot Password",
+	"page.articleList": "Articles",
+	"page.articleDetails": "Article Details",
+	"page.userInfo": "Profile",
+	"page.userAddress": "Addresses",
+	"page.address": "Address",
+	"page.aboutMe": "About Us",
+
+	"common.confirm": "Confirm",
+	"common.cancel": "Cancel",
+	"common.submit": "Submit",
+	"common.save": "Save",
+	"common.delete": "Delete",
+	"common.edit": "Edit",
+	"common.loading": "Loading...",
+	"common.noData": "No Data",
+	"common.noMore": "No More",
+	"common.retry": "Retry",
+	"common.back": "Back",
+
+	"auth.loginRequired": "Please login first",
+	"auth.loginPrompt": "Not logged in. Login now?",
+	"auth.loginSuccess": "Login successful",
+	"auth.logoutSuccess": "Logout successful",
+	"auth.registerSuccess": "Registration successful",
+	"auth.passwordReset": "Password reset successful",
+
+	"validation.phoneRequired": "Please enter phone number",
+	"validation.phoneInvalid": "Invalid phone number",
+	"validation.codeRequired": "Please enter verification code",
+	"validation.passwordRequired": "Please enter password",
+	"validation.passwordMismatch": "Passwords do not match",
+	"validation.agreeRequired": "Please agree to the terms",
+
+	"button.sendCode": "Send Code",
+	"button.resendCode": "Resend ({seconds}s)",
+	"button.login": "Login",
+	"button.register": "Register",
+	"button.resetPassword": "Reset Password",
+
+	"update.title": "New Version Available",
+	"update.confirm": "Update Now",
+	"update.later": "Later",
+	"update.downloading": "Downloading...",
+	"update.install": "Install",
+	"update.failed": "Download failed, please check your network"
+}

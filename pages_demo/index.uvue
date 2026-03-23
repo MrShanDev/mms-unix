@@ -1,0 +1,168 @@
+<template>
+	<view class="demo-container">
+		<view class="demo-header">
+			<text class="demo-title">MMS-UNIX 组件演示</text>
+			<text class="demo-desc">点击查看各组件的使用示例</text>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">基础组件</text>
+			<view class="demo-grid">
+				<view class="demo-item" v-for="(item, index) in basicComponents" :key="index" @tap="navigateTo(item.path)">
+					<mms-icon :name="item.icon" size="48rpx" color="#ff2727"></mms-icon>
+					<text class="item-name">{{ item.name }}</text>
+				</view>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">表单组件</text>
+			<view class="demo-grid">
+				<view class="demo-item" v-for="(item, index) in formComponents" :key="index" @tap="navigateTo(item.path)">
+					<mms-icon :name="item.icon" size="48rpx" color="#1890ff"></mms-icon>
+					<text class="item-name">{{ item.name }}</text>
+				</view>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">反馈组件</text>
+			<view class="demo-grid">
+				<view class="demo-item" v-for="(item, index) in feedbackComponents" :key="index" @tap="navigateTo(item.path)">
+					<mms-icon :name="item.icon" size="48rpx" color="#52c41a"></mms-icon>
+					<text class="item-name">{{ item.name }}</text>
+				</view>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">展示组件</text>
+			<view class="demo-grid">
+				<view class="demo-item" v-for="(item, index) in displayComponents" :key="index" @tap="navigateTo(item.path)">
+					<mms-icon :name="item.icon" size="48rpx" color="#722ed1"></mms-icon>
+					<text class="item-name">{{ item.name }}</text>
+				</view>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">业务组件</text>
+			<view class="demo-grid">
+				<view class="demo-item" v-for="(item, index) in businessComponents" :key="index" @tap="navigateTo(item.path)">
+					<mms-icon :name="item.icon" size="48rpx" color="#fa8c16"></mms-icon>
+					<text class="item-name">{{ item.name }}</text>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+type ComponentItem = {
+	name: string
+	path: string
+	icon: string
+}
+
+const basicComponents: ComponentItem[] = [
+	{ name: 'Button 按钮', path: '/pages_demo/button/button', icon: 'button' },
+	{ name: 'Cell 单元格', path: '/pages_demo/cell/cell', icon: 'menu' },
+	{ name: 'Icon 图标', path: '/pages_demo/icon/icon', icon: 'emoji' },
+	{ name: 'Tag 标签', path: '/pages_demo/tag/tag', icon: 'tag' },
+	{ name: 'Card 卡片', path: '/pages_demo/card/card', icon: 'creditcard' },
+]
+
+const formComponents: ComponentItem[] = [
+	{ name: 'Search 搜索', path: '/pages_demo/search/search', icon: 'search' },
+	{ name: 'Upload 上传', path: '/pages_demo/upload/upload', icon: 'upload' },
+]
+
+const feedbackComponents: ComponentItem[] = [
+	{ name: 'Dialog 弹窗', path: '/pages_demo/dialog/dialog', icon: 'info' },
+	{ name: 'Popup 弹出层', path: '/pages_demo/popup/popup', icon: 'arrow-up' },
+	{ name: 'Toast 轻提示', path: '/pages_demo/toast/toast', icon: 'notification' },
+	{ name: 'Loading 加载', path: '/pages_demo/loading/loading', icon: 'loading' },
+]
+
+const displayComponents: ComponentItem[] = [
+	{ name: 'Empty 空状态', path: '/pages_demo/empty/empty', icon: 'folder' },
+	{ name: 'Price 价格', path: '/pages_demo/price/price', icon: 'wallet' },
+	{ name: 'Countdown 倒计时', path: '/pages_demo/countdown/countdown', icon: 'time' },
+	{ name: 'Grid 宫格', path: '/pages_demo/grid/grid', icon: 'apps' },
+	{ name: 'QRCode 二维码', path: '/pages_demo/qrcode/qrcode', icon: 'scan' },
+	{ name: 'Watermark 水印', path: '/pages_demo/watermark/watermark', icon: 'lock' },
+]
+
+const businessComponents: ComponentItem[] = [
+	{ name: 'Login 登录', path: '/pages_demo/login/login', icon: 'person' },
+]
+
+function navigateTo(url: string) {
+	uni.navigateTo({ url })
+}
+</script>
+
+<style lang="scss">
+.demo-container {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-header {
+	background: linear-gradient(135deg, #ff2727 0%, #ff6b6b 100%);
+	border-radius: 16rpx;
+	padding: 40rpx 30rpx;
+	margin-bottom: 30rpx;
+}
+
+.demo-title {
+	font-size: 44rpx;
+	font-weight: bold;
+	color: #ffffff;
+	display: block;
+	margin-bottom: 12rpx;
+}
+
+.demo-desc {
+	font-size: 28rpx;
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	display: block;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff2727;
+}
+
+.demo-grid {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.demo-item {
+	width: 25%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 24rpx 0;
+}
+
+.item-name {
+	font-size: 24rpx;
+	color: #666666;
+	margin-top: 12rpx;
+	text-align: center;
+}
+</style>

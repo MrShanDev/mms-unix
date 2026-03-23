@@ -31,7 +31,7 @@
 
 <script setup lang="uts">
 	import { ref } from 'vue'
-	import { jumpTo, msg } from '@/common/utils/ut'
+	import { jumpTo, msg } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 	import { addressList as fetchAddressList, deleteAddress as deleteAddressApi } from '@/common/api/mallApi'
 
 	type AddressItem = {

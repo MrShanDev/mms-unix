@@ -4,6 +4,15 @@
 @import "./libs/css/color.scss";
 @import "./libs/css/utils.scss";
 
+// 图标字体样式（字体文件通过 App.uvue 的 uni.loadFontFace 加载）
+.iconfont {
+	font-family: "iconfont" !important;
+	font-size: 32rpx;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
 // H5特有样式
 /* #ifdef H5 */
 @import "./libs/css/h5.scss";

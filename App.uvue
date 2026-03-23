@@ -6,18 +6,37 @@
 	// 应用启动完成
 	onLaunch(() => {
 		console.log('App Launch')
+		// 加载自定义字体
+		loadIconFont()
 		// 检查小程序版本更新
 		checkForUpdate()
 	})
+
+	/**
+	 * 加载自定义图标字体
+	 */
+	function loadIconFont() {
+		uni.loadFontFace({
+			family: 'iconfont',
+			source: 'url("/static/iconfont/iconfont.ttf")',
+			success: () => {
+				console.log('图标字体加载成功')
+			},
+			fail: (err) => {
+				console.log('图标字体加载失败', err)
+			}
+		})
+	}
 
 	/**
 	 * 检查小程序版本更新
 	 * 在小程序环境下检测是否有新版本，如果有则提示用户更新
 	 */
 	function checkForUpdate() {
-		// 判断是否为小程序环境
-		if (uni.canIUse('getUpdateManager')) {
-			const updateManager = uni.getUpdateManager()
+		// 判断是否为小程序环境（使用 any 绕过类型检查，因为 canIUse 是小程序特有 API）
+		const uniAny = uni as any
+		if (typeof uniAny.canIUse === 'function' && uniAny.canIUse('getUpdateManager')) {
+			const updateManager = uniAny.getUpdateManager()
 			// 检查更新
 			updateManager.onCheckForUpdate((res) => {
 				console.log('检查更新结果：', res.hasUpdate)

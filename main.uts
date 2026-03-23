@@ -4,16 +4,30 @@ import App from './App.uvue'
 import { createSSRApp } from 'vue'
 // 引入 mms-unix 组件库
 import mmsUnix from '@/uni_modules/mms-unix'
+// 引入国际化初始化
+import { initI18n } from '@/uni_modules/mms-unix/locale/index.uts'
 
 /**
  * 创建应用入口函数
  * 由 uni-app 框架调用，返回应用实例
  */
 export function createApp() {
+	// 初始化国际化
+	initI18n()
+
 	// 创建 Vue 应用实例
 	const app = createSSRApp(App)
 	// 安装 mms-unix 组件库
 	app.use(mmsUnix)
+
+	// #ifdef WEB
+	// Web 平台支持 vue-i18n
+	// 可在此处集成 vue-i18n 插件
+	// import { createI18n } from 'vue-i18n'
+	// const i18n = createI18n({ locale: 'zh-Hans', messages })
+	// app.use(i18n)
+	// #endif
+
 	// 返回应用实例给框架
 	return {
 		app

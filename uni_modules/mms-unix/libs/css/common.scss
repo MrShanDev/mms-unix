@@ -1,65 +1,37 @@
-/* 基础公共样式 */
-* {
-  box-sizing: border-box;
-}
-
-/* 清除内外边距 */
-page, view, text, image, input, textarea, button {
-  margin: 0;
-  padding: 0;
-}
-
-/* 字体抗锯齿 */
-page {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/* 基础公共样式 - ucss 兼容版本 */
 
 /* 通用flex类 */
 .mms-flex {
-  display: flex;
+	display: flex;
+	flex-direction: row;
 }
 
 .mms-flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
 }
 
 .mms-flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .mms-flex-column {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .mms-flex-1 {
-  flex: 1;
+	flex: 1;
 }
 
-/* 文字截断 */
+/* 文字截断 - 注意：文字样式需设置在 text 组件上 */
 .mms-ellipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.mms-ellipsis-2 {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-}
-
-/* 清除浮动 */
-.mms-clearfix::after {
-  content: '';
-  display: block;
-  height: 0;
-  visibility: hidden;
-  clear: both;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }

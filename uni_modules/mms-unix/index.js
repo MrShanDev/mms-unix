@@ -1,18 +1,16 @@
 // 导出工具函数
 import * as utils from './libs/utils.uts'
-import request, { configure, addInterceptor } from './libs/request.uts'
+import request from './components/mms-tools/Request.uts'
 
 // 导出所有工具函数
 export * from './libs/utils.uts'
-export * from './libs/request.uts'
+export * from './components/mms-tools/Request.uts'
 export { request }
 
 // 挂载到uni对象上
 const $mms = {
   ...utils,
-  request,
-  configure,
-  addInterceptor
+  request
 }
 
 export const mount$mms = function() {

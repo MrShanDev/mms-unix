@@ -1,21 +1,46 @@
-/* 默认主题颜色 */
-:root {
-  --mms-primary-color: #409eff;
-  --mms-success-color: #67c23a;
-  --mms-warning-color: #e6a23c;
-  --mms-danger-color: #f56c6c;
-  --mms-info-color: #909399;
+/* 默认主题颜色 - ucss 兼容版本 */
+/* 注意：ucss 不支持 :root 和 CSS 变量，改用类选择器 */
 
-  --mms-text-primary: #303133;
-  --mms-text-regular: #606266;
-  --mms-text-secondary: #909399;
-  --mms-text-placeholder: #c0c4cc;
+.mms-color-primary {
+	color: #409eff;
+}
 
-  --mms-border-base: #dcdfe6;
-  --mms-border-light: #e4e7ed;
-  --mms-border-lighter: #ebeef5;
-  --mms-border-extra-light: #f2f6fc;
+.mms-color-success {
+	color: #67c23a;
+}
 
-  --mms-bg-color: #f5f7fa;
-  --mms-bg-light: #fafafa;
+.mms-color-warning {
+	color: #e6a23c;
+}
+
+.mms-color-danger {
+	color: #f56c6c;
+}
+
+.mms-color-info {
+	color: #909399;
+}
+
+.mms-text-primary {
+	color: #303133;
+}
+
+.mms-text-regular {
+	color: #606266;
+}
+
+.mms-text-secondary {
+	color: #909399;
+}
+
+.mms-text-placeholder {
+	color: #c0c4cc;
+}
+
+.mms-bg-color {
+	background-color: #f5f7fa;
+}
+
+.mms-bg-light {
+	background-color: #fafafa;
 }

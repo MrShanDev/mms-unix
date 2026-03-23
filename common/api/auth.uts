@@ -1,7 +1,7 @@
 /**
  * 认证相关 API - 对接后端接口示例
  */
-import { http } from '@/uni_modules/mms-unix/components/mms-tools/Request.uts'
+import { http, request } from '@/uni_modules/mms-unix/components/mms-tools/Request.uts'
 
 /** 快捷登录（验证码） */
 export function loginByCode(phone: string, code: string) {
@@ -37,4 +37,20 @@ export function register(params: {
 /** 找回密码 */
 export function resetPassword(phone: string, code: string, password: string) {
 	return http.post('/api/auth/password/reset', { phone, code, password })
+}
+
+/** Token 登录（静默校验，不跳转登录页） */
+export function tokenLogin() {
+	return request({
+		url: '/api/auth/token/login',
+		method: 'GET',
+		withToken: true,
+		showError: false,
+		redirectOnUnauthorized: false
+	})
+}
+
+/** 退出登录 */
+export function logout() {
+	return http.post('/api/auth/logout')
 }

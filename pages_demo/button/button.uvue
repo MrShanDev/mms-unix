@@ -1,0 +1,120 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">按钮类型</text>
+			<view class="demo-row">
+				<mms-button type="primary">主要按钮</mms-button>
+			</view>
+			<view class="demo-row">
+				<mms-button type="danger">危险按钮</mms-button>
+			</view>
+			<view class="demo-row">
+				<mms-button type="warning">警告按钮</mms-button>
+			</view>
+			<view class="demo-row">
+				<mms-button type="green">成功按钮</mms-button>
+			</view>
+			<view class="demo-row">
+				<mms-button type="blue">信息按钮</mms-button>
+			</view>
+			<view class="demo-row">
+				<mms-button type="gray">灰色按钮</mms-button>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">镂空按钮</text>
+			<view class="demo-row">
+				<mms-button type="primary" :plain="true">主要镂空</mms-button>
+			</view>
+			<view class="demo-row">
+				<mms-button type="danger" :plain="true">危险镂空</mms-button>
+			</view>
+			<view class="demo-row">
+				<mms-button type="warning" :plain="true">警告镂空</mms-button>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">按钮尺寸</text>
+			<view class="demo-row">
+				<mms-button type="primary" btnSize="large">大号按钮</mms-button>
+			</view>
+			<view class="demo-row">
+				<mms-button type="primary" btnSize="medium">中等按钮</mms-button>
+			</view>
+			<view class="demo-row">
+				<mms-button type="primary" btnSize="small">小型按钮</mms-button>
+			</view>
+			<view class="demo-row">
+				<mms-button type="primary" btnSize="mini">迷你按钮</mms-button>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">按钮形状</text>
+			<view class="demo-row">
+				<mms-button type="primary" shape="circle">圆形按钮</mms-button>
+			</view>
+			<view class="demo-row">
+				<mms-button type="primary" shape="square">方形按钮</mms-button>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">禁用状态</text>
+			<view class="demo-row">
+				<mms-button type="primary" :disabled="true">禁用按钮</mms-button>
+			</view>
+			<view class="demo-row">
+				<mms-button type="primary" :plain="true" :disabled="true">禁用镂空</mms-button>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">加载状态</text>
+			<view class="demo-row">
+				<mms-button type="primary" :loading="true">加载中...</mms-button>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">自定义宽高</text>
+			<view class="demo-row">
+				<mms-button type="primary" width="400rpx" height="88rpx">自定义宽高</mms-button>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	display: block;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff2727;
+}
+
+.demo-row {
+	margin-bottom: 20rpx;
+}
+</style>

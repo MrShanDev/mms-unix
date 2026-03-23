@@ -1,0 +1,27 @@
+/**
+ * 首页服务栏数据
+ */
+
+type ServiceItem = {
+	icon: string
+	title: string
+	pages: string
+	requireLogin: boolean
+}
+
+const myServiceMp: ServiceItem[] = [
+	{
+		icon: '/static/img/address.png',
+		title: '地址管理',
+		pages: '/pages_Me/user_address/index',
+		requireLogin: true
+	},
+	{
+		icon: '/static/img/heading.png',
+		title: '个人信息',
+		pages: '/pages_Me/user_info/index',
+		requireLogin: true
+	}
+]
+
+export default myServiceMp

@@ -1,13 +1,179 @@
 <template>
-	<view>
-		<mms-button type="warning">Hello</mms-button>
+	<view class="container">
+		<view class="bj">
+			<view @tap.stop="checkLoginAndNav('/pages_Me/user_info/index', true)" class="userInfo flex">
+				<view class="avatar">
+					<image class="avatar-image" :src="userInfo.headPortrait || defaultFace" mode="aspectFill"></image>
+				</view>
+				<view class="info">
+					<view v-if="hasLogin">
+						<view class="nickname">{{ userInfo.nickname || '暂无昵称' }}</view>
+						<view class="follow">{{ userInfo.phone }}</view>
+					</view>
+				<view v-else class="not-login">未登录</view>
+				<mms-icon name="arrow-right" size="32rpx" color="#ffffff"></mms-icon>
+			</view>
+			</view>
+		</view>
+		
+		<!-- 组件演示入口 -->
+		<view class="demo-entry" @tap="goToDemo">
+			<mms-icon name="apps" size="48rpx" color="#ff2727"></mms-icon>
+			<text class="demo-text">组件演示</text>
+			<mms-icon name="arrow-right" size="32rpx" color="#999"></mms-icon>
+		</view>
+		
+		<view class="service">
+			<view @tap.stop="checkLoginAndNav(item.pages, item.requireLogin === true)" v-for="(item, index) in serviceBar" :key="index" class="service_item">
+				<image class="service-icon" :src="item.icon" mode="aspectFit"></image>
+				<text class="service-text">{{ item.title }}</text>
+			</view>
+		</view>
 	</view>
 </template>
 
-<script setup>
-		
+<script setup lang="uts">
+	import { ref, computed } from 'vue'
+	import { jumpTo } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+	import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
+	import { tokenLogin, myList } from '@/common/api/mallApi'
+	import myServiceMp from './myServiceData'
+
+	const defaultFace = '/static/img/heading.png'
+	const serviceBar = myServiceMp
+	const total = ref(0)
+	const hasLogin = ref(storage.getToken() != '' || storage.getUserInfo() != null)
+	const userInfo = ref(storage.getUserInfo() ?? {} as UTSJSONObject)
+
+	function checkLoginAndNav(url: string, requireLogin: boolean = false) {
+		if (!hasLogin.value) {
+			if (requireLogin) {
+				setTimeout(() => {
+					uni.showModal({
+						title: '提示',
+						content: '未登录，是否立即登录？',
+						showCancel: true,
+						cancelText: '取消',
+						confirmText: '去登录',
+						success: (res) => {
+							if (res.confirm) {
+								uni.navigateTo({ url: '/pages_Me/login/login' })
+							}
+						}
+					})
+				}, 100)
+			} else {
+				jumpTo(url)
+			}
+		} else {
+			jumpTo(url)
+		}
+	}
+
+	function goToDemo() {
+		uni.navigateTo({ url: '/pages_demo/index' })
+	}
 </script>
 
 <style lang="scss">
+.container {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+}
 
+.bj {
+	background-color: #ff2727;
+	padding: 60rpx 30rpx 40rpx;
+}
+
+.userInfo {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.avatar {
+	width: 120rpx;
+	height: 120rpx;
+	border-radius: 60rpx;
+	overflow: hidden;
+	border: 4rpx solid rgba(255, 255, 255, 0.5);
+}
+
+.avatar-image {
+	width: 100%;
+	height: 100%;
+}
+
+.info {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	flex: 1;
+	margin-left: 24rpx;
+	align-items: stretch;
+}
+
+.nickname {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #ffffff;
+	margin-bottom: 8rpx;
+}
+
+.follow {
+	font-size: 26rpx;
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.not-login {
+	font-size: 32rpx;
+	color: #ffffff;
+}
+
+.demo-entry {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	background-color: #ffffff;
+	margin: 20rpx;
+	padding: 30rpx;
+	border-radius: 16rpx;
+}
+
+.demo-text {
+	flex: 1;
+	font-size: 32rpx;
+	color: #333333;
+	margin-left: 20rpx;
+}
+
+.service {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	background-color: #ffffff;
+	margin: 20rpx;
+	border-radius: 16rpx;
+	padding: 20rpx 0;
+}
+
+.service_item {
+	width: 25%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 20rpx 0;
+}
+
+.service-icon {
+	width: 80rpx;
+	height: 80rpx;
+	margin-bottom: 12rpx;
+}
+
+.service-text {
+	font-size: 26rpx;
+	color: #333333;
+}
 </style>

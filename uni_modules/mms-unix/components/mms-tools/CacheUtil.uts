@@ -1,7 +1,7 @@
 // cache-util.uts
 const CACHE_PREFIX = "app_cache_"
 
-interface CacheMeta {
+type CacheMeta = {
   /** 数据过期时间戳（毫秒） */
   expire?: number
   /** 数据存储时间戳 */

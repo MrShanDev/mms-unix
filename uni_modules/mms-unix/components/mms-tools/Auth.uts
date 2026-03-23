@@ -13,8 +13,8 @@ export function isLoggedIn(): boolean {
 export function checkLogin(toPath?: string): boolean {
 	if (isLoggedIn()) return true
 	const url = toPath != null && toPath != ''
-		? '/pages/login/login?redirect=' + encodeURIComponent(toPath)
-		: '/pages/login/login'
+		? '/pages_Me/login/login?redirect=' + encodeURIComponent(toPath)
+		: '/pages_Me/login/login'
 	uni.navigateTo({ url })
 	return false
 }

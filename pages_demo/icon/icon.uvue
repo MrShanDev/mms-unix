@@ -1,0 +1,154 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">基础图标</text>
+			<view class="icon-grid">
+				<view class="icon-item" v-for="(item, index) in icons" :key="index">
+					<mms-icon :name="item" size="48rpx"></mms-icon>
+					<text class="icon-name">{{ item }}</text>
+				</view>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">图标颜色</text>
+			<view class="icon-row">
+				<mms-icon name="setting" size="48rpx" color="#ff2727"></mms-icon>
+				<mms-icon name="setting" size="48rpx" color="#1890ff"></mms-icon>
+				<mms-icon name="setting" size="48rpx" color="#52c41a"></mms-icon>
+				<mms-icon name="setting" size="48rpx" color="#fa8c16"></mms-icon>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">图标大小</text>
+			<view class="icon-row">
+				<mms-icon name="setting" size="32rpx"></mms-icon>
+				<mms-icon name="setting" size="48rpx"></mms-icon>
+				<mms-icon name="setting" size="64rpx"></mms-icon>
+				<mms-icon name="setting" size="80rpx"></mms-icon>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">方向图标</text>
+			<view class="icon-row">
+				<mms-icon name="arrow-up" size="48rpx"></mms-icon>
+				<mms-icon name="arrow-down" size="48rpx"></mms-icon>
+				<mms-icon name="arrow-left" size="48rpx"></mms-icon>
+				<mms-icon name="arrow-right" size="48rpx"></mms-icon>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">填充图标</text>
+			<view class="icon-grid">
+				<view class="icon-item" v-for="(item, index) in fillingIcons" :key="index">
+					<mms-icon :name="item" size="48rpx" color="#ff2727"></mms-icon>
+					<text class="icon-name">{{ item }}</text>
+				</view>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">操作图标</text>
+			<view class="icon-row">
+				<mms-icon name="add" size="48rpx" color="#1890ff"></mms-icon>
+				<mms-icon name="close" size="48rpx" color="#ff2727"></mms-icon>
+				<mms-icon name="delete" size="48rpx" color="#ff4d4f"></mms-icon>
+				<mms-icon name="edit" size="48rpx" color="#52c41a"></mms-icon>
+				<mms-icon name="download" size="48rpx" color="#1890ff"></mms-icon>
+				<mms-icon name="upload" size="48rpx" color="#fa8c16"></mms-icon>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">媒体图标</text>
+			<view class="icon-row">
+				<mms-icon name="camera" size="48rpx"></mms-icon>
+				<mms-icon name="picture" size="48rpx"></mms-icon>
+				<mms-icon name="film" size="48rpx"></mms-icon>
+				<mms-icon name="play" size="48rpx"></mms-icon>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">状态图标</text>
+			<view class="icon-row">
+				<mms-icon name="success" size="48rpx" color="#52c41a"></mms-icon>
+				<mms-icon name="warning" size="48rpx" color="#faad14"></mms-icon>
+				<mms-icon name="error" size="48rpx" color="#ff4d4f"></mms-icon>
+				<mms-icon name="help" size="48rpx" color="#1890ff"></mms-icon>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+// 基础图标列表
+const icons: string[] = [
+	'setting', 'home', 'search', 'user', 'lock',
+	'calendar', 'camera', 'picture', 'email', 'telephone',
+	'map', 'time', 'history', 'notification', 'more'
+]
+
+// 填充图标列表
+const fillingIcons: string[] = [
+	'home-filling', 'user-filling', 'setting-filling', 'success-filling',
+	'warning-filling', 'favorite-filling', 'good-filling', 'map-filling'
+]
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	display: block;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff2727;
+}
+
+.icon-grid {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.icon-item {
+	width: 20%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 20rpx 0;
+}
+
+.icon-name {
+	font-size: 22rpx;
+	color: #999999;
+	margin-top: 10rpx;
+}
+
+.icon-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	padding: 20rpx 0;
+	flex-wrap: wrap;
+}
+</style>

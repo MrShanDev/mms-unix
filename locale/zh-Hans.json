@@ -1,0 +1,58 @@
+{
+	"app.name": "MMS-UNIX",
+	"app.desc": "uni-app 组件库",
+
+	"tabbar.home": "首页",
+	"tabbar.user": "我的",
+
+	"page.home": "首页",
+	"page.user": "我的",
+	"page.login": "登录",
+	"page.register": "注册",
+	"page.forgotPassword": "找回密码",
+	"page.articleList": "文章列表",
+	"page.articleDetails": "文章详情",
+	"page.userInfo": "个人信息",
+	"page.userAddress": "收货地址",
+	"page.address": "地址",
+	"page.aboutMe": "关于我们",
+
+	"common.confirm": "确定",
+	"common.cancel": "取消",
+	"common.submit": "提交",
+	"common.save": "保存",
+	"common.delete": "删除",
+	"common.edit": "编辑",
+	"common.loading": "加载中...",
+	"common.noData": "暂无数据",
+	"common.noMore": "没有更多了",
+	"common.retry": "重试",
+	"common.back": "返回",
+
+	"auth.loginRequired": "请先登录",
+	"auth.loginPrompt": "未登录，是否立即登录？",
+	"auth.loginSuccess": "登录成功",
+	"auth.logoutSuccess": "退出成功",
+	"auth.registerSuccess": "注册成功",
+	"auth.passwordReset": "密码重置成功",
+
+	"validation.phoneRequired": "请输入手机号",
+	"validation.phoneInvalid": "手机号格式不正确",
+	"validation.codeRequired": "请输入验证码",
+	"validation.passwordRequired": "请输入密码",
+	"validation.passwordMismatch": "两次密码不一致",
+	"validation.agreeRequired": "请阅读并同意协议",
+
+	"button.sendCode": "发送验证码",
+	"button.resendCode": "重新发送({seconds}s)",
+	"button.login": "登录",
+	"button.register": "注册",
+	"button.resetPassword": "重置密码",
+
+	"update.title": "发现新版本",
+	"update.confirm": "立即更新",
+	"update.later": "稍后提醒",
+	"update.downloading": "正在下载...",
+	"update.install": "安装",
+	"update.failed": "下载失败，请检查网络后重试"
+}

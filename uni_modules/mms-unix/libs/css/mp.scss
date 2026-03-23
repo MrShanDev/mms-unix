@@ -1,6 +1,7 @@
-/* 小程序平台特有样式 */
+/* 小程序平台特有样式 - ucss 兼容版本 */
+/* 注意：ucss 不支持 CSS 变量 */
 page {
-  background-color: var(--mms-bg-color, #f5f7fa);
-  font-size: 28rpx;
-  line-height: 1.5;
+	background-color: #f5f7fa;
+	font-size: 28rpx;
+	line-height: 1.5;
 }

@@ -1,13 +1,15 @@
 <template>
-	<view class="mms-grid" :class="{'mms-grid--square': square}">
-		<view class="mms-grid__item" v-for="(item, index) in list" :key="index" @click="handleItemClick(item, index)">
-			<slot name="item" :item="item" :index="index">
-				<view class="mms-grid__icon">
-					<image :src="item.icon" mode="aspectFit"></image>
-				</view>
-				<text class="mms-grid__text">{{ item.text }}</text>
-			</slot>
-		</view>
+	<view class="mms-grid" :class="{'mms-grid--border': border, 'mms-grid--square': square}" :style="gridStyle">
+		<slot>
+			<view class="mms-grid__item" v-for="(item, index) in list" :key="index" @click="handleItemClick(item, index)">
+				<slot name="item" :item="item" :index="index">
+					<view class="mms-grid__icon">
+						<image :src="item.icon" mode="aspectFit"></image>
+					</view>
+					<text class="mms-grid__text">{{ item.text }}</text>
+				</slot>
+			</view>
+		</slot>
 	</view>
 </template>
 
@@ -21,6 +23,11 @@ export default {
 			type: [Number, String],
 			default: 4
 		},
+		// 宫格列数（别名）
+		column: {
+			type: [Number, String],
+			default: 4
+		},
 		// 宫格数据
 		list: {
 			type: Array as PropType<any[]>,
@@ -30,6 +37,20 @@ export default {
 		square: {
 			type: Boolean,
 			default: false
+		},
+		// 是否显示边框
+		border: {
+			type: Boolean,
+			default: true
+		}
+	},
+	computed: {
+		actualCol(): number {
+			const c = this.column ?? this.col
+			return typeof c === 'string' ? parseInt(c) : c
+		},
+		gridStyle(): string {
+			return '--col-num: ' + this.actualCol + ';'
 		}
 	},
 	methods: {
@@ -37,7 +58,7 @@ export default {
 			this.$emit('click', { item, index })
 		}
 	}
-};
+}
 </script>
 
 <style scoped lang="scss">
@@ -71,6 +92,13 @@ export default {
 			color: #606266;
 			line-height: 1.4;
 			text-align: center;
+		}
+	}
+
+	&.mms-grid--border {
+		.mms-grid__item {
+			border-right: 1rpx solid #ebedf0;
+			border-bottom: 1rpx solid #ebedf0;
 		}
 	}
 

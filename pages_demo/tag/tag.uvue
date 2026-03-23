@@ -1,0 +1,81 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">基础标签</text>
+			<view class="tag-row">
+				<mms-tag text="标签"></mms-tag>
+				<mms-tag text="标签" type="success"></mms-tag>
+				<mms-tag text="标签" type="warning"></mms-tag>
+				<mms-tag text="标签" type="danger"></mms-tag>
+				<mms-tag text="标签" type="info"></mms-tag>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">镂空标签</text>
+			<view class="tag-row">
+				<mms-tag text="标签" :plain="true"></mms-tag>
+				<mms-tag text="标签" type="success" :plain="true"></mms-tag>
+				<mms-tag text="标签" type="warning" :plain="true"></mms-tag>
+				<mms-tag text="标签" type="danger" :plain="true"></mms-tag>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">标签尺寸</text>
+			<view class="tag-row">
+				<mms-tag text="小标签" size="small"></mms-tag>
+				<mms-tag text="默认标签"></mms-tag>
+				<mms-tag text="大标签" size="large"></mms-tag>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">可关闭标签</text>
+			<view class="tag-row">
+				<mms-tag v-for="(tag, index) in tags" :key="index" :text="tag" :closable="true" @close="closeTag(index)"></mms-tag>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { ref } from 'vue'
+
+const tags = ref<string[]>(['标签一', '标签二', '标签三'])
+
+function closeTag(index: number) {
+	tags.value.splice(index, 1)
+}
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	display: block;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff2727;
+}
+
+.tag-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16rpx;
+}
+</style>

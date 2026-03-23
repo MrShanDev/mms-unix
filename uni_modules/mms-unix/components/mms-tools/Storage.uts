@@ -8,6 +8,10 @@ import { notifyAuthChange } from './AuthNotifier.uts'
 const tokenKey = config.storage.token
 const userInfoKey = config.storage.userInfo
 
+type AnyRecord = {
+	[key: string]: any
+}
+
 type StorageApi = {
 	get: (key: string) => any | null
 	set: (key: string, value: any) => void
@@ -16,7 +20,7 @@ type StorageApi = {
 	getToken: () => string
 	setToken: (token: string) => void
 	getUserInfo: () => any | null
-	setUserInfo: (info: Record<string, any>) => void
+	setUserInfo: (info: AnyRecord) => void
 	clearAuth: () => void
 }
 
@@ -85,7 +89,7 @@ export const storage: StorageApi = {
 		return storageGet(userInfoKey)
 	},
 
-	setUserInfo(info: Record<string, any>): void {
+	setUserInfo(info: AnyRecord): void {
 		storageSet(userInfoKey, info)
 		notifyAuthChange()
 	},

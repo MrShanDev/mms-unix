@@ -64,7 +64,7 @@
 
 <script setup lang="uts">
 	import { ref, computed } from 'vue'
-	import { storage } from '@/common/utils/storage'
+	import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
 	import { updateMemberInfo } from '@/common/api/mallApi'
 
 	const defaultFace = '/static/img/heading.png'

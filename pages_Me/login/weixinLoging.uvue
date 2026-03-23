@@ -7,7 +7,7 @@
 
 <script setup lang="uts">
 	function goMainLogin() {
-		uni.redirectTo({ url: '/pages/login/login' })
+		uni.redirectTo({ url: '/pages_Me/login/login' })
 	}
 </script>
 

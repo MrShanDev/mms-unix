@@ -1,0 +1,86 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">基础价格</text>
+			<view class="price-row">
+				<mms-price :value="99.99"></mms-price>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">价格符号</text>
+			<view class="price-row">
+				<mms-price :value="199.00" symbol="¥"></mms-price>
+			</view>
+			<view class="price-row">
+				<mms-price :value="29.99" symbol="$"></mms-price>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">价格尺寸</text>
+			<view class="price-row">
+				<mms-price :value="99.99" size="small"></mms-price>
+			</view>
+			<view class="price-row">
+				<mms-price :value="199.99" size="normal"></mms-price>
+			</view>
+			<view class="price-row">
+				<mms-price :value="299.99" size="large"></mms-price>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">价格颜色</text>
+			<view class="price-row">
+				<mms-price :value="99.99" color="#ff2727"></mms-price>
+			</view>
+			<view class="price-row">
+				<mms-price :value="199.99" color="#1890ff"></mms-price>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">划线价</text>
+			<view class="price-row">
+				<mms-price :value="99.99"></mms-price>
+				<mms-price :value="199.99" :lineThrough="true" color="#999999"></mms-price>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	display: block;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff2727;
+}
+
+.price-row {
+	margin-bottom: 20rpx;
+	display: flex;
+	align-items: center;
+	gap: 20rpx;
+}
+</style>

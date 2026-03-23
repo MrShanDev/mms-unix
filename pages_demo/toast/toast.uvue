@@ -1,0 +1,85 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">基础用法</text>
+			<view class="demo-row">
+				<mms-button type="primary" size="small" @click="showToast('普通提示')">普通提示</mms-button>
+				<mms-button type="green" size="small" @click="showToast('成功提示', 'success')">成功提示</mms-button>
+				<mms-button type="danger" size="small" @click="showToast('失败提示', 'error')">失败提示</mms-button>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">自定义时长</text>
+			<view class="demo-row">
+				<mms-button type="primary" size="small" @click="showLongToast">长时提示(3秒)</mms-button>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">加载提示</text>
+			<view class="demo-row">
+				<mms-button type="primary" size="small" @click="showLoadingToast">加载中...</mms-button>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+function showToast(title: string, icon: string = 'none') {
+	uni.showToast({
+		title,
+		icon: icon as 'success' | 'error' | 'loading' | 'none',
+		duration: 1500
+	})
+}
+
+function showLongToast() {
+	uni.showToast({
+		title: '这是一个持续时间较长的提示',
+		icon: 'none',
+		duration: 3000
+	})
+}
+
+function showLoadingToast() {
+	uni.showLoading({
+		title: '加载中...',
+		mask: true
+	})
+	setTimeout(() => {
+		uni.hideLoading()
+	}, 2000)
+}
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	display: block;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff2727;
+}
+
+.demo-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20rpx;
+}
+</style>

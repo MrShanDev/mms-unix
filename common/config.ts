@@ -5,6 +5,8 @@
 type AppConfig = {
 	/** 基础 API 地址 */
 	baseUrl: string
+	/** 商城 API 地址（可选，若为空则使用 baseUrl） */
+	mallBaseUrl: string
 	/** 存储 Key 配置 */
 	storage: StorageConfig
 	/** 需要登录才能访问的页面路径（不含 pages/ 前缀） */
@@ -77,6 +79,8 @@ export type ConfigInfo = {
 export const config: AppConfig = {
 	// 基础 API 地址
 	baseUrl: 'http://localhost:8070',
+	// 商城 API 地址（若为空则使用 baseUrl）
+	mallBaseUrl: '',
 	// 存储 Key
 	storage: {
 		token: 'token',

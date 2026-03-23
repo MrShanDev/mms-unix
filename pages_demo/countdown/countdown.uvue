@@ -1,0 +1,67 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">基础倒计时</text>
+			<view class="countdown-row">
+				<mms-countdown :seconds="60" @finish="onFinish"></mms-countdown>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">倒计时样式</text>
+			<view class="countdown-row">
+				<text>默认样式：</text>
+				<mms-countdown :seconds="30"></mms-countdown>
+			</view>
+			<view class="countdown-row">
+				<text>按钮样式：</text>
+				<mms-countdown :seconds="30" type="button"></mms-countdown>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">自定义文字</text>
+			<view class="countdown-row">
+				<mms-countdown :seconds="60" startText="获取验证码" endText="重新获取" suffix="秒后重试"></mms-countdown>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+function onFinish() {
+	uni.showToast({ title: '倒计时结束', icon: 'none' })
+}
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	display: block;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff2727;
+}
+
+.countdown-row {
+	display: flex;
+	align-items: center;
+	gap: 16rpx;
+	margin-bottom: 20rpx;
+}
+</style>

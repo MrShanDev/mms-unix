@@ -26,8 +26,8 @@
 
 <script setup lang="uts">
 	import { ref, computed } from 'vue'
-	import { jumpTo } from '@/common/utils/ut'
-	import { storage } from '@/common/utils/storage'
+	import { jumpTo } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+	import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
 	import { tokenLogin, myList } from '@/common/api/mallApi'
 	import myServiceMp from './myServiceData'
 
@@ -50,7 +50,7 @@
 						confirmText: '去登录',
 						success: (res) => {
 							if (res.confirm) {
-								jumpTo('/pages/login/login', 'to')
+								jumpTo('/pages_Me/login/login', 'to')
 							}
 						}
 					})
