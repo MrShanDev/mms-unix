@@ -58,7 +58,6 @@
 	font-weight: bold;
 	color: #333333;
 	margin-bottom: 24rpx;
-	display: block;
 	padding-left: 16rpx;
 	border-left: 6rpx solid #ff2727;
 }
@@ -75,12 +74,12 @@
 .card-desc {
 	font-size: 28rpx;
 	color: #666666;
-	display: block;
 	margin-bottom: 20rpx;
 }
 
 .card-footer {
 	display: flex;
+	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
 }

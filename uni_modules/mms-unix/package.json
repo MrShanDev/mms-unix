@@ -2,7 +2,7 @@
   "id": "mms-unix",
   "name": "mms-unix",
   "displayName": "mms-unix uni-app-x 基础组件库",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "专为 uni-app-x 定制的自研基础组件库，包含常用组件和工具函数",
   "keywords": [
     "mms",

@@ -68,14 +68,13 @@ function closeTag(index: number) {
 	font-weight: bold;
 	color: #333333;
 	margin-bottom: 24rpx;
-	display: block;
 	padding-left: 16rpx;
 	border-left: 6rpx solid #ff2727;
 }
 
 .tag-row {
 	display: flex;
+	flex-direction: row;
 	flex-wrap: wrap;
-	gap: 16rpx;
 }
 </style>

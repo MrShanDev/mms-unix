@@ -53,15 +53,14 @@ function onFinish() {
 	font-weight: bold;
 	color: #333333;
 	margin-bottom: 24rpx;
-	display: block;
 	padding-left: 16rpx;
 	border-left: 6rpx solid #ff2727;
 }
 
 .countdown-row {
 	display: flex;
+	flex-direction: row;
 	align-items: center;
-	gap: 16rpx;
 	margin-bottom: 20rpx;
 }
 </style>

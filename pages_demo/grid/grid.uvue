@@ -56,7 +56,6 @@
 	font-weight: bold;
 	color: #333333;
 	margin-bottom: 24rpx;
-	display: block;
 	padding-left: 16rpx;
 	border-left: 6rpx solid #ff2727;
 }

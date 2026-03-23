@@ -95,7 +95,6 @@ const showCenter = ref(false)
 	font-weight: bold;
 	color: #333333;
 	margin-bottom: 24rpx;
-	display: block;
 	padding-left: 16rpx;
 	border-left: 6rpx solid #ff2727;
 }
@@ -121,14 +120,12 @@ const showCenter = ref(false)
 	font-size: 32rpx;
 	font-weight: bold;
 	color: #333333;
-	display: block;
 	margin-bottom: 20rpx;
 }
 
 .popup-text {
 	font-size: 28rpx;
 	color: #666666;
-	display: block;
 	margin-bottom: 30rpx;
 }
 </style>

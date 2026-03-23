@@ -72,19 +72,20 @@ const logoUrl = '/static/img/heading.png'
 	font-weight: bold;
 	color: #333333;
 	margin-bottom: 24rpx;
-	display: block;
 	padding-left: 16rpx;
 	border-left: 6rpx solid #ff2727;
 }
 
 .qrcode-center {
 	display: flex;
+	flex-direction: row;
 	justify-content: center;
 	padding: 20rpx 0;
 }
 
 .qrcode-row {
 	display: flex;
+	flex-direction: row;
 	justify-content: space-around;
 	padding: 20rpx 0;
 }

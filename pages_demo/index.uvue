@@ -65,11 +65,11 @@ type ComponentItem = {
 }
 
 const basicComponents: ComponentItem[] = [
-	{ name: 'Button 按钮', path: '/pages_demo/button/button', icon: 'button' },
+	{ name: 'Button 按钮', path: '/pages_demo/button/button', icon: 'menu' },
 	{ name: 'Cell 单元格', path: '/pages_demo/cell/cell', icon: 'menu' },
-	{ name: 'Icon 图标', path: '/pages_demo/icon/icon', icon: 'emoji' },
+	{ name: 'Icon 图标', path: '/pages_demo/icon/icon', icon: 'setting' },
 	{ name: 'Tag 标签', path: '/pages_demo/tag/tag', icon: 'tag' },
-	{ name: 'Card 卡片', path: '/pages_demo/card/card', icon: 'creditcard' },
+	{ name: 'Card 卡片', path: '/pages_demo/card/card', icon: 'menu' },
 ]
 
 const formComponents: ComponentItem[] = [
@@ -78,23 +78,23 @@ const formComponents: ComponentItem[] = [
 ]
 
 const feedbackComponents: ComponentItem[] = [
-	{ name: 'Dialog 弹窗', path: '/pages_demo/dialog/dialog', icon: 'info' },
+	{ name: 'Dialog 弹窗', path: '/pages_demo/dialog/dialog', icon: 'help' },
 	{ name: 'Popup 弹出层', path: '/pages_demo/popup/popup', icon: 'arrow-up' },
 	{ name: 'Toast 轻提示', path: '/pages_demo/toast/toast', icon: 'notification' },
 	{ name: 'Loading 加载', path: '/pages_demo/loading/loading', icon: 'loading' },
 ]
 
 const displayComponents: ComponentItem[] = [
-	{ name: 'Empty 空状态', path: '/pages_demo/empty/empty', icon: 'folder' },
+	{ name: 'Empty 空状态', path: '/pages_demo/empty/empty', icon: 'folder-close' },
 	{ name: 'Price 价格', path: '/pages_demo/price/price', icon: 'wallet' },
 	{ name: 'Countdown 倒计时', path: '/pages_demo/countdown/countdown', icon: 'time' },
 	{ name: 'Grid 宫格', path: '/pages_demo/grid/grid', icon: 'apps' },
-	{ name: 'QRCode 二维码', path: '/pages_demo/qrcode/qrcode', icon: 'scan' },
+	{ name: 'QRCode 二维码', path: '/pages_demo/qrcode/qrcode', icon: 'scanning' },
 	{ name: 'Watermark 水印', path: '/pages_demo/watermark/watermark', icon: 'lock' },
 ]
 
 const businessComponents: ComponentItem[] = [
-	{ name: 'Login 登录', path: '/pages_demo/login/login', icon: 'person' },
+	{ name: 'Login 登录', path: '/pages_demo/login/login', icon: 'user' },
 ]
 
 function navigateTo(url: string) {
@@ -110,7 +110,7 @@ function navigateTo(url: string) {
 }
 
 .demo-header {
-	background: linear-gradient(135deg, #ff2727 0%, #ff6b6b 100%);
+	background-color: #ff2727;
 	border-radius: 16rpx;
 	padding: 40rpx 30rpx;
 	margin-bottom: 30rpx;
@@ -120,7 +120,6 @@ function navigateTo(url: string) {
 	font-size: 44rpx;
 	font-weight: bold;
 	color: #ffffff;
-	display: block;
 	margin-bottom: 12rpx;
 }
 
@@ -141,13 +140,13 @@ function navigateTo(url: string) {
 	font-weight: bold;
 	color: #333333;
 	margin-bottom: 24rpx;
-	display: block;
 	padding-left: 16rpx;
 	border-left: 6rpx solid #ff2727;
 }
 
 .demo-grid {
 	display: flex;
+	flex-direction: row;
 	flex-wrap: wrap;
 }
 

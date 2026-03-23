@@ -56,16 +56,15 @@
 	font-weight: bold;
 	color: #333333;
 	margin-bottom: 24rpx;
-	display: block;
 	padding-left: 16rpx;
 	border-left: 6rpx solid #ff2727;
 }
 
 .demo-row-center {
 	display: flex;
+	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	gap: 40rpx;
 	padding: 40rpx 0;
 }
 </style>
