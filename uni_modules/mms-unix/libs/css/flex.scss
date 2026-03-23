@@ -1,0 +1,136 @@
+/* flex 布局工具类 */
+.mms-flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.mms-flex-row-reverse {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.mms-flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.mms-flex-column-reverse {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.mms-flex-wrap {
+  flex-wrap: wrap;
+}
+
+.mms-flex-nowrap {
+  flex-wrap: nowrap;
+}
+
+.mms-justify-start {
+  justify-content: flex-start;
+}
+
+.mms-justify-end {
+  justify-content: flex-end;
+}
+
+.mms-justify-center {
+  justify-content: center;
+}
+
+.mms-justify-between {
+  justify-content: space-between;
+}
+
+.mms-justify-around {
+  justify-content: space-around;
+}
+
+.mms-items-start {
+  align-items: flex-start;
+}
+
+.mms-items-end {
+  align-items: flex-end;
+}
+
+.mms-items-center {
+  align-items: center;
+}
+
+.mms-items-baseline {
+  align-items: baseline;
+}
+
+.mms-items-stretch {
+  align-items: stretch;
+}
+
+.mms-content-start {
+  align-content: flex-start;
+}
+
+.mms-content-end {
+  align-content: flex-end;
+}
+
+.mms-content-center {
+  align-content: center;
+}
+
+.mms-content-between {
+  align-content: space-between;
+}
+
+.mms-content-around {
+  align-content: space-around;
+}
+
+.mms-content-stretch {
+  align-content: stretch;
+}
+
+.mms-flex-auto {
+  flex: auto;
+}
+
+.mms-flex-1 {
+  flex: 1;
+}
+
+.mms-flex-2 {
+  flex: 2;
+}
+
+.mms-flex-3 {
+  flex: 3;
+}
+
+.mms-flex-none {
+  flex: none;
+}
+
+.mms-self-auto {
+  align-self: auto;
+}
+
+.mms-self-start {
+  align-self: flex-start;
+}
+
+.mms-self-end {
+  align-self: flex-end;
+}
+
+.mms-self-center {
+  align-self: center;
+}
+
+.mms-self-baseline {
+  align-self: baseline;
+}
+
+.mms-self-stretch {
+  align-self: stretch;
+}

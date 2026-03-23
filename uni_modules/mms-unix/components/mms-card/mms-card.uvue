@@ -1,0 +1,83 @@
+<template>
+	<view class="mms-card" :class="[{'mms-card--border': border}, {'mms-card--shadow': shadow}, {'mms-card--full': full}]" :style="boxStyle">
+		<view class="mms-card__content" :class="[{'mms-card--full-padding': full}]">
+			<slot></slot>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsCard',
+	props: {
+		// 是否显示边框
+		border: {
+			type: Boolean,
+			default: true
+		},
+		// 是否显示阴影
+		shadow: {
+			type: Boolean,
+			default: false
+		},
+		// 是否通栏
+		full: {
+			type: Boolean,
+			default: false
+		},
+		// 自定义样式
+		customStyle: {
+			type: Object as PropType<UTSJSONObject>,
+			default: () => ({})
+		}
+	},
+	computed: {
+		boxStyle() {
+			const style: UTSJSONObject = {}
+			if (this.customStyle) {
+				Object.assign(style, this.customStyle)
+			}
+			return style
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-card {
+	background-color: #ffffff;
+	position: relative;
+	box-sizing: border-box;
+	margin-left: 20rpx;
+	margin-right: 20rpx;
+
+	.mms-card__content {
+		position: relative;
+		box-sizing: border-box;
+		padding: 24rpx 20rpx;
+	}
+
+	&.mms-card--border {
+		border: 1rpx solid #e5e5e5;
+		border-radius: 8rpx;
+	}
+
+	&.mms-card--shadow {
+		border-radius: 8rpx;
+		box-shadow: 0 2rpx 12rpx 0 rgba(0, 0, 0, 0.08);
+	}
+
+	&.mms-card--full {
+		margin-left: 0;
+		margin-right: 0;
+		border-radius: 0;
+
+		.mms-card__content {
+			&.mms-card--full-padding {
+				padding-left: 30rpx;
+				padding-right: 30rpx;
+			}
+		}
+	}
+}
+</style>

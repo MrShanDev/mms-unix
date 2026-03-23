@@ -1,0 +1,222 @@
+<template>
+	<view class="address-setting-page">
+		<view class="content">
+			<view class="form-container">
+				<view class="form-item">
+					<view class="form-row">
+						<text class="label">收货人</text>
+						<input class="input" v-model="formData.name" placeholder="姓名" placeholder-style="color: #CBCBCB" />
+					</view>
+				</view>
+				<view class="form-item">
+					<view class="form-row">
+						<text class="label">手机号码</text>
+						<input class="input" v-model="formData.phone" placeholder="联系电话" placeholder-style="color: #CBCBCB" type="number" />
+					</view>
+				</view>
+				<view class="form-item">
+					<view class="form-row" @tap="selectRegion">
+						<text class="label">所在地区</text>
+						<text class="input" :class="{ placeholder: !formData.province }">{{ formData.province ? `${formData.province} ${formData.city} ${formData.district}` : '请选择所在地区' }}</text>
+					</view>
+				</view>
+				<view class="form-item">
+					<view class="form-row">
+						<text class="label">详细地址</text>
+						<input class="input" v-model="formData.address" placeholder="门牌号" placeholder-style="color: #CBCBCB" />
+					</view>
+				</view>
+				<view class="form-item">
+					<view class="form-row switch-row">
+						<text class="label">设为默认地址</text>
+						<switch :checked="formData.tolerant == '1'" @change="switchChange" color="#ff2727" />
+					</view>
+				</view>
+				<view class="bottom-placeholder"></view>
+			</view>
+		</view>
+		<view class="bottom-bar">
+			<button class="save-btn" @tap="saveAddress">保存并使用</button>
+		</view>
+		<RegionPicker :visible="showRegionPicker" @confirm="onRegionConfirm" @cancel="onRegionCancel" />
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { ref } from 'vue'
+	import RegionPicker from '../components/region-picker/region-picker.uvue'
+	import { addressDetail, addressEdit, addressInsert } from '@/common/api/mallApi'
+
+	type FormData = {
+		id: string
+		name: string
+		phone: string
+		province: string
+		city: string
+		district: string
+		address: string
+		tolerant: string
+	}
+
+	const formData = ref<FormData>({
+		id: '',
+		name: '',
+		phone: '',
+		province: '',
+		city: '',
+		district: '',
+		address: '',
+		tolerant: '0',
+	})
+	const showRegionPicker = ref(false)
+
+	function selectRegion() {
+		showRegionPicker.value = true
+	}
+
+	function onRegionConfirm(regionData: { text: string; province: string; city: string; district: string }) {
+		formData.value.province = regionData.province
+		formData.value.city = regionData.city
+		formData.value.district = regionData.district
+		showRegionPicker.value = false
+	}
+
+	function onRegionCancel() {
+		showRegionPicker.value = false
+	}
+
+	function switchChange(e: any) {
+		formData.value.tolerant = e.detail.value ? '1' : '0'
+	}
+
+	function loadAddressData(id: string) {
+		addressDetail(id).then((res) => {
+			if (res.code == 200 && res.data != null) {
+				const d = res.data as UTSJSONObject
+				formData.value = {
+					id: (d['id'] != null ? String(d['id']) : ''),
+					name: (d['name'] != null ? String(d['name']) : ''),
+					phone: (d['phone'] != null ? String(d['phone']) : ''),
+					province: (d['province'] != null ? String(d['province']) : ''),
+					city: (d['city'] != null ? String(d['city']) : ''),
+					district: (d['district'] != null ? String(d['district']) : ''),
+					address: (d['address'] != null ? String(d['address']) : ''),
+					tolerant: (d['tolerant'] != null ? String(d['tolerant']) : '0'),
+				}
+			}
+		}).catch(() => {
+			uni.showToast({ title: '获取地址信息失败', icon: 'none' })
+		})
+	}
+
+	function validateForm(): boolean {
+		if (formData.value.name.trim() == '') {
+			uni.showToast({ title: '请输入收货人姓名', icon: 'none' })
+			return false
+		}
+		if (formData.value.phone.trim() == '') {
+			uni.showToast({ title: '请输入手机号码', icon: 'none' })
+			return false
+		}
+		const phoneRegex = /^1[3-9]\d{9}$/
+		if (!phoneRegex.test(formData.value.phone)) {
+			uni.showToast({ title: '请输入正确的手机号码', icon: 'none' })
+			return false
+		}
+		if (formData.value.province == '' || formData.value.city == '' || formData.value.district == '') {
+			uni.showToast({ title: '请选择所在地区', icon: 'none' })
+			return false
+		}
+		if (formData.value.address.trim() == '') {
+			uni.showToast({ title: '请输入详细地址', icon: 'none' })
+			return false
+		}
+		if (formData.value.address.trim().length < 5) {
+			uni.showToast({ title: '详细地址至少输入5个字符', icon: 'none' })
+			return false
+		}
+		return true
+	}
+
+	function saveAddress() {
+		if (!validateForm()) return
+		const payload = {
+			id: formData.value.id,
+			name: formData.value.name,
+			phone: formData.value.phone,
+			province: formData.value.province,
+			city: formData.value.city,
+			district: formData.value.district,
+			address: formData.value.address,
+			tolerant: formData.value.tolerant,
+		} as UTSJSONObject
+		if (formData.value.id != '') {
+			addressEdit(payload).then((res) => {
+				if (res.code == 200) {
+					uni.showToast({ title: '更新成功', icon: 'success' })
+					setTimeout(() => { uni.navigateBack() }, 1500)
+				} else {
+					uni.showToast({ title: res.msg != null ? res.msg : '更新失败', icon: 'none' })
+				}
+			}).catch(() => {
+				uni.showToast({ title: '更新地址失败', icon: 'none' })
+			})
+		} else {
+			addressInsert(payload).then((res) => {
+				if (res.code == 200) {
+					uni.showToast({ title: '保存成功', icon: 'success' })
+					setTimeout(() => { uni.navigateBack() }, 1500)
+				} else {
+					uni.showToast({ title: res.msg != null ? res.msg : '保存失败', icon: 'none' })
+				}
+			}).catch(() => {
+				uni.showToast({ title: '保存地址失败', icon: 'none' })
+			})
+		}
+	}
+
+	onLoad((options: any) => {
+		if (options != null && options['id'] != null) {
+			formData.value.id = String(options['id'])
+			loadAddressData(formData.value.id)
+			uni.setNavigationBarTitle({ title: '编辑地址' })
+		} else {
+			uni.setNavigationBarTitle({ title: '新建地址' })
+		}
+	})
+</script>
+
+<style lang="scss" scoped>
+.address-setting-page { background: #fff; min-height: 100vh; }
+.form-container { padding: 30rpx; }
+.form-item {
+	.form-row {
+		display: flex;
+		padding: 20rpx 30rpx;
+		gap: 20rpx;
+		.label { font-size: 28rpx; color: #979797; font-weight: 500; min-width: 160rpx; }
+		.input { font-size: 28rpx; color: #333; line-height: 1.5; flex: 1; &.placeholder { color: #CBCBCB; } }
+	}
+	.switch-row { justify-content: space-between; align-items: center; }
+}
+.bottom-placeholder { height: 140rpx; }
+.bottom-bar {
+	position: fixed;
+	bottom: 0; left: 0; right: 0;
+	background: #fff;
+	border-top: 1rpx solid #f0f0f0;
+	padding: 30rpx;
+	z-index: 100;
+	box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
+	.save-btn {
+		width: 100%;
+		height: 88rpx;
+		background-color: #ff2727;
+		color: #fff;
+		border: none;
+		border-radius: 50rpx;
+		font-size: 32rpx;
+		font-weight: 600;
+	}
+}
+</style>

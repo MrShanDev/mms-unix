@@ -1,0 +1,98 @@
+/**
+ * 全局存储工具 - 基于 uni.setStorageSync / uni.getStorageSync
+ * auth 相关变更会触发 notifyAuthChange，供 useAuth 全局响应
+ */
+import { config } from '@/common/config'
+import { notifyAuthChange } from './authNotifier'
+
+const tokenKey = config.storage.token
+const userInfoKey = config.storage.userInfo
+
+type StorageApi = {
+	get: (key: string) => any | null
+	set: (key: string, value: any) => void
+	remove: (key: string) => void
+	clear: () => void
+	getToken: () => string
+	setToken: (token: string) => void
+	getUserInfo: () => any | null
+	setUserInfo: (info: Record<string, any>) => void
+	clearAuth: () => void
+}
+
+function storageGet(key: string): any | null {
+	try {
+		const val = uni.getStorageSync(key) as any
+		return val
+	} catch (e) {
+		return null
+	}
+}
+
+function storageSet(key: string, value: any): void {
+	try {
+		uni.setStorageSync(key, value)
+	} catch (e) {
+		console.error('storage set error', e)
+	}
+}
+
+function storageRemove(key: string): void {
+	try {
+		uni.removeStorageSync(key)
+	} catch (e) {
+		console.error('storage remove error', e)
+	}
+}
+
+function storageClear(): void {
+	try {
+		uni.clearStorageSync()
+	} catch (e) {
+		console.error('storage clear error', e)
+	}
+}
+
+export const storage: StorageApi = {
+	get(key: string): any | null {
+		return storageGet(key)
+	},
+
+	set(key: string, value: any): void {
+		storageSet(key, value)
+	},
+
+	remove(key: string): void {
+		storageRemove(key)
+	},
+
+	clear(): void {
+		storageClear()
+	},
+
+	// 快捷方法
+	getToken(): string {
+		const token = storageGet(tokenKey)
+		return token != null ? (token as string) : ''
+	},
+
+	setToken(token: string): void {
+		storageSet(tokenKey, token)
+		notifyAuthChange()
+	},
+
+	getUserInfo(): any | null {
+		return storageGet(userInfoKey)
+	},
+
+	setUserInfo(info: Record<string, any>): void {
+		storageSet(userInfoKey, info)
+		notifyAuthChange()
+	},
+
+	clearAuth(): void {
+		storageRemove(tokenKey)
+		storageRemove(userInfoKey)
+		notifyAuthChange()
+	},
+}

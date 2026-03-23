@@ -1,0 +1,168 @@
+<template>
+	<view class="mms-search" :style="{ backgroundColor: bgColor }">
+		<view class="mms-search__content" :class="[border ? 'mms-search__content--border' : '']" :style="{ borderRadius: `${radius}rpx`, height: `${height}rpx` }">
+			<view class="mms-search__left">
+				<icon name="search" color="#c0c4cc" :size="iconSize"></icon>
+			</view>
+			<input
+				class="mms-search__input"
+				v-model="value"
+				:placeholder="placeholder"
+				:placeholder-color="placeholderColor"
+				@input="handleInput"
+				@confirm="handleConfirm"
+				@focus="handleFocus"
+				@blur="handleBlur"
+			>
+			<view v-if="clearabled && value" class="mms-search__clear" @tap="handleClear">
+				<icon name="close-circle" color="#c0c4cc" :size="iconSize"></icon>
+			</view>
+		</view>
+		<view v-if="cancelabled" class="mms-search__cancel" @tap="handleCancel">
+			<text>取消</text>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsSearch',
+	emits: ['input', 'confirm', 'clear', 'cancel', 'focus', 'blur'],
+	props: {
+		// 双向绑定值
+		modelValue: {
+			type: String,
+			default: ''
+		},
+		// 占位文字
+		placeholder: {
+			type: String,
+			default: '请搜索'
+		},
+		// 占位文字颜色
+		placeholderColor: {
+			type: String,
+			default: '#c0c4cc'
+		},
+		// 圆角
+		radius: {
+			type: [Number, String],
+			default: 60
+		},
+		// 高度
+		height: {
+			type: [Number, String],
+			default: 60
+		},
+		// 图标大小
+		iconSize: {
+			type: [Number, String],
+			default: 32
+		},
+		// 外层背景色
+		bgColor: {
+			type: String,
+			default: '#f5f5f5'
+		},
+		// 是否显示边框
+		border: {
+			type: Boolean,
+			default: false
+		},
+		// 是否可清除
+		clearabled: {
+			type: Boolean,
+			default: true
+		},
+		// 是否显示取消按钮
+		cancelabled: {
+			type: Boolean,
+			default: false
+		}
+	},
+	data() {
+		return {
+			value: ''
+		}
+	},
+	watch: {
+		modelValue(val: string) {
+			this.value = val
+		}
+	},
+	created() {
+		this.value = this.modelValue
+	},
+	methods: {
+		handleInput(e: any) {
+			this.$emit('input', this.value)
+		},
+		handleConfirm(e: any) {
+			this.$emit('confirm', this.value)
+		},
+		handleClear() {
+			this.value = ''
+			this.$emit('clear', '')
+			this.$emit('input', '')
+		},
+		handleCancel() {
+			this.$emit('cancel')
+		},
+		handleFocus(e: any) {
+			this.$emit('focus', e)
+		},
+		handleBlur(e: any) {
+			this.$emit('blur', e)
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-search {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 10rpx 20rpx;
+
+	.mms-search__content {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		background-color: #ffffff;
+		box-sizing: border-box;
+		padding-left: 20rpx;
+		padding-right: 20rpx;
+
+		&.mms-search__content--border {
+			border: 1rpx solid #e4e7ed;
+		}
+
+		.mms-search__left {
+			flex-shrink: 0;
+		}
+
+		.mms-search__input {
+			flex: 1;
+			font-size: 28rpx;
+			color: #606266;
+			line-height: 1;
+			background-color: transparent;
+			padding: 0;
+			margin-left: 10rpx;
+		}
+
+		.mms-search__clear {
+			flex-shrink: 0;
+			padding-left: 10rpx;
+		}
+	}
+
+	.mms-search__cancel {
+		flex-shrink: 0;
+		padding-left: 20rpx;
+		font-size: 28rpx;
+		color: #606266;
+	}
+}
+</style>

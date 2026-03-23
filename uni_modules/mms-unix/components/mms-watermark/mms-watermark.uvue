@@ -1,0 +1,141 @@
+<template>
+	<view class="mms-watermark" :style="containerStyle">
+		<canvas :canvas-id="canvasId" :style="canvasStyle" @longpress="saveImage"></canvas>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsWatermark',
+	props: {
+		// 原图
+		image: {
+			type: String,
+			default: ''
+		},
+		// 水印文字
+		content: {
+			type: String,
+			default: ''
+		},
+		// 字体大小
+		fontSize: {
+			type: [Number, String],
+			default: 20
+		},
+		// 字体颜色（带透明度）
+		color: {
+			type: String,
+			default: 'rgba(255, 255, 255, 0.5)'
+		},
+		// 间距 [x, y]
+		gap: {
+			type: Array as PropType<number[]>,
+			default: () => [50, 50]
+		},
+		// 旋转角度
+		rotate: {
+			type: [Number, String],
+			default: -30
+		}
+	},
+	data() {
+		return {
+			canvasId: '',
+			width: 0,
+			height: 0
+		}
+	},
+	created() {
+		this.canvasId = 'mms-watermark-' + Math.random().toString(36).substr(2, 9)
+	},
+	mounted() {
+		this.draw()
+	},
+	methods: {
+		draw() {
+			if (!this.image && !this.$slots.default) {
+				return
+			}
+			const that = this
+			const query = uni.createSelectorQuery().in(this)
+			query.select('.mms-watermark').boundingClientRect(function(rect) {
+				that.width = rect.width
+				that.height = rect.height
+				const pixelRatio = uni.getSystemInfoSync().pixelRatio
+				const canvas = uni.createCanvasContext(that.canvasId, that)
+				// 如果有图片，先画图片
+				if (that.image) {
+					canvas.drawImage(that.image, 0, 0, that.width, that.height)
+				}
+				// 设置水印文字样式
+				canvas.beginPath()
+				canvas.setFontSize(Number(that.fontSize) * pixelRatio)
+				canvas.setFillStyle(that.color)
+				canvas.rotate(that.rotate * Math.PI / 180)
+				const gapX = that.gap[0] * pixelRatio || 0
+				const gapY = that.gap[1] * pixelRatio || 0
+				const step = Number(that.fontSize) * pixelRatio + gapY
+				let x = 0
+				let y = gapY
+
+				// 平铺绘制水印文字
+				while (y < that.height * pixelRatio + step) {
+					x = 0
+					while (x < that.width * pixelRatio + step) {
+						canvas.fillText(that.content, x, y)
+						x += that.content.length * Number(that.fontSize) * pixelRatio + gapX
+					}
+					y += step
+				}
+				canvas.stroke()
+				canvas.draw(() => {
+					console.log('水印绘制完成')
+				})
+			})
+			query.exec()
+		},
+		saveImage() {
+			uni.canvasToTempFilePath({
+				canvasId: this.canvasId,
+				success: (res) => {
+					uni.saveImageToPhotosAlbum({
+						filePath: res.tempFilePath,
+						success: () => {
+							uni.showToast({
+								title: '保存成功',
+								icon: 'success'
+							})
+						},
+						fail: () => {
+							uni.showToast({
+								title: '保存失败',
+								icon: 'none'
+							})
+						}
+					})
+				},
+				fail: () => {
+					uni.showToast({
+						title: '生成失败',
+						icon: 'none'
+					})
+				}
+			})
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-watermark {
+	position: relative;
+	width: 100%;
+	box-sizing: border-box;
+
+	canvas {
+		width: 100%;
+		height: auto;
+	}
+}
+</style>

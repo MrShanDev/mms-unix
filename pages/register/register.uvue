@@ -1,0 +1,278 @@
+<template>
+	<view class="register-page">
+		<!-- 顶部渐变区域（与登录页一致） -->
+		<view class="reg-header">
+			<view class="nav-back" @tap="goBack">
+				<text class="nav-back-icon">←</text>
+			</view>
+			<text class="reg-title">注册账号</text>
+			<text class="reg-desc">欢迎注册{{ config.configInfo.name }}，请填写以下信息</text>
+		</view>
+		<!-- 注册表单卡片 -->
+		<view class="reg-card">
+			<view class="input-wrap">
+				<input class="input" type="number" placeholder="手机号" v-model="phone" :maxlength="11" />
+			</view>
+			<view class="input-wrap code-wrap">
+				<input class="input" type="number" placeholder="验证码" v-model="code" :maxlength="6" />
+				<text :class="['get-code', { disabled: countdown > 0 }]" @tap="getCode">
+					{{ countdown > 0 ? countdown + 's' : '获取验证码' }}
+				</text>
+			</view>
+			<view class="input-wrap">
+				<input class="input" type="password" placeholder="设置密码" v-model="password" />
+			</view>
+			<view class="input-wrap">
+				<input class="input" type="password" placeholder="确认密码" v-model="confirmPassword" />
+			</view>
+			<view class="agree-wrap" @tap="agree = !agree">
+				<view :class="['checkbox', { checked: agree }]">
+					<text v-if="agree" class="checkbox-icon">✓</text>
+				</view>
+				<text class="agree-text">
+					我已阅读并同意
+					<text class="link" @tap.stop="goAgreement('user')">《用户协议》</text>
+					和
+					<text class="link" @tap.stop="goAgreement('privacy')">《隐私政策》</text>
+				</text>
+			</view>
+			<button class="reg-btn" @tap="handleRegister">注册</button>
+			<view class="go-login" @tap="goLogin">
+				<text class="go-login-text">已有账号？去登录</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { ref } from 'vue'
+	import { storage } from '@/common/utils/storage'
+	import { config } from '@/common/config'
+	import { accountRegister, mallSendSmsCode } from '@/common/api/mallApi'
+
+	const phone = ref('')
+	const code = ref('')
+	const password = ref('')
+	const confirmPassword = ref('')
+	const agree = ref(false)
+	const countdown = ref(0)
+	const loading = ref(false)
+	let countTimer : number | null = null
+
+	function saveLoginUser(data: any) {
+		if (data != null) {
+			const token = data['token']
+			if (token != null && token != '') {
+				storage.setToken(token as string)
+			}
+			storage.setUserInfo({
+				id: data['id'],
+				nickname: data['nickname'] ?? '',
+				account: data['account'] ?? '',
+				phone: data['phone'] ?? '',
+			})
+		}
+	}
+
+	const getCode = () => {
+		if (countdown.value > 0) return
+		if (phone.value == '' || phone.value.length !== 11) {
+			uni.showToast({ title: '请输入正确手机号', icon: 'none' })
+			return
+		}
+		mallSendSmsCode({ phone: phone.value, type: 1 }).then(res => {
+			if (res.code == 200) {
+				countdown.value = 60
+				countTimer = setInterval(() => {
+					countdown.value--
+					if (countdown.value <= 0 && countTimer != null) {
+						clearInterval(countTimer)
+						countTimer = null
+					}
+				}, 1000)
+				uni.showToast({ title: '验证码已发送', icon: 'success' })
+			} else {
+				uni.showToast({ title: res.msg ?? '发送失败', icon: 'none' })
+			}
+		}).catch(() => {
+			uni.showToast({ title: '网络异常，请重试', icon: 'none' })
+		})
+	}
+
+	const handleRegister = () => {
+		if (!agree.value) {
+			uni.showToast({ title: '请先同意用户协议和隐私协议', icon: 'none' })
+			return
+		}
+		if (phone.value == '' || code.value == '' || password.value == '' || confirmPassword.value == '') {
+			uni.showToast({ title: '请填写完整信息', icon: 'none' })
+			return
+		}
+		if (password.value.length < 6 || password.value.length > 16) {
+			uni.showToast({ title: '密码长度应在6~16位之间', icon: 'none' })
+			return
+		}
+		if (password.value !== confirmPassword.value) {
+			uni.showToast({ title: '两次密码不一致', icon: 'none' })
+			return
+		}
+		if (loading.value) return
+		loading.value = true
+		accountRegister({ phone: phone.value, smsCode: code.value, password: password.value }).then(res => {
+			if (res.code == 200 && res.data != null) {
+				saveLoginUser(res.data)
+				uni.showToast({ title: '注册成功', icon: 'success' })
+				setTimeout(() => {
+					uni.switchTab({ url: '/pages/index/index' })
+				}, 500)
+			} else {
+				uni.showToast({ title: res.msg ?? '注册失败', icon: 'none' })
+			}
+		}).catch(() => {
+			uni.showToast({ title: '网络异常，请重试', icon: 'none' })
+		}).finally(() => {
+			loading.value = false
+		})
+	}
+
+	const goLogin = () => {
+		uni.navigateTo({ url: '/pages/login/login' })
+	}
+	const goBack = () => {
+		uni.navigateBack()
+	}
+	const goAgreement = (type : string) => {
+		const id = type === 'user' ? (config.configInfo.userAgreementArticleId ?? '') : (config.configInfo.privacyPolicyArticleId ?? '')
+		if (id != '') {
+			uni.navigateTo({ url: '/pages_Article/articleDetails/articleDetails?id=' + id })
+		} else {
+			uni.showToast({ title: '协议未配置', icon: 'none' })
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+	.register-page {
+		min-height: 100vh;
+		background: linear-gradient(180deg, #ffefef 0%, #ffe8e8 50%, #f5f5f5 100%);
+		display: flex;
+		flex-direction: column;
+		padding-bottom: 40rpx;
+	}
+	.reg-header {
+		height: 360rpx;
+		background: linear-gradient(135deg, #ff2727 0%, #ff5a5a 50%, #ff8080 100%);
+		padding: 180rpx 40rpx 0;
+		position: relative;
+	}
+	.nav-back {
+		position: absolute;
+		top: 80rpx;
+		left: 30rpx;
+		width: 64rpx;
+		height: 64rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 10;
+	}
+	.nav-back-icon {
+		font-size: 48rpx;
+		color: #fff;
+		font-weight: 500;
+	}
+	.reg-title {
+		font-size: 44rpx;
+		font-weight: bold;
+		color: #fff;
+		margin-bottom: 16rpx;
+	}
+	.reg-desc {
+		font-size: 28rpx;
+		color: rgba(255, 255, 255, 0.9);
+	}
+	.reg-card {
+		margin: -60rpx 30rpx 0;
+		background: #fff;
+		border-radius: 24rpx;
+		padding: 40rpx;
+		box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
+	}
+	.input-wrap {
+		background: #f5f7fa;
+		border-radius: 12rpx;
+		padding: 24rpx 28rpx;
+		margin-bottom: 24rpx;
+	}
+	.input-wrap.code-wrap {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+	.input {
+		flex: 1;
+		font-size: 28rpx;
+	}
+	.get-code {
+		font-size: 28rpx;
+		color: #ff2727;
+		margin-left: 20rpx;
+	}
+	.get-code.disabled {
+		color: #999;
+	}
+	.agree-wrap {
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		margin-bottom: 40rpx;
+	}
+	.checkbox {
+		width: 36rpx;
+		height: 36rpx;
+		border: 2rpx solid #ccc;
+		border-radius: 50%;
+		margin-right: 16rpx;
+		flex-shrink: 0;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+	}
+	.checkbox.checked {
+		background: #ff2727;
+		border-color: #ff2727;
+	}
+	.checkbox-icon {
+		color: #fff;
+		font-size: 24rpx;
+		font-weight: bold;
+	}
+	.agree-text {
+		font-size: 24rpx;
+		color: #666;
+		line-height: 1.6;
+	}
+	.link {
+		color: #ff2727;
+	}
+	.reg-btn {
+		width: 100%;
+		height: 88rpx;
+		line-height: 88rpx;
+		background: linear-gradient(90deg, #ff2727, #ff5a5a);
+		color: #fff;
+		font-size: 32rpx;
+		border-radius: 12rpx;
+		border: none;
+	}
+	.go-login {
+		margin-top: 30rpx;
+		text-align: center;
+	}
+	.go-login-text {
+		font-size: 28rpx;
+		color: #ff2727;
+	}
+</style>

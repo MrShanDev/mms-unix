@@ -1,0 +1,146 @@
+<template>
+	<view class="page">
+		<view class="p-10">
+			<view v-if="articleList.length > 0" class="content">
+				<view
+					v-for="(item, index) in articleList"
+					:key="index"
+					class="list-item flex flex--row"
+					@tap="navTo('/pages_Article/articleDetails/articleDetails?id=' + item.id)"
+				>
+					<view class="image">
+						<image :src="item.articleLitpic != null && item.articleLitpic != '' ? item.articleLitpic : imageUrl" mode="aspectFill"></image>
+					</view>
+					<view class="info">
+						<view class="item-title">{{ item.articleTitle != null ? item.articleTitle : '文章标题' }}</view>
+						<view class="time">{{ item.createdTime != null ? item.createdTime : '' }}</view>
+					</view>
+				</view>
+			</view>
+			<view v-else-if="!loading" class="empty-tip">暂无数据</view>
+			<view class="loading-tip" v-if="loading && articleList.length == 0">加载中...</view>
+			<view class="loading-tip" v-if="articleLoading">正在加载更多...</view>
+			<view class="loading-tip" v-if="articleNoMoreData && articleList.length > 0">没有更多数据了</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { ref } from 'vue'
+	import { articleList as fetchArticleList } from '@/common/api/mallApi'
+
+	const articleList = ref<any[]>([])
+	const cateId = ref('')
+	const title = ref('文章列表')
+	const imageUrl = 'https://ssca-1364461867.cos.ap-beijing.myqcloud.com/mms/upload/68f72f91cad408e14b73d40b.png'
+	const articlePageNum = ref(1)
+	const articlePageSize = 10
+	const articleTotal = ref(0)
+	const articleLoading = ref(false)
+	const articleNoMoreData = ref(false)
+	const loading = ref(false)
+
+	function goBack() {
+		uni.navigateBack()
+	}
+
+	function navTo(url: string) {
+		uni.navigateTo({ url })
+	}
+
+	function getArticleList() {
+		if (articleLoading.value || articleNoMoreData.value) return
+		articleLoading.value = true
+		if (articlePageNum.value === 1) loading.value = true
+		fetchArticleList({
+			pageSize: articlePageSize,
+			pageNum: articlePageNum.value,
+			cateId: cateId.value,
+		} as UTSJSONObject).then((res) => {
+			if (res.code == 200 && res.data != null) {
+				const data = res.data as UTSJSONObject
+				const rows = data['rows'] != null ? (data['rows'] as any[]) : []
+				articleTotal.value = data['total'] != null ? (data['total'] as number) : 0
+				if (articlePageNum.value === 1) {
+					articleList.value = rows
+				} else {
+					articleList.value = articleList.value.concat(rows)
+				}
+				if (articleList.value.length >= articleTotal.value) {
+					articleNoMoreData.value = true
+				}
+			} else {
+				articleNoMoreData.value = true
+			}
+		}).catch(() => {
+			articleNoMoreData.value = true
+		}).finally(() => {
+			articleLoading.value = false
+			loading.value = false
+		})
+	}
+
+	onLoad((options) => {
+		cateId.value = options['cateId'] ?? ''
+		title.value = options['title'] ?? '文章列表'
+		getArticleList()
+	})
+
+	onReachBottom(() => {
+		if (!articleLoading.value && !articleNoMoreData.value) {
+			articlePageNum.value = articlePageNum.value + 1
+			getArticleList()
+		}
+	})
+</script>
+
+<style lang="scss" scoped>
+.page { min-height: 100vh; background-color: #f5f5f5; }
+.p-10 { padding: 20rpx; }
+.flex { display: flex; flex-direction: row; }
+.flex--row { flex-direction: row; }
+.content { display: flex; flex-direction: column; }
+.list-item {
+	margin-top: 15rpx;
+	width: 100%;
+	padding: 20rpx;
+	background-color: #fff;
+	border-radius: 10rpx;
+	align-items: center;
+}
+.list-item .image {
+	width: 200rpx;
+	height: 200rpx;
+	flex-shrink: 0;
+	border-radius: 8rpx;
+	overflow: hidden;
+}
+.list-item .image image {
+	width: 100%;
+	height: 100%;
+}
+.list-item .info {
+	flex: 1;
+	padding-left: 24rpx;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+}
+.list-item .item-title {
+	font-size: 32rpx;
+	color: #333;
+	line-height: 1.4;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+.list-item .time {
+	font-size: 25rpx;
+	color: #838383;
+	margin-top: 12rpx;
+}
+.empty-tip { text-align: center; padding: 80rpx; font-size: 28rpx; color: #999; }
+.loading-tip { text-align: center; padding: 30rpx; font-size: 26rpx; color: #999; }
+</style>

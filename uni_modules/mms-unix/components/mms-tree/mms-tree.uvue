@@ -1,0 +1,87 @@
+<template>
+	<view class="mms-tree">
+		<view v-for="item in data" :key="item.id" class="mms-tree-item">
+			<view class="mms-tree-item__title" @tap="toggleItem(item)">
+				<icon v-if="item.children && item.children.length > 0" :name="expandedMap[item.id] ? 'down' : 'right'" color="#909399" size="28"></icon>
+				<view class="mms-tree-item__text">{{ item.label }}</view>
+				<slot name="item" :item="item"></slot>
+			</view>
+			<view v-if="item.children && item.children.length > 0 && expandedMap[item.id]" class="mms-tree-item__children">
+				<mms-tree :data="item.children" :expanded-map="expandedMap" @item-click="handleItemClick"></mms-tree>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsTree',
+	emits: ['item-click', 'item-toggle'],
+	props: {
+		// 树形数据
+		data: {
+			type: Array as PropType<any[]>,
+			default: () => []
+		},
+		// 默认展开的id数组
+		defaultExpandKeys: {
+			type: Array as PropType<string[]>,
+			default: () => []
+		}
+	},
+	data() {
+		return {
+			expandedMap: {} as UTSJSONObject
+		}
+	},
+	created() {
+		// 初始化默认展开
+		this.defaultExpandKeys.forEach((id: string) => {
+			this.expandedMap[id] = true
+		})
+	},
+	methods: {
+		toggleItem(item: any) {
+			const id = item.id
+			if (item.children && item.children.length > 0) {
+				this.expandedMap[id] = !this.expandedMap[id]
+				this.$emit('item-toggle', { item, expanded: this.expandedMap[id] })
+			}
+			this.$emit('item-click', { item })
+		},
+		handleItemClick(data: any) {
+			this.$emit('item-click', data)
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-tree {
+	padding-left: 10rpx;
+
+	.mms-tree-item {
+		.mms-tree-item__title {
+			display: flex;
+			align-items: center;
+			padding: 16rpx 10rpx;
+			cursor: pointer;
+
+			icon {
+				flex-shrink: 0;
+				margin-right: 10rpx;
+			}
+
+			.mms-tree-item__text {
+				flex: 1;
+				font-size: 28rpx;
+				color: #303133;
+			}
+		}
+
+		.mms-tree-item__children {
+			padding-left: 30rpx;
+		}
+	}
+}
+</style>

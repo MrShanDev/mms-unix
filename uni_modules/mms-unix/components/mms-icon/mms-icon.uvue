@@ -1,0 +1,64 @@
+<template>
+	<text :class="[cls, 'mms-icon']" :style="iconStyle" @tap="handleClick">
+		<slot></slot>
+	</text>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsIcon',
+	emits: ['click'],
+	props: {
+		// 图标名称
+		name: {
+			type: String,
+			default: ''
+		},
+		// 图标大小
+		size: {
+			type: [Number, String],
+			default: 40
+		},
+		// 图标颜色
+		color: {
+			type: String,
+			default: ''
+		},
+		// 粗体
+		bold: {
+			type: Boolean,
+			default: false
+		}
+	},
+	computed: {
+		cls() {
+			return 'iconfont icon-' + this.name
+		},
+		iconStyle() {
+			const style: UTSJSONObject = {}
+			if (this.size) {
+				style.fontSize = this.size + 'rpx'
+			}
+			if (this.color) {
+				style.color = this.color
+			}
+			if (this.bold) {
+				style.fontWeight = 'bold'
+			}
+			return style
+		}
+	},
+	methods: {
+		handleClick(e: any) {
+			this.$emit('click', e)
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-icon {
+	display: inline-block;
+	line-height: 1;
+}
+</style>

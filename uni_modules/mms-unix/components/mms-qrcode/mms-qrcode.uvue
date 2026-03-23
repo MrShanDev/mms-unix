@@ -1,0 +1,95 @@
+<template>
+	<view class="mms-qrcode" :style="{ width: size + 'rpx', height: size + 'rpx' }">
+		<canvas canvas-id="mms-qrcode" :style="{ width: size + 'rpx', height: size + 'rpx', backgroundColor: bgColor }"></canvas>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsQrcode',
+	props: {
+		// 二维码内容
+		value: {
+			type: String,
+			default: ''
+		},
+		// 二维码大小，单位rpx
+		size: {
+			type: [Number, String],
+			default: 200
+		},
+		// 二维码颜色
+		color: {
+			type: String,
+			default: '#000000'
+		},
+		// 背景颜色
+		bgColor: {
+			type: String,
+			default: '#ffffff'
+		},
+		// 边距
+		margin: {
+			type: [Number, String],
+			default: 0
+		},
+		// 容错级别 L M Q H
+		errorLevel: {
+			type: String,
+			default: 'M'
+		}
+	},
+	watch: {
+		value() {
+			this.draw()
+		}
+	},
+	mounted() {
+		this.draw()
+	},
+	methods: {
+		draw() {
+			if (!this.value) {
+				return
+			}
+			const size = uni.getSystemInfoSync().pixelRatio
+			const canvasWidth = Number(this.size) * size
+			const canvasHeight = Number(this.size) * size
+			const margin = Number(this.margin) * size
+
+			uni.createCanvasContext('mms-qrcode', this).then(ctx => {
+				// 绘制背景
+				ctx.setBackgroundColor(this.bgColor)
+				ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+				ctx.fill()
+
+				// 调用uni-app接口绘制二维码
+				uni.makeQrCode({
+					canvas: ctx,
+					text: this.value,
+					width: canvasWidth,
+					height: canvasHeight,
+					color: this.color,
+					background: this.bgColor,
+					errorCorrectLevel: this.errorLevel,
+					success: () => {
+						ctx.draw()
+					},
+					fail: (err: any) => {
+						console.error('二维码生成失败', err)
+					}
+				})
+			})
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-qrcode {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+}
+</style>

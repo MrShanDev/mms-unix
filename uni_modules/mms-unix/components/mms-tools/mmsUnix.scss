@@ -1,0 +1,412 @@
+/* Flex 布局工具库 - flex-utils.css */
+
+/***********************
+  基础 Flex 容器 
+************************/
+
+/* 设置元素为 Flex 布局容器 */
+.flex {
+  display: flex;
+}
+.w-100{
+	width: 100%;
+}
+/***********************
+  简化写法 (新增部分)
+************************/
+/* 方向简写 */
+.f-row , .f-x { flex-direction: row; }        /* 横向布局 | 等同 flex--row */
+.f-col , .f-y { flex-direction: column; }     /* 纵向布局 | 等同 flex--column */
+/* 主轴对齐简写 */
+.f-y-c { justify-content: center; }      /* 水平居中 | 等同 justify--center */
+.f-y-l { justify-content: flex-start; }  /* 水平左对齐 | 等同 justify--start */
+.f-y-r { justify-content: flex-end; }    /* 水平右对齐 | 等同 justify--end */
+.f-y-b { justify-content: space-between; } /* 两端对齐 | 等同 justify--between */
+.f-y-a { justify-content: space-around; }  /* 环绕间隔 | 等同 justify--around */
+
+/* 交叉轴对齐简写 */
+.f-x-c { align-items: center; }          /* 垂直居中 | 等同 align--center */
+.f-x-l { align-items: flex-start; }      /* 顶部对齐 | 等同 align--start */
+.f-x-r { align-items: flex-end; }        /* 底部对齐 | 等同 align--end */
+.f-x-st { align-items: stretch; }        /* 拉伸填充 | 等同 align--stretch */
+
+/* 复合对齐简写 */
+.f-c {                                  /* 快速水平垂直居中 */
+  justify-content: center;
+  align-items: center;
+}
+
+/* 文本对齐简写 */
+.text-l { text-align: left; }             /* 文本左对齐 | 等同 text-left */
+.text-r { text-align: right; }            /* 文本右对齐 | 等同 text-right */
+.text-c { text-align: center; }          /* 文本居中 | 等同 text-center */
+
+/***********************
+  兼容版 12等分栅格系统 
+  <!-- 16px 大间距 -->
+  <div class="mms-row gutter-10">
+    <div class="mms-col-4">33.3%宽度，两侧16px间距</div>
+    <div class="mms-col-8">66.6%宽度，两侧16px间距</div>
+  </div>
+************************/
+/* 栅格容器 - 增加间距方案 */
+.mms-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  /* 通过负边距抵消列间距 */
+  margin-left: -0px;
+  margin-right: -0px;
+}
+
+/* 通用列间距 (通过 padding 实现) */
+[class*="mms-col-"] {
+  padding-left: 0px;
+  padding-right: 0px;
+  flex-shrink: 0;
+  box-sizing: border-box; /* 关键：确保 padding 不改变列宽 */
+}
+
+/* 列宽定义 (保持原有比例) */
+.mms-col-1  { flex-basis: 8.3333%; }
+.mms-col-2  { flex-basis: 16.6666%; }
+.mms-col-3  { flex-basis: 25%; }
+.mms-col-4  { flex-basis: 33.3333%; }
+.mms-col-5  { flex-basis: 41.6666%; }
+.mms-col-6  { flex-basis: 50%; }
+.mms-col-7  { flex-basis: 58.3333%; }
+.mms-col-8  { flex-basis: 66.6666%; }
+.mms-col-9  { flex-basis: 75%; }
+.mms-col-10 { flex-basis: 83.3333%; }
+.mms-col-11 { flex-basis: 91.6666%; }
+.mms-col-12 { flex-basis: 100%; }
+
+/* 可选：间距尺寸扩展方案 */
+.mms-row.gutter-40 {
+  margin-left: -40px;
+  margin-right: -40px;
+}
+.gutter-40 [class*="mms-col-"] {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+.mms-row.gutter-30 {
+  margin-left: -30px;
+  margin-right: -30px;
+}
+.gutter-30 [class*="mms-col-"] {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+.mms-row.gutter-20 {
+  margin-left: -20px;
+  margin-right: -20px;
+}
+.gutter-20 [class*="mms-col-"] {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.mms-row.gutter-15 {
+  margin-left: -15px;
+  margin-right: -15px;
+}
+.gutter-15 [class*="mms-col-"] {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.mms-row.gutter-10 {
+  margin-left: -10px;
+  margin-right: -10px;
+}
+.gutter-10 [class*="mms-col-"] {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.mms-row.gutter-5 {
+  margin-left: -5px;
+  margin-right: -5px;
+}
+.gutter-5 [class*="mms-col-"] {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+
+
+/* 自动填充剩余空间 */
+.f-auto { 
+  flex: 1; 
+  min-width: calc(var(--min-col, 100px) - var(--gap, 0)); 
+}
+
+/* 主轴方向类 */
+.flex--row         { flex-direction: row; }           /* 主轴水平方向 (默认) */
+.flex--row-reverse { flex-direction: row-reverse; }    /* 主轴水平反向 */
+.flex--column      { flex-direction: column; }         /* 主轴垂直方向 */
+.flex--column-reverse { flex-direction: column-reverse; } /* 主轴垂直反向 */
+
+/* 换行控制类 */
+.flex--nowrap      { flex-wrap: nowrap; }     /* 不换行 (默认) */
+.flex--wrap        { flex-wrap: wrap; }       /* 正常换行 */
+.flex--wrap-reverse { flex-wrap: wrap-reverse; } /* 反向换行 */
+
+/***********************
+  主轴对齐方式 
+************************/
+
+/* 主轴对齐类 */
+.justify--start    { justify-content: flex-start; }    /* 起始对齐 */
+.justify--end      { justify-content: flex-end; }      /* 末尾对齐 */
+.justify--center   { justify-content: center; }        /* 居中对齐 */
+.justify--between  { justify-content: space-between; } /* 两端对齐，项目间隔相等 */
+.justify--around   { justify-content: space-around; }  /* 项目两侧间隔相等 */
+.justify--evenly   { justify-content: space-evenly; }  /* 项目周围间隔完全相等 */
+
+/***********************
+  交叉轴对齐方式 
+************************/
+
+/* 交叉轴对齐类 */
+.align--start      { align-items: flex-start; }    /* 交叉轴起始对齐 */
+.align--end        { align-items: flex-end; }      /* 交叉轴末尾对齐 */
+.align--center     { align-items: center; }        /* 交叉轴居中对齐 */
+.align--baseline   { align-items: baseline; }      /* 基线对齐 */
+.align--stretch    { align-items: stretch; }       /* 拉伸填充容器 (默认) */
+
+/***********************
+  多轴线对齐 
+************************/
+
+/* 多行内容对齐类 */
+.align-content--start   { align-content: flex-start; }   /* 多行起始对齐 */
+.align-content--end     { align-content: flex-end; }     /* 多行末尾对齐 */
+.align-content--center  { align-content: center; }       /* 多行居中对齐 */
+.align-content--between { align-content: space-between; }/* 多行两端对齐 */
+.align-content--around  { align-content: space-around; } /* 多行周围间隔相等 */
+.align-content--stretch { align-content: stretch; }     /* 多行拉伸填充 */
+
+/***********************
+  Flex 项目属性 
+************************/
+
+/* 项目排序控制类 */
+.order--first     { order: -1; }    /* 项目排在最前面 */
+.order--0        { order: 0; }      /* 默认排序 */
+.order--1        { order: 1; }      /* 项目排在后面 */
+
+/* 项目独立对齐类 */
+.align-self--auto    { align-self: auto; }       /* 继承容器对齐设置 */
+.align-self--start   { align-self: flex-start; } /* 独立起始对齐 */
+.align-self--end     { align-self: flex-end; }   /* 独立末尾对齐 */
+.align-self--center  { align-self: center; }     /* 独立居中对齐 */
+.align-self--baseline { align-self: baseline; }  /* 独立基线对齐 */
+.align-self--stretch { align-self: stretch; }    /* 独立拉伸填充 */
+
+/* 项目伸缩比例类 */
+.flex-grow--0      { flex-grow: 0; }    /* 不放大 (默认) */
+.flex-grow--1      { flex-grow: 1; }    /* 等比例放大 */
+.flex-shrink--0    { flex-shrink: 0; }  /* 不缩小 */
+.flex-shrink--1    { flex-shrink: 1; }  /* 等比例缩小 (默认) */
+
+/***********************
+  常用组合简写 
+************************/
+
+/* 水平垂直居中组合类 */
+.flex--center,.f-c-c {
+  justify-content: center;
+  align-items: center;
+}
+
+/* 两端对齐 + 垂直居中组合类 */
+.flex--space-between {
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 自动填充容器类 (需配合子元素.item使用) */
+.flex--auto > .item {
+  flex: 1 1 auto;  /* 自动填充分配剩余空间 */
+}
+/***********************
+  文字排版工具 
+************************/
+.flex-img,.f-img {
+  max-width: 100%;        /* 限制图片最大宽度 */
+  max-height: 100%;       /* 限制图片最大高度 */
+  object-fit: contain;    /* 保持比例完整显示 */
+}
+
+/***********************
+  文字排版工具 
+************************/
+
+/* 字体大小类 (rpx单位适配小程序) */
+.text-xs { font-size: 24rpx; }   /* 超小文本 */
+.text-sm { font-size: 28rpx; }   /* 小文本 */
+.text-base { font-size: 32rpx; } /* 基础文本 */
+.text-lg { font-size: 36rpx; }   /* 大文本 */
+.text-xl { font-size: 40rpx; }   /* 超大文本 */
+
+/* 文本对齐类 */
+.text-left { text-align: left; }    /* 左对齐 */
+.text-center { text-align: center; }/* 居中对齐 */
+.text-right { text-align: right; }  /* 右对齐 */
+
+/* 字体粗细类 */
+.font-normal { font-weight: 400; }  /* 常规字体 */
+.font-bold { font-weight: 700; }    /* 加粗字体 */
+
+/* 单行溢出省略号类 */
+.overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/***********************
+  间距工具 
+************************/
+
+/* 外边距通用类 */
+.m-0 { margin: 0; }
+.m-5 { margin: 5rpx; }
+.m-10 { margin: 10rpx; }
+.m-15 { margin: 15rpx; }
+.m-20 { margin-top: 20rpx; }
+.mx-auto { margin-left: auto; margin-right: auto; } /* 自动水平居中类 */
+
+.m-t-5{margin-top: 5rpx;}
+.m-l-5{margin-left: 5rpx;}
+.m-r-5{margin-right: 5rpx;}
+.m-b-5{margin-bottom: 5rpx;}
+
+.m-t-10{margin-top: 10rpx;}
+.m-l-10{margin-left: 10rpx;}
+.m-r-10{margin-right: 10rpx;}
+.m-b-10{margin-bottom: 5rpx;}
+
+.m-t-15{margin-top: 15rpx;}
+.m-l-15{margin-left: 15rpx;}
+.m-r-15{margin-right: 15rpx;}
+.m-b-15{margin-bottom: 15rpx;}
+
+.m-t-20{margin-top: 20rpx;}
+.m-l-20{margin-left: 20rpx;}
+.m-r-20{margin-right: 20rpx;}
+.m-b-20{margin-bottom: 20rpx;}
+
+.m-t-40{margin-top: 40rpx;}
+.m-l-40{margin-left: 40rpx;}
+.m-r-40{margin-right: 40rpx;}
+.m-b-40{margin-bottom: 40rpx;}
+
+/* 内边距 */
+.p-0 { padding: 0; }
+.p-5 { padding: 5rpx;}
+.p-10 { padding: 10rpx;}
+.p-15 { padding: 15rpx;}
+.p-20 { padding: 20rpx; }
+.p-40 { padding: 40rpx; }
+.p-50 { padding: 50rpx; }
+
+.p-t-5 { padding-top: 5rpx;}
+.p-l-5 { padding-left: 5rpx;}
+.p-r-5 { padding-right: 5rpx;}
+.p-b-5 { padding-bottom: 5rpx;}
+
+.p-t-10 { padding-top: 10rpx;}
+.p-l-10 { padding-left: 10rpx;}
+.p-r-10 { padding-right: 10rpx;}
+.p-b-10 { padding-bottom: 10rpx;}
+
+.p-t-15 { padding-top: 15rpx;}
+.p-l-15 { padding-left: 15rpx;}
+.p-r-15 { padding-right: 15rpx;}
+.p-b-15 { padding-bottom: 15rpx;}
+
+/***********************
+  边框与圆角 
+************************/
+
+/* 基础边框类 */
+.border { border: 1rpx solid #e5e5e5; }  /* 全边框 */
+.border-t { border-top: 1rpx solid #e5e5e5; } /* 上边框 */
+
+/* 圆角类 */
+.rounded { border-radius: 8rpx; }      /* 常规圆角 */
+.rounded-full { border-radius: 9999rpx; } /* 完全圆形 */
+
+/* 主题边框颜色类 */
+.border-primary { border-color: #007aff; } /* 主色调边框 */
+
+/***********************
+  阴影与过渡 
+************************/
+
+/* 阴影效果类 */
+.shadow-sm { /* 小阴影 */
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+.shadow-md { /* 中阴影 */
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
+}
+.shadow-lg { /* 大阴影 */
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.2);
+}
+
+/* 通用过渡效果类 */
+.transition {
+  transition: all 0.3s ease-in-out; /* 所有属性0.3秒缓动过渡 */
+}
+
+
+/***********************
+  动画效果 
+************************/
+
+/* 淡入动画 */
+.fade-in { animation: fadeIn 0.5s; }
+
+/* 上滑动画 */
+.slide-up { animation: slideUp 0.4s ease-out; }
+
+/***********************
+  组件样式 
+************************/
+
+/* 卡片样式 */
+.card {
+  padding: 32rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 按钮基础样式 */
+.btn {
+  padding: 20rpx 40rpx;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  text-align: center;
+  transition: opacity 0.2s;
+}
+.btn:active { opacity: 0.8; } /* 按钮点击反馈 */
+
+/***********************
+  响应式布局 (移动优先)
+************************/
+
+/* 中屏响应式类 */
+@media (min-width: 768rpx) {
+  .md-flex--row { flex-direction: row; } /* 中屏横向布局 */
+  .md-flex--column { flex-direction: column; } /* 中屏纵向布局 */
+  .md-justify--between { justify-content: space-between; } /* 中屏两端对齐 */
+}
+
+/* 大屏响应式类 */
+@media (min-width: 1024rpx) {
+  .lg-flex--row { flex-direction: row; } /* 大屏横向布局 */
+  .lg-flex--wrap { flex-wrap: wrap; }    /* 大屏自动换行 */
+}

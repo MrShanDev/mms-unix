@@ -1,0 +1,147 @@
+<template>
+	<view class="mms-popup">
+		<mms-overlay :show="show" :opacity="overlayOpacity" :z-index="zIndex - 1" @click="handleOverlayClick"></mms-overlay>
+		<view class="mms-popup__content" :class="[`mms-popup--${position}`, {'mms-popup--round': round}]" :style="contentStyle">
+			<view class="mms-popup__content-inner" :class="{'mms-popup--closeable': closeable}">
+				<slot></slot>
+				<view class="mms-popup__close" @tap="handleCloseClick" v-if="closeable">
+					<icon name="close" size="40" color="#c0c4cc"></icon>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsPopup',
+	emits: ['close', 'overlay-click'],
+	props: {
+		// 是否显示
+		show: {
+			type: Boolean,
+			default: false
+		},
+		// 弹窗位置 bottom/center/top
+		position: {
+			type: String,
+			default: 'bottom'
+		},
+		// 是否显示圆角
+		round: {
+			type: Boolean,
+			default: true
+		},
+		// 蒙板透明度
+		overlayOpacity: {
+			type: [Number, String],
+			default: 0.5
+		},
+		// 是否显示关闭按钮
+		closeable: {
+			type: Boolean,
+			default: false
+		},
+		// 层级
+		zIndex: {
+			type: [Number, String],
+			default: 999
+		},
+		// 点击遮罩是否关闭
+		closeOnClickOverlay: {
+			type: Boolean,
+			default: true
+		},
+		// 最大高度
+		maxHeight: {
+			type: [Number, String],
+			default: 80
+		}
+	},
+	computed: {
+		contentStyle() {
+			const maxHeight = this.maxHeight + 'vh'
+			return {
+				maxHeight: maxHeight,
+				zIndex: this.zIndex
+			}
+		}
+	},
+	methods: {
+		handleOverlayClick() {
+			if (this.closeOnClickOverlay) {
+				this.$emit('close')
+			}
+			this.$emit('overlay-click')
+		},
+		handleCloseClick() {
+			this.$emit('close')
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-popup {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	pointer-events: none;
+
+	.mms-popup__content {
+		position: absolute;
+		background-color: #ffffff;
+		box-sizing: border-box;
+		pointer-events: auto;
+		overflow-y: auto;
+
+		&.mms-popup--bottom {
+			bottom: 0;
+			left: 0;
+			width: 100%;
+
+			&.mms-popup--round {
+				border-top-left-radius: 20rpx;
+				border-top-right-radius: 20rpx;
+			}
+		}
+
+		&.mms-popup--center {
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			max-width: 80%;
+
+			&.mms-popup--round {
+				border-radius: 16rpx;
+			}
+		}
+
+		&.mms-popup--top {
+			top: 0;
+			left: 0;
+			width: 100%;
+
+			&.mms-popup--round {
+				border-bottom-left-radius: 20rpx;
+				border-bottom-right-radius: 20rpx;
+			}
+		}
+	}
+
+	.mms-popup__content-inner {
+		position: relative;
+		padding: 30rpx;
+		box-sizing: border-box;
+
+		.mms-popup__close {
+			position: absolute;
+			top: 10rpx;
+			right: 10rpx;
+			padding: 10rpx;
+		}
+	}
+}
+</style>

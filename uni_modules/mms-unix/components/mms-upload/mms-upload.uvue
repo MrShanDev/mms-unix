@@ -1,0 +1,140 @@
+<template>
+	<view class="mms-upload">
+		<view
+			class="mms-upload__item"
+			v-for="(item, index) in files"
+			:key="index"
+		>
+			<image :src="item.url" mode="aspectFill" @click="previewImage(index)"></image>
+			<view class="mms-upload__delete" @click="deleteImage(index)">
+				<text class="mms-icon mms-icon-close"></text>
+			</view>
+		</view>
+		<view
+			v-if="files.length < maxCount"
+			class="mms-upload__add"
+			@click="chooseImage"
+		>
+			<text class="mms-icon mms-icon-plus"></text>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsUpload',
+	emits: ['update:files', 'choose', 'delete'],
+	props: {
+		files: {
+			type: Array,
+			default: () => []
+		},
+		maxCount: {
+			type: Number,
+			default: 9
+		},
+		count: {
+			type: Number,
+			default: 9
+		},
+		sizeType: {
+			type: Array,
+			default: () => ['original', 'compressed']
+		},
+		sourceType: {
+			type: Array,
+			default: () => ['album', 'camera']
+		}
+	},
+	methods: {
+		chooseImage() {
+			const remaining = this.maxCount - this.files.length
+			const count = this.count > remaining ? remaining : this.count
+			uni.chooseImage({
+				count,
+				sizeType: this.sizeType as any,
+				sourceType: this.sourceType as any,
+				success: (res) => {
+					this.$emit('choose', {
+						tempFiles: res.tempFiles
+					})
+				}
+			})
+		},
+		deleteImage(index: number) {
+			const files = [...this.files]
+			const deleted = files.splice(index, 1)
+			this.$emit('update:files', files)
+			this.$emit('delete', {
+				index,
+				file: deleted[0]
+			})
+		},
+		previewImage(index: number) {
+			const urls = this.files.map(item => item.url)
+			uni.previewImage({
+				urls,
+				current: urls[index]
+			})
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-upload {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20rpx;
+
+	.mms-upload__item {
+		position: relative;
+		width: 160rpx;
+		height: 160rpx;
+		border-radius: 8rpx;
+		overflow: hidden;
+		background: #f5f5f5;
+
+		image {
+			width: 100%;
+			height: 100%;
+		}
+
+		.mms-upload__delete {
+			position: absolute;
+			top: -10rpx;
+			right: -10rpx;
+			width: 48rpx;
+			height: 48rpx;
+			border-radius: 50%;
+			background: rgba(0, 0, 0, 0.5);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #fff;
+			font-size: 24rpx;
+
+			.mms-icon {
+				line-height: 1;
+			}
+		}
+	}
+
+	.mms-upload__add {
+		width: 160rpx;
+		height: 160rpx;
+		border-radius: 8rpx;
+		border: 2rpx dashed #dcdfe6;
+		background: #f5f5f5;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		.mms-icon {
+			font-size: 60rpx;
+			color: #c0c4cc;
+			line-height: 1;
+		}
+	}
+}
+</style>

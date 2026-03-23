@@ -1,0 +1,117 @@
+<template>
+	<view class="container">
+		<view class="bj">
+			<view @tap.stop="checkLoginAndNav('/pages_Me/user_info/index', true)" class="userInfo">
+				<view class="avatar">
+					<image class="avatar-image" :src="userInfo.headPortrait || defaultFace" mode="aspectFill"></image>
+				</view>
+				<view class="info">
+					<view v-if="hasLogin">
+						<view class="nickname">{{ userInfo.nickname || '暂无昵称' }}</view>
+						<view class="follow">{{ userInfo.phone }}</view>
+					</view>
+					<view v-else class="not-login">未登录</view>
+					<up-icon name="http://tmp/qgdgx1LfJFsC34be62d7eea3e0fa81fe81fd40bf0270.png"></up-icon>
+				</view>
+			</view>
+		</view>
+		<view class="service">
+			<view @tap.stop="checkLoginAndNav(item.pages, item.requireLogin === true)" v-for="(item, index) in serviceBar" :key="index" class="service_item">
+				<image class="service-icon" :src="item.icon" mode="aspectFit"></image>
+				<text class="service-text">{{ item.title }}</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { ref, computed } from 'vue'
+	import { jumpTo } from '@/common/utils/ut'
+	import { storage } from '@/common/utils/storage'
+	import { tokenLogin, myList } from '@/common/api/mallApi'
+	import myServiceMp from './myServiceData'
+
+	const defaultFace = '/static/img/heading.png'
+	const serviceBar = myServiceMp
+	const total = ref(0)
+	// 直接控制，避免 UTS 下 computed+storage 响应式不生效
+	const hasLogin = ref(storage.getToken() != '' || storage.getUserInfo() != null)
+	const userInfo = ref(storage.getUserInfo() ?? {} as UTSJSONObject)
+
+	function checkLoginAndNav(url: string, requireLogin: boolean = false) {
+		if (!hasLogin.value) {
+			if (requireLogin) {
+				setTimeout(() => {
+					uni.showModal({
+						title: '提示',
+						content: '未登录，是否立即登录？',
+						showCancel: true,
+						cancelText: '取消',
+						confirmText: '去登录',
+						success: (res) => {
+							if (res.confirm) {
+								jumpTo('/pages/login/login', 'to')
+							}
+						}
+					})
+				}, 50)
+			} else {
+				jumpTo(url)
+			}
+		} else {
+			jumpTo(url)
+		}
+	}
+
+	function getMyList() {
+		if (!hasLogin.value) return
+		myList({ pageSize: 10, pageNum: 1, selectType: 'randomly' }).then(res => {
+			if (res.code == 200 && res.data != null) {
+				const data = res.data as UTSJSONObject
+				total.value = data['total'] != null ? (data['total'] as number) : 0
+			}
+		}).catch(() => {})
+	}
+
+	onLoad(() => {
+		if (hasLogin.value) getMyList()
+	})
+
+	onShow(() => {
+		tokenLogin({}).then(res => {
+			if (res.code == 200 && res.data != null) {
+				const data = res.data as UTSJSONObject
+				storage.setToken(data['token'] != null ? (data['token'] as string) : '')
+				storage.setUserInfo(res.data)
+				hasLogin.value = true
+				userInfo.value = data
+			} else {
+				storage.clearAuth()
+				hasLogin.value = false
+				userInfo.value = {} as UTSJSONObject
+			}
+		}).catch(() => {})
+	})
+</script>
+
+<style lang="scss" scoped>
+.container { min-height: 100vh; background-color: #f5f5f5; }
+.bj { position: relative; margin-bottom: 20rpx; color: #fff; }
+.userInfo { display: flex; flex-direction: row; padding: 150rpx 30rpx 100rpx; background-color: #ff2727; }
+.avatar { overflow: hidden; width: 120rpx; height: 120rpx; border-radius: 120rpx; margin-right: 20rpx; }
+.avatar-image { width: 100%; height: 100%; }
+.info { flex: 1; }
+.nickname { margin-top: 15rpx; font-size: 32rpx; }
+.follow { margin-top: 15rpx; font-size: 25rpx; }
+.not-login { line-height: 120rpx; }
+.box { margin: -80rpx 20rpx 0; padding: 40rpx 30rpx; margin-bottom: 20rpx; background-color: #fff; border-radius: 20rpx; }
+.order-title { font-size: 30rpx; font-weight: 600; margin-bottom: 30rpx; color: #333; }
+.order-status { display: flex; flex-direction: row; justify-content: space-between; align-items: center; }
+.status-item { display: flex; flex-direction: row; align-items: center; flex: 1; }
+.status-icon { width: 38rpx; height: 38rpx; }
+.status-text { margin-left: 10rpx; font-size: 26rpx; color: #333; }
+.service { overflow: hidden; padding: 20rpx 0; background-color: #fff; margin: -40px 20rpx 20rpx; border-radius: 20rpx; display:block; }
+.service_item { float: left; width: 25%; box-sizing: border-box; padding: 24rpx 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.service-icon { width: 72rpx; height: 72rpx; margin-bottom: 12rpx; }
+.service-text { color: #333; font-size: 24rpx; }
+</style>

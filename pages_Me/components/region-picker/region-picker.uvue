@@ -1,0 +1,177 @@
+<template>
+	<view class="region-picker">
+		<view class="mask" :class="{ show: visible }" @tap="closePicker"></view>
+		<view class="picker-container" :class="{ show: visible }">
+			<view class="picker-header">
+				<text class="cancel-btn" @tap="closePicker">取消</text>
+				<text class="confirm-btn" @tap="confirm">确定</text>
+			</view>
+			<view class="picker-content">
+				<picker-view :value="selectedIndexes" @change="onPickerChange" class="picker-view" indicator-style="height: 50rpx;">
+					<picker-view-column>
+						<view class="picker-item" v-for="(province, index) in provinces" :key="index">{{ province }}</view>
+					</picker-view-column>
+					<picker-view-column>
+						<view class="picker-item" v-for="(city, index) in cities" :key="index">{{ city }}</view>
+					</picker-view-column>
+					<picker-view-column>
+						<view class="picker-item" v-for="(district, index) in districts" :key="index">{{ district }}</view>
+					</picker-view-column>
+				</picker-view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { ref, watch } from 'vue'
+	import { storeToolAreaList } from '@/common/api/mallApi'
+
+	const props = defineProps<{
+		visible: boolean
+		defaultRegionCode?: string
+	}>()
+	const emit = defineEmits<{
+		confirm: [regionData: { text: string; province: string; city: string; district: string }]
+		cancel: []
+	}>()
+
+	const provinces = ref<string[]>([])
+	const cities = ref<string[]>([])
+	const districts = ref<string[]>([])
+	const selectedIndexes = ref<number[]>([0, 0, 0])
+	const selectedRegion = ref<{ province: string | null; city: string | null; district: string | null }>({ province: null, city: null, district: null })
+
+	function initData() {
+		storeToolAreaList({}).then((res) => {
+			if (res.code == 200 && res.data != null) {
+				const arr = res.data as any[]
+				provinces.value = (arr[0] != null ? arr[0] : []) as string[]
+				if (provinces.value.length > 0) {
+					selectedRegion.value.province = provinces.value[0]
+					loadCities(provinces.value[0])
+				}
+			}
+		}).catch(() => {
+			uni.showToast({ title: '获取地区数据失败', icon: 'none' })
+		})
+	}
+
+	function loadCities(province: string) {
+		if (province == '') return
+		uni.showLoading({ title: '加载中...' })
+		storeToolAreaList({ provincialName: province }).then((res) => {
+			uni.hideLoading()
+			if (res.code == 200 && res.data != null) {
+				const arr = res.data as any[]
+				cities.value = (arr[1] != null ? arr[1] : []) as string[]
+				if (cities.value.length > 0) {
+					selectedRegion.value.city = cities.value[0]
+					loadDistricts(province, cities.value[0])
+				} else {
+					districts.value = []
+				}
+			}
+		}).catch(() => {
+			uni.hideLoading()
+			uni.showToast({ title: '获取城市数据失败', icon: 'none' })
+			cities.value = []
+			districts.value = []
+		})
+	}
+
+	function loadDistricts(province: string, city: string) {
+		if (city == '') return
+		uni.showLoading({ title: '加载中...' })
+		storeToolAreaList({ provincialName: province, cityName: city }).then((res) => {
+			uni.hideLoading()
+			if (res.code == 200 && res.data != null) {
+				const arr = res.data as any[]
+				districts.value = (arr[2] != null ? arr[2] : []) as string[]
+				if (districts.value.length > 0) {
+					selectedRegion.value.district = districts.value[0]
+				}
+			}
+		}).catch(() => {
+			uni.hideLoading()
+			uni.showToast({ title: '获取区县数据失败', icon: 'none' })
+			districts.value = []
+		})
+	}
+
+	function onPickerChange(e: any) {
+		const values = e.detail.value as number[]
+		const oldIndexes = selectedIndexes.value
+		selectedIndexes.value = values
+		if (values[0] != oldIndexes[0]) {
+			const p = provinces.value[values[0]]
+			if (p != null) {
+				selectedRegion.value.province = p
+				loadCities(p)
+			}
+			return
+		}
+		if (values[1] != oldIndexes[1]) {
+			const p = provinces.value[values[0]]
+			const c = cities.value[values[1]]
+			if (c != null && p != null) {
+				selectedRegion.value.city = c
+				loadDistricts(p, c)
+			}
+			return
+		}
+		if (values[2] != oldIndexes[2]) {
+			const d = districts.value[values[2]]
+			if (d != null) selectedRegion.value.district = d
+		}
+	}
+
+	function closePicker() {
+		selectedIndexes.value = [0, 0, 0]
+		selectedRegion.value = { province: null, city: null, district: null }
+		emit('cancel')
+	}
+
+	function confirm() {
+		const sr = selectedRegion.value
+		const text = `${sr.province ?? ''} ${sr.city ?? ''} ${sr.district ?? ''}`.trim()
+		emit('confirm', { text, province: sr.province ?? '', city: sr.city ?? '', district: sr.district ?? '' })
+	}
+
+	watch(() => props.visible, (v) => {
+		if (v) initData()
+	})
+</script>
+
+<style lang="scss" scoped>
+.region-picker {
+	.mask {
+		position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+		background-color: rgba(0,0,0,0.6); z-index: 998;
+		opacity: 0; visibility: hidden; transition: all 0.3s ease;
+		&.show { opacity: 1; visibility: visible; }
+	}
+	.picker-container {
+		position: fixed; bottom: 0; left: 0; right: 0;
+		background: #fff; z-index: 999;
+		transform: translateY(100%); transition: transform 0.3s ease;
+		border-top-left-radius: 20rpx; border-top-right-radius: 20rpx;
+		&.show { transform: translateY(0); }
+		.picker-header {
+			padding: 20rpx 30rpx; border-bottom: 1rpx solid #eee;
+			display: flex; flex-direction: row; justify-content: space-between; align-items: center;
+			.cancel-btn, .confirm-btn { font-size: 32rpx; padding: 10rpx 20rpx; }
+			.cancel-btn { color: #999; }
+			.confirm-btn { color: #ff2727; }
+		}
+		.picker-content {
+			height: 400rpx; overflow: hidden;
+			.picker-view { height: 100%; }
+			.picker-item {
+				display: flex; align-items: center; justify-content: center;
+				font-size: 28rpx; color: #333; height: 50rpx; line-height: 50rpx;
+			}
+		}
+	}
+}
+</style>

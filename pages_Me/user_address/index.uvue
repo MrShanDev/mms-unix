@@ -1,0 +1,167 @@
+<template>
+	<view class="page">
+		<view class="container">
+			<view v-if="addressList.length > 0" class="address-list">
+				<view v-for="(item, index) in addressList" :key="index" class="address-item" @tap="onItemTap(item)">
+					<view class="address-info">
+						<view class="contact-info">
+							<text class="contact-name">{{ item.name }}</text>
+							<text class="contact-phone">{{ item.phone }}</text>
+						</view>
+						<text class="address-detail">{{ item.province }} {{ item.city }} {{ item.district }} {{ item.address }}</text>
+					</view>
+					<view v-if="!isSelectMode" class="address-actions">
+						<view class="action-btn" @tap.stop="editAddress(item.id)">
+							<text class="action-text">编辑</text>
+						</view>
+						<view class="action-btn" @tap.stop="deleteAddress(item.id)">
+							<text class="action-text delete-text">删除</text>
+						</view>
+					</view>
+				</view>
+			</view>
+			<up-empty v-else text="暂无收货地址~" mode="list" :show="true"></up-empty>
+		</view>
+		<view class="bottom-placeholder"></view>
+		<view class="bottom-bar">
+			<button class="add-btn" @tap="addAddress">新建收货地址</button>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { ref } from 'vue'
+	import { jumpTo, msg } from '@/common/utils/ut'
+	import { addressList as fetchAddressList, deleteAddress as deleteAddressApi } from '@/common/api/mallApi'
+
+	type AddressItem = {
+		id: string
+		name: string
+		phone: string
+		province: string
+		city: string
+		district: string
+		address: string
+	}
+
+	const addressList = ref<AddressItem[]>([])
+	const isSelectMode = ref(false)
+
+function addAddress() {
+		jumpTo('/pages_Me/user_setting_address/user_setting_address')
+	}
+
+	function editAddress(id: string) {
+		jumpTo('/pages_Me/user_setting_address/user_setting_address?id=' + id)
+	}
+
+	function onItemTap(item: AddressItem) {
+		if (isSelectMode.value) {
+			const pages = getCurrentPages()
+			const prev = pages.length >= 2 ? pages[pages.length - 2] : null
+			if (prev != null && (prev as any).onReceiveSelectedAddress != null) {
+				;(prev as any).onReceiveSelectedAddress(item)
+			}
+			uni.navigateBack()
+		}
+	}
+
+	function deleteAddress(id: string) {
+		uni.showModal({
+			title: '提示',
+			content: '确定要删除该地址吗？',
+			success: (res) => {
+				if (res.confirm) {
+					deleteAddressApi(id).then((r) => {
+						if (r.code == 200) {
+							uni.showToast({ title: '删除成功', icon: 'success' })
+							getAddressList()
+						} else {
+							msg(r.msg != null ? r.msg : '删除失败')
+						}
+					}).catch(() => {
+						msg('删除地址失败')
+					})
+				}
+			}
+		})
+	}
+
+	function getAddressList() {
+		fetchAddressList({}).then(res => {
+			if (res.code == 200 && res.data != null) {
+				const data = res.data as UTSJSONObject
+				const rows = data['rows'] as AddressItem[]
+				addressList.value = (rows != null) ? rows : []
+			}
+		}).catch(() => {
+			addressList.value = []
+			msg('加载地址失败')
+		})
+	}
+
+	onLoad((options: any) => {
+		if (options != null && options['select'] == '1') {
+			isSelectMode.value = true
+		}
+		getAddressList()
+	})
+
+	onShow(() => {
+		getAddressList()
+	})
+</script>
+
+<style lang="scss" scoped>
+.page { min-height: 100vh; background-color: #f5f5f5; }
+.container { padding: 20rpx; }
+.address-list { }
+.address-item {
+	background: #fff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 20rpx;
+	box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+.address-info {
+	.contact-info {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 20rpx;
+		margin-bottom: 16rpx;
+		.contact-name { font-size: 32rpx; color: #333; font-weight: 600; }
+		.contact-phone { font-size: 28rpx; color: #666; }
+	}
+	.address-detail { font-size: 28rpx; color: #666; line-height: 1.5; }
+}
+.address-actions {
+	margin-top: 20rpx;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	gap: 24rpx;
+	.action-btn { font-size: 26rpx; color: #666; }
+	.delete-text { color: #ff2727; }
+}
+.bottom-placeholder { height: 140rpx; }
+.bottom-bar {
+	position: fixed;
+	bottom: 0; left: 0; right: 0;
+	background: #fff;
+	border-top: 1rpx solid #e0e0e0;
+	padding: 30rpx;
+	z-index: 100;
+	box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
+	.add-btn {
+		width: 100%;
+		height: 88rpx;
+		background-color: #ff2727;
+		color: #fff;
+		border: none;
+		border-radius: 50rpx;
+		font-size: 32rpx;
+		font-weight: 600;
+	}
+}
+</style>

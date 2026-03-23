@@ -1,0 +1,89 @@
+<template>
+	<view class="page">
+		<view class="content">
+			<view class="about-inner">
+				<view class="logo-wrap">
+					<image class="logo-img" src="https://ssca-1364461867.cos.ap-beijing.myqcloud.com/mms/upload/688c17e596d408e1ce66306b.png" mode="aspectFit" />
+				</view>
+				<view class="title">盛世长安</view>
+				<view class="desc">
+					我们是一家专注于文化艺术品交易的平台，致力于为用户提供安全、便捷、专业的艺术品托管和交易服务。通过我们的平台，您可以轻松实现艺术品的价值流转和投资增值。
+				</view>
+				<view class="features">
+					<view class="feature-item">
+						<text class="feature-dot">●</text>
+						<text class="feature-text">专业鉴定团队</text>
+					</view>
+					<view class="feature-item">
+						<text class="feature-dot">●</text>
+						<text class="feature-text">安全托管服务</text>
+					</view>
+					<view class="feature-item">
+						<text class="feature-dot">●</text>
+						<text class="feature-text">便捷交易流程</text>
+					</view>
+					<view class="feature-item">
+						<text class="feature-dot">●</text>
+						<text class="feature-text">完善保障体系</text>
+					</view>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+</script>
+
+<style lang="scss" scoped>
+.page { min-height: 100vh; background-color: #f5f5f5; }
+.content {
+	margin: 20rpx;
+	background: #fff;
+	border-radius: 16rpx;
+	padding: 40rpx;
+	box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+.about-inner { }
+.logo-wrap {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 30rpx;
+	.logo-img {
+		width: 160rpx;
+		height: 160rpx;
+		border-radius: 50%;
+	}
+}
+.title {
+	font-size: 36rpx;
+	font-weight: 600;
+	color: #303133;
+	text-align: center;
+	margin-bottom: 24rpx;
+}
+.desc {
+	font-size: 28rpx;
+	color: #606266;
+	line-height: 1.6;
+	text-align: justify;
+}
+.features {
+	margin-top: 40rpx;
+	.feature-item {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		margin-bottom: 20rpx;
+		.feature-dot {
+			color: #ff2727;
+			font-size: 24rpx;
+			margin-right: 16rpx;
+		}
+		.feature-text {
+			font-size: 30rpx;
+			color: #303133;
+		}
+	}
+}
+</style>

@@ -1,0 +1,162 @@
+<template>
+	<view class="mms-tag" :class="[`mms-tag--${type}`, `mms-tag--${size}`, {'mms-tag--mark': mark}, {'mms-tag--disabled': disabled}]" :style="customStyle" @click="handleClick">
+		<slot></slot>
+		<text v-if="text" class="mms-tag__text">{{ text }}</text>
+		<icon v-if="closable" name="close-circle" :size="size === 'mini' ? 12 : 16" color="currentColor" @click="handleClose"></icon>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsTag',
+	emits: ['click', 'close'],
+	props: {
+		// 类型 primary/ success/ warning/ danger/ default
+		type: {
+			type: String,
+			default: 'default'
+		},
+		// 尺寸  medium/ small/ mini
+		size: {
+			type: String,
+			default: 'small'
+		},
+		// 文字
+		text: {
+			type: String,
+			default: ''
+		},
+		// 是否圆角
+		round: {
+			type: Boolean,
+			default: false
+		},
+		// 是否标记样式
+		mark: {
+			type: Boolean,
+			default: false
+		},
+		// 是否可关闭
+		closable: {
+			type: Boolean,
+			default: false
+		},
+		// 是否禁用
+		disabled: {
+			type: Boolean,
+			default: false
+		},
+		// 自定义颜色
+		color: {
+			type: String,
+			default: ''
+		},
+		// 自定义背景色
+		bgColor: {
+			type: String,
+			default: ''
+		},
+		// 自定义样式
+		customStyle: {
+			type: Object as PropType<UTSJSONObject>,
+			default: () => ({})
+		}
+	},
+	computed: {
+		customStyle() {
+			const style: UTSJSONObject = {}
+			if (this.color) {
+				style.color = this.color
+			}
+			if (this.bgColor) {
+				style.backgroundColor = this.bgColor
+			}
+			Object.assign(style, this.customStyle)
+			return style
+		}
+	},
+	methods: {
+		handleClick(e: any) {
+			if (!this.disabled) {
+				this.$emit('click', e)
+			}
+		},
+		handleClose(e: any) {
+			if (!this.disabled) {
+				this.$emit('close', e)
+			}
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	padding: 8rpx 16rpx;
+	line-height: 1;
+
+	// 尺寸
+	&.mms-tag--medium {
+		font-size: 28rpx;
+		padding: 12rpx 20rpx;
+	}
+	&.mms-tag--small {
+		font-size: 26rpx;
+	}
+	&.mms-tag--mini {
+		font-size: 20rpx;
+		padding: 4rpx 8rpx;
+	}
+
+	// 类型
+	&.mms-tag--primary {
+		background-color: #409eff;
+		color: #ffffff;
+		border: 1rpx solid #409eff;
+	}
+	&.mms-tag--success {
+		background-color: #67c23a;
+		color: #ffffff;
+		border: 1rpx solid #67c23a;
+	}
+	&.mms-tag--warning {
+		background-color: #e6a23c;
+		color: #ffffff;
+		border: 1rpx solid #e6a23c;
+	}
+	&.mms-tag--danger {
+		background-color: #f56c6c;
+		color: #ffffff;
+		border: 1rpx solid #f56c6c;
+	}
+	&.mms-tag--default {
+		background-color: #f5f7fa;
+		color: #606266;
+		border: 1rpx solid #dcdfe6;
+	}
+
+	// 圆角
+	&.mms-tag--round {
+		border-radius: 100rpx;
+	}
+
+	// 标记样式
+	&.mms-tag--mark {
+		border: none;
+	}
+
+	// 禁用
+	&.mms-tag--disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	.mms-tag__text {
+		line-height: inherit;
+	}
+}
+</style>

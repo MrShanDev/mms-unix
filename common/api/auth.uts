@@ -1,0 +1,40 @@
+/**
+ * 认证相关 API - 对接后端接口示例
+ */
+import { http } from '@/common/utils/request'
+
+/** 快捷登录（验证码） */
+export function loginByCode(phone: string, code: string) {
+	return http.post('/api/auth/login/code', {
+		phone,
+		code,
+	})
+}
+
+/** 账号密码登录 */
+export function loginByPassword(account: string, password: string) {
+	return http.post('/api/auth/login/password', {
+		account,
+		password,
+	})
+}
+
+/** 发送验证码 */
+export function sendSmsCode(phone: string, type: string) {
+	return http.post('/api/auth/sms/send', { phone, type })
+}
+
+/** 注册 */
+export function register(params: {
+	phone: string
+	code: string
+	username: string
+	password: string
+}) {
+	return http.post('/api/auth/register', params)
+}
+
+/** 找回密码 */
+export function resetPassword(phone: string, code: string, password: string) {
+	return http.post('/api/auth/password/reset', { phone, code, password })
+}

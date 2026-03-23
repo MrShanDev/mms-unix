@@ -1,0 +1,224 @@
+/**
+ * 商城/托管 API - 对应 mms-mall-mobile-uni 盛世长安接口
+ */
+import { config } from '@/common/config'
+import { storage } from '@/common/utils/storage'
+
+const base = config.mallBaseUrl != '' ? config.mallBaseUrl : config.baseUrl
+
+type ApiResponse = {
+	code: number
+	msg: string
+	data: any
+}
+
+function mallRequest(path: string, method: string, data?: UTSJSONObject, redirectOn403: boolean = false): Promise<ApiResponse> {
+	let url = path.startsWith('http') ? path : (path.startsWith('/') ? path : '/' + path)
+	let reqData: UTSJSONObject = data != null ? data : {}
+	if (method == 'GET' && reqData != null && Object.keys(reqData).length > 0) {
+		const parts: string[] = []
+		for (const k in reqData) {
+			const v = reqData[k]
+			if (v != null && v !== '') parts.push(k + '=' + encodeURIComponent(String(v)))
+		}
+		if (parts.length > 0) {
+			url += (url.indexOf('?') >= 0 ? '&' : '?') + parts.join('&')
+			reqData = {}
+		}
+	}
+	const fullUrl = url.startsWith('http') ? url : base + url
+	const token = storage.getToken()
+	const reqHeader = {
+		'Content-Type': 'application/json',
+	} as UTSJSONObject
+	if (token != '') {
+		reqHeader['Authorization'] = token
+	}
+	return new Promise<ApiResponse>((resolve, reject) => {
+		uni.request({
+			url: fullUrl,
+			method: method as 'GET' | 'POST',
+			data: reqData,
+			header: reqHeader,
+				success: (res) => {
+					const result = res.data as UTSJSONObject
+					const code = result['code'] as number
+					const msg = result['msg'] != null ? (result['msg'] as string) : ''
+					const responseData = result['data'] != null ? result['data'] : {}
+					const apiResponse: ApiResponse = {
+					code: code,
+					msg: msg,
+					data: responseData as any,
+				}
+				if (redirectOn403 && code == 403) {
+					storage.clearAuth()
+					uni.showToast({ title: '请先登录', icon: 'none' })
+					setTimeout(() => {
+						uni.navigateTo({ url: '/pages/login/login' })
+					}, 1200)
+				}
+				resolve(apiResponse)
+			},
+			fail: (err) => {
+				reject(err)
+			},
+		})
+	})
+}
+
+/** 根据广告位编码查询广告（公开接口，首页等无需登录） */
+export function selectByAdvertisingCode(params: UTSJSONObject) {
+	return mallRequest('/v1/common/location/selectByAdvertisingCode', 'GET', params, false)
+}
+
+/** 获取藏品列表（公开接口） */
+export function collectionList(params: UTSJSONObject) {
+	return mallRequest('/v1/collection/list', 'POST', params, false)
+}
+
+/** 获取文章列表（公开接口） */
+export function articleList(params: UTSJSONObject) {
+	return mallRequest('/v1/article/articleList', 'POST', params, false)
+}
+
+/** 商品列表（正在出售）（公开接口） */
+export function productListPage(params: UTSJSONObject) {
+	return mallRequest('/api/v1/storeProduct/productList', 'GET', params, false)
+}
+
+/** 托管记录列表（需登录） */
+export function myList(params: UTSJSONObject) {
+	return mallRequest('/v1/collection/myList', 'POST', params, true)
+}
+
+/** 我的托管详情（需登录，返回完整数据） */
+export function collectionDetailsMy(id: string) {
+	return mallRequest(`/v1/collection/my/${id}`, 'GET', {}, true)
+}
+
+/** token 登录（静默校验 token，用于刷新登录状态，不触发跳转） */
+export function tokenLogin(params: UTSJSONObject) {
+	return mallRequest('/v1/common/login/tokenLogin', 'GET', params, false)
+}
+
+/** 新增藏品（托管申请，需登录） */
+export function insert(params: UTSJSONObject) {
+	return mallRequest('/v1/collection/insert', 'POST', params, true)
+}
+
+/** 获取地址列表（需登录） */
+export function addressList(params?: UTSJSONObject) {
+	const payload = params != null ? params : {} as UTSJSONObject
+	return mallRequest('/v1/common/member/address/list', 'POST', payload, true)
+}
+
+/** 订单支付（需登录） */
+export function payOrderPlus(params: UTSJSONObject) {
+	return mallRequest('/v1/common/order/payOrderPlus', 'GET', params, true)
+}
+
+// ========== 扩展接口（参考 mms-mall-mobile-uni） ==========
+
+/** 藏品详情（公开接口） */
+export function collectionDetails(id: string) {
+	return mallRequest(`/v1/collection/${id}`, 'GET', {}, false)
+}
+
+/** 藏品证书查询 */
+export function selectController(params: UTSJSONObject) {
+	return mallRequest('/v1/collection/selectController', 'GET', params)
+}
+
+/** 文章详情（公开接口） */
+export function articleDetails(id: string) {
+	return mallRequest(`/v1/article/article/${id}`, 'GET', {}, false)
+}
+
+/** 地址详情（需登录） */
+export function addressDetail(id: string) {
+	return mallRequest(`/v1/common/member/address/${id}`, 'GET', {}, true)
+}
+
+/** 编辑地址（需登录） */
+export function addressEdit(params: UTSJSONObject) {
+	return mallRequest('/v1/common/member/address/edit', 'POST', params, true)
+}
+
+/** 新增地址（需登录） */
+export function addressInsert(params: UTSJSONObject) {
+	return mallRequest('/v1/common/member/address/insert', 'POST', params, true)
+}
+
+/** 删除地址（需登录） */
+export function deleteAddress(id: string) {
+	return mallRequest(`/v1/common/member/address/delete/${id}`, 'GET', {}, true)
+}
+
+/** 更新用户信息 */
+export function updateMemberInfo(params: UTSJSONObject) {
+	return mallRequest('/v1/common/member/updateMember', 'POST', params)
+}
+
+/** 区域列表（省市区） */
+export function storeToolAreaList(params?: UTSJSONObject) {
+	const payload = params != null ? params : {} as UTSJSONObject
+	return mallRequest('/v1/common/common/storeToolAreaList', 'GET', payload)
+}
+
+/** 微信手机号登录/注册 */
+export function weixinLogin(params: UTSJSONObject) {
+	return mallRequest('/v1/common/login/codeGetPhoneRegisterOrLogin', 'GET', params)
+}
+
+/** 账号+密码登录（盛世长安） */
+export function mallAccountLogin(params: UTSJSONObject) {
+	return mallRequest('/v1/common/login/accountLogin', 'POST', params)
+}
+
+/** 手机号+验证码登录（盛世长安） */
+export function phoneSmsLogin(params: UTSJSONObject) {
+	return mallRequest('/v1/common/login/login', 'POST', params)
+}
+
+/** 发送验证码（盛世长安）type: 1注册 2登录 3修改密码 */
+export function mallSendSmsCode(params: UTSJSONObject) {
+	return mallRequest('/v1/common/common/smsCode', 'POST', params, false)
+}
+
+/** 账号注册（盛世长安） */
+export function accountRegister(params: UTSJSONObject) {
+	return mallRequest('/v1/common/login/accountRegister', 'POST', params, false)
+}
+
+/** 找回密码（盛世长安） */
+export function findPassword(params: UTSJSONObject) {
+	return mallRequest('/v1/common/login/findPassword', 'POST', params, false)
+}
+
+// ========== 电子合同相关 ==========
+
+/** 创建合同 - 立即签署（需登录） */
+export function createContract(params: UTSJSONObject) {
+	return mallRequest('/api/mall/contract/create', 'POST', params, true)
+}
+
+/** 查询订单签署状态（需登录） */
+export function getContractStatus(orderId: string) {
+	return mallRequest('/api/mall/contract/status', 'GET', { orderId: orderId }, true)
+}
+
+/** 获取合同列表（需登录） */
+export function getContractList(params: UTSJSONObject) {
+	return mallRequest('/api/mall/contract/list', 'GET', params, true)
+}
+
+/** 获取合同详情（需登录） */
+export function getContractDetail(id: string) {
+	return mallRequest('/api/mall/contract/detail', 'GET', { id: id }, true)
+}
+
+/** 下载合同PDF（需登录） */
+export function downloadContractPdf(id: string) {
+	const base = config.mallBaseUrl != '' ? config.mallBaseUrl : config.baseUrl
+	return base + '/api/mall/contract/download?id=' + id
+}

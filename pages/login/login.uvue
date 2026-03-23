@@ -1,0 +1,425 @@
+<template>
+	<view class="login-page">
+		<!-- 顶部渐变区域 -->
+		<view class="login-header">
+			<view class="nav-back" @tap="goBack">
+				<text class="nav-back-icon">←</text>
+			</view>
+			<text class="login-greeting">Hello! 欢迎来到{{ config.configInfo.name }}</text>
+		</view>
+		<!-- 登录表单卡片 -->
+		<view class="login-card">
+			<!-- 切换 Tab -->
+			<view class="login-tabs">
+				<view 
+					:class="['tab-item', { active: tabIndex === 0 }]" 
+					@tap="tabIndex = 0"
+				>
+					<text :class="tabIndex === 0 ? 'tab-text tab-text-active' : 'tab-text'">快捷登录</text>
+					<view v-if="tabIndex === 0" class="tab-line"></view>
+				</view>
+				<view 
+					:class="['tab-item', { active: tabIndex === 1 }]" 
+					@tap="tabIndex = 1"
+				>
+					<text :class="tabIndex === 1 ? 'tab-text tab-text-active' : 'tab-text'">账号登陆</text>
+					<view v-if="tabIndex === 1" class="tab-line"></view>
+				</view>
+			</view>
+			<!-- 快捷登录 -->
+			<view v-if="tabIndex === 0" class="form-wrap">
+				<view class="input-wrap">
+					<input 
+						class="input" 
+						type="number" 
+						placeholder="手机号" 
+						v-model="phone"
+						:maxlength="11"
+					/>
+				</view>
+				<view class="input-wrap code-wrap">
+					<input 
+						class="input" 
+						type="number" 
+						placeholder="验证码" 
+						v-model="code"
+						:maxlength="6"
+					/>
+					<text 
+						:class="['get-code', { disabled: countdown > 0 }]" 
+						@tap="getCode"
+					>
+						{{ countdown > 0 ? countdown + 's' : '获取验证码' }}
+					</text>
+				</view>
+			</view>
+			<!-- 账号登录 -->
+			<view v-else class="form-wrap">
+				<view class="input-wrap">
+					<input 
+						class="input" 
+						placeholder="账号" 
+						v-model="account"
+					/>
+				</view>
+				<view class="input-wrap">
+					<input 
+						class="input" 
+						type="password" 
+						placeholder="密码" 
+						v-model="password"
+					/>
+				</view>
+			</view>
+			<!-- 忘记密码/注册 -->
+			<view class="login-links">
+				<text class="link-item" @tap="goRegister">注册账号</text>
+				<text class="link-item" @tap="goForgot">忘记密码？</text>
+			</view>
+			<!-- 登录按钮 -->
+			<button class="login-btn" @tap="handleLogin">登录</button>
+			<view class="go-home" @tap="goHome">
+				<text class="go-home-text">返回首页</text>
+			</view>
+		</view>
+		<!-- 底部协议 -->
+		<view class="login-footer">
+			<view class="agree-wrap" @tap="agree = !agree">
+				<view :class="['checkbox', { checked: agree }]">
+					<text v-if="agree" class="checkbox-icon">✓</text>
+				</view>
+				<text class="agree-text">
+					我已阅读并同意
+					<text class="link" @tap.stop="goAgreement('user')">《用户协议》</text>
+					和
+					<text class="link" @tap.stop="goAgreement('privacy')">《隐私协议》</text>
+				</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { ref } from 'vue'
+	import { storage } from '@/common/utils/storage'
+	import { config } from '@/common/config'
+	import { phoneSmsLogin, mallAccountLogin, mallSendSmsCode } from '@/common/api/mallApi'
+
+	const tabIndex = ref(0)
+	const phone = ref('')
+	const code = ref('')
+	const account = ref('')
+	const password = ref('')
+	const agree = ref(false)
+	const countdown = ref(0)
+	const redirectUrl = ref('')
+	const loading = ref(false)
+	let countTimer : number | null = null
+
+	onLoad((options) => {
+		redirectUrl.value = options['redirect'] ?? ''
+	})
+
+	function saveLoginUser(data: any) {
+		if (data != null) {
+			const token = data['token']
+			if (token != null && token != '') {
+				storage.setToken(token as string)
+			}
+			storage.setUserInfo({
+				id: data['id'],
+				nickname: data['nickname'] ?? '',
+				account: data['account'] ?? '',
+				phone: data['phone'] ?? '',
+			})
+		}
+	}
+
+	function doRedirect() {
+		const redirect = redirectUrl.value
+		if (redirect != '') {
+			if (redirect.startsWith('/pages/index') || redirect.startsWith('/pages/user') || redirect.startsWith('/pages/cases') || redirect.startsWith('/pages/hosting')) {
+				uni.switchTab({ url: redirect })
+			} else {
+				uni.redirectTo({ url: redirect })
+			}
+		} else {
+			uni.switchTab({ url: '/pages/index/index' })
+		}
+	}
+
+	const getCode = () => {
+		if (countdown.value > 0) return
+		if (phone.value == '' || phone.value.length !== 11) {
+			uni.showToast({ title: '请输入正确手机号', icon: 'none' })
+			return
+		}
+		const smsType = tabIndex.value === 0 ? 2 : 2
+		mallSendSmsCode({ phone: phone.value, type: smsType }).then(res => {
+			if (res.code == 200) {
+				countdown.value = 60
+				countTimer = setInterval(() => {
+					countdown.value--
+					if (countdown.value <= 0 && countTimer != null) {
+						clearInterval(countTimer)
+						countTimer = null
+					}
+				}, 1000)
+				uni.showToast({ title: '验证码已发送', icon: 'success' })
+			} else {
+				uni.showToast({ title: res.msg ?? '发送失败', icon: 'none' })
+			}
+		}).catch(() => {
+			uni.showToast({ title: '网络异常，请重试', icon: 'none' })
+		})
+	}
+
+	const handleLogin = () => {
+		if (!agree.value) {
+			uni.showToast({ title: '请先同意用户协议和隐私协议', icon: 'none' })
+			return
+		}
+		if (tabIndex.value === 0) {
+			if (phone.value == '' || code.value == '') {
+				uni.showToast({ title: '请输入手机号和验证码', icon: 'none' })
+				return
+			}
+			if (loading.value) return
+			loading.value = true
+			phoneSmsLogin({ phone: phone.value, smsCode: code.value }).then(res => {
+				if (res.code == 200 && res.data != null) {
+					saveLoginUser(res.data)
+					uni.showToast({ title: '登录成功', icon: 'success' })
+					setTimeout(doRedirect, 500)
+				} else {
+					uni.showToast({ title: res.msg ?? '登录失败', icon: 'none' })
+				}
+			}).catch(() => {
+				uni.showToast({ title: '网络异常，请重试', icon: 'none' })
+			}).finally(() => {
+				loading.value = false
+			})
+		} else {
+			if (account.value == '' || password.value == '') {
+				uni.showToast({ title: '请输入账号和密码', icon: 'none' })
+				return
+			}
+			if (loading.value) return
+			loading.value = true
+			mallAccountLogin({ type: 1, account: account.value, password: password.value }).then(res => {
+				if (res.code == 200 && res.data != null) {
+					saveLoginUser(res.data)
+					uni.showToast({ title: '登录成功', icon: 'success' })
+					setTimeout(doRedirect, 500)
+				} else {
+					uni.showToast({ title: res.msg ?? '登录失败', icon: 'none' })
+				}
+			}).catch(() => {
+				uni.showToast({ title: '网络异常，请重试', icon: 'none' })
+			}).finally(() => {
+				loading.value = false
+			})
+		}
+	}
+
+	const goAgreement = (type : string) => {
+		const id = type === 'user' ? (config.configInfo.userAgreementArticleId ?? '') : (config.configInfo.privacyPolicyArticleId ?? '')
+		if (id != '') {
+			uni.navigateTo({ url: '/pages_Article/articleDetails/articleDetails?id=' + id })
+		} else {
+			uni.showToast({ title: '协议未配置', icon: 'none' })
+		}
+	}
+	const goRegister = () => {
+		uni.navigateTo({ url: '/pages/register/register' })
+	}
+	const goForgot = () => {
+		uni.navigateTo({ url: '/pages/forgot-password/forgot-password' })
+	}
+	const goBack = () => {
+		uni.navigateBack()
+	}
+	const goHome = () => {
+		uni.switchTab({ url: '/pages/index/index' })
+	}
+</script>
+
+<style lang="scss" scoped>
+	.login-page {
+		min-height: 100vh;
+		background: linear-gradient(180deg, #ffefef 0%, #ffe8e8 50%, #f5f5f5 100%);
+		display: flex;
+		flex-direction: column;
+		padding-bottom: 40rpx;
+	}
+	.login-header {
+		height: 360rpx;
+		background: linear-gradient(135deg, #ff2727 0%, #ff5a5a 50%, #ff8080 100%);
+		padding: 180rpx 40rpx 0;
+		position: relative;
+	}
+	.nav-back {
+		position: absolute;
+		top: 80rpx;
+		left: 30rpx;
+		width: 64rpx;
+		height: 64rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 10;
+	}
+	.nav-back-icon {
+		font-size: 48rpx;
+		color: #fff;
+		font-weight: 500;
+	}
+	.login-greeting {
+		font-size: 40rpx;
+		font-weight: bold;
+		color: #fff;
+	}
+	.login-card {
+		margin: -60rpx 30rpx 0;
+		background: #fff;
+		border-radius: 24rpx;
+		padding: 40rpx;
+		box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
+	}
+	.login-tabs {
+		display: flex;
+		flex-direction: row;
+		margin-bottom: 40rpx;
+		border-bottom: 1rpx solid #eee;
+	}
+	.tab-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		flex: 1;
+		text-align: center;
+		padding-bottom: 24rpx;
+		position: relative;
+	}
+	.tab-text {
+		font-size: 30rpx;
+		color: #999;
+	}
+	.tab-text-active {
+		color: #ff2727;
+		font-weight: 600;
+	}
+	.tab-line {
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 60rpx;
+		height: 6rpx;
+		background: #ff2727;
+		border-radius: 3rpx;
+	}
+	.form-wrap {
+		margin-bottom: 24rpx;
+	}
+	.login-links {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		margin-bottom: 40rpx;
+	}
+	.link-item {
+		font-size: 28rpx;
+		color: #ff2727;
+	}
+	.input-wrap {
+		background: #f5f7fa;
+		border-radius: 12rpx;
+		padding: 24rpx 28rpx;
+		margin-bottom: 24rpx;
+	}
+	.input-wrap.code-wrap {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+	.input {
+		flex: 1;
+		font-size: 28rpx;
+	}
+	.get-code {
+		font-size: 28rpx;
+		color: #ff2727;
+		margin-left: 20rpx;
+	}
+	.get-code.disabled {
+		color: #999;
+	}
+	.login-links {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		margin-bottom: 32rpx;
+	}
+	.link-item {
+		font-size: 26rpx;
+		color: #ff2727;
+	}
+	.login-btn {
+		width: 100%;
+		height: 88rpx;
+		line-height: 88rpx;
+		background: linear-gradient(90deg, #ff2727, #ff5a5a);
+		color: #fff;
+		font-size: 32rpx;
+		border-radius: 12rpx;
+		border: none;
+	}
+	.go-home {
+		margin-top: 24rpx;
+		text-align: center;
+	}
+	.go-home-text {
+		font-size: 28rpx;
+		color: #ff2727;
+	}
+	.login-footer {
+		margin-top: 60rpx;
+		padding: 0 50rpx;
+	}
+	.agree-wrap {
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+	}
+	.checkbox {
+		width: 36rpx;
+		height: 36rpx;
+		border: 2rpx solid #ccc;
+		border-radius: 50%;
+		margin-right: 16rpx;
+		flex-shrink: 0;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+	}
+	.checkbox.checked {
+		background: #ff2727;
+		border-color: #ff2727;
+	}
+	.checkbox-icon {
+		color: #fff;
+		font-size: 24rpx;
+		font-weight: bold;
+	}
+	.agree-text {
+		font-size: 24rpx;
+		color: #666;
+		line-height: 1.6;
+	}
+	.link {
+		color: #ff2727;
+	}
+</style>

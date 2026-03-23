@@ -1,0 +1,118 @@
+<template>
+	<view class="mms-countdown">
+		<text class="mms-countdown__text">{{ display }}</text>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsCountdown',
+	emits: ['change', 'finish'],
+	props: {
+		// 倒计时秒数
+		time: {
+			type: Number,
+			default: 60
+		},
+		// 格式化 DD HH mm ss
+		format: {
+			type: String,
+			default: 'HH:mm:ss'
+		},
+		// 是否自动开始
+		autoStart: {
+			type: Boolean,
+			default: true
+		}
+	},
+	data() {
+		return {
+			remaining: 0,
+			timer: null as number | null
+		}
+	},
+	computed: {
+		display() {
+			let { day, hour, minute, second } = this.parseFormat(this.remaining)
+			let result = this.format
+			if (day > 0) {
+				result = result.replace('DD', this.padZero(day))
+			}
+			result = result.replace('HH', this.padZero(hour))
+			result = result.replace('mm', this.padZero(minute))
+			result = result.replace('ss', this.padZero(second))
+			return result
+		}
+	},
+	mounted() {
+		this.remaining = this.time
+		if (this.autoStart) {
+			this.start()
+		}
+	},
+	beforeUnmount() {
+		this.stop()
+	},
+	methods: {
+		padZero(num: number) {
+			return num < 10 ? '0' + num : String(num)
+		},
+		parseFormat(seconds: number) {
+			const day = Math.floor(seconds / (60 * 60 * 24))
+			seconds = seconds % (60 * 60 * 24)
+			const hour = Math.floor(seconds / (60 * 60))
+			seconds = seconds % (60 * 60)
+			const minute = Math.floor(seconds / 60)
+			seconds = seconds % 60
+			return {
+				day,
+				hour,
+				minute,
+				second: seconds
+			}
+		},
+		tick() {
+			this.remaining--
+			this.$emit('change', this.parseFormat(this.remaining))
+			if (this.remaining <= 0) {
+				this.stop()
+				this.$emit('finish')
+			}
+		},
+		start() {
+			this.stop()
+			if (this.remaining <= 0) {
+				this.$emit('finish')
+				return
+			}
+			this.timer = setInterval(() => {
+				this.tick()
+			}, 1000) as unknown as number
+		},
+		pause() {
+			this.stop()
+		},
+		reset() {
+			this.remaining = this.time
+			this.start()
+		},
+		stop() {
+			if (this.timer) {
+				clearInterval(this.timer)
+				this.timer = null
+			}
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-countdown {
+	display: inline-block;
+	.mms-countdown__text {
+		font-size: 28rpx;
+		color: #303133;
+		line-height: 1;
+	}
+}
+</style>

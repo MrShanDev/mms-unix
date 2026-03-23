@@ -1,0 +1,126 @@
+<template>
+	<view class="mms-notice-bar" :class="{'mms-notice-bar--wrapable': wrapable}" @click="handleClick">
+		<view class="mms-notice-bar__left">
+			<slot name="icon">
+				<icon v-if="showIcon" name="volume" color="#ff976a" size="32"></icon>
+			</slot>
+		</view>
+		<view class="mms-notice-bar__content" :class="{'mms-notice-bar__content--disabled': !scrollable}">
+			<slot>
+				<text>{{ text }}</text>
+			</slot>
+		</view>
+		<view class="mms-notice-bar__right">
+			<slot name="right">
+				<text v-if="showRight" class="mms-notice-bar__close">更多<icon name="right-arrow" color="#c0c4cc" size="26"></icon></text>
+			</slot>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsNoticeBar',
+	emits: ['click'],
+	props: {
+		// 通知文字
+		text: {
+			type: String,
+			default: ''
+		},
+		// 是否显示左侧图标
+		showIcon: {
+			type: Boolean,
+			default: true
+		},
+		// 是否显示右侧箭头
+		showRight: {
+			type: Boolean,
+			default: false
+		},
+		// 是否可以滚动
+		scrollable: {
+			type: Boolean,
+			default: true
+		},
+		// 文字超长是否换行
+		wrapable: {
+			type: Boolean,
+			default: false
+		},
+		// 背景颜色
+		bgColor: {
+			type: String,
+			default: '#fdf6ec'
+		},
+		// 文字颜色
+		textColor: {
+			type: String,
+			default: '#f56c6c'
+		}
+	},
+	methods: {
+		handleClick(e: any) {
+			this.$emit('click', e)
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-notice-bar {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 18rpx 24rpx;
+	background-color: v-bind(bgColor);
+	border-radius: 8rpx;
+
+	.mms-notice-bar__left {
+		margin-right: 8rpx;
+		flex-shrink: 0;
+	}
+
+	.mms-notice-bar__content {
+		flex: 1;
+		font-size: 26rpx;
+		color: v-bind(textColor);
+		line-height: 1.6;
+		overflow: hidden;
+
+		/* 滚动动画 */
+		&.mms-notice-bar__content--disabled {
+			white-space: nowrap;
+			animation: mms-notice-scroll 15s linear infinite;
+		}
+	}
+
+	.mms-notice-bar__right {
+		margin-left: 16rpx;
+		flex-shrink: 0;
+
+		.mms-notice-bar__close {
+			display: flex;
+			align-items: center;
+			font-size: 26rpx;
+			color: #c0c4cc;
+		}
+	}
+
+	&.mms-notice-bar--wrapable {
+		.mms-notice-bar__content {
+			white-space: normal;
+			animation: none;
+		}
+	}
+}
+
+@keyframes mms-notice-scroll {
+	0% {
+		transform: translate(0, 0);
+	}
+	100% {
+		transform: translate(-100%, 0);
+	}
+}
+</style>

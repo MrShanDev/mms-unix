@@ -1,0 +1,148 @@
+<template>
+	<view class="mms-cell" :class="{'mms-cell--center': center, 'mms-cell--border': border}" @click="handleClick">
+		<view class="mms-cell__left">
+			<slot name="icon"></slot>
+			<view class="mms-cell__content">
+				<view class="mms-cell__title" :class="{'mms-cell__title--disabled': disabled}">
+					<slot></slot>
+					<text v-if="label" class="mms-cell__label">{{ label }}</text>
+				</view>
+				<view v-if="brief" class="mms-cell__brief">{{ brief }}</view>
+			</view>
+		</view>
+		<view class="mms-cell__right">
+			<slot name="right"></slot>
+			<text class="mms-cell__value" :class="{'mms-cell__value--disabled': disabled}">{{ value }}</text>
+			<view v-if="isLink" class="mms-cell__arrow">
+				<icon name="right-arrow"></icon>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsCell',
+	emits: ['click'],
+	props: {
+		// 左侧标题
+		label: {
+			type: String,
+			default: ''
+		},
+		// 右侧内容
+		value: {
+			type: String,
+			default: ''
+		},
+		// 标题下方的提示说明
+		brief: {
+			type: String,
+			default: ''
+		},
+		// 是否禁止点击
+		disabled: {
+			type: Boolean,
+			default: false
+		},
+		// 是否展示下边框
+		border: {
+			type: Boolean,
+			default: true
+		},
+		// 是否垂直居中对齐
+		center: {
+			type: Boolean,
+			default: false
+		},
+		// 是否链接类型（显示箭头）
+		isLink: {
+			type: Boolean,
+			default: false
+		},
+		// 自定义样式
+		customStyle: {
+			type: Object as PropType<UTSJSONObject>,
+			default: () => ({})
+		}
+	},
+	methods: {
+		handleClick(event: any) {
+			if (!this.disabled) {
+				this.$emit('click', event)
+			}
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-cell {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	box-sizing: border-box;
+	padding: 24rpx 30rpx;
+	background-color: #ffffff;
+	min-height: 90rpx;
+
+	.mms-cell__left {
+		display: flex;
+		align-items: center;
+		flex: 1;
+
+		.mms-cell__content {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+
+			.mms-cell__title {
+				display: flex;
+				align-items: center;
+				font-size: 30rpx;
+				line-height: 1.5;
+				color: #303133;
+
+				&.mms-cell__title--disabled {
+					color: #c0c4cc;
+				}
+			}
+
+			.mms-cell__brief {
+				font-size: 24rpx;
+				color: #606266;
+				margin-top: 8rpx;
+				line-height: 1.5;
+			}
+		}
+	}
+
+	.mms-cell__right {
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+
+		.mms-cell__value {
+			font-size: 28rpx;
+			color: #606266;
+			text-align: right;
+
+			&.mms-cell__value--disabled {
+				color: #c0c4cc;
+			}
+		}
+
+		.mms-cell__arrow {
+			margin-left: 10rpx;
+		}
+	}
+
+	&.mms-cell--center {
+		align-items: center;
+	}
+
+	&.mms-cell--border {
+		border-bottom: 1rpx solid #e4e7ed;
+	}
+}
+</style>

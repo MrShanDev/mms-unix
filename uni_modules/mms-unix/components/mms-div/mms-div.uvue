@@ -1,0 +1,97 @@
+<template>
+	<view class="mms-div" :class="getDividerClass" :style="{ backgroundColor: backgroundColor, height: height }">
+		<view v-if="contentPosition !== 'center'" class="mms-div__content" :class="[`mms-div__content--${contentPosition}`, textClass ? textClass : '']" :style="{ color: textColor, fontSize: fontSize + 'rpx' }">
+			<slot></slot>
+			<text v-if="text">{{ text }}</text>
+		</view>
+		<view v-else class="mms-div__content mms-div__content--center" :class="[textClass ? textClass : '']" :style="{ color: textColor, fontSize: fontSize + 'rpx' }">
+			<slot></slot>
+			<text v-if="text">{{ text }}</text>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsDiv',
+	props: {
+		// 分割线颜色
+		backgroundColor: {
+			type: String,
+			default: ''
+		},
+		// 文字颜色
+		textColor: {
+			type: String,
+			default: '#909399'
+		},
+		// 文字大小
+		fontSize: {
+			type: [Number, String],
+			default: 28
+		},
+		// 分割线高度
+		height: {
+			type: String,
+			default: '1rpx'
+		},
+		// 文字位置 left/center/right
+		contentPosition: {
+			type: String,
+			default: 'center'
+		},
+		// 文字内容
+		text: {
+			type: String,
+			default: ''
+		},
+		// 文字自定义类名
+		textClass: {
+			type: String,
+			default: ''
+		}
+	},
+	computed: {
+		getDividerClass() {
+			const classes: string[] = ['mms-div']
+			if (this.text || this.$slots.default) {
+				classes.push('mms-div--has-text')
+			}
+			return classes.join(' ')
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-div {
+	position: relative;
+	box-sizing: border-box;
+	background-color: #e4e7ed;
+
+	.mms-div__content {
+		position: absolute;
+		background-color: #ffffff;
+		padding: 0 16rpx;
+		transform: translateY(-50%);
+		color: #909399;
+
+		&.mms-div__content--left {
+			left: 20rpx;
+		}
+
+		&.mms-div__content--center {
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+
+		&.mms-div__content--right {
+			right: 20rpx;
+		}
+	}
+
+	&.mms-div--has-text {
+		background-color: transparent;
+	}
+}
+</style>

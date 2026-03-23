@@ -1,0 +1,67 @@
+<template>
+	<view class="mms-col" :class="getGutterClass" :style="getStyle">
+		<slot></slot>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsCol',
+	props: {
+		// 栅格占据的列数，总共24栅格
+		span: {
+			type: [Number, String],
+			default: 24
+		},
+		// 左侧间距
+		offset: {
+			type: [Number, String],
+			default: 0
+		},
+		// 自定义元素宽度
+		width: {
+			type: [Number, String],
+			default: ''
+		},
+		// 自定义padding
+		padding: {
+			type: [Number, String],
+			default: ''
+		}
+	},
+	computed: {
+		getGutterClass() {
+			// 如果父row设置了gutter，需要添加padding-left
+			return 'mms-col'
+		},
+		getStyle() {
+			const style: UTSJSONObject = {}
+			let span = Number(this.span)
+			if (span > 24) span = 24
+			if (span < 1) span = 1
+			// 计算百分比宽度
+			const percent = (span / 24 * 100) + '%'
+			style.width = this.width || percent
+			// 左侧偏移
+			if (this.offset > 0) {
+				const offsetPercent = (Number(this.offset) / 24 * 100) + '%'
+				style.marginLeft = offsetPercent
+			}
+			// 自定义padding
+			if (this.padding) {
+				const p = Number(this.padding)
+				style.paddingLeft = p + 'rpx'
+				style.paddingRight = p + 'rpx'
+			}
+			return style
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-col {
+	float: left;
+	box-sizing: border-box;
+}
+</style>

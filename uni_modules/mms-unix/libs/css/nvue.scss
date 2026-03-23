@@ -1,0 +1,5 @@
+/* nvue 特有样式 */
+/* nvue 中flex默认就是flex，不需要特别处理 */
+page {
+  background-color: var(--mms-bg-color, #f5f7fa);
+}

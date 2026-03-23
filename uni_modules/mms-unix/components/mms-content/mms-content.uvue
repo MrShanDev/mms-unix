@@ -1,0 +1,93 @@
+<template>
+	<view class="mms-wing__blank" :class="[radius?'mms-wingblank__hidden':'',getPadding?'':`mms-wingblank__${size}`]"
+		:style="getStyles" @tap="handleClick">
+		<slot></slot>
+	</view>
+</template>
+
+<script lang="uts">
+	import { PropType } from 'vue';
+	export default {
+		name: "mmsWingBlank",
+		emits: ['click'],
+		props: {
+			//边距大小
+			size: {
+				type: String as unknown as PropType<'small' | 'default' | 'large'>, // 双重断言
+				default: 'default',
+				validator: (value : string) => ['small', 'default', 'large'].includes(value) // 可选校验
+			},
+			//自定义
+			gap: {
+				type: [Number, String] as unknown as PropType<number | string>,
+				default: 0
+			},
+			//背景
+			background: {
+				type: String as unknown as PropType<string>,
+				default: 'transparent'
+			},
+			//圆角
+			radius: {
+				type: [Number, String] as unknown as PropType<number | string>,
+				default: 0
+			},
+			//上边距
+			marginTop: {
+				type: [Number, String] as unknown as PropType<number | string>,
+				default: 20
+			},
+			//下边距
+			marginBottom: {
+				type: [Number, String] as unknown as PropType<number | string>,
+				default: 20
+			}
+		},
+		computed: {
+			getPadding() {
+				let styles = '';
+				const padding : number = Number(this.gap)
+				if (padding && padding > 0) {
+					styles += `padding:0 ${padding}rpx;`
+				}
+				return styles
+			},
+			getStyles() {
+				let styles : string =
+					`background:${this.background};border-radius:${this.radius}rpx;margin-top:${this.marginTop}rpx;margin-bottom:${this.marginBottom}rpx;`;
+				styles += this.getPadding;
+				return styles
+			}
+		},
+		methods: {
+			handleClick() {
+				this.$emit('click')
+			}
+		}
+	}
+</script>
+
+<style scoped lang="scss">
+	.mms-wing__blank {
+		/* #ifndef APP-NVUE */
+		width: 100%;
+		box-sizing: border-box;
+		/* #endif */
+	}
+
+	.mms-wingblank__hidden {
+		overflow: hidden;
+	}
+
+	.mms-wingblank__small {
+		padding: 0 10rpx;
+	}
+
+	.mms-wingblank__default {
+		padding: 0 20rpx;
+	}
+
+	.mms-wingblank__large {
+		padding: 0 30rpx;
+	}
+</style>

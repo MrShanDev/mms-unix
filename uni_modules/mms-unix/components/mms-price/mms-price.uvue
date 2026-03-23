@@ -1,0 +1,58 @@
+<template>
+	<view class="mms-price">
+		<text v-if="symbol" class="mms-price__symbol">{{ symbol }}</text>
+		<text class="mms-price__price" :class="{'mms-price__price--small': small}">{{ price }}</text>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsPrice',
+	props: {
+		// 价格
+		price: {
+			type: [Number, String],
+			default: '0.00'
+		},
+		// 货币符号
+		symbol: {
+			type: String,
+			default: '¥'
+		},
+		// 是否小数部分缩小
+		small: {
+			type: Boolean,
+			default: true
+		},
+		// 颜色
+		color: {
+			type: String,
+			default: '#303133'
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.mms-price {
+	display: inline-block;
+	font-weight: 500;
+	color: v-bind(color);
+	line-height: 1;
+
+	.mms-price__symbol {
+		font-size: 0.6em;
+		margin-right: 2rpx;
+		vertical-align: top;
+	}
+
+	.mms-price__price {
+		.mms-price__price--small {
+			&::after {
+				content: '';
+				display: inline;
+			}
+		}
+	}
+}
+</style>

@@ -1,0 +1,19 @@
+// 引入公共基础样式
+@import "./libs/css/common.scss";
+@import "./libs/css/flex.scss";
+@import "./libs/css/color.scss";
+
+// H5特有样式
+/* #ifdef H5 */
+@import "./libs/css/h5.scss";
+/* #endif */
+
+// 小程序特有样式
+/* #ifdef MP */
+@import "./libs/css/mp.scss";
+/* #endif */
+
+// APP NVue 特有样式
+/* #ifdef APP-NVUE */
+@import "./libs/css/nvue.scss";
+/* #endif */

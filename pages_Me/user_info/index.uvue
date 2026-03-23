@@ -1,0 +1,329 @@
+<template>
+	<view class="container">
+		<view class="content">
+			<!-- 头像区域 -->
+			<view class="head">
+				<view class="avatar" @click="changeAvatar">
+					<image :src="userInfo.headPortrait || defaultFace" mode="aspectFill"></image>
+				</view>
+				<view class="change" @click="changeAvatar">更换头像</view>
+			</view>
+
+			<!-- 昵称 -->
+			<view class="item flex flex-row justify-between align-center" @click="editNickname">
+				<view class="item_l">昵称</view>
+				<view class="item_r flex flex-row">
+					<text class="nickname">{{ userInfo.nickname || '暂无昵称' }}</text>
+					<text class="icon iconfont icon-youjiantou arrow-icon"></text>
+				</view>
+			</view>
+
+			<!-- 性别 -->
+			<view class="item flex flex-row justify-between align-center">
+				<view class="item_l">性别</view>
+				<view class="item_r">
+					<picker @change="bindPickerChange" :value="getGenderIndex(userInfo.sex)" :range="genderArray">
+						<view class="uni-input picker-text">
+							{{ getGenderText(userInfo.sex) }}
+							<text class="icon iconfont icon-youjiantou arrow-icon"></text>
+						</view>
+					</picker>
+				</view>
+			</view>
+
+			<!-- 生日 -->
+			<view class="item flex flex-row justify-between align-center">
+				<view class="item_l">生日</view>
+				<view class="item_r">
+					<picker mode="date" :value="birthdayValue" :start="startDate" :end="endDate" @change="bindDateChange">
+						<view class="uni-input picker-text">
+							{{ userInfo.birthday && userInfo.birthday != 'null' ? userInfo.birthday : '请选择生日' }}
+							<text class="icon iconfont icon-youjiantou arrow-icon"></text>
+						</view>
+					</picker>
+				</view>
+			</view>
+		</view>
+
+		<!-- 修改昵称弹窗 -->
+		<view class="modal" v-if="showNicknameModal">
+			<view class="modal-mask" @click="closeNicknameModal"></view>
+			<view class="modal-content">
+				<view class="modal-header">修改昵称</view>
+				<view class="modal-body">
+					<input class="nickname-input" v-model="newNickname" placeholder="请输入新的昵称" />
+				</view>
+				<view class="modal-footer flex flex-row">
+					<view class="modal-btn cancel-btn" @click="closeNicknameModal">取消</view>
+					<view class="modal-btn confirm-btn" @click="confirmNicknameChange">确定</view>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { ref, computed } from 'vue'
+	import { storage } from '@/common/utils/storage'
+	import { updateMemberInfo } from '@/common/api/mallApi'
+
+	const defaultFace = '/static/img/heading.png'
+	const genderArray = ['保密', '男', '女']
+	const showNicknameModal = ref(false)
+	const newNickname = ref('')
+
+	const userInfo = ref<UTSJSONObject>(storage.getUserInfo() ?? {} as UTSJSONObject)
+
+	// 生日显示值
+	const birthdayValue = computed((): string => {
+		const b = userInfo.value['birthday']
+		if (b != null && b != '' && b != 'null') {
+			return b as string
+		}
+		return ''
+	})
+
+	// 日期选择器范围
+	const startDate = '1900-01-01'
+	const endDate = computed((): string => {
+		const now = new Date()
+		const y = now.getFullYear()
+		const m = String(now.getMonth() + 1).padStart(2, '0')
+		const d = String(now.getDate()).padStart(2, '0')
+		return `${y}-${m}-${d}`
+	})
+
+	// 获取性别显示文本
+	function getGenderText(sex: any): string {
+		if (sex == null || sex === '') {
+			return '请选择性别'
+		}
+		const index = parseInt(sex as string)
+		return genderArray[index] ?? '保密'
+	}
+
+	// 获取性别索引
+	function getGenderIndex(sex: any): number {
+		if (sex == null || sex === '') {
+			return 0
+		}
+		const index = parseInt(sex as string)
+		return isNaN(index) ? 0 : index
+	}
+
+	// 更换头像
+	function changeAvatar() {
+		uni.showActionSheet({
+			itemList: ['拍照', '从相册选择'],
+			success: (res) => {
+				const sourceType = res.tapIndex === 0 ? ['camera'] : ['album']
+				uni.chooseImage({
+					count: 1,
+					sizeType: ['compressed'],
+					sourceType: sourceType as string[],
+					success: (imageRes) => {
+						const tempFilePaths = imageRes.tempFilePaths
+						if (tempFilePaths != null && tempFilePaths.length > 0) {
+							const filePath = tempFilePaths[0]
+							updateMemberInfo({ type: 4, headPortrait: filePath }).then(res => {
+								if (res.code == 200) {
+									uni.showToast({ title: '头像更换成功', icon: 'success' })
+									userInfo.value['headPortrait'] = filePath
+									storage.setUserInfo(userInfo.value)
+								} else {
+									uni.showToast({ title: '头像更换失败', icon: 'none' })
+								}
+							}).catch(() => {
+								uni.showToast({ title: '头像更换失败', icon: 'none' })
+							})
+						}
+					},
+					fail: () => {
+						uni.showToast({ title: '选择图片失败', icon: 'none' })
+					}
+				})
+			}
+		})
+	}
+
+	// 编辑昵称
+	function editNickname() {
+		newNickname.value = (userInfo.value['nickname'] ?? '') as string
+		showNicknameModal.value = true
+	}
+
+	// 关闭昵称修改弹窗
+	function closeNicknameModal() {
+		showNicknameModal.value = false
+		newNickname.value = ''
+	}
+
+	// 确认修改昵称
+	function confirmNicknameChange() {
+		if (newNickname.value === '') {
+			uni.showToast({ title: '昵称不能为空', icon: 'none' })
+			return
+		}
+		updateMemberInfo({ type: 3, nickname: newNickname.value }).then(res => {
+			if (res.code == 200) {
+				uni.showToast({ title: '昵称修改成功', icon: 'success' })
+				userInfo.value['nickname'] = newNickname.value
+				storage.setUserInfo(userInfo.value)
+			} else {
+				uni.showToast({ title: '昵称修改失败', icon: 'none' })
+			}
+		}).catch(() => {
+			uni.showToast({ title: '昵称修改失败', icon: 'none' })
+		}).finally(() => {
+			closeNicknameModal()
+		})
+	}
+
+	// 性别选择
+	function bindPickerChange(e: any) {
+		const index = parseInt(e.detail.value as string)
+		updateMemberInfo({ type: 5, sex: index }).then(res => {
+			if (res.code == 200) {
+				uni.showToast({ title: '性别修改成功', icon: 'success' })
+				userInfo.value['sex'] = index
+				storage.setUserInfo(userInfo.value)
+			} else {
+				uni.showToast({ title: '性别修改失败', icon: 'none' })
+			}
+		}).catch(() => {
+			uni.showToast({ title: '性别修改失败', icon: 'none' })
+		})
+	}
+
+	// 生日选择
+	function bindDateChange(e: any) {
+		const date = e.detail.value as string
+		updateMemberInfo({ type: 7, birthday: date + ' 00:00:00' }).then(res => {
+			if (res.code == 200) {
+				uni.showToast({ title: '生日修改成功', icon: 'success' })
+				userInfo.value['birthday'] = date
+				storage.setUserInfo(userInfo.value)
+			} else {
+				uni.showToast({ title: '生日修改失败', icon: 'none' })
+			}
+		}).catch(() => {
+			uni.showToast({ title: '生日修改失败', icon: 'none' })
+		})
+	}
+
+	onShow(() => {
+		// 刷新用户信息
+		const info = storage.getUserInfo()
+		if (info != null) {
+			userInfo.value = info
+		}
+	})
+</script>
+
+<style lang="scss" scoped>
+.container { min-height: 100vh; background-color: #f5f5f5; }
+
+.flex { display: flex; }
+.flex-row { flex-direction: row; }
+.align-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+
+.content {
+	padding: 20rpx;
+}
+
+// 头像区域
+.head {
+	padding: 50rpx 0 30rpx;
+	margin-bottom: 20rpx;
+	text-align: center;
+	background-color: #fff;
+	border-radius: 20rpx;
+}
+.avatar {
+	margin: 0 auto 30rpx;
+	width: 160rpx;
+	height: 160rpx;
+	border-radius: 50%;
+	border: 4rpx solid #f0f0f0;
+	overflow: hidden;
+}
+.avatar image { width: 100%; height: 100%; }
+.change { color: #ff2727; font-weight: 600; }
+
+// 列表项
+.item {
+	padding: 0 30rpx;
+	height: 100rpx;
+	margin-bottom: 2rpx;
+	background-color: #fff;
+	border-bottom: 1rpx solid #eee;
+}
+.item_l { color: #303133; font-size: 32rpx; }
+.item_r { color: #909193; text-align: right; }
+.nickname { color: #606266; margin-right: 10rpx; }
+.arrow-icon { color: #c0c4cc; font-size: 28rpx; }
+.picker-text { color: #606266; }
+.uni-input { display: flex; flex-direction: row; }
+
+// 修改昵称弹窗
+.modal {
+	.modal-mask {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.6);
+		z-index: 999;
+	}
+	.modal-content {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 80%;
+		background: #fff;
+		border-radius: 16rpx;
+		z-index: 1000;
+	}
+	.modal-header {
+		padding: 30rpx;
+		text-align: center;
+		font-size: 36rpx;
+		color: #303133;
+		border-bottom: 1rpx solid #eee;
+	}
+	.modal-body {
+		padding: 40rpx 30rpx;
+	}
+	.nickname-input {
+		width: 100%;
+		height: 80rpx;
+		padding: 0 20rpx;
+		border: 1rpx solid #dadbde;
+		border-radius: 12rpx;
+		font-size: 32rpx;
+		color: #303133;
+		box-sizing: border-box;
+	}
+	.modal-footer {
+		border-top: 1rpx solid #eee;
+	}
+	.modal-btn {
+		flex: 1;
+		height: 80rpx;
+		line-height: 80rpx;
+		text-align: center;
+		font-size: 32rpx;
+	}
+	.cancel-btn {
+		color: #909193;
+		border-right: 1rpx solid #eee;
+	}
+	.confirm-btn {
+		color: #ff2727;
+		font-weight: 500;
+	}
+}
+</style>
