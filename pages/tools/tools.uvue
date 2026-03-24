@@ -1,0 +1,279 @@
+<template>
+	<view class="page-root">
+		<scroll-view class="page-scroll" scroll-y>
+			<view class="page-inner">
+				<view class="header">
+					<text class="title">开发工具</text>
+					<text class="sub">常用能力快速试用（与 mms-tools、common/api 对齐）</text>
+				</view>
+
+				<view class="section">
+					<text class="section-title">接口请求</text>
+					<text class="desc">
+						业务接口请用 Request.uts 的 request / get / post / publicRequest 等，响应需符合 { code, msg, data }。下方「封装请求」走项目 checkUpdate；「原始 HTTP」为任意 JSON 演示。
+					</text>
+					<view class="btn-row">
+						<view class="btn btn--primary" @tap="onBizRequestDemo">
+							<text class="btn-text btn-text--light">封装请求（checkUpdate）</text>
+						</view>
+						<view class="btn" @tap="onRawHttpDemo">
+							<text class="btn-text">原始 HTTP（外链 JSON）</text>
+						</view>
+					</view>
+				</view>
+
+				<view class="section">
+					<text class="section-title">缓存</text>
+					<text class="desc">
+						推荐使用 Storage.uts 的 storage（含 Token / 用户信息快捷方法）；简单键值也可用 Ut.uts 的 get / set。演示键名：{{ demoStorageKey }}
+					</text>
+					<view class="btn-row">
+						<view class="btn btn--primary" @tap="onStorageWrite">
+							<text class="btn-text btn-text--light">写入演示数据</text>
+						</view>
+						<view class="btn" @tap="onStorageRead">
+							<text class="btn-text">读取</text>
+						</view>
+						<view class="btn" @tap="onStorageRemoveDemo">
+							<text class="btn-text">清除演示键</text>
+						</view>
+					</view>
+				</view>
+
+				<view class="section">
+					<text class="section-title">通信</text>
+					<text class="desc">
+						页面传参可用 navigateTo 的 eventChannel；登录态变更可依赖 Storage 写入后调用 AuthNotifier.notifyAuthChange，配合 useAuth 做全局响应。组件内向父级通信用 emit。
+					</text>
+					<view class="btn-row">
+						<view class="btn btn--primary" @tap="onNotifyAuthChange">
+							<text class="btn-text btn-text--light">触发 notifyAuthChange</text>
+						</view>
+					</view>
+				</view>
+
+				<view class="section">
+					<text class="section-title">权限与登录</text>
+					<text class="desc">
+						业务登录态用 Auth.uts（isLoggedIn / checkLogin）；需登录页面在 common/config.ts 的 loginRequiredPaths 配置。小程序授权设置可尝试打开系统设置页（仅部分端支持）。
+					</text>
+					<view class="btn-row">
+						<view class="btn btn--primary" @tap="onCheckLoginState">
+							<text class="btn-text btn-text--light">是否已登录</text>
+						</view>
+						<view class="btn" @tap="onGoLogin">
+							<text class="btn-text">跳转登录页</text>
+						</view>
+						<view class="btn" @tap="onOpenPermissionSetting">
+							<text class="btn-text">授权设置</text>
+						</view>
+					</view>
+				</view>
+
+				<view class="section">
+					<text class="section-title">剪贴板</text>
+					<text class="desc">调用 Ut.copyToClipboard 写入系统剪贴板</text>
+					<view class="btn-row">
+						<view class="btn btn--primary" @tap="onCopyDemo">
+							<text class="btn-text btn-text--light">复制示例文本</text>
+						</view>
+					</view>
+				</view>
+
+				<view class="section">
+					<text class="section-title">页面跳转</text>
+					<text class="desc">Ut.jumpTo 会根据路径自动选择 navigateTo 或 switchTab</text>
+					<view class="btn-row">
+						<view class="btn" @tap="openDemoPage">
+							<text class="btn-text">打开 Button 演示页</text>
+						</view>
+					</view>
+				</view>
+			</view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { copyToClipboard, jumpTo, msg, jslog } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+	import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
+	import { notifyAuthChange } from '@/uni_modules/mms-unix/components/mms-tools/AuthNotifier.uts'
+	import { isLoggedIn, checkLogin } from '@/uni_modules/mms-unix/components/mms-tools/Auth.uts'
+	import { checkUpdate } from '@/common/api/mallApi.uts'
+
+	const demoStorageKey = 'mms_tools_demo_kv'
+
+	function onCopyDemo() {
+		copyToClipboard('MMS-UNIX 剪贴板示例')
+	}
+
+	function openDemoPage() {
+		jumpTo('/pages_demo/button/button', 'to')
+	}
+
+	async function onBizRequestDemo() {
+		try {
+			const res = await checkUpdate(100)
+			msg('code ' + res.code + '，' + res.msg)
+			jslog('checkUpdate', res)
+		} catch (e) {
+			msg('请求未完成（网络或接口不可用属正常）')
+		}
+	}
+
+	function onRawHttpDemo() {
+		uni.request({
+			url: 'https://jsonplaceholder.typicode.com/posts/1',
+			method: 'GET',
+			success: (res) => {
+				const st = res.statusCode
+				if (st != 200) {
+					msg('HTTP ' + st)
+					return
+				}
+				const d = res.data as UTSJSONObject
+				const t = d['title']
+				if (t != null) {
+					const s = '' + t
+					const short = s.length > 20 ? s.substring(0, 20) + '...' : s
+					msg('标题：' + short)
+				} else {
+					msg('已收到响应')
+				}
+				jslog('rawHttp', res.data)
+			},
+			fail: () => {
+				msg('请求失败，请检查网络')
+			}
+		})
+	}
+
+	function onStorageWrite() {
+		storage.set(demoStorageKey, { from: 'tools', at: Date.now() })
+		msg('已写入 Storage')
+	}
+
+	function onStorageRead() {
+		const v = storage.get(demoStorageKey)
+		if (v == null) {
+			msg('暂无演示数据，请先写入')
+			return
+		}
+		msg('已读取，见控制台')
+		jslog('storage demo', v)
+	}
+
+	function onStorageRemoveDemo() {
+		storage.remove(demoStorageKey)
+		msg('已清除演示键')
+	}
+
+	function onNotifyAuthChange() {
+		notifyAuthChange()
+		msg('已触发 notifyAuthChange')
+	}
+
+	function onCheckLoginState() {
+		msg(isLoggedIn() ? '当前已登录' : '当前未登录')
+	}
+
+	function onGoLogin() {
+		checkLogin('/pages/tools/tools')
+	}
+
+	function onOpenPermissionSetting() {
+		if (uni.canIUse('openSetting')) {
+			uni.openSetting({})
+			return
+		}
+		msg('当前端无 openSetting：App 请在 manifest 配置权限；H5 由浏览器管理授权')
+	}
+</script>
+
+<style lang="scss">
+	.page-root {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-height: 100%;
+		background-color: #f5f5f5;
+	}
+
+	.page-scroll {
+		flex: 1;
+		height: 0;
+		box-sizing: border-box;
+	}
+
+	.page-inner {
+		padding: 24rpx;
+		padding-bottom: 200rpx;
+	}
+
+	.header {
+		background-color: #ff0844;
+		border-radius: 16rpx;
+		padding: 36rpx 28rpx;
+		margin-bottom: 24rpx;
+	}
+
+	.title {
+		font-size: 40rpx;
+		font-weight: bold;
+		color: #ffffff;
+		margin-bottom: 8rpx;
+	}
+
+	.sub {
+		font-size: 26rpx;
+		color: rgba(255, 255, 255, 0.85);
+		line-height: 1.5;
+	}
+
+	.section {
+		background-color: #ffffff;
+		border-radius: 16rpx;
+		padding: 28rpx;
+		margin-bottom: 20rpx;
+	}
+
+	.section-title {
+		font-size: 30rpx;
+		font-weight: 600;
+		color: #333333;
+		margin-bottom: 12rpx;
+	}
+
+	.desc {
+		font-size: 26rpx;
+		color: #666666;
+		line-height: 1.5;
+		margin-bottom: 24rpx;
+	}
+
+	.btn-row {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 16rpx;
+	}
+
+	.btn {
+		padding: 20rpx 28rpx;
+		border-radius: 12rpx;
+		background-color: #f0f0f0;
+	}
+
+	.btn--primary {
+		background-color: #ff0844;
+	}
+
+	.btn-text {
+		font-size: 26rpx;
+		color: #333333;
+	}
+
+	.btn-text--light {
+		color: #ffffff;
+	}
+</style>

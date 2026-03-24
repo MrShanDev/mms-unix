@@ -1,0 +1,53 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">悬浮扩展按钮</text>
+			<text class="demo-desc">右下角 FAB，点击展开子项；可点击遮罩关闭。</text>
+		</view>
+
+		<mms-fab :btn-list="fabBtns" :mask-closable="true" @click="onFabClick"></mms-fab>
+	</view>
+</template>
+
+<script setup lang="uts">
+const fabBtns = [
+	{ bgColor: '#16C2C2', text: '关于', fontSize: 28, color: '#fff' },
+	{ bgColor: '#64B532', text: '分享', fontSize: 28, color: '#fff' }
+]
+
+function onFabClick(e: UTSJSONObject) {
+	const i = e['index']
+	uni.showToast({ title: 'fab index ' + i, icon: 'none' })
+}
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff0844;
+}
+
+.demo-desc {
+	font-size: 26rpx;
+	color: #666666;
+	line-height: 1.5;
+	display: block;
+}
+</style>

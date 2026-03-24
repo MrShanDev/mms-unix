@@ -1,0 +1,40 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">横向步骤条</text>
+			<mms-steps :items="stepItems" :active-steps="1" spacing="120rpx" direction="row"></mms-steps>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+const stepItems = [
+	{ title: '下单', desc: '03-24' },
+	{ title: '发货', desc: '03-24' },
+	{ title: '签收', desc: '03-25' }
+]
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff0844;
+}
+</style>

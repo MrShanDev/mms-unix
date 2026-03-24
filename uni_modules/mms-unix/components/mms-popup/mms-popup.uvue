@@ -1,8 +1,23 @@
 <template>
 	<view class="mms-popup">
-		<mms-overlay :show="show" :opacity="overlayOpacity" :z-index="zIndex - 1" @click="handleOverlayClick"></mms-overlay>
-		<view class="mms-popup__content" :class="[`mms-popup--${position}`, {'mms-popup--round': round}]" :style="contentStyle">
-			<view class="mms-popup__content-inner" :class="{'mms-popup--closeable': closeable}">
+		<mms-overlay
+			:show="overlayVisible"
+			:opacity="overlayOpacity"
+			:z-index="zIndex - 1"
+			:duration-ms="duration"
+			@click="handleOverlayClick"
+		></mms-overlay>
+		<view
+			v-if="contentMounted"
+			class="mms-popup__content"
+			:class="[
+				`mms-popup--${position}`,
+				{ 'mms-popup--round': round },
+				{ 'mms-popup__content--show': panelShowClass }
+			]"
+			:style="contentStyle"
+		>
+			<view class="mms-popup__content-inner" :class="{ 'mms-popup--closeable': closeable }">
 				<slot></slot>
 				<view class="mms-popup__close" @tap="handleCloseClick" v-if="closeable">
 					<icon name="close" size="40" color="#c0c4cc"></icon>
@@ -15,70 +30,171 @@
 <script lang="uts">
 export default {
 	name: 'mmsPopup',
-	emits: ['close', 'overlay-click'],
+	emits: ['close', 'overlay-click', 'update:show', 'update:visible'],
 	props: {
-		// 是否显示
 		show: {
 			type: Boolean,
 			default: false
 		},
-		// 弹窗位置 bottom/center/top
+		visible: {
+			type: Boolean,
+			default: false
+		},
 		position: {
 			type: String,
 			default: 'bottom'
 		},
-		// 是否显示圆角
 		round: {
 			type: Boolean,
 			default: true
 		},
-		// 蒙板透明度
 		overlayOpacity: {
 			type: [Number, String],
 			default: 0.5
 		},
-		// 是否显示关闭按钮
 		closeable: {
 			type: Boolean,
 			default: false
 		},
-		// 层级
 		zIndex: {
 			type: [Number, String],
 			default: 999
 		},
-		// 点击遮罩是否关闭
 		closeOnClickOverlay: {
 			type: Boolean,
 			default: true
 		},
-		// 最大高度
 		maxHeight: {
 			type: [Number, String],
 			default: 80
+		},
+		/** 是否启用显示/隐藏过渡 */
+		animation: {
+			type: Boolean,
+			default: true
+		},
+		/** 与 CSS 过渡时长一致（毫秒），关闭后延迟卸载面板 */
+		duration: {
+			type: Number,
+			default: 300
+		}
+	},
+	data() {
+		return {
+			leaving: false as boolean,
+			panelActive: false as boolean,
+			closeTimer: null as number | null
 		}
 	},
 	computed: {
-		contentStyle() {
-			const maxHeight = this.maxHeight + 'vh'
-			return {
-				maxHeight: maxHeight,
-				zIndex: this.zIndex
+		isOpen(): boolean {
+			return this.show || this.visible
+		},
+		contentMounted(): boolean {
+			if (!this.animation) {
+				return this.isOpen
+			}
+			return this.isOpen || this.leaving
+		},
+		overlayVisible(): boolean {
+			return this.isOpen
+		},
+		panelShowClass(): boolean {
+			if (!this.animation) {
+				return this.isOpen
+			}
+			return this.panelActive
+		},
+		contentStyle(): any {
+			const sec = this.duration / 1000
+			const durStr = sec + 's'
+			const pos = this.position as string
+			const style: any = {
+				zIndex: this.zIndex,
+				transitionDuration: durStr
+			}
+			// 左右侧：高度由样式 top:0 + bottom:0 拉满视口，不再套默认 maxHeight（避免 80vh 裁成「不满屏」）
+			if (pos === 'left' || pos === 'right') {
+				style.maxHeight = '100%'
+			} else {
+				style.maxHeight = this.maxHeight + 'vh'
+			}
+			return style
+		}
+	},
+	watch: {
+		isOpen: {
+			handler(val: boolean) {
+				this.onIsOpenChange(val)
 			}
 		}
 	},
+	mounted() {
+		if (this.isOpen) {
+			this.openEnter()
+		}
+	},
+	beforeUnmount() {
+		this.cancelCloseTimer()
+	},
 	methods: {
+		cancelCloseTimer() {
+			if (this.closeTimer != null) {
+				clearTimeout(this.closeTimer)
+				this.closeTimer = null
+			}
+		},
+		openEnter() {
+			if (!this.animation) {
+				this.panelActive = true
+				this.leaving = false
+				return
+			}
+			this.leaving = false
+			this.panelActive = false
+			this.$nextTick(() => {
+				this.panelActive = true
+			})
+		},
+		closeLeave() {
+			if (!this.animation) {
+				this.panelActive = false
+				this.leaving = false
+				return
+			}
+			this.panelActive = false
+			this.leaving = true
+			this.cancelCloseTimer()
+			const ms = this.duration
+			this.closeTimer = setTimeout(() => {
+				this.leaving = false
+				this.closeTimer = null
+			}, ms) as number
+		},
+		onIsOpenChange(val: boolean) {
+			if (val) {
+				this.cancelCloseTimer()
+				this.openEnter()
+			} else {
+				this.closeLeave()
+			}
+		},
+		emitDismiss() {
+			this.$emit('update:show', false)
+			this.$emit('update:visible', false)
+			this.$emit('close')
+		},
 		handleOverlayClick() {
 			if (this.closeOnClickOverlay) {
-				this.$emit('close')
+				this.emitDismiss()
 			}
 			this.$emit('overlay-click')
 		},
 		handleCloseClick() {
-			this.$emit('close')
+			this.emitDismiss()
 		}
 	}
-};
+}
 </script>
 
 <style scoped lang="scss">
@@ -96,11 +212,18 @@ export default {
 		box-sizing: border-box;
 		pointer-events: auto;
 		overflow-y: auto;
+		transition-property: transform, opacity;
+		transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
 
 		&.mms-popup--bottom {
-			bottom: 0;
+			bottom: var(--uni-safe-area-inset-bottom, 0px);
 			left: 0;
 			width: 100%;
+			transform: translateY(100%);
+
+			&.mms-popup__content--show {
+				transform: translateY(0);
+			}
 
 			&.mms-popup--round {
 				border-top-left-radius: 20rpx;
@@ -111,8 +234,14 @@ export default {
 		&.mms-popup--center {
 			top: 50%;
 			left: 50%;
-			transform: translate(-50%, -50%);
 			max-width: 80%;
+			opacity: 0;
+			transform: translate(-50%, -46%) scale(0.94);
+
+			&.mms-popup__content--show {
+				opacity: 1;
+				transform: translate(-50%, -50%) scale(1);
+			}
 
 			&.mms-popup--round {
 				border-radius: 16rpx;
@@ -120,13 +249,54 @@ export default {
 		}
 
 		&.mms-popup--top {
-			top: 0;
+			top: var(--uni-safe-area-inset-top, 0px);
 			left: 0;
 			width: 100%;
+			transform: translateY(-100%);
+
+			&.mms-popup__content--show {
+				transform: translateY(0);
+			}
 
 			&.mms-popup--round {
 				border-bottom-left-radius: 20rpx;
 				border-bottom-right-radius: 20rpx;
+			}
+		}
+
+		&.mms-popup--left {
+			top: var(--uni-safe-area-inset-top, 0px);
+			left: 0;
+			bottom: var(--uni-safe-area-inset-bottom, 0px);
+			width: 70%;
+			max-width: 600rpx;
+			transform: translateX(-100%);
+
+			&.mms-popup__content--show {
+				transform: translateX(0);
+			}
+
+			&.mms-popup--round {
+				border-top-right-radius: 20rpx;
+				border-bottom-right-radius: 20rpx;
+			}
+		}
+
+		&.mms-popup--right {
+			top: var(--uni-safe-area-inset-top, 0px);
+			right: 0;
+			bottom: var(--uni-safe-area-inset-bottom, 0px);
+			width: 70%;
+			max-width: 600rpx;
+			transform: translateX(100%);
+
+			&.mms-popup__content--show {
+				transform: translateX(0);
+			}
+
+			&.mms-popup--round {
+				border-top-left-radius: 20rpx;
+				border-bottom-left-radius: 20rpx;
 			}
 		}
 	}

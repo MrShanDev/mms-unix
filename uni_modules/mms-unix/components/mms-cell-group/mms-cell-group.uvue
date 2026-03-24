@@ -33,7 +33,7 @@ export default {
 
 <style scoped lang="scss">
 .mms-cell-group {
-	margin: 20rpx 0;
+	margin: 0;
 
 	.mms-cell-group__title {
 		padding: 20rpx 30rpx;

@@ -1,0 +1,325 @@
+<template>
+	<view v-if="show">
+		<view v-if="showMask" class="mms-picker__mask" :style="{ zIndex: maskZ }" @tap="onCancel"></view>
+		<view class="mms-picker__panel mms-picker__panel--show" :style="{ zIndex: panelZ }">
+			<view class="mms-picker__head">
+				<text class="mms-picker__btn" @tap="onCancel">{{ cancelText }}</text>
+				<text class="mms-picker__btn mms-picker__btn--ok" @tap="onConfirm">{{ confirmText }}</text>
+			</view>
+			<picker-view class="mms-picker__pv" indicator-style="height: 50px;" :value="pickerValue" @change="onPickerChange">
+				<picker-view-column>
+					<view v-for="(t, i) in col0" :key="i" class="mms-picker__cell">
+						<text class="mms-picker__cell-t">{{ t }}</text>
+					</view>
+				</picker-view-column>
+				<picker-view-column>
+					<view v-for="(t, i) in col1" :key="i" class="mms-picker__cell">
+						<text class="mms-picker__cell-t">{{ t }}</text>
+					</view>
+				</picker-view-column>
+				<picker-view-column>
+					<view v-for="(t, i) in col2" :key="i" class="mms-picker__cell">
+						<text class="mms-picker__cell-t">{{ t }}</text>
+					</view>
+				</picker-view-column>
+			</picker-view>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+type PNode = UTSJSONObject
+
+export default {
+	name: 'mmsPicker',
+	emits: ['confirm', 'cancel', 'columnchange'],
+	props: {
+		show: {
+			type: Boolean,
+			default: false
+		},
+		showMask: {
+			type: Boolean,
+			default: true
+		},
+		tree: {
+			type: Array,
+			default(): any[] {
+				return []
+			}
+		},
+		textKey: {
+			type: String,
+			default: 'text'
+		},
+		childrenKey: {
+			type: String,
+			default: 'children'
+		},
+		cancelText: {
+			type: String,
+			default: '取消'
+		},
+		confirmText: {
+			type: String,
+			default: '确定'
+		},
+		zIndex: {
+			type: Number,
+			default: 10002
+		}
+	},
+	data() {
+		return {
+			pickerValue: [0, 0, 0] as number[]
+		}
+	},
+	computed: {
+		maskZ(): number {
+			return (this.zIndex as number) - 1
+		},
+		panelZ(): number {
+			return this.zIndex as number
+		},
+		col0(): string[] {
+			return this.toLabels(this.rootNodes())
+		},
+		col1(): string[] {
+			const v = this.pickerValue
+			const roots = this.rootNodes()
+			if (roots.length === 0) {
+				return [] as string[]
+			}
+			const i0 = this.clamp(v[0], 0, roots.length - 1)
+			const ch = this.childrenOf(roots[i0])
+			return this.toLabels(ch)
+		},
+		col2(): string[] {
+			const v = this.pickerValue
+			const roots = this.rootNodes()
+			if (roots.length === 0) {
+				return [] as string[]
+			}
+			const i0 = this.clamp(v[0], 0, roots.length - 1)
+			const ch1 = this.childrenOf(roots[i0])
+			if (ch1.length === 0) {
+				return [] as string[]
+			}
+			const i1 = this.clamp(v[1], 0, ch1.length - 1)
+			const ch2 = this.childrenOf(ch1[i1])
+			return this.toLabels(ch2)
+		}
+	},
+	watch: {
+		show(n: boolean) {
+			if (n) {
+				this.pickerValue = [0, 0, 0]
+				this.syncPicker()
+			}
+		},
+		tree() {
+			this.syncPicker()
+		}
+	},
+	methods: {
+		rootNodes(): PNode[] {
+			const arr = this.tree as any[]
+			const out = [] as PNode[]
+			for (let i = 0; i < arr.length; i++) {
+				out.push(arr[i] as PNode)
+			}
+			return out
+		},
+		childrenOf(n: PNode): PNode[] {
+			const k = this.childrenKey as string
+			const ch = n[k]
+			if (ch == null) {
+				return []
+			}
+			const arr = ch as any[]
+			const out = [] as PNode[]
+			for (let i = 0; i < arr.length; i++) {
+				out.push(arr[i] as PNode)
+			}
+			return out
+		},
+		labelOf(n: PNode): string {
+			const k = this.textKey as string
+			const v = n[k]
+			if (v != null) {
+				return '' + v
+			}
+			return ''
+		},
+		toLabels(nodes: PNode[]): string[] {
+			const out = [] as string[]
+			for (let i = 0; i < nodes.length; i++) {
+				out.push(this.labelOf(nodes[i]))
+			}
+			if (out.length === 0) {
+				out.push('-')
+			}
+			return out
+		},
+		clamp(x: number, lo: number, hi: number): number {
+			if (x < lo) {
+				return lo
+			}
+			if (x > hi) {
+				return hi
+			}
+			return x
+		},
+		syncPicker() {
+			const v = this.pickerValue
+			const roots = this.rootNodes()
+			if (roots.length === 0) {
+				return
+			}
+			const i0 = this.clamp(v[0], 0, roots.length - 1)
+			const ch1 = this.childrenOf(roots[i0])
+			let i1 = this.clamp(v[1], 0, Math.max(ch1.length - 1, 0))
+			if (ch1.length === 0) {
+				i1 = 0
+			}
+			let ch2 = [] as PNode[]
+			if (ch1.length > 0) {
+				ch2 = this.childrenOf(ch1[i1])
+			}
+			let i2 = 0
+			if (ch2.length > 0) {
+				i2 = this.clamp(v[2], 0, ch2.length - 1)
+			}
+			this.pickerValue = [i0, i1, i2]
+		},
+		onPickerChange(e: UTSJSONObject) {
+			const d = e['detail'] as UTSJSONObject
+			if (d == null) {
+				return
+			}
+			const val = d['value'] as number[] | null
+			if (val == null || val.length < 3) {
+				return
+			}
+			const i0 = val[0]
+			const i1 = val[1]
+			const i2 = val[2]
+			const old = this.pickerValue
+			if (old[0] !== i0) {
+				this.pickerValue = [i0, 0, 0]
+				this.$emit('columnchange', { column: 0, value: i0 } as UTSJSONObject)
+			} else if (old[1] !== i1) {
+				this.pickerValue = [i0, i1, 0]
+				this.$emit('columnchange', { column: 1, value: i1 } as UTSJSONObject)
+			} else {
+				this.pickerValue = [i0, i1, i2]
+			}
+			this.syncPicker()
+		},
+		onConfirm() {
+			const roots = this.rootNodes()
+			if (roots.length === 0) {
+				this.$emit('confirm', { labels: ['', '', ''], nodes: [] } as UTSJSONObject)
+				return
+			}
+			const v = this.pickerValue
+			const i0 = this.clamp(v[0], 0, roots.length - 1)
+			const n0 = roots[i0]
+			const ch1 = this.childrenOf(n0)
+			const labels = [] as string[]
+			const nodes = [] as PNode[]
+			labels.push(this.labelOf(n0))
+			nodes.push(n0)
+			if (ch1.length > 0) {
+				const i1 = this.clamp(v[1], 0, ch1.length - 1)
+				const n1 = ch1[i1]
+				labels.push(this.labelOf(n1))
+				nodes.push(n1)
+				const ch2 = this.childrenOf(n1)
+				if (ch2.length > 0) {
+					const i2 = this.clamp(v[2], 0, ch2.length - 1)
+					const n2 = ch2[i2]
+					labels.push(this.labelOf(n2))
+					nodes.push(n2)
+				} else {
+					labels.push('')
+				}
+			} else {
+				labels.push('')
+				labels.push('')
+			}
+			this.$emit('confirm', { labels: labels, nodes: nodes, value: v } as UTSJSONObject)
+		},
+		onCancel() {
+			this.$emit('cancel')
+		}
+	}
+}
+</script>
+
+<style scoped lang="scss">
+.mms-picker__mask {
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.45);
+}
+
+.mms-picker__panel {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ffffff;
+	transform: translate3d(0, 100%, 0);
+	transition: transform 0.28s ease;
+	border-top-left-radius: 16rpx;
+	border-top-right-radius: 16rpx;
+	padding-bottom: env(safe-area-inset-bottom);
+}
+
+.mms-picker__panel--show {
+	transform: translate3d(0, 0, 0);
+}
+
+.mms-picker__head {
+	height: 88rpx;
+	padding: 0 28rpx;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: #eeeeee;
+}
+
+.mms-picker__btn {
+	font-size: 30rpx;
+	color: #888888;
+}
+
+.mms-picker__btn--ok {
+	color: #5677fc;
+}
+
+.mms-picker__pv {
+	height: 480rpx;
+	width: 100%;
+}
+
+.mms-picker__cell {
+	height: 72rpx;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.mms-picker__cell-t {
+	font-size: 30rpx;
+	color: #333333;
+}
+</style>

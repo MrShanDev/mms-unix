@@ -2,10 +2,14 @@
 	"app.name": "MMS-UNIX",
 	"app.desc": "uni-app 组件库",
 
-	"tabbar.home": "首页",
+	"tabbar.components": "组件",
+	"tabbar.tools": "工具",
+	"tabbar.templates": "模版",
 	"tabbar.user": "我的",
 
-	"page.home": "首页",
+	"page.components": "组件",
+	"page.tools": "工具",
+	"page.templates": "模版",
 	"page.user": "我的",
 	"page.login": "登录",
 	"page.register": "注册",
@@ -16,6 +20,7 @@
 	"page.userAddress": "收货地址",
 	"page.address": "地址",
 	"page.aboutMe": "关于我们",
+	"page.contact": "联系我们",
 
 	"common.confirm": "确定",
 	"common.cancel": "取消",

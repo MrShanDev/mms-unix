@@ -1,15 +1,17 @@
 <template>
 	<view v-if="position == 'top'" class="mms-tips-class mms-toptips"
-		:style="{backgroundColor:backgroundColor,color:color,fontSize:size+'rpx'}"
+		:style="tipBarStyle"
 		:class="[show ? 'mms-top-show' : '']">{{ msg }}</view>
 	<view v-else class="mms-tips-class mms-toast"
 		:class="[position == 'center' ? 'mms-centertips' : 'mms-bottomtips', show ? 'mms-toast-show' : '']">
-		<view class="mms-tips-content" :style="{backgroundColor:backgroundColor,color:color,fontSize:size+'rpx'}">
+		<view class="mms-tips-content" :style="tipBarStyle">
 			{{ msg }}</view>
 	</view>
 </template>
 
 <script lang="uts">
+	import { toCssLength } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+
 	interface ToastRef {
 	  showTips: (options: { msg: string; duration?: number }) => void; // 属性名必须是 msg
 	}
@@ -30,8 +32,17 @@
 				default: '#fff'
 			},
 			size: {
-				type: Number,
+				type: [Number, String],
 				default: 30
+			}
+		},
+		computed: {
+			tipBarStyle(): UTSJSONObject {
+				return {
+					backgroundColor: this.backgroundColor,
+					color: this.color,
+					fontSize: toCssLength(this.size as number | string)
+				}
 			}
 		},
 		data() {
@@ -72,6 +83,7 @@
 		left: 0;
 		top: 0;
 		display: flex;
+		flex-direction: row;
 		align-items: center;
 		justify-content: center;
 		word-break: break-all;
@@ -105,6 +117,7 @@
 		transition: all 0.3s ease-in-out;
 		z-index: 9999;
 		display: flex;
+		flex-direction: row;
 		align-items: center;
 		justify-content: center;
 	}

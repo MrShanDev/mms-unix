@@ -1,0 +1,150 @@
+<template>
+	<view class="idx-page">
+		<scroll-view class="idx-scroll" scroll-y>
+			<view class="idx-hint">
+				<text class="idx-hint-t">扩展演示已拆分为独立页面，也可从「组件」Tab 首页分类进入。</text>
+			</view>
+			<view class="idx-section" v-for="(cat, ci) in categories" :key="ci">
+				<text class="idx-sec-title">{{ cat.title }}</text>
+				<view class="idx-list">
+					<view class="idx-item" v-for="(it, ii) in cat.items" :key="ii" @tap="go(it.path)">
+						<text class="idx-item-name">{{ it.name }}</text>
+						<mms-icon class="idx-item-arrow" name="arrow-right" size="32rpx" color="#cccccc"></mms-icon>
+					</view>
+				</view>
+			</view>
+			<view class="idx-footer"></view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	type IdxItem = { name: string; path: string }
+	type IdxCat = { title: string; items: IdxItem[] }
+
+	const categories: IdxCat[] = [
+		{
+			title: '布局与导航',
+			items: [
+				{ name: '吸顶', path: '/pages_demo/ext/sticky/sticky' },
+				{ name: '底部导航', path: '/pages_demo/ext/bottom-nav/bottom-nav' }
+			]
+		},
+		{
+			title: '表单与选择',
+			items: [
+				{ name: '下拉列表', path: '/pages_demo/ext/dropdown/dropdown' },
+				{ name: '步进器', path: '/pages_demo/ext/number-box/number-box' },
+				{ name: '评分', path: '/pages_demo/ext/rate/rate' },
+				{ name: '级联选择', path: '/pages_demo/ext/cascade/cascade' },
+				{ name: '联动选择器', path: '/pages_demo/ext/picker/picker' },
+				{ name: '气泡菜单', path: '/pages_demo/ext/bubble-popup/bubble-popup' },
+				{ name: '验证码输入', path: '/pages_demo/ext/code-input/code-input' },
+				{ name: '图形验证码', path: '/pages_demo/ext/vcode/vcode' },
+				{ name: '金额大写', path: '/pages_demo/ext/amount-inwords/amount-inwords' }
+			]
+		},
+		{
+			title: '列表与展示',
+			items: [
+				{ name: '时间轴', path: '/pages_demo/ext/time-axis/time-axis' },
+				{ name: '标签页', path: '/pages_demo/ext/tabs/tabs' },
+				{ name: '折叠面板', path: '/pages_demo/ext/collapse/collapse' },
+				{ name: '骨架屏', path: '/pages_demo/ext/skeleton/skeleton' },
+				{ name: '步骤条', path: '/pages_demo/ext/steps/steps' },
+				{ name: '滑动操作', path: '/pages_demo/ext/swipe-action/swipe-action' },
+				{ name: '区块标题', path: '/pages_demo/ext/section/section' },
+				{ name: '左右留白', path: '/pages_demo/ext/wing-blank/wing-blank' },
+				{ name: '富文本', path: '/pages_demo/ext/richtext/richtext' },
+				{ name: '滚动资讯', path: '/pages_demo/ext/rolling-news/rolling-news' },
+				{ name: '文本', path: '/pages_demo/ext/text/text' },
+				{ name: '链接', path: '/pages_demo/ext/link/link' },
+				{ name: '弧形横幅', path: '/pages_demo/ext/banner-arc/banner-arc' },
+				{ name: '图片裁剪', path: '/pages_demo/ext/cropper/cropper' }
+			]
+		},
+		{
+			title: '浮层与交互',
+			items: [
+				{ name: '数字键盘', path: '/pages_demo/ext/keyboard/keyboard' },
+				{ name: '操作菜单', path: '/pages_demo/ext/action-sheet/action-sheet' },
+				{ name: '提醒弹框', path: '/pages_demo/ext/alert/alert' },
+				{ name: '剪贴板', path: '/pages_demo/ext/clipboard/clipboard' },
+				{ name: '悬浮按钮', path: '/pages_demo/ext/fab/fab' }
+			]
+		}
+	]
+
+	function go(url: string) {
+		uni.navigateTo({ url })
+	}
+</script>
+
+<style lang="scss">
+	.idx-page {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		background-color: #f5f5f5;
+	}
+
+	.idx-scroll {
+		flex: 1;
+		height: 0;
+		box-sizing: border-box;
+	}
+
+	.idx-hint {
+		padding: 24rpx;
+	}
+
+	.idx-hint-t {
+		font-size: 26rpx;
+		color: #666666;
+		line-height: 1.5;
+	}
+
+	.idx-section {
+		margin: 0 24rpx 24rpx;
+	}
+
+	.idx-sec-title {
+		font-size: 28rpx;
+		font-weight: bold;
+		color: #333333;
+		margin-bottom: 16rpx;
+		display: block;
+	}
+
+	.idx-list {
+		background-color: #ffffff;
+		border-radius: 16rpx;
+		overflow: hidden;
+	}
+
+	.idx-item {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		padding: 28rpx 24rpx;
+		border-bottom-width: 1rpx;
+		border-bottom-style: solid;
+		border-bottom-color: #f0f0f0;
+	}
+
+	.idx-item-name {
+		font-size: 30rpx;
+		color: #333333;
+	}
+
+	.idx-item-arrow {
+		flex-shrink: 0;
+		margin-left: 12rpx;
+	}
+
+	.idx-footer {
+		height: 48rpx;
+	}
+</style>

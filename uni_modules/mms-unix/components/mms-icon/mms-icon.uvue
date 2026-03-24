@@ -130,9 +130,10 @@ function getIconChar(name: string): string {
 	if (name === 'edit') return '\ue693'
 	if (name === 'email') return '\ue695'
 	if (name === 'error') return '\ue696'
-	if (name === 'favorite' || name === 'heart') return '\ue697'
+	if (name === 'favorite' || name === 'heart' || name === 'tag' || name === 'label') return '\ue697'
 	if (name === 'file') return '\ue69d'
 	if (name === 'folder-close') return '\ue69e'
+	if (name === 'folder') return '\ue70f'
 	if (name === 'filter') return '\ue69f'
 	if (name === 'good' || name === 'star') return '\ue6a0'
 	if (name === 'hide') return '\ue6a1'
@@ -150,10 +151,15 @@ function getIconChar(name: string): string {
 	if (name === 'notification' || name === 'message') return '\ue6b7'
 	if (name === 'play') return '\ue6bc'
 	if (name === 'film') return '\ue69b'
+	// 字库无 good-filling，与 fabulous（点赞）共用字形
+	if (name === 'fabulous' || name === 'good-filling') return '\ue69c'
 	if (name === 'elipsis') return '\ue690'
 	if (name === 'location') return '\ue6c0'
 	if (name === 'wallet') return '\ue6a6'
 	if (name === 'shop' || name === 'apps' || name === 'modular') return '\ue6b6'
+	// 字库无独立购物车：layers（icon-layers）层叠形，与商城 shop 区分
+	if (name === 'layers') return '\ue6ad'
+	if (name === 'cart' || name === 'shopping-cart' || name === 'trolley') return '\ue6ad'
 	return ''
 }
 
@@ -188,9 +194,7 @@ export default {
 		},
 		iconStyle(): string {
 			let style = 'font-family:"iconfont";'
-			if (this.size) {
-				style += 'font-size:' + this.size + 'rpx;'
-			}
+			style += 'font-size:' + this.resolveFontSize() + ';'
 			if (this.color) {
 				style += 'color:' + this.color + ';'
 			}
@@ -201,6 +205,35 @@ export default {
 		}
 	},
 	methods: {
+		/** size 支持数字(按 rpx)、纯数字字符串、或已带 rpx/px/%/em 的字符串，避免 48rpx 被拼成 48rpxrpx */
+		resolveFontSize(): string {
+			const sz = this.size
+			if (typeof sz === 'number') {
+				return sz + 'rpx'
+			}
+			const s = sz as string
+			if (s.length === 0) {
+				return '40rpx'
+			}
+			const len = s.length
+			if (len >= 3 && s.substring(len - 3) === 'rpx') {
+				return s
+			}
+			if (len >= 2 && s.substring(len - 2) === 'px') {
+				return s
+			}
+			if (len >= 1 && s.substring(len - 1) === '%') {
+				return s
+			}
+			if (len >= 2 && s.substring(len - 2) === 'em') {
+				return s
+			}
+			const n = parseFloat(s)
+			if (!isNaN(n)) {
+				return n + 'rpx'
+			}
+			return '40rpx'
+		},
 		handleClick(e: any) {
 			this.$emit('click', e)
 		}

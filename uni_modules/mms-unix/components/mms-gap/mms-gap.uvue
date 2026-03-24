@@ -3,6 +3,8 @@
 </template>
 
 <script lang="uts">
+import { toCssLength } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+
 export default {
 	name: 'mmsGap',
 	props: {
@@ -20,7 +22,7 @@ export default {
 	computed: {
 		gapStyle() {
 			return {
-				height: this.height + 'rpx',
+				height: toCssLength(this.height as number | string),
 				backgroundColor: this.background
 			}
 		}

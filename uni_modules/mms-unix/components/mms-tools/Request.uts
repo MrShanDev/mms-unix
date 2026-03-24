@@ -4,6 +4,7 @@
  */
 import { config } from '@/common/config'
 import { storage } from './Storage.uts'
+import { uploadFileRequest } from './Upload.uts'
 
 // ========== 类型定义 ==========
 
@@ -338,6 +339,11 @@ export const http = {
 	/** 带加载提示的请求 */
 	loading<T = any>(options: RequestOptions, loadingText?: string): Promise<ApiResponse<T>> {
 		return loadingRequest<T>(options, loadingText)
+	},
+
+	/** multipart 上传单个文件（实现见 Upload.uts） */
+	upload<T = any>(options: any): Promise<any> {
+		return uploadFileRequest<T>(options)
 	}
 }
 

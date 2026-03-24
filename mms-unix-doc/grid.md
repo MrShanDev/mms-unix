@@ -27,9 +27,10 @@
 
 | 参数 | 说明 | 类型 | 默认值 |
 |------|------|------|------|
-| `col` | 宫格列数 | `number` | `4` |
+| `col` / `column` | 宫格列数 | `number` | `4` |
 | `list` | 宫格数据 | `array` | `[]` |
 | `square` | 是否固定正方形 | `boolean` | `false` |
+| `border` | 是否显示单元格边框；使用默认 `list` 渲染时作用于内部项；使用 **`mms-grid-item` 插槽时也会通过 provide 统一下发**，子项无需逐个设 `:border="false"` | `boolean` | `true` |
 
 ## Events
 

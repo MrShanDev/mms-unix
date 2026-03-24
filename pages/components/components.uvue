@@ -1,0 +1,286 @@
+<template>
+	<view class="page-root">
+	<scroll-view class="page-scroll" scroll-y :style="scrollViewStyle">
+		<view class="demo-container">
+		<view class="demo-header">
+			<image class="demo-logo" src="/static/logo.png" mode="aspectFit"></image>
+			<text class="demo-title">MMS-UNIX 组件演示</text>
+			<text class="demo-desc">按分类浏览，点击进入示例页</text>
+		</view>
+
+		<view class="demo-section" v-for="(cat, cidx) in componentCategories" :key="cidx">
+			<text class="section-title" :style="'border-left-color:' + cat.color">{{ cat.title }}</text>
+			<view class="demo-grid">
+				<view class="demo-item" v-for="(item, index) in cat.items" :key="index" @tap="navigateTo(item.path)">
+					<mms-icon :name="item.icon" size="48rpx" :color="cat.color"></mms-icon>
+					<text class="item-name">{{ item.name }}</text>
+				</view>
+			</view>
+		</view>
+		<!-- 尾部占位：保证「业务」等最后一组能滚到 TabBar 之上（各端 Tab 高度差异大） -->
+		<view class="tabbar-spacer"></view>
+		</view>
+	</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { ref } from 'vue'
+
+	type ComponentItem = {
+		name: string
+		path: string
+		icon: string
+	}
+
+	type ComponentCategory = {
+		title: string
+		color: string
+		items: ComponentItem[]
+	}
+
+	const scrollViewStyle = ref('')
+
+	function applyScrollHeight() {
+		const w = uni.getWindowInfo()
+		let winH = w.windowHeight as number
+		if (winH == null || winH <= 0) {
+			winH = 600
+		}
+		let safeBottom = 0
+		const insets = w.safeAreaInsets
+		if (insets != null) {
+			const b = insets.bottom
+			if (b != null && b > 0) {
+				safeBottom = b
+			}
+		}
+		// TabBar 高度按 rpx 转 px（120rpx 约等于栏高+余量），避免算小导致内容压在菜单下
+		let tabBarPx = 88
+		const u = uni.upx2px(120)
+		if (u != null && u > 0) {
+			tabBarPx = u
+		}
+		const h = Math.max(120, winH - tabBarPx - safeBottom)
+		scrollViewStyle.value = 'height:' + h + 'px'
+	}
+
+	onLoad(() => {
+		applyScrollHeight()
+	})
+
+	onReady(() => {
+		applyScrollHeight()
+	})
+
+	onShow(() => {
+		applyScrollHeight()
+	})
+
+	const componentCategories: ComponentCategory[] = [
+		{
+			title: '基础',
+			color: '#ff0844',
+			items: [
+				{ name: '按钮', path: '/pages_demo/button/button', icon: 'add-circle' },
+				{ name: '单元格', path: '/pages_demo/cell/cell', icon: 'browse' },
+				{ name: '图标', path: '/pages_demo/icon/icon', icon: 'setting' },
+				{ name: '标签', path: '/pages_demo/tag/tag', icon: 'tag' },
+				{ name: '卡片', path: '/pages_demo/card/card', icon: 'picture' },
+			],
+		},
+		{
+			title: '表单',
+			color: '#1890ff',
+			items: [
+				{ name: '搜索', path: '/pages_demo/search/search', icon: 'search' },
+				{ name: '上传', path: '/pages_demo/upload/upload', icon: 'upload' },
+			],
+		},
+		{
+			title: '反馈',
+			color: '#52c41a',
+			items: [
+				{ name: '对话框', path: '/pages_demo/dialog/dialog', icon: 'help' },
+				{ name: '弹出层', path: '/pages_demo/popup/popup', icon: 'arrow-up' },
+				{ name: '轻提示', path: '/pages_demo/toast/toast', icon: 'notification' },
+				{ name: '加载中', path: '/pages_demo/loading/loading', icon: 'loading' },
+			],
+		},
+		{
+			title: '展示',
+			color: '#722ed1',
+			items: [
+				{ name: '空状态', path: '/pages_demo/empty/empty', icon: 'folder-close' },
+				{ name: '价格', path: '/pages_demo/price/price', icon: 'wallet' },
+				{ name: '倒计时', path: '/pages_demo/countdown/countdown', icon: 'time' },
+				{ name: '宫格', path: '/pages_demo/grid/grid', icon: 'layers' },
+				{ name: '二维码', path: '/pages_demo/qrcode/qrcode', icon: 'scanning' },
+				{ name: '水印', path: '/pages_demo/watermark/watermark', icon: 'lock' },
+			],
+		},
+		{
+			title: '扩展 / 布局与导航',
+			color: '#13c2c2',
+			items: [
+				{ name: '吸顶', path: '/pages_demo/ext/sticky/sticky', icon: 'layout-filling' },
+				{ name: '底部导航', path: '/pages_demo/ext/bottom-nav/bottom-nav', icon: 'apps' },
+			],
+		},
+		{
+			title: '扩展 / 表单与选择',
+			color: '#2f54eb',
+			items: [
+				{ name: '下拉列表', path: '/pages_demo/ext/dropdown/dropdown', icon: 'arrow-down' },
+				{ name: '步进器', path: '/pages_demo/ext/number-box/number-box', icon: 'adjust' },
+				{ name: '评分', path: '/pages_demo/ext/rate/rate', icon: 'star' },
+				{ name: '级联选择', path: '/pages_demo/ext/cascade/cascade', icon: 'location' },
+				{ name: '联动选择器', path: '/pages_demo/ext/picker/picker', icon: 'calendar' },
+				{ name: '气泡菜单', path: '/pages_demo/ext/bubble-popup/bubble-popup', icon: 'comment-filling' },
+				{ name: '验证码输入', path: '/pages_demo/ext/code-input/code-input', icon: 'lock' },
+				{ name: '图形验证码', path: '/pages_demo/ext/vcode/vcode', icon: 'security' },
+				{ name: '金额大写', path: '/pages_demo/ext/amount-inwords/amount-inwords', icon: 'wallet' },
+			],
+		},
+		{
+			title: '扩展 / 列表与展示',
+			color: '#eb2f96',
+			items: [
+				{ name: '时间轴', path: '/pages_demo/ext/time-axis/time-axis', icon: 'time' },
+				{ name: '标签页', path: '/pages_demo/ext/tabs/tabs', icon: 'sorting' },
+				{ name: '折叠面板', path: '/pages_demo/ext/collapse/collapse', icon: 'minus-circle' },
+				{ name: '骨架屏', path: '/pages_demo/ext/skeleton/skeleton', icon: 'loading' },
+				{ name: '步骤条', path: '/pages_demo/ext/steps/steps', icon: 'task' },
+				{ name: '滑动操作', path: '/pages_demo/ext/swipe-action/swipe-action', icon: 'ashbin' },
+				{ name: '区块标题', path: '/pages_demo/ext/section/section', icon: 'filter-filling' },
+				{ name: '左右留白', path: '/pages_demo/ext/wing-blank/wing-blank', icon: 'fullscreen-expand-filling' },
+				{ name: '富文本', path: '/pages_demo/ext/richtext/richtext', icon: 'edit-filling' },
+				{ name: '滚动资讯', path: '/pages_demo/ext/rolling-news/rolling-news', icon: 'news-filling' },
+				{ name: '文本', path: '/pages_demo/ext/text/text', icon: 'text' },
+				{ name: '链接', path: '/pages_demo/ext/link/link', icon: 'link' },
+				{ name: '弧形横幅', path: '/pages_demo/ext/banner-arc/banner-arc', icon: 'top-filling' },
+				{ name: '图片裁剪', path: '/pages_demo/ext/cropper/cropper', icon: 'picture' },
+			],
+		},
+		{
+			title: '扩展 / 浮层与交互',
+			color: '#faad14',
+			items: [
+				{ name: '数字键盘', path: '/pages_demo/ext/keyboard/keyboard', icon: 'telephone' },
+				{ name: '操作菜单', path: '/pages_demo/ext/action-sheet/action-sheet', icon: 'arrow-up' },
+				{ name: '提醒弹框', path: '/pages_demo/ext/alert/alert', icon: 'help' },
+				{ name: '剪贴板', path: '/pages_demo/ext/clipboard/clipboard', icon: 'select' },
+				{ name: '悬浮按钮', path: '/pages_demo/ext/fab/fab', icon: 'add-circle' },
+			],
+		},
+		{
+			title: '业务',
+			color: '#fa8c16',
+			items: [
+				{ name: '登录', path: '/pages_demo/login/login', icon: 'user' },
+			],
+		},
+	]
+
+	function navigateTo(url: string) {
+		uni.navigateTo({ url })
+	}
+</script>
+
+<style lang="scss">
+	.page-root {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-height: 100%;
+	}
+
+	.page-scroll {
+		flex: 1;
+		width: 100%;
+	}
+
+	.demo-container {
+		background-color: #f5f5f5;
+		padding: 20rpx;
+		padding-bottom: 32rpx;
+	}
+
+	/* 与 TabBar、Home Indicator 之间的硬留白（可滚动区域内） */
+	.tabbar-spacer {
+		width: 100%;
+		height: 280rpx;
+		flex-shrink: 0;
+	}
+
+	.demo-header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		background-color: #ff0844;
+		border-radius: 16rpx;
+		padding: 36rpx 30rpx 40rpx;
+		margin-bottom: 30rpx;
+	}
+
+	.demo-logo {
+		width: 128rpx;
+		height: 128rpx;
+		margin-bottom: 20rpx;
+		flex-shrink: 0;
+	}
+
+	.demo-title {
+		font-size: 44rpx;
+		font-weight: bold;
+		color: #ffffff;
+		margin-bottom: 12rpx;
+		text-align: center;
+	}
+
+	.demo-desc {
+		font-size: 28rpx;
+		color: rgba(255, 255, 255, 0.8);
+		text-align: center;
+		line-height: 1.5;
+	}
+
+	.demo-section {
+		background-color: #ffffff;
+		border-radius: 16rpx;
+		padding: 30rpx;
+		margin-bottom: 24rpx;
+	}
+
+	.section-title {
+		font-size: 32rpx;
+		font-weight: bold;
+		color: #333333;
+		margin-bottom: 24rpx;
+		padding-left: 16rpx;
+		border-left-width: 6rpx;
+		border-left-style: solid;
+		border-left-color: #ff0844;
+	}
+
+	.demo-grid {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+
+	.demo-item {
+		width: 25%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 24rpx 0;
+	}
+
+	.item-name {
+		font-size: 24rpx;
+		color: #666666;
+		margin-top: 12rpx;
+		text-align: center;
+	}
+</style>

@@ -41,7 +41,7 @@
 	color: #333333;
 	margin-bottom: 24rpx;
 	padding-left: 16rpx;
-	border-left: 6rpx solid #ff2727;
+	border-left: 6rpx solid #ff0844;
 }
 
 .login-demo {

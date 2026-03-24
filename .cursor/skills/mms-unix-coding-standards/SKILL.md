@@ -1,6 +1,6 @@
 ---
 name: mms-unix-coding-standards
-description: "Maintains mms-unix uni-app component library project structure and coding standards for uni-app + Vue + uni-uts. Use when working on this project, adding new features, refactoring code, or moving files between directories."
+description: "Maintains mms-unix uni-app component library project structure and coding standards for uni-app + Vue + uni-uts. Covers pages vs subPackages, version/doc workflow, mmsUi theme, mms-unix-doc, and mms-unix-vscode. Use when working on this project, adding features, demos, releases, or moving files."
 ---
 
 # MMS-UNIX 项目编码规范与结构标准
@@ -15,52 +15,18 @@ description: "Maintains mms-unix uni-app component library project structure and
 
 ```
 mms-unix/
-├── uni_modules/mms-unix/          # 组件库核心（所有可复用工具和组件在这里）
-│   ├── components/
-│   │   └── mms-tools/            # 核心工具类
-│   │       ├── AuthNotifier.uts  # 认证变更通知（响应式触发）
-│   │       ├── Storage.uts       # 本地存储工具（token/userInfo）
-│   │       ├── Auth.uts          # 认证判断与拦截工具
-│   │       ├── Request.uts       # HTTP 请求工具（带 401 拦截）
-│   │       ├── Ut.uts            # 通用工具方法集合
-│   │       ├── I18n.uts          # 国际化工具类
-│   │       ├── useAuth.uts       # 组合式函数 - 响应式登录态
-│   │       ├── CacheUtil.uts     # 带过期缓存工具
-│   │       ├── LoginObject.uts   # 登录对象（兼容旧版）
-│   │       ├── uenum/            # 枚举定义
-│   │       └── utype/            # 类型定义
-│   ├── locale/                    # 国际化初始化
-│   │   └── index.uts             # 初始化入口
-│   ├── libs/css/                  # 全局样式
-│   │   ├── common.scss           # 公共样式
-│   │   ├── flex.scss             # flex 布局
-│   │   ├── color.scss            # 颜色变量
-│   │   └── utils.scss            # 工具样式类（间距、文字、flex 等）
-│   ├── components/               # 业务组件
-│   │   ├── mms-button/
-│   │   ├── mms-col/
-│   │   ├── mms-grid/
-│   │   ├── mms-login/
-│   │   ├── mms-qrcode/
-│   │   ├── mms-update/          # 版本更新检测组件
-│   │   ├── mms-upload/
-│   │   ├── mms-watermark/
-│   │   └── ...
-│   ├── index.scss                # 全局样式入口
-│   └── index.uts                 # 组件库入口
-├── locale/                        # 语言包目录
-│   ├── zh-Hans.json              # 简体中文
-│   └── en.json                   # 英文
-├── common/                       # 项目业务代码（项目特有，不进组件库）
-│   ├── api/                      # 业务 API 接口
-│   ├── config.ts                 # 全局配置（API 地址、版本信息等）
-│   ├── composables/              # 留空，已移动到组件库
-│   └── utils/                    # 留空，已移动到组件库
-├── pages/                        # 页面
-├── static/                       # 静态资源
-├── App.uvue                      # 入口组件
-├── main.uts                      # 入口文件
-└── pages.json                    # 页面路由配置
+├── uni_modules/mms-unix/          # 组件库（mms-*、mms-tools、libs/css、config、mms-ui-config 等）
+├── locale/                        # 应用级语言包（zh-Hans.json、en.json）
+├── common/                        # 业务配置与业务 API（config.ts、api/）
+├── pages/                         # 主包 Tab 根页（components / tools / templates / user 等）
+├── pages_demo/                    # 组件演示分包（subPackages root，勿与主包路径混淆）
+├── pages_Me/、pages_Article/ 等   # 业务/会员/文章等模块页面（按业务域分目录）
+├── mms-unix-doc/                  # 组件库 Markdown 说明（与演示页互补，非运行时依赖）
+├── version/doc/                   # 版本说明、验收与待办（app-*.md、lib-*.md、qa-open-items 等）
+├── mms-unix-vscode/             # VS Code 扩展子工程（独立打开调试）
+├── static/                        # 静态资源（含 tabbar、logo）
+├── App.uvue、main.uts、pages.json
+└── ...
 ```
 
 ### 组件库 vs 业务代码
@@ -74,6 +40,40 @@ mms-unix/
 **必须放在 `common/` 中（项目业务相关）：**
 - `common/config.ts` - 项目配置（API 地址、版本号等）
 - `common/api/` - 业务接口（调用封装好的 request）
+
+### 主包、分包与页面目录（建议固化）
+
+| 区域 | 用途 | 约定 |
+|------|------|------|
+| `pages/*` | Tab 或应用一级入口 | 在 `pages.json` 的 `pages` 数组登记；需要整页固定高度配合 TabBar 时可用 `disableScroll: true` + 内层 `scroll-view`。 |
+| `pages_demo/*` | 官方组件演示 | **分包**（`subPackages` 的 `root: "pages_demo"`）；跳转路径形如 `/pages_demo/button/button`，**不要**写成 `pages/pages_demo/...`。 |
+| `pages_Me/*` 等 | 登录、资料、地址等业务 | 与演示分包分离；新增模块时保持「一个业务域一个根目录」，避免堆在 `pages/` 下。 |
+
+### pages.json 与路径
+
+- **新增演示页**：在 `subPackages` → `pages_demo` → `pages` 中追加一项；标题可与页面内文案一致。
+- **`loginRequiredPaths`**：填写**不含 `pages/` 前缀**的路径片段，与项目里实际鉴权逻辑保持一致（改路径时同步改配置与拦截处）。
+- **导航**：`uni.navigateTo({ url: '/pages_demo/...' })` 以 **`/` 开头的绝对路径**为准，避免依赖当前页相对层级出错。
+
+### 版本与变更文档（`version/doc/`）
+
+- **演示工程发版**：`common/config.ts` → `configInfo.versionName`（及 `versionCode`）变更后，在 `version/doc/` 按约定新增或更新 `app-{x.y.z}.md`，并在 `version/doc/README.md` 索引表中加一行。
+- **组件库发版**：`uni_modules/mms-unix/package.json` → `version` 与 `lib-{x.y.z}.md` 对齐，同样更新索引。
+- **持续清单**：未完成项、风险、编辑器扩展待办等放在 `qa-open-items.md`、`mms-unix-vscode-dev.md` 等，**不**在根目录或 `uni_modules` 下再复制一份 CHANGELOG/待办，避免双源。
+
+### 主题与 UI 配置（`mmsUi`）
+
+- 项目侧品牌色、占位图等通过 `common/config.ts` 的 **`mmsUi`**（类型 `MmsUiUserConfig`）注入，与 `uni_modules/mms-unix/config/mms-ui-config.uts` 合并。
+- **改主色时**：同时检查 `mmsUi.primaryColor` 与 `uni_modules/mms-unix/libs/css/mms.scss`（及文档中的色值说明）是否一致，避免演示与真机主题漂移。
+
+### 对外说明文档（`mms-unix-doc/`）
+
+- 面向使用者的长文说明（API、示例、注意事项）放在 `mms-unix-doc/*.md`；`uni_modules/mms-unix/readme.md` 保持组件库入口与安装说明即可。
+- 新增组件时：**演示页（pages_demo）+ 可选 mms-unix-doc 一篇**；二者描述与 props/emits 须与实现一致（细节见 component-api skill）。
+
+### VS Code 扩展（`mms-unix-vscode/`）
+
+- 扩展为**独立子工程**：本地开发时单独用 VS Code 打开该文件夹再 F5；需求与待办以 **`version/doc/mms-unix-vscode-dev.md`** 为准。
 
 ## 编码规范
 
@@ -136,6 +136,14 @@ defineProps({
 
 - 使用 kebab-case：`@update:visible` 风格
 - 成功/失败：`success`、`fail`
+
+**组件 API、v-model、演示与实现一致性**的详细清单与事故案例见：`.cursor/skills/mms-unix-component-api/SKILL.md`（新增/改版 `mms-*` 或 `pages_demo` 时建议同时打开）。
+
+### 演示页与样式归属（必选）
+
+- **组件自带默认观感**：字号、颜色、圆角、边框、阴影、尺寸档位等**必须**在 `uni_modules/mms-unix/components/mms-*` 内通过 props 与组件 `scoped` 样式实现；业务页与演示页引用同一组件时应看到一致效果。
+- **`pages_demo/*` 只做陈列**：页面背景、分区标题、区块间距、示例文案与插槽内容；**不得**用演示页样式去「规定」组件外观（避免深度选择器覆盖 `mms-*` 内部、或在 demo 里承担本应属于组件的排版逻辑）。
+- 若演示效果与预期不符，应**改组件**或**加/调 props**，而不是只在演示页补样式糊弄过去。
 
 ## 配置规范
 
@@ -306,7 +314,7 @@ type ApiResponse<T = any> = {
 ```json
 {
   "app.name": "MMS-UNIX",
-  "tabbar.home": "首页",
+  "tabbar.components": "组件",
   "page.login": "登录",
   "common.confirm": "确定",
   "validation.phoneRequired": "请输入手机号",
@@ -380,6 +388,9 @@ const { locale, t } = useI18n()
 - [ ] 添加注释说明用法
 - [ ] 如果需要接口地址，配置在 `common/config.ts`
 - [ ] 如果需要工具方法，放在 `mms-tools` 对应文件
+- [ ] **演示**：在 `pages.json` → `subPackages` → `pages_demo` 注册页面；若需从 Tab「组件」首页进入，更新 `pages/components/components.uvue` 中分类数据
+- [ ] **（可选）** 在 `mms-unix-doc/` 增加说明文档，并与实现 API 一致
+- [ ] **发版**：同步 `uni_modules/mms-unix/package.json` 的 `version` 与 `version/doc/lib-*.md`（见上文版本约定）
 
 ## 总结
 
@@ -388,3 +399,6 @@ const { locale, t } = useI18n()
 - **接口地址统一 → `common/config.ts`**
 - **请求工具统一 → `mms-tools/Request.uts`**
 - **组件自动注册 → easycom 无需手动引入**
+- **演示分包 → `pages_demo/`，路径以 `/pages_demo/` 跳转**
+- **版本与验收文案 → `version/doc/`，与 config / 组件库 version 对齐**
+- **组件 API 与演示一致 → 见 `mms-unix-component-api` skill**

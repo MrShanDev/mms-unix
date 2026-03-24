@@ -1,0 +1,23 @@
+<template>
+	<view class="mms-time-axis">
+		<slot></slot>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsTimeAxis'
+}
+</script>
+
+<style lang="scss">
+.mms-time-axis {
+	display: flex;
+	flex-direction: column;
+	padding-left: 24rpx;
+	border-left-width: 2rpx;
+	border-left-style: solid;
+	border-left-color: #e5e5e5;
+	box-sizing: border-box;
+}
+</style>

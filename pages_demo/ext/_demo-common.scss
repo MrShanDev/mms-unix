@@ -1,0 +1,268 @@
+.ext-page {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	background-color: #f5f5f5;
+}
+
+.ext-scroll {
+	flex: 1;
+	height: 0;
+	box-sizing: border-box;
+}
+
+.ext-spacer {
+	padding: 24rpx;
+}
+
+.ext-hint {
+	font-size: 26rpx;
+	color: #666666;
+	line-height: 1.5;
+}
+
+.ext-sticky-bar {
+	height: 88rpx;
+	padding: 0 24rpx;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: #eeeeee;
+}
+
+.ext-sticky-text {
+	font-size: 30rpx;
+	color: #333333;
+	font-weight: bold;
+}
+
+.ext-block {
+	padding: 24rpx;
+}
+
+.ext-p {
+	font-size: 28rpx;
+	color: #666666;
+	margin-bottom: 16rpx;
+	display: block;
+}
+
+.ext-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 24rpx;
+	margin: 24rpx;
+}
+
+.ext-title {
+	font-size: 30rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 20rpx;
+	display: block;
+}
+
+.ext-node {
+	width: 44rpx;
+	height: 44rpx;
+	border-radius: 50%;
+	background-color: #5677fc;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.ext-node--muted {
+	background-color: #cccccc;
+}
+
+.ext-axis-title {
+	font-size: 30rpx;
+	color: #333333;
+	font-weight: bold;
+	margin-bottom: 8rpx;
+	display: block;
+}
+
+.ext-axis-title--muted {
+	color: #888888;
+}
+
+.ext-axis-desc {
+	font-size: 26rpx;
+	color: #666666;
+	line-height: 1.4;
+	display: block;
+}
+
+.ext-dd-head {
+	height: 88rpx;
+	padding: 0 20rpx;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	background-color: #f8f8f8;
+	border-radius: 12rpx;
+}
+
+.ext-dd-head-text {
+	font-size: 28rpx;
+	color: #333333;
+}
+
+.ext-dd-scroll {
+	height: 320rpx;
+}
+
+.ext-dd-item {
+	padding: 24rpx;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: #f0f0f0;
+}
+
+.ext-dd-item-text {
+	font-size: 28rpx;
+	color: #333333;
+}
+
+.ext-row {
+	margin-bottom: 24rpx;
+}
+
+.ext-btns {
+	display: flex;
+	flex-direction: column;
+	gap: 16rpx;
+}
+
+.ext-clip {
+	margin-top: 20rpx;
+}
+
+.ext-kb-top {
+	padding: 32rpx;
+}
+
+.ext-kb-tip {
+	font-size: 28rpx;
+	color: #333333;
+	text-align: center;
+	margin-bottom: 20rpx;
+	display: block;
+}
+
+.ext-kb-dots {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 16rpx;
+}
+
+.ext-kb-dot {
+	font-size: 32rpx;
+	color: #333333;
+}
+
+.ext-alert-msg {
+	font-size: 30rpx;
+	color: #333333;
+	line-height: 1.5;
+	text-align: center;
+	display: block;
+}
+
+.ext-footer-space {
+	height: 200rpx;
+}
+
+.ext-collapse-title {
+	padding: 24rpx 0;
+}
+
+.ext-collapse-title-t {
+	font-size: 30rpx;
+	color: #333333;
+}
+
+.ext-collapse-body {
+	padding: 16rpx 0 24rpx;
+	font-size: 26rpx;
+	color: #666666;
+	line-height: 1.5;
+	display: block;
+}
+
+.ext-sk-wrap {
+	position: relative;
+	min-height: 280rpx;
+	background-color: #fafafa;
+	border-radius: 12rpx;
+	overflow: hidden;
+}
+
+.ext-sk-body {
+	padding: 24rpx;
+}
+
+.ext-swipe-cell {
+	padding: 32rpx 24rpx;
+	background-color: #ffffff;
+}
+
+.ext-bubble-wrap {
+	position: relative;
+	margin-top: 24rpx;
+	min-height: 80rpx;
+}
+
+.ext-bubble-item {
+	display: block;
+	padding: 20rpx 24rpx;
+	font-size: 28rpx;
+	color: #ffffff;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+.ext-section--nav {
+	padding-bottom: 8rpx;
+}
+
+.ext-nav-box {
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #eeeeee;
+	border-radius: 12rpx;
+	overflow: hidden;
+}
+
+.ext-code-hint {
+	font-size: 26rpx;
+	color: #666666;
+	margin-top: 16rpx;
+	display: block;
+}
+
+.ext-vcode-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 20rpx;
+	margin-top: 20rpx;
+}
+
+.ext-banner-inner {
+	padding: 40rpx 32rpx;
+}
+
+.ext-banner-t {
+	font-size: 32rpx;
+	color: #ffffff;
+	font-weight: bold;
+}

@@ -14,16 +14,21 @@
 
 | 参数 | 说明 | 类型 | 默认值 |
 |------|------|------|------|
-| `image` | 自定义图片 URL | `string` | 默认图片 |
+| `image` | 自定义图片 URL | `string` | `''` |
 | `description` | 文字说明 | `string` | `暂无数据` |
-| `paddingTop` | 图片距离顶部距离，单位 rpx | `number` | `200` |
+| `text` | 与 `description` 相同含义，非空时优先显示 | `string` | `''` |
+| `icon` | `mms-icon` 的 `name`，与 `image`、默认插图互斥 | `string` | `''` |
+| `paddingTop` | 区域距离顶部距离（数字默认 rpx） | `number \| string` | `200` |
 
 ## 插槽
 
 | 名称 | 说明 |
 |------|------|
-| `icon` | 自定义图标插槽（替换默认图片） |
-| `default` | 底部内容，一般放按钮 |
+| `icon` | 自定义图标（不传则当设置了 `icon` 属性时用内置 `mms-icon`） |
+| `footer` | 底部内容，一般放按钮 |
+| `default` | 底部内容，与 `footer` 可同时使用 |
+
+底部使用 `mms-button` 时，请用 **`btnSize`**（如 `small`）控制按钮规格；`mms-button` 的 **`size` 表示字号 rpx**，写成 `size="small"` 不会得到小按钮，且默认 **`width` 为 100%** 会拉满一行。
 
 ## 示例
 
@@ -46,6 +51,8 @@
 
 ```uvue
 <mms-empty description="暂无数据">
-	<mms-button type="primary" text="去添加"></mms-button>
+	<template #footer>
+		<mms-button type="primary" btnSize="small">去添加</mms-button>
+	</template>
 </mms-empty>
 ```

@@ -1,5 +1,10 @@
 <template>
-	<view v-if="show" class="mms-overlay" :class="{'mms-overlay--visible': show}" :style="overlayStyle" @tap="handleClick"></view>
+	<view
+		class="mms-overlay"
+		:class="{ 'mms-overlay--visible': show }"
+		:style="overlayStyle"
+		@tap="handleClick"
+	></view>
 </template>
 
 <script lang="uts">
@@ -26,13 +31,21 @@ export default {
 		lockScroll: {
 			type: Boolean,
 			default: true
+		},
+		/** 淡入淡出时长（毫秒），与 mms-popup duration 对齐 */
+		durationMs: {
+			type: Number,
+			default: 300
 		}
 	},
 	computed: {
 		overlayStyle() {
+			const sec = this.durationMs / 1000
+			const dur = sec + 's'
 			return {
 				'background-color': `rgba(0, 0, 0, ${this.opacity})`,
-				'z-index': this.zIndex
+				'z-index': this.zIndex,
+				'transition-duration': dur
 			}
 		}
 	},
@@ -52,10 +65,13 @@ export default {
 	right: 0;
 	bottom: 0;
 	opacity: 0;
-	transition: opacity 0.3s ease;
+	pointer-events: none;
+	transition-property: opacity;
+	transition-timing-function: ease;
 
 	&.mms-overlay--visible {
 		opacity: 1;
+		pointer-events: auto;
 	}
 }
 </style>

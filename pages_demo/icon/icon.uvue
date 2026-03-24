@@ -13,7 +13,7 @@
 		<view class="demo-section">
 			<text class="section-title">图标颜色</text>
 			<view class="icon-row">
-				<mms-icon name="setting" size="48rpx" color="#ff2727"></mms-icon>
+				<mms-icon name="setting" size="48rpx" color="#ff0844"></mms-icon>
 				<mms-icon name="setting" size="48rpx" color="#1890ff"></mms-icon>
 				<mms-icon name="setting" size="48rpx" color="#52c41a"></mms-icon>
 				<mms-icon name="setting" size="48rpx" color="#fa8c16"></mms-icon>
@@ -44,7 +44,7 @@
 			<text class="section-title">填充图标</text>
 			<view class="icon-grid">
 				<view class="icon-item" v-for="(item, index) in fillingIcons" :key="index">
-					<mms-icon :name="item" size="48rpx" color="#ff2727"></mms-icon>
+					<mms-icon :name="item" size="48rpx" color="#ff0844"></mms-icon>
 					<text class="icon-name">{{ item }}</text>
 				</view>
 			</view>
@@ -54,7 +54,7 @@
 			<text class="section-title">操作图标</text>
 			<view class="icon-row">
 				<mms-icon name="add" size="48rpx" color="#1890ff"></mms-icon>
-				<mms-icon name="close" size="48rpx" color="#ff2727"></mms-icon>
+				<mms-icon name="close" size="48rpx" color="#ff0844"></mms-icon>
 				<mms-icon name="delete" size="48rpx" color="#ff4d4f"></mms-icon>
 				<mms-icon name="edit" size="48rpx" color="#52c41a"></mms-icon>
 				<mms-icon name="download" size="48rpx" color="#1890ff"></mms-icon>
@@ -120,7 +120,7 @@ const fillingIcons: string[] = [
 	margin-bottom: 24rpx;
 	display: block;
 	padding-left: 16rpx;
-	border-left: 6rpx solid #ff2727;
+	border-left: 6rpx solid #ff0844;
 }
 
 .icon-grid {
@@ -130,7 +130,8 @@ const fillingIcons: string[] = [
 }
 
 .icon-item {
-	width: 20%;
+	width: 25%;
+	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
 	align-items: center;

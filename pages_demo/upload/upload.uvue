@@ -1,40 +1,69 @@
 <template>
 	<view class="demo-page">
 		<view class="demo-section">
-			<text class="section-title">基础上传</text>
+			<text class="section-title">基础上传（手动，不压缩）</text>
+			<text class="section-desc">选图后仅触发 afterRead，由页面把本地 path 写入列表。</text>
 			<mms-upload></mms-upload>
 		</view>
 
 		<view class="demo-section">
-			<text class="section-title">限制上传数量</text>
+			<text class="section-title">限制数量</text>
 			<mms-upload :maxCount="3"></mms-upload>
 		</view>
 
 		<view class="demo-section">
-			<text class="section-title">预览已上传</text>
-			<mms-upload :fileList="fileList" @afterRead="afterRead" @delete="deleteFile"></mms-upload>
+			<text class="section-title">回显 + 手动追加（压缩后 emit）</text>
+			<text class="section-desc">compress 为 true 时，afterRead 里的 path 已是压缩后的临时路径。</text>
+			<mms-upload v-model:fileList="fileList" :compress="true" :compressQuality="75" @afterRead="afterRead"></mms-upload>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">仅回显（网络图）</text>
+			<text class="section-desc">绑定服务端 URL，可预览、删除（删的是前端列表）。</text>
+			<mms-upload v-model:fileList="remoteList"></mms-upload>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">自动上传（需后端与 config.api.upload.image 一致）</text>
+			<text class="section-desc">开启 autoUpload 后勿在 afterRead 里再 push。失败可点击重试。</text>
+			<mms-upload
+				v-model:fileList="autoList"
+				:autoUpload="true"
+				:compress="true"
+				:maxCount="5"
+			></mms-upload>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
 import { ref } from 'vue'
+import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
 
 type FileItem = {
 	url: string
+	status?: string
+	path?: string
+	serverData?: any
 }
 
+const _mmsUi = getMmsUiConfig()
 const fileList = ref<FileItem[]>([
-	{ url: '/static/img/heading.png' },
-	{ url: '/static/img/heading.png' }
+	{ url: _mmsUi.avatarDefault },
+	{ url: _mmsUi.avatarDefault },
 ])
 
-function afterRead(file: any) {
-	fileList.value.push({ url: file.url })
-}
+const remoteList = ref<FileItem[]>([{ url: _mmsUi.appLogo }])
 
-function deleteFile(index: number) {
-	fileList.value.splice(index, 1)
+const autoList = ref<FileItem[]>([])
+
+function afterRead(evt: { tempFiles: { path: string }[] }) {
+	const next = [...fileList.value]
+	for (let i = 0; i < evt.tempFiles.length; i++) {
+		const f = evt.tempFiles[i]
+		next.push({ url: f.path, path: f.path })
+	}
+	fileList.value = next
 }
 </script>
 
@@ -56,8 +85,16 @@ function deleteFile(index: number) {
 	font-size: 28rpx;
 	font-weight: bold;
 	color: #333333;
-	margin-bottom: 24rpx;
+	margin-bottom: 16rpx;
 	padding-left: 16rpx;
-	border-left: 6rpx solid #ff2727;
+	border-left: 6rpx solid #ff0844;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.5;
+	margin-bottom: 20rpx;
+	display: block;
 }
 </style>

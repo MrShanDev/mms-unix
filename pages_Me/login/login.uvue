@@ -3,7 +3,7 @@
 		<!-- 顶部渐变区域 -->
 		<view class="login-header">
 			<view class="nav-back" @tap="goBack">
-				<text class="nav-back-icon">←</text>
+				<mms-icon name="arrow-left" size="48rpx" color="#ffffff"></mms-icon>
 			</view>
 			<text class="login-greeting">Hello! 欢迎来到{{ config.configInfo.name }}</text>
 		</view>
@@ -86,7 +86,7 @@
 		<view class="login-footer">
 			<view class="agree-wrap" @tap="agree = !agree">
 				<view :class="['checkbox', { checked: agree }]">
-					<text v-if="agree" class="checkbox-icon">✓</text>
+					<mms-icon v-if="agree" class="checkbox-icon" name="check-item" size="22rpx" color="#ffffff"></mms-icon>
 				</view>
 				<text class="agree-text">
 					我已阅读并同意
@@ -138,13 +138,20 @@
 	function doRedirect() {
 		const redirect = redirectUrl.value
 		if (redirect != '') {
-			if (redirect.startsWith('/pages/index') || redirect.startsWith('/pages/user') || redirect.startsWith('/pages/cases') || redirect.startsWith('/pages/hosting')) {
+			if (
+				redirect.startsWith('/pages/components') ||
+				redirect.startsWith('/pages/tools') ||
+				redirect.startsWith('/pages/templates') ||
+				redirect.startsWith('/pages/user') ||
+				redirect.startsWith('/pages/cases') ||
+				redirect.startsWith('/pages/hosting')
+			) {
 				uni.switchTab({ url: redirect })
 			} else {
 				uni.redirectTo({ url: redirect })
 			}
 		} else {
-			uni.switchTab({ url: '/pages/index/index' })
+			uni.switchTab({ url: '/pages/components/components' })
 		}
 	}
 
@@ -240,7 +247,7 @@
 		uni.navigateBack()
 	}
 	const goHome = () => {
-		uni.switchTab({ url: '/pages/index/index' })
+		uni.switchTab({ url: '/pages/components/components' })
 	}
 </script>
 
@@ -254,7 +261,7 @@
 	}
 	.login-header {
 		height: 360rpx;
-		background: linear-gradient(135deg, #ff2727 0%, #ff5a5a 50%, #ff8080 100%);
+		background: linear-gradient(135deg, #ff0844 0%, #ff3d62 50%, #ff8a9e 100%);
 		padding: 180rpx 40rpx 0;
 		position: relative;
 	}
@@ -265,14 +272,10 @@
 		width: 64rpx;
 		height: 64rpx;
 		display: flex;
+		flex-direction: row;
 		align-items: center;
 		justify-content: center;
 		z-index: 10;
-	}
-	.nav-back-icon {
-		font-size: 48rpx;
-		color: #fff;
-		font-weight: 500;
 	}
 	.login-greeting {
 		font-size: 40rpx;
@@ -306,7 +309,7 @@
 		color: #999;
 	}
 	.tab-text-active {
-		color: #ff2727;
+		color: #ff0844;
 		font-weight: 600;
 	}
 	.tab-line {
@@ -316,7 +319,7 @@
 		transform: translateX(-50%);
 		width: 60rpx;
 		height: 6rpx;
-		background: #ff2727;
+		background: #ff0844;
 		border-radius: 3rpx;
 	}
 	.form-wrap {
@@ -330,7 +333,7 @@
 	}
 	.link-item {
 		font-size: 28rpx;
-		color: #ff2727;
+		color: #ff0844;
 	}
 	.input-wrap {
 		background: #f5f7fa;
@@ -350,7 +353,7 @@
 	}
 	.get-code {
 		font-size: 28rpx;
-		color: #ff2727;
+		color: #ff0844;
 		margin-left: 20rpx;
 	}
 	.get-code.disabled {
@@ -364,13 +367,13 @@
 	}
 	.link-item {
 		font-size: 26rpx;
-		color: #ff2727;
+		color: #ff0844;
 	}
 	.login-btn {
 		width: 100%;
 		height: 88rpx;
 		line-height: 88rpx;
-		background: linear-gradient(90deg, #ff2727, #ff5a5a);
+		background: linear-gradient(90deg, #ff0844, #ff3d62);
 		color: #fff;
 		font-size: 32rpx;
 		border-radius: 12rpx;
@@ -382,7 +385,7 @@
 	}
 	.go-home-text {
 		font-size: 28rpx;
-		color: #ff2727;
+		color: #ff0844;
 	}
 	.login-footer {
 		margin-top: 60rpx;
@@ -406,13 +409,11 @@
 		justify-content: center;
 	}
 	.checkbox.checked {
-		background: #ff2727;
-		border-color: #ff2727;
+		background: #ff0844;
+		border-color: #ff0844;
 	}
 	.checkbox-icon {
-		color: #fff;
-		font-size: 24rpx;
-		font-weight: bold;
+		flex-shrink: 0;
 	}
 	.agree-text {
 		font-size: 24rpx;
@@ -420,6 +421,6 @@
 		line-height: 1.6;
 	}
 	.link {
-		color: #ff2727;
+		color: #ff0844;
 	}
 </style>

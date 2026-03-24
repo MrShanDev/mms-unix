@@ -17,6 +17,11 @@
 export default {
 	name: 'mmsGrid',
 	emits: ['click'],
+	provide() {
+		return {
+			mmsGridBorder: this.border as boolean
+		}
+	},
 	props: {
 		// 宫格列数
 		col: {
@@ -64,6 +69,7 @@ export default {
 <style scoped lang="scss">
 .mms-grid {
 	display: flex;
+	flex-direction: row;
 	flex-wrap: wrap;
 	background-color: #ffffff;
 
@@ -96,6 +102,10 @@ export default {
 	}
 
 	&.mms-grid--border {
+		border-top: 1rpx solid #ebedf0;
+		border-left: 1rpx solid #ebedf0;
+		box-sizing: border-box;
+
 		.mms-grid__item {
 			border-right: 1rpx solid #ebedf0;
 			border-bottom: 1rpx solid #ebedf0;

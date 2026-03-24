@@ -1,0 +1,295 @@
+<template>
+	<view
+		class="mms-tabs"
+		:class="{ 'mms-tabs--fixed': isFixed }"
+		:style="rootStyle"
+	>
+		<view
+			class="mms-tabs__inner"
+			:style="{ height: height + 'rpx', paddingLeft: padding + 'rpx', paddingRight: padding + 'rpx', backgroundColor: backgroundColor }"
+		>
+			<view
+				v-for="(tab, idx) in tabs"
+				:key="idx"
+				class="mms-tabs__item"
+				:style="{ width: itemWidthComputed }"
+				@tap="onTabTap(idx, tab)"
+			>
+				<view class="mms-tabs__item-inner">
+					<text
+						class="mms-tabs__text"
+						:style="textStyle(idx, tab)"
+					>{{ tabLabel(tab) }}</text>
+					<view v-if="badgeText(tab) !== ''" class="mms-tabs__badge-wrap">
+						<text class="mms-tabs__badge" :style="{ color: badgeColor, backgroundColor: badgeBgColor }">{{ badgeText(tab) }}</text>
+					</view>
+					<view v-else-if="tabDot(tab)" class="mms-tabs__dot" :style="{ backgroundColor: badgeBgColor }"></view>
+				</view>
+				<view
+					v-if="isSlider && (currentTab as number) === idx"
+					class="mms-tabs__slider"
+					:style="{ backgroundColor: sliderBgColor, height: sliderHeight + 'rpx', borderRadius: sliderRadius, width: sliderWidth + 'rpx' }"
+				></view>
+			</view>
+		</view>
+		<view v-if="!unlined" class="mms-tabs__line"></view>
+	</view>
+</template>
+
+<script lang="uts">
+type TabItem = UTSJSONObject
+
+export default {
+	name: 'mmsTabs',
+	emits: ['change'],
+	props: {
+		tabs: {
+			type: Array,
+			default(): any[] {
+				return []
+			}
+		},
+		field: {
+			type: String,
+			default: 'name'
+		},
+		badgeField: {
+			type: String,
+			default: 'num'
+		},
+		height: {
+			type: Number,
+			default: 80
+		},
+		padding: {
+			type: Number,
+			default: 30
+		},
+		backgroundColor: {
+			type: String,
+			default: '#FFFFFF'
+		},
+		isFixed: {
+			type: Boolean,
+			default: false
+		},
+		top: {
+			type: Number,
+			default: 0
+		},
+		unlined: {
+			type: Boolean,
+			default: false
+		},
+		currentTab: {
+			type: Number,
+			default: 0
+		},
+		isSlider: {
+			type: Boolean,
+			default: true
+		},
+		sliderWidth: {
+			type: Number,
+			default: 68
+		},
+		sliderHeight: {
+			type: Number,
+			default: 6
+		},
+		sliderBgColor: {
+			type: String,
+			default: '#5677fc'
+		},
+		sliderRadius: {
+			type: String,
+			default: '50rpx'
+		},
+		itemWidth: {
+			type: String,
+			default: ''
+		},
+		color: {
+			type: String,
+			default: '#666666'
+		},
+		selectedColor: {
+			type: String,
+			default: '#5677fc'
+		},
+		size: {
+			type: Number,
+			default: 28
+		},
+		bold: {
+			type: Boolean,
+			default: false
+		},
+		scale: {
+			type: [Number, String],
+			default: 1
+		},
+		badgeColor: {
+			type: String,
+			default: '#ffffff'
+		},
+		badgeBgColor: {
+			type: String,
+			default: '#F74D54'
+		},
+		zIndex: {
+			type: [Number, String],
+			default: 996
+		}
+	},
+	computed: {
+		tabCount(): number {
+			return (this.tabs as any[]).length
+		},
+		itemWidthComputed(): string {
+			const iw = this.itemWidth as string
+			if (iw != null && iw.length > 0) {
+				return iw
+			}
+			const n = this.tabCount
+			if (n <= 0) {
+				return '25%'
+			}
+			return (100 / n) + '%'
+		},
+		rootStyle(): UTSJSONObject {
+			const st = {} as UTSJSONObject
+			const z = this.zIndex
+			st['zIndex'] = typeof z === 'number' ? z : parseInt('' + z)
+			if (this.isFixed) {
+				st['position'] = 'fixed'
+				st['left'] = '0'
+				st['right'] = '0'
+				st['top'] = (this.top as number) + 'px'
+			}
+			return st
+		}
+	},
+	methods: {
+		tabLabel(tab: TabItem): string {
+			const k = this.field as string
+			const v = tab[k]
+			return v == null ? '' : '' + v
+		},
+		badgeText(tab: TabItem): string {
+			const k = this.badgeField as string
+			const v = tab[k]
+			if (v == null) {
+				return ''
+			}
+			const s = '' + v
+			if (s === '0' || s === '') {
+				return ''
+			}
+			return s
+		},
+		tabDot(tab: TabItem): boolean {
+			return tab['isDot'] === true
+		},
+		tabDisabled(tab: TabItem): boolean {
+			return tab['disabled'] === true
+		},
+		textStyle(idx: number, tab: TabItem): UTSJSONObject {
+			const st = {} as UTSJSONObject
+			const sel = (this.currentTab as number) === idx
+			const dis = this.tabDisabled(tab)
+			st['color'] = dis ? '#cccccc' : (sel ? this.selectedColor as string : this.color as string)
+			st['fontSize'] = (this.size as number) + 'rpx'
+			if (this.bold && sel) {
+				st['fontWeight'] = 'bold'
+			}
+			if (sel) {
+				const sc = this.scale
+				const f = typeof sc === 'number' ? sc as number : parseFloat('' + sc)
+				if (!isNaN(f) && f !== 1) {
+					st['transform'] = 'scale(' + f + ')'
+				}
+			}
+			return st
+		},
+		onTabTap(idx: number, tab: TabItem) {
+			if (this.tabDisabled(tab)) {
+				return
+			}
+			this.$emit('change', { index: idx, item: tab })
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+.mms-tabs {
+	width: 100%;
+	position: relative;
+	box-sizing: border-box;
+}
+
+.mms-tabs__inner {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.mms-tabs__item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	position: relative;
+}
+
+.mms-tabs__item-inner {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	padding: 8rpx 4rpx;
+	flex: 1;
+}
+
+.mms-tabs__text {
+	line-height: 1.2;
+}
+
+.mms-tabs__badge-wrap {
+	position: absolute;
+	top: -4rpx;
+	right: -16rpx;
+}
+
+.mms-tabs__badge {
+	font-size: 20rpx;
+	padding: 2rpx 8rpx;
+	border-radius: 20rpx;
+	min-width: 28rpx;
+	text-align: center;
+}
+
+.mms-tabs__dot {
+	position: absolute;
+	top: 0;
+	right: -6rpx;
+	width: 12rpx;
+	height: 12rpx;
+	border-radius: 50%;
+}
+
+.mms-tabs__slider {
+	margin-top: 4rpx;
+}
+
+.mms-tabs__line {
+	height: 1rpx;
+	background-color: #eeeeee;
+	width: 100%;
+}
+</style>

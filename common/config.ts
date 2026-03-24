@@ -2,6 +2,24 @@
  * mms-unix 全局配置
  * 组件库核心配置，所有项目通用配置在此定义
  */
+
+/** 与 mms-ui-config.uts 的 MmsUiPartial 字段对齐，供 TypeScript 项目配置 */
+export type MmsUiUserConfig = {
+	appLogo?: string
+	emptyDefaultImage?: string
+	avatarDefault?: string
+	articlePlaceholder?: string
+	demoCardThumb?: string
+	cropperDemo?: string
+	qrCodeImageApiBase?: string
+	primaryColor?: string
+	serviceIconRead?: string
+	serviceIconCertificate?: string
+	serviceIconGroup?: string
+	serviceIconAddress?: string
+	serviceIconAbout?: string
+}
+
 type AppConfig = {
 	/** 基础 API 地址 */
 	baseUrl: string
@@ -15,6 +33,11 @@ type AppConfig = {
 	api: ApiConfig
 	/** 应用基础信息 */
 	configInfo: ConfigInfo
+	/**
+	 * mms-unix 组件库 UI 资源与主题（可选）
+	 * 与 uni_modules/mms-unix/config/mms-ui-config.uts 中默认值合并，未填则使用库内默认路径
+	 */
+	mmsUi?: MmsUiUserConfig
 }
 
 type StorageConfig = {
@@ -40,6 +63,16 @@ type ApiConfig = {
 		/** 检查版本更新 */
 		checkUpdate: string
 	}
+	/** 文件上传（multipart，字段名与组件 uploadName 一致） */
+	upload: {
+		/** 默认图片上传路径；组件未传 uploadUrl 且开启 autoUpload 时使用 */
+		image: string
+	}
+	/**
+	 * H5/App 端 mms-qrcode 拉取二维码 PNG 的接口根地址（须自建，query 与 qrserver 兼容：size、color、bgcolor、data）
+	 * 留空则不请求任何外链，非微信端不显示联网二维码（微信端仍用 canvas 本地绘制）
+	 */
+	qrCodeImageApiBase: string
 }
 
 /** 应用基础信息 - 用于版本更新、关于页面等 */
@@ -87,7 +120,7 @@ export const config: AppConfig = {
 		userInfo: 'userInfo',
 	},
 	// 需要登录的页面路径（不含 pages/ 前缀）
-	loginRequiredPaths: ['hosting_records', 'hosting_certificate', 'user_address', 'user_info'],
+	loginRequiredPaths: ['user_address', 'user_info'],
 	// API 接口路径配置
 	api: {
 		login: {
@@ -97,14 +130,22 @@ export const config: AppConfig = {
 		},
 		update: {
 			checkUpdate: '/api/v1/common/checkUpdate',
-		}
+		},
+		upload: {
+			image: '/api/v1/common/upload/image',
+		},
+		qrCodeImageApiBase: '',
 	},
 	// 应用基础信息
 	configInfo: {
 		name: 'mms-unix',
-		logo: 'https://ssca-1364461867.cos.ap-beijing.myqcloud.com/mms/upload/688c17e596d408e1ce66306b.png',
+		logo: '/static/img/app-logo.png',
 		desc: 'uni-app 组件库',
-		versionCode: 1,
-		versionName: '1.0.0',
+		versionCode: 2,
+		versionName: '1.0.1',
+	},
+	// mms-unix 演示/业务页资源覆盖示例（按需取消注释并修改路径）
+	mmsUi: {
+		primaryColor: '#ff0844',
 	},
 }

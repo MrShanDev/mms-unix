@@ -1,0 +1,9 @@
+.vscode/**
+.vscode-test/**
+src/**
+tsconfig.json
+**/*.map
+**/.DS_Store
+node_modules/**
+!node_modules/@types/**
+.gitignore

@@ -1,0 +1,144 @@
+<template>
+	<view v-if="showPanel" class="mms-keyboard">
+		<view v-if="mask" class="mms-keyboard__mask" @tap="onMaskTap"></view>
+		<view class="mms-keyboard__panel" :class="{ 'mms-keyboard__panel--radius': radius }">
+			<view class="mms-keyboard__slot">
+				<slot></slot>
+			</view>
+			<view class="mms-keyboard__keys">
+				<view
+					v-for="(cell, idx) in cells"
+					:key="idx"
+					class="mms-keyboard__cell"
+					@tap="onKeyTap(cell.index)"
+				>
+					<text v-if="cell.label !== ''" class="mms-keyboard__key-text">{{ cell.label }}</text>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+type KeyCell = {
+	index: number
+	label: string
+}
+
+export default {
+	name: 'mmsKeyboard',
+	emits: ['close', 'click'],
+	props: {
+		mask: {
+			type: Boolean,
+			default: true
+		},
+		show: {
+			type: Boolean,
+			default: false
+		},
+		/** 为 true 时无入场动画，直接展示 */
+		action: {
+			type: Boolean,
+			default: true
+		},
+		radius: {
+			type: Boolean,
+			default: false
+		}
+	},
+	computed: {
+		showPanel(): boolean {
+			return this.show
+		},
+		cells(): KeyCell[] {
+			const list = [] as KeyCell[]
+			for (let i = 0; i < 9; i++) {
+				list.push({ index: i, label: '' + (i + 1) })
+			}
+			list.push({ index: 9, label: '取消' })
+			list.push({ index: 10, label: '0' })
+			list.push({ index: 11, label: '删除' })
+			return list
+		}
+	},
+	methods: {
+		onMaskTap() {
+			this.$emit('close', {})
+		},
+		onKeyTap(index: number) {
+			this.$emit('click', { index })
+			if (index === 9) {
+				this.$emit('close', {})
+			}
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+.mms-keyboard {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 10080;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+}
+
+.mms-keyboard__mask {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.45);
+}
+
+.mms-keyboard__panel {
+	position: relative;
+	background-color: #ebedf0;
+	padding-bottom: env(safe-area-inset-bottom);
+}
+
+.mms-keyboard__panel--radius {
+	border-top-left-radius: 24rpx;
+	border-top-right-radius: 24rpx;
+	overflow: hidden;
+}
+
+.mms-keyboard__slot {
+	background-color: #ffffff;
+}
+
+.mms-keyboard__keys {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	padding: 12rpx 8rpx 20rpx;
+	box-sizing: border-box;
+}
+
+.mms-keyboard__cell {
+	width: 33.33%;
+	box-sizing: border-box;
+	padding: 8rpx;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.mms-keyboard__key-text {
+	font-size: 36rpx;
+	color: #333333;
+	background-color: #ffffff;
+	border-radius: 8rpx;
+	width: 100%;
+	text-align: center;
+	padding: 28rpx 0;
+}
+</style>

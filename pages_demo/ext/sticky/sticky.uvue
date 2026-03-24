@@ -1,0 +1,45 @@
+<template>
+	<view class="ext-page">
+		<scroll-view class="ext-scroll" scroll-y @scroll="onScroll">
+			<view class="ext-spacer">
+				<text class="ext-hint">向下滚动查看 mms-sticky 吸顶（scroll-view 内同步 scrollTop）</text>
+			</view>
+
+			<mms-sticky :scroll-top="scrollTop" sticky-height="88rpx" sticky-top="0" background-color="#ffffff">
+				<template #header>
+					<view class="ext-sticky-bar">
+						<text class="ext-sticky-text">吸顶区域 mms-sticky</text>
+					</view>
+				</template>
+			</mms-sticky>
+
+			<view class="ext-block">
+				<text class="ext-p">占位内容，用于产生滚动。</text>
+				<text class="ext-p">占位内容，用于产生滚动。</text>
+				<text class="ext-p">占位内容，用于产生滚动。</text>
+			</view>
+
+			<view class="ext-footer-space"></view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { ref } from 'vue'
+
+const scrollTop = ref(0)
+
+function onScroll(e: UTSJSONObject) {
+	const d = e['detail'] as UTSJSONObject
+	if (d != null) {
+		const st = d['scrollTop']
+		if (st != null) {
+			scrollTop.value = st as number
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+@import '../_demo-common.scss';
+</style>

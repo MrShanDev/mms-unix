@@ -1,0 +1,112 @@
+<template>
+	<view class="mms-dropdown-list" :style="{ backgroundColor: backgroundColor }">
+		<view class="mms-dropdown-list__selection">
+			<slot name="selectionbox"></slot>
+		</view>
+		<view
+			v-if="show"
+			class="mms-dropdown-list__dropdown"
+			:style="dropdownStyle"
+		>
+			<view v-if="isMask" class="mms-dropdown-list__panel-mask" :style="{ backgroundColor: maskBackground }" @tap="onMaskTap"></view>
+			<view class="mms-dropdown-list__panel">
+				<slot name="dropdownbox"></slot>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsDropdownList',
+	emits: ['close'],
+	props: {
+		show: {
+			type: Boolean,
+			default: false
+		},
+		backgroundColor: {
+			type: String,
+			default: 'transparent'
+		},
+		/** 下拉层相对容器顶部的偏移，单位 rpx */
+		top: {
+			type: Number,
+			default: 0
+		},
+		/** 下拉区域高度 rpx */
+		height: {
+			type: Number,
+			default: 0
+		},
+		selectHeight: {
+			type: Number,
+			default: 0
+		},
+		isMask: {
+			type: Boolean,
+			default: false
+		},
+		maskBackground: {
+			type: String,
+			default: 'transparent'
+		}
+	},
+	computed: {
+		dropdownStyle(): UTSJSONObject {
+			const st = {} as UTSJSONObject
+			st['top'] = (this.top as number) + 'rpx'
+			const h = this.height as number
+			if (h > 0) {
+				st['height'] = h + 'rpx'
+			}
+			return st
+		}
+	},
+	methods: {
+		onMaskTap() {
+			this.$emit('close')
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+.mms-dropdown-list {
+	position: relative;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.mms-dropdown-list__selection {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.mms-dropdown-list__dropdown {
+	position: absolute;
+	left: 0;
+	right: 0;
+	z-index: 910;
+	box-sizing: border-box;
+}
+
+.mms-dropdown-list__panel-mask {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 905;
+}
+
+.mms-dropdown-list__panel {
+	position: relative;
+	z-index: 910;
+	background-color: #ffffff;
+	border-radius: 0 0 12rpx 12rpx;
+	overflow: hidden;
+	box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+	box-sizing: border-box;
+}
+</style>

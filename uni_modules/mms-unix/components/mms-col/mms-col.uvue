@@ -5,6 +5,8 @@
 </template>
 
 <script lang="uts">
+import { parseCssNumber } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+
 export default {
 	name: 'mmsCol',
 	props: {
@@ -49,10 +51,12 @@ export default {
 				style.marginLeft = offsetPercent
 			}
 			// 自定义padding
-			if (this.padding) {
-				const p = Number(this.padding)
-				style.paddingLeft = p + 'rpx'
-				style.paddingRight = p + 'rpx'
+			if (this.padding !== '' && this.padding != null) {
+				const p = parseCssNumber(this.padding as number | string)
+				if (p > 0) {
+					style.paddingLeft = p + 'rpx'
+					style.paddingRight = p + 'rpx'
+				}
 			}
 			return style
 		}

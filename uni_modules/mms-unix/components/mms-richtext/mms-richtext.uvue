@@ -1,0 +1,25 @@
+<template>
+	<rich-text class="mms-richtext" :nodes="content"></rich-text>
+</template>
+
+<script lang="uts">
+/**
+ * 薄封装 rich-text，用于展示 HTML 字符串（能力受各端 rich-text 限制）。
+ * Markdown 请在外部先转为 HTML 再传入。
+ */
+export default {
+	name: 'mmsRichtext',
+	props: {
+		content: {
+			type: String,
+			default: ''
+		}
+	}
+}
+</script>
+
+<style scoped lang="scss">
+.mms-richtext {
+	width: 100%;
+}
+</style>

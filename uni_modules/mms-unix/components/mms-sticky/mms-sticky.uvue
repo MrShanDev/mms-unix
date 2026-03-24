@@ -1,0 +1,197 @@
+<template>
+	<view class="mms-sticky">
+		<view
+			class="mms-sticky__ph"
+			:style="{ height: isFixed ? headerHeightPx + 'px' : 'auto', minHeight: minHeightStyle }"
+		>
+			<view
+				class="mms-sticky__header"
+				:class="{ 'mms-sticky__header--fixed': isFixed }"
+				:style="headerFixedStyle"
+			>
+				<slot name="header"></slot>
+			</view>
+		</view>
+		<view v-if="container" class="mms-sticky__container">
+			<slot name="content"></slot>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsSticky',
+	emits: ['sticky', 'change'],
+	props: {
+		/** 页面或 scroll-view 的滚动距离（与 onPageScroll / @scroll 同步） */
+		scrollTop: {
+			type: Number,
+			default: 0
+		},
+		/** 吸顶时与顶部的距离，单位 px */
+		stickyTop: {
+			type: [Number, String],
+			default: 0
+		},
+		/** 占位最小高度，如 80rpx */
+		stickyHeight: {
+			type: String,
+			default: ''
+		},
+		/** 是否启用 content 插槽区域 */
+		container: {
+			type: Boolean,
+			default: false
+		},
+		/** 占位背景色 */
+		backgroundColor: {
+			type: String,
+			default: 'transparent'
+		},
+		/** 列表索引，回传事件 */
+		index: {
+			type: [Number, String],
+			default: 0
+		},
+		/** 异步布局后递增以触发重新测量 */
+		recalc: {
+			type: Number,
+			default: 0
+		}
+	},
+	data() {
+		return {
+			isFixed: false as boolean,
+			headerHeightPx: 0 as number,
+			stickyTopPx: 0 as number,
+			lastTop: 0 as number
+		}
+	},
+	computed: {
+		minHeightStyle(): string {
+			const h = this.stickyHeight as string
+			if (h == null || h === '') {
+				return 'auto'
+			}
+			return h
+		},
+		headerFixedStyle(): UTSJSONObject {
+			const bg = this.backgroundColor as string
+			const style = {} as UTSJSONObject
+			if (this.isFixed) {
+				style['top'] = this.stickyTopPx + 'px'
+				style['backgroundColor'] = bg.length > 0 ? bg : '#ffffff'
+			}
+			return style
+		}
+	},
+	watch: {
+		scrollTop() {
+			this.scheduleUpdate()
+		},
+		stickyTop() {
+			this.resolveStickyTop()
+		},
+		recalc() {
+			this.measureHeader()
+			this.scheduleUpdate()
+		}
+	},
+	mounted() {
+		this.resolveStickyTop()
+		this.$nextTick(() => {
+			this.measureHeader()
+			this.scheduleUpdate()
+		})
+	},
+	methods: {
+		resolveStickyTop() {
+			const v = this.stickyTop
+			if (typeof v === 'number') {
+				this.stickyTopPx = v
+			} else {
+				const n = parseInt(v as string)
+				this.stickyTopPx = isNaN(n) ? 0 : n
+			}
+		},
+		scheduleUpdate() {
+			this.$nextTick(() => {
+				this.updateSticky()
+			})
+		},
+		measureHeader() {
+			const that = this
+			const q = uni.createSelectorQuery().in(this)
+			q.select('.mms-sticky__header').boundingClientRect(function (rect) {
+				if (rect == null) {
+					return
+				}
+				const h = rect.height as number
+				if (h > 0) {
+					that.headerHeightPx = h
+				}
+			})
+			q.exec()
+		},
+		updateSticky() {
+			const that = this
+			const q = uni.createSelectorQuery().in(this)
+			q.select('.mms-sticky__ph').boundingClientRect(function (rect) {
+				if (rect == null) {
+					return
+				}
+				const top = rect.top as number
+				const nextFixed = top <= that.stickyTopPx
+				if (nextFixed != that.isFixed) {
+					that.isFixed = nextFixed
+					const idx = that.index
+					const n = typeof idx === 'number' ? idx as number : parseInt(idx as string)
+					that.$emit('sticky', {
+						isFixed: nextFixed,
+						index: isNaN(n) ? 0 : n
+					})
+				}
+				const idx2 = that.index
+				const n2 = typeof idx2 === 'number' ? idx2 as number : parseInt(idx2 as string)
+				that.$emit('change', {
+					top,
+					index: isNaN(n2) ? 0 : n2
+				})
+				that.lastTop = top
+			})
+			q.exec()
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+.mms-sticky {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.mms-sticky__ph {
+	position: relative;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.mms-sticky__header {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.mms-sticky__header--fixed {
+	position: fixed;
+	left: 0;
+	right: 0;
+	z-index: 920;
+}
+
+.mms-sticky__container {
+	width: 100%;
+	box-sizing: border-box;
+}
+</style>

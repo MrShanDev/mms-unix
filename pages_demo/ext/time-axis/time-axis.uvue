@@ -1,0 +1,41 @@
+<template>
+	<view class="ext-page">
+		<scroll-view class="ext-scroll" scroll-y>
+			<view class="ext-section">
+				<text class="ext-title">mms-time-axis</text>
+				<mms-time-axis>
+					<mms-time-axis-item background-color="transparent">
+						<template #node>
+							<view class="ext-node">
+								<mms-icon name="check-item" size="28rpx" color="#ffffff"></mms-icon>
+							</view>
+						</template>
+						<template #content>
+							<text class="ext-axis-title">已签收</text>
+							<text class="ext-axis-desc">物流节点示例文案。</text>
+						</template>
+					</mms-time-axis-item>
+					<mms-time-axis-item background-color="transparent">
+						<template #node>
+							<view class="ext-node ext-node--muted">
+								<mms-icon name="time" size="28rpx" color="#ffffff"></mms-icon>
+							</view>
+						</template>
+						<template #content>
+							<text class="ext-axis-title ext-axis-title--muted">运输中</text>
+							<text class="ext-axis-desc">上一节点示例。</text>
+						</template>
+					</mms-time-axis-item>
+				</mms-time-axis>
+			</view>
+			<view class="ext-footer-space"></view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+</script>
+
+<style lang="scss">
+@import '../_demo-common.scss';
+</style>

@@ -1,8 +1,27 @@
 <template>
-	<view class="mms-tag" :class="[`mms-tag--${type}`, `mms-tag--${size}`, {'mms-tag--mark': mark}, {'mms-tag--disabled': disabled}]" :style="customStyle" @click="handleClick">
+	<view
+		class="mms-tag"
+		:class="[
+			`mms-tag--${type}`,
+			`mms-tag--${size}`,
+			{ 'mms-tag--plain': plain },
+			{ 'mms-tag--round': round },
+			{ 'mms-tag--mark': mark },
+			{ 'mms-tag--disabled': disabled }
+		]"
+		:style="mergedCustomStyle"
+		@tap="handleClick"
+	>
 		<slot></slot>
 		<text v-if="text" class="mms-tag__text">{{ text }}</text>
-		<icon v-if="closable" name="close-circle" :size="size === 'mini' ? 12 : 16" color="currentColor" @click="handleClose"></icon>
+		<mms-icon
+			v-if="closable"
+			class="mms-tag__close"
+			name="close"
+			:size="closeIconSize"
+			:color="closeIconColor"
+			@tap.stop="handleClose"
+		></mms-icon>
 	</view>
 </template>
 
@@ -11,20 +30,25 @@ export default {
 	name: 'mmsTag',
 	emits: ['click', 'close'],
 	props: {
-		// 类型 primary/ success/ warning/ danger/ default
+		// 类型 primary/ success/ warning/ danger/ info/ default
 		type: {
 			type: String,
 			default: 'default'
 		},
-		// 尺寸  medium/ small/ mini
+		// 尺寸 large / medium / small / mini
 		size: {
 			type: String,
-			default: 'small'
+			default: 'medium'
 		},
 		// 文字
 		text: {
 			type: String,
 			default: ''
+		},
+		// 镂空样式
+		plain: {
+			type: Boolean,
+			default: false
 		},
 		// 是否圆角
 		round: {
@@ -56,23 +80,63 @@ export default {
 			type: String,
 			default: ''
 		},
-		// 自定义样式
+		// 自定义样式（勿与合并结果同名 computed，否则冲突）
 		customStyle: {
 			type: Object as PropType<UTSJSONObject>,
 			default: () => ({})
 		}
 	},
 	computed: {
-		customStyle() {
+		mergedCustomStyle(): UTSJSONObject {
 			const style: UTSJSONObject = {}
-			if (this.color) {
+			if (this.color !== '') {
 				style.color = this.color
 			}
-			if (this.bgColor) {
+			if (this.bgColor !== '') {
 				style.backgroundColor = this.bgColor
 			}
 			Object.assign(style, this.customStyle)
 			return style
+		},
+		closeIconSize(): string {
+			if (this.size === 'mini') {
+				return '24rpx'
+			}
+			if (this.size === 'small') {
+				return '28rpx'
+			}
+			if (this.size === 'large') {
+				return '36rpx'
+			}
+			return '32rpx'
+		},
+		// 关闭图标与标签字色一致（避免父 view 的 color 未作用到 mms-icon 内 text）
+		closeIconColor(): string {
+			if (this.color !== '') {
+				return this.color
+			}
+			if (this.plain) {
+				if (this.type === 'primary') {
+					return '#409eff'
+				}
+				if (this.type === 'success') {
+					return '#67c23a'
+				}
+				if (this.type === 'warning') {
+					return '#e6a23c'
+				}
+				if (this.type === 'danger') {
+					return '#f56c6c'
+				}
+				if (this.type === 'info') {
+					return '#909399'
+				}
+				return '#606266'
+			}
+			if (this.type === 'default') {
+				return '#606266'
+			}
+			return '#ffffff'
 		}
 	},
 	methods: {
@@ -93,23 +157,30 @@ export default {
 <style scoped lang="scss">
 .mms-tag {
 	display: inline-flex;
+	flex-direction: row;
 	align-items: center;
 	justify-content: center;
 	box-sizing: border-box;
 	padding: 8rpx 16rpx;
 	line-height: 1;
+	border-radius: 6rpx;
 
-	// 尺寸
+	// 尺寸（须与 props 默认 medium 一致）
+	&.mms-tag--large {
+		font-size: 32rpx;
+		padding: 16rpx 24rpx;
+	}
 	&.mms-tag--medium {
 		font-size: 28rpx;
 		padding: 12rpx 20rpx;
 	}
 	&.mms-tag--small {
-		font-size: 26rpx;
+		font-size: 24rpx;
+		padding: 6rpx 14rpx;
 	}
 	&.mms-tag--mini {
 		font-size: 20rpx;
-		padding: 4rpx 8rpx;
+		padding: 4rpx 10rpx;
 	}
 
 	// 类型
@@ -133,10 +204,44 @@ export default {
 		color: #ffffff;
 		border: 1rpx solid #f56c6c;
 	}
+	&.mms-tag--info {
+		background-color: #909399;
+		color: #ffffff;
+		border: 1rpx solid #909399;
+	}
 	&.mms-tag--default {
 		background-color: #f5f7fa;
 		color: #606266;
 		border: 1rpx solid #dcdfe6;
+	}
+
+	// 镂空
+	&.mms-tag--plain {
+		background-color: transparent !important;
+	}
+	&.mms-tag--plain.mms-tag--primary {
+		color: #409eff;
+		border-color: #409eff;
+	}
+	&.mms-tag--plain.mms-tag--success {
+		color: #67c23a;
+		border-color: #67c23a;
+	}
+	&.mms-tag--plain.mms-tag--warning {
+		color: #e6a23c;
+		border-color: #e6a23c;
+	}
+	&.mms-tag--plain.mms-tag--danger {
+		color: #f56c6c;
+		border-color: #f56c6c;
+	}
+	&.mms-tag--plain.mms-tag--info {
+		color: #909399;
+		border-color: #909399;
+	}
+	&.mms-tag--plain.mms-tag--default {
+		color: #606266;
+		border-color: #dcdfe6;
 	}
 
 	// 圆角
@@ -152,11 +257,18 @@ export default {
 	// 禁用
 	&.mms-tag--disabled {
 		opacity: 0.5;
-		cursor: not-allowed;
 	}
 
 	.mms-tag__text {
 		line-height: inherit;
+		font-size: inherit;
+		color: inherit;
+	}
+
+	.mms-tag__close {
+		margin-left: 8rpx;
+		flex-shrink: 0;
+		opacity: 0.85;
 	}
 }
 </style>

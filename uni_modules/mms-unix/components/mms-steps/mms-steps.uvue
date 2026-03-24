@@ -1,0 +1,273 @@
+<template>
+	<view class="mms-steps" :style="{ backgroundColor: backgroundColor }">
+		<!-- 横向 -->
+		<view v-if="direction === 'row'" class="mms-steps__row">
+			<view v-for="(item, idx) in items" :key="idx" class="mms-steps__unit">
+				<view v-if="idx > 0" class="mms-steps__seg" :style="segStyle(idx - 1)"></view>
+				<view class="mms-steps__col" @tap="onItemTap(idx)">
+					<view class="mms-steps__icon-row">
+						<text v-if="typeNum === 2" class="mms-steps__num" :style="numStyle(idx)">{{ idx + 1 }}</text>
+						<view v-else class="mms-steps__dot" :style="dotStyle(idx)"></view>
+					</view>
+					<text class="mms-steps__title" :style="titleStyle(idx)">{{ itemTitle(item) }}</text>
+					<text v-if="itemDesc(item) !== ''" class="mms-steps__desc" :style="descStyle">{{ itemDesc(item) }}</text>
+				</view>
+			</view>
+		</view>
+		<!-- 纵向 -->
+		<view v-else class="mms-steps__column">
+			<view
+				v-for="(item, idx) in items"
+				:key="idx"
+				class="mms-steps__col-v"
+				:style="{ marginBottom: spacing }"
+				@tap="onItemTap(idx)"
+			>
+				<view class="mms-steps__v-left">
+					<view class="mms-steps__v-line" v-if="idx > 0" :style="vLineStyle(idx - 1)"></view>
+					<text v-if="typeNum === 2" class="mms-steps__num" :style="numStyle(idx)">{{ idx + 1 }}</text>
+					<view v-else class="mms-steps__dot" :style="dotStyle(idx)"></view>
+					<view class="mms-steps__v-line-b" v-if="idx < itemCount - 1" :style="vLineStyle(idx)"></view>
+				</view>
+				<view class="mms-steps__v-right">
+					<text class="mms-steps__title" :style="titleStyle(idx)">{{ itemTitle(item) }}</text>
+					<text v-if="itemDesc(item) !== ''" class="mms-steps__desc" :style="descStyle">{{ itemDesc(item) }}</text>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+type StepItem = UTSJSONObject
+
+export default {
+	name: 'mmsSteps',
+	emits: ['click'],
+	props: {
+		type: {
+			type: Number,
+			default: 1
+		},
+		spacing: {
+			type: String,
+			default: '160rpx'
+		},
+		direction: {
+			type: String,
+			default: 'row'
+		},
+		activeColor: {
+			type: String,
+			default: '#5677fc'
+		},
+		deactiveColor: {
+			type: String,
+			default: '#999999'
+		},
+		titleSize: {
+			type: Number,
+			default: 28
+		},
+		bold: {
+			type: Boolean,
+			default: false
+		},
+		descSize: {
+			type: Number,
+			default: 24
+		},
+		activeSteps: {
+			type: Number,
+			default: -1
+		},
+		lineStyleProp: {
+			type: String,
+			default: 'solid'
+		},
+		items: {
+			type: Array,
+			default(): any[] {
+				return []
+			}
+		},
+		titleField: {
+			type: String,
+			default: 'title'
+		},
+		descrField: {
+			type: String,
+			default: 'desc'
+		},
+		backgroundColor: {
+			type: String,
+			default: '#ffffff'
+		}
+	},
+	computed: {
+		typeNum(): number {
+			return this.type as number
+		},
+		itemCount(): number {
+			return (this.items as any[]).length
+		},
+		descStyle(): UTSJSONObject {
+			return {
+				fontSize: (this.descSize as number) + 'rpx',
+				color: '#999999'
+			} as UTSJSONObject
+		}
+	},
+	methods: {
+		itemTitle(item: StepItem): string {
+			const k = this.titleField as string
+			const v = item[k]
+			return v == null ? '' : '' + v
+		},
+		itemDesc(item: StepItem): string {
+			const k = this.descrField as string
+			const v = item[k]
+			return v == null ? '' : '' + v
+		},
+		segStyle(segIdx: number): UTSJSONObject {
+			const active = (this.activeSteps as number) > segIdx
+			return {
+				flex: '1',
+				height: '4rpx',
+				backgroundColor: active ? this.activeColor as string : this.deactiveColor as string,
+				alignSelf: 'center',
+				minWidth: '16rpx'
+			} as UTSJSONObject
+		},
+		vLineStyle(segIdx: number): UTSJSONObject {
+			const active = (this.activeSteps as number) > segIdx
+			return {
+				width: '4rpx',
+				flex: '1',
+				backgroundColor: active ? this.activeColor as string : this.deactiveColor as string
+			} as UTSJSONObject
+		},
+		dotStyle(idx: number): UTSJSONObject {
+			const on = idx <= (this.activeSteps as number)
+			return {
+				backgroundColor: on ? this.activeColor as string : this.deactiveColor as string,
+				width: '20rpx',
+				height: '20rpx',
+				borderRadius: '50%'
+			} as UTSJSONObject
+		},
+		numStyle(idx: number): UTSJSONObject {
+			const on = idx <= (this.activeSteps as number)
+			return {
+				color: on ? '#ffffff' : this.deactiveColor as string,
+				backgroundColor: on ? this.activeColor as string : '#f0f0f0',
+				fontSize: '24rpx',
+				width: '44rpx',
+				height: '44rpx',
+				borderRadius: '50%',
+				textAlign: 'center',
+				lineHeight: '44rpx'
+			} as UTSJSONObject
+		},
+		titleStyle(idx: number): UTSJSONObject {
+			const st = {} as UTSJSONObject
+			st['fontSize'] = (this.titleSize as number) + 'rpx'
+			st['color'] = idx <= (this.activeSteps as number) ? this.activeColor as string : '#333333'
+			if (this.bold) {
+				st['fontWeight'] = 'bold'
+			}
+			return st
+		},
+		onItemTap(idx: number) {
+			this.$emit('click', { index: idx })
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+.mms-steps {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 24rpx 16rpx;
+}
+
+.mms-steps__row {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	width: 100%;
+}
+
+.mms-steps__unit {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+}
+
+.mms-steps__seg {
+	display: flex;
+	flex-direction: row;
+}
+
+.mms-steps__col {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	flex: 1;
+}
+
+.mms-steps__icon-row {
+	height: 48rpx;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.mms-steps__title {
+	margin-top: 8rpx;
+	text-align: center;
+}
+
+.mms-steps__desc {
+	margin-top: 6rpx;
+	text-align: center;
+}
+
+.mms-steps__column {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.mms-steps__col-v {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+}
+
+.mms-steps__v-left {
+	width: 48rpx;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.mms-steps__v-line {
+	min-height: 16rpx;
+}
+
+.mms-steps__v-line-b {
+	min-height: 16rpx;
+	flex: 1;
+}
+
+.mms-steps__v-right {
+	flex: 1;
+	padding-left: 16rpx;
+	padding-bottom: 24rpx;
+	display: flex;
+	flex-direction: column;
+}
+</style>

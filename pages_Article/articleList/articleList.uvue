@@ -26,13 +26,14 @@
 </template>
 
 <script setup lang="uts">
-	import { ref } from 'vue'
+	import { ref, computed } from 'vue'
+	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
 	import { articleList as fetchArticleList } from '@/common/api/mallApi'
 
 	const articleList = ref<any[]>([])
 	const cateId = ref('')
 	const title = ref('文章列表')
-	const imageUrl = 'https://ssca-1364461867.cos.ap-beijing.myqcloud.com/mms/upload/68f72f91cad408e14b73d40b.png'
+	const imageUrl = computed((): string => getMmsUiConfig().articlePlaceholder)
 	const articlePageNum = ref(1)
 	const articlePageSize = 10
 	const articleTotal = ref(0)

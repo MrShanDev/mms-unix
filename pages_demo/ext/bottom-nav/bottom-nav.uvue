@@ -1,0 +1,45 @@
+<template>
+	<view class="ext-page">
+		<scroll-view class="ext-scroll" scroll-y>
+			<view class="ext-section ext-section--nav">
+				<text class="ext-title">mms-bottom-navigation（非 fixed 演示）</text>
+				<view class="ext-nav-box">
+					<mms-bottom-navigation
+						:current="navCur"
+						:item-list="navItems"
+						:is-fixed="false"
+						:safe-bottom="false"
+						@click="onNavClick"
+					></mms-bottom-navigation>
+				</view>
+			</view>
+			<view class="ext-footer-space"></view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { ref } from 'vue'
+
+const navCur = ref(0)
+const navItems = [
+	{ text: '首页', type: 1, color: '#666666' },
+	{ text: '分类', type: 1, color: '#666666' },
+	{ text: '我的', type: 1, color: '#666666' }
+]
+
+function onNavClick(e: UTSJSONObject) {
+	const menu = e['menu']
+	const idx = e['index']
+	if (menu === 'main' && idx != null) {
+		const ty = e['type']
+		if (ty === 1) {
+			navCur.value = idx as number
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+@import '../_demo-common.scss';
+</style>

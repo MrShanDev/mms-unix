@@ -1,0 +1,61 @@
+<template>
+	<view class="page">
+		<mms-cell-group title="陕西品创网络">
+			<mms-cell title="官网" :border="true">
+				<template #right>
+					<mms-link href="https://mmsadmin.cn" text="mmsadmin.cn" underline></mms-link>
+				</template>
+			</mms-cell>
+			<mms-cell title="商务咨询" value="欢迎邮件/电话沟通合作" :border="false"></mms-cell>
+		</mms-cell-group>
+		<mms-cell-group title="沟通方式（请按实际修改）">
+			<mms-cell title="电话" :value="contactPhone" :isLink="true" @click="onDial"></mms-cell>
+			<mms-cell title="邮箱" :border="false">
+				<template #right>
+					<mms-link :href="'mailto:' + contactEmail" :text="contactEmail" underline></mms-link>
+				</template>
+			</mms-cell>
+		</mms-cell-group>
+		<view class="tip">
+			<text class="tip-text">以上联系方式可在本页 script 中修改常量；也可后续接入 config。</text>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	/** 替换为贵司真实号码与邮箱 */
+	const contactPhone = '029-88888888'
+	const contactEmail = 'contact@example.com'
+
+	function onDial() {
+		uni.makePhoneCall({
+			phoneNumber: contactPhone,
+			fail: () => {
+				uni.showModal({
+					title: '联系电话',
+					content: contactPhone,
+					showCancel: false,
+				})
+			},
+		})
+	}
+</script>
+
+<style lang="scss" scoped>
+.page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+	box-sizing: border-box;
+}
+
+.tip {
+	padding: 24rpx 8rpx 40rpx;
+}
+
+.tip-text {
+	font-size: 24rpx;
+	color: #969799;
+	line-height: 1.5;
+}
+</style>

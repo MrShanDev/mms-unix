@@ -36,7 +36,7 @@
 			<text class="section-title">自定义颜色</text>
 			<view class="qrcode-row">
 				<view class="qrcode-item">
-					<mms-qrcode :value="qrValue" color="#ff2727"></mms-qrcode>
+					<mms-qrcode :value="qrValue" color="#ff0844"></mms-qrcode>
 					<text class="qrcode-label">红色</text>
 				</view>
 				<view class="qrcode-item">
@@ -49,8 +49,11 @@
 </template>
 
 <script setup lang="uts">
-const qrValue = 'https://www.example.com'
-const logoUrl = '/static/img/heading.png'
+	import { computed } from 'vue'
+	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
+
+	const qrValue = 'https://www.example.com'
+	const logoUrl = computed((): string => getMmsUiConfig().avatarDefault)
 </script>
 
 <style lang="scss">
@@ -73,7 +76,7 @@ const logoUrl = '/static/img/heading.png'
 	color: #333333;
 	margin-bottom: 24rpx;
 	padding-left: 16rpx;
-	border-left: 6rpx solid #ff2727;
+	border-left: 6rpx solid #ff0844;
 }
 
 .qrcode-center {

@@ -3,28 +3,36 @@
 		<view class="content">
 			<view class="about-inner">
 				<view class="logo-wrap">
-					<image class="logo-img" src="https://ssca-1364461867.cos.ap-beijing.myqcloud.com/mms/upload/688c17e596d408e1ce66306b.png" mode="aspectFit" />
+					<image class="logo-img" src="/static/logo.png" mode="aspectFit"></image>
 				</view>
-				<view class="title">盛世长安</view>
+				<text class="product-name">MMS-UNIX</text>
+				<text class="brand-line">陕西品创网络旗下产品</text>
 				<view class="desc">
-					我们是一家专注于文化艺术品交易的平台，致力于为用户提供安全、便捷、专业的艺术品托管和交易服务。通过我们的平台，您可以轻松实现艺术品的价值流转和投资增值。
+					<text class="para">
+						MMS-UNIX 面向 uni-app x，提供可复用的 UI 组件、工具方法与示例工程，帮助团队在 App、小程序等端快速搭建一致、可维护的界面。
+					</text>
+					<text class="para">
+						组件与页面遵循 UTS 强类型与项目内 ucss 约定，支持通过全局配置（如 common/config.ts 中的 mmsUi）统一替换 Logo、占位图、主题色等资源，便于品牌化落地。
+					</text>
+				</view>
+				<view class="doc-block">
+					<text class="doc-label">官方文档</text>
+					<view class="doc-link-row">
+						<mms-link href="https://mmsadmin.cn" text="mmsadmin.cn" underline></mms-link>
+					</view>
 				</view>
 				<view class="features">
 					<view class="feature-item">
-						<text class="feature-dot">●</text>
-						<text class="feature-text">专业鉴定团队</text>
+						<view class="feature-dot"></view>
+						<text class="feature-text">多端组件与工具能力，覆盖表单、反馈、展示与业务场景</text>
 					</view>
 					<view class="feature-item">
-						<text class="feature-dot">●</text>
-						<text class="feature-text">安全托管服务</text>
+						<view class="feature-dot"></view>
+						<text class="feature-text">可配置的 UI 资源与主题入口，便于对接自有素材与规范</text>
 					</view>
 					<view class="feature-item">
-						<text class="feature-dot">●</text>
-						<text class="feature-text">便捷交易流程</text>
-					</view>
-					<view class="feature-item">
-						<text class="feature-dot">●</text>
-						<text class="feature-text">完善保障体系</text>
+						<view class="feature-dot"></view>
+						<text class="feature-text">详细说明与更新以官方网站为准</text>
 					</view>
 				</view>
 			</view>
@@ -32,58 +40,111 @@
 	</view>
 </template>
 
-<script setup lang="uts">
-</script>
-
-<style lang="scss" scoped>
-.page { min-height: 100vh; background-color: #f5f5f5; }
-.content {
-	margin: 20rpx;
-	background: #fff;
-	border-radius: 16rpx;
-	padding: 40rpx;
-	box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
-}
-.about-inner { }
-.logo-wrap {
-	display: flex;
-	justify-content: center;
-	margin-bottom: 30rpx;
-	.logo-img {
-		width: 160rpx;
-		height: 160rpx;
-		border-radius: 50%;
+<style lang="scss">
+	.page {
+		min-height: 100vh;
+		background-color: #f5f5f5;
 	}
-}
-.title {
-	font-size: 36rpx;
-	font-weight: 600;
-	color: #303133;
-	text-align: center;
-	margin-bottom: 24rpx;
-}
-.desc {
-	font-size: 28rpx;
-	color: #606266;
-	line-height: 1.6;
-	text-align: justify;
-}
-.features {
-	margin-top: 40rpx;
-	.feature-item {
+
+	.content {
+		margin: 20rpx;
+		background: #ffffff;
+		border-radius: 16rpx;
+		padding: 40rpx;
+		box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+	}
+
+	.logo-wrap {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		margin-bottom: 24rpx;
+	}
+
+	.logo-img {
+		width: 200rpx;
+		height: 200rpx;
+		border-radius: 20rpx;
+		background-color: #ffffff;
+	}
+
+	.product-name {
+		font-size: 40rpx;
+		font-weight: 700;
+		color: #303133;
+		text-align: center;
+		margin-bottom: 12rpx;
+	}
+
+	.brand-line {
+		display: block;
+		font-size: 28rpx;
+		color: #909399;
+		text-align: center;
+		margin-bottom: 32rpx;
+	}
+
+	.desc {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.para {
+		font-size: 28rpx;
+		color: #606266;
+		line-height: 1.65;
+		text-align: justify;
+		margin-bottom: 20rpx;
+	}
+
+	.doc-block {
+		margin-top: 8rpx;
+		margin-bottom: 36rpx;
+		padding: 24rpx;
+		background-color: #f9fafb;
+		border-radius: 12rpx;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.doc-label {
+		font-size: 26rpx;
+		color: #909399;
+		margin-bottom: 12rpx;
+	}
+
+	.doc-link-row {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-		margin-bottom: 20rpx;
-		.feature-dot {
-			color: #ff2727;
-			font-size: 24rpx;
-			margin-right: 16rpx;
-		}
-		.feature-text {
-			font-size: 30rpx;
-			color: #303133;
-		}
+		flex-wrap: wrap;
 	}
-}
+
+	.features {
+		margin-top: 8rpx;
+	}
+
+	.feature-item {
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		margin-bottom: 20rpx;
+	}
+
+	.feature-dot {
+		width: 12rpx;
+		height: 12rpx;
+		border-radius: 50%;
+		background-color: #ff0844;
+		margin-right: 16rpx;
+		margin-top: 10rpx;
+		flex-shrink: 0;
+	}
+
+	.feature-text {
+		flex: 1;
+		font-size: 28rpx;
+		color: #303133;
+		line-height: 1.5;
+	}
 </style>

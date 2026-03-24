@@ -2,32 +2,57 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">基础搜索框</text>
-			<mms-search placeholder="请输入搜索关键词"></mms-search>
+			<text class="section-desc">默认方形圆角、外层灰底、内层白底</text>
+			<mms-search v-model="q1" placeholder="请输入搜索关键词"></mms-search>
 		</view>
 
 		<view class="demo-section">
-			<text class="section-title">圆形搜索框</text>
-			<mms-search placeholder="请输入搜索关键词" shape="round"></mms-search>
+			<text class="section-title">圆形（胶囊）搜索框</text>
+			<text class="section-desc">shape="round"，高圆角胶囊</text>
+			<mms-search v-model="q2" placeholder="请输入搜索关键词" shape="round"></mms-search>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">带边框</text>
+			<text class="section-desc">border=true，内框描边</text>
+			<mms-search v-model="q3" placeholder="带边框的搜索" :border="true"></mms-search>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">显示搜索按钮</text>
-			<mms-search placeholder="请输入搜索关键词" :showAction="true" @search="onSearch"></mms-search>
+			<text class="section-desc">showAction=true，右侧「搜索」，点击触发 @search</text>
+			<mms-search v-model="q4" placeholder="输入后点搜索" :showAction="true" @search="onSearch"></mms-search>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">禁用状态</text>
+			<text class="section-desc">disabled=true，不可输入、不显示清除</text>
 			<mms-search placeholder="搜索框已禁用" :disabled="true"></mms-search>
 		</view>
 
 		<view class="demo-section">
-			<text class="section-title">自定义背景色</text>
-			<mms-search placeholder="请输入搜索关键词" backgroundColor="#f5f5f5"></mms-search>
+			<text class="section-title">自定义内外背景</text>
+			<text class="section-desc">backgroundColor 外层条，innerBgColor 输入区域（与默认形成对比）</text>
+			<mms-search
+				v-model="q5"
+				placeholder="浅蓝底输入区"
+				backgroundColor="#e8eef5"
+				innerBgColor="#e3f2fd"
+				:border="true"
+			></mms-search>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
+import { ref } from 'vue'
+
+const q1 = ref('')
+const q2 = ref('')
+const q3 = ref('')
+const q4 = ref('')
+const q5 = ref('')
+
 function onSearch(value: string) {
 	uni.showToast({ title: '搜索：' + value, icon: 'none' })
 }
@@ -51,8 +76,16 @@ function onSearch(value: string) {
 	font-size: 28rpx;
 	font-weight: bold;
 	color: #333333;
-	margin-bottom: 24rpx;
+	margin-bottom: 12rpx;
 	padding-left: 16rpx;
-	border-left: 6rpx solid #ff2727;
+	border-left: 6rpx solid #ff0844;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #909399;
+	margin-bottom: 20rpx;
+	padding-left: 16rpx;
+	line-height: 1.4;
 }
 </style>

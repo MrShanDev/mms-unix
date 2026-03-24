@@ -1,0 +1,31 @@
+{
+  "name": "mms-unix-vscode",
+  "displayName": "MMS-UNIX 组件提示",
+  "description": "为 uni-app x 项目提供 mms-* 组件标签补全；可将 .uvue 关联为 Vue 语言。",
+  "version": "0.0.1",
+  "publisher": "mms-unix",
+  "private": true,
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Programming Languages", "Snippets"],
+  "activationEvents": ["onLanguage:vue"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configurationDefaults": {
+      "files.associations": {
+        "*.uvue": "vue"
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.5.0"
+  }
+}

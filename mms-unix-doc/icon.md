@@ -7,7 +7,7 @@
 ```uvue
 <template>
 	<view>
-		<mms-icon name="right-arrow" color="#333333" size="40"></mms-icon>
+		<mms-icon name="arrow-right" color="#333333" size="40"></mms-icon>
 	</view>
 </template>
 ```

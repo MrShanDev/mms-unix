@@ -162,13 +162,13 @@
 			display: flex; flex-direction: row; justify-content: space-between; align-items: center;
 			.cancel-btn, .confirm-btn { font-size: 32rpx; padding: 10rpx 20rpx; }
 			.cancel-btn { color: #999; }
-			.confirm-btn { color: #ff2727; }
+			.confirm-btn { color: #ff0844; }
 		}
 		.picker-content {
 			height: 400rpx; overflow: hidden;
 			.picker-view { height: 100%; }
 			.picker-item {
-				display: flex; align-items: center; justify-content: center;
+				display: flex; flex-direction: row; align-items: center; justify-content: center;
 				font-size: 28rpx; color: #333; height: 50rpx; line-height: 50rpx;
 			}
 		}

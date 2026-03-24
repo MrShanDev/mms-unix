@@ -33,7 +33,7 @@
 		<view class="demo-section">
 			<text class="section-title">价格颜色</text>
 			<view class="price-row">
-				<mms-price :value="99.99" color="#ff2727"></mms-price>
+				<mms-price :value="99.99" color="#ff0844"></mms-price>
 			</view>
 			<view class="price-row">
 				<mms-price :value="199.99" color="#1890ff"></mms-price>
@@ -73,7 +73,7 @@
 	color: #333333;
 	margin-bottom: 24rpx;
 	padding-left: 16rpx;
-	border-left: 6rpx solid #ff2727;
+	border-left: 6rpx solid #ff0844;
 }
 
 .price-row {

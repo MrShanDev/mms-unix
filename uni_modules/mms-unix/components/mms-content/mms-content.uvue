@@ -7,6 +7,8 @@
 
 <script lang="uts">
 	import { PropType } from 'vue';
+	import { toCssLength, parseCssNumber } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+
 	export default {
 		name: "mmsWingBlank",
 		emits: ['click'],
@@ -45,17 +47,18 @@
 		},
 		computed: {
 			getPadding() {
-				let styles = '';
-				const padding : number = Number(this.gap)
-				if (padding && padding > 0) {
-					styles += `padding:0 ${padding}rpx;`
+				const padding = parseCssNumber(this.gap as number | string)
+				if (padding > 0) {
+					return `padding:0 ${padding}rpx;`
 				}
-				return styles
+				return ''
 			},
 			getStyles() {
-				let styles : string =
-					`background:${this.background};border-radius:${this.radius}rpx;margin-top:${this.marginTop}rpx;margin-bottom:${this.marginBottom}rpx;`;
-				styles += this.getPadding;
+				const br = toCssLength(this.radius as number | string)
+				const mt = toCssLength(this.marginTop as number | string)
+				const mb = toCssLength(this.marginBottom as number | string)
+				let styles = `background:${this.background};border-radius:${br};margin-top:${mt};margin-bottom:${mb};`
+				styles += this.getPadding
 				return styles
 			}
 		},

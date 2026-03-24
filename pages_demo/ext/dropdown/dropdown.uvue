@@ -1,0 +1,46 @@
+<template>
+	<view class="ext-page">
+		<scroll-view class="ext-scroll" scroll-y>
+			<view class="ext-section">
+				<text class="ext-title">mms-dropdown-list</text>
+				<mms-dropdown-list
+					:show="dropdownShow"
+					:top="88"
+					:height="320"
+					:is-mask="true"
+					mask-background="rgba(0,0,0,0.35)"
+					@close="dropdownShow = false"
+				>
+					<template #selectionbox>
+						<view class="ext-dd-head" @tap="dropdownShow = !dropdownShow">
+							<text class="ext-dd-head-text">{{ dropdownShow ? '点击遮罩关闭' : '点击展开下拉' }}</text>
+						</view>
+					</template>
+					<template #dropdownbox>
+						<scroll-view scroll-y class="ext-dd-scroll">
+							<view class="ext-dd-item" v-for="n in 8" :key="n" @tap="pickDd(n)">
+								<text class="ext-dd-item-text">选项 {{ n }}</text>
+							</view>
+						</scroll-view>
+					</template>
+				</mms-dropdown-list>
+			</view>
+			<view class="ext-footer-space"></view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { ref } from 'vue'
+
+const dropdownShow = ref(false)
+
+function pickDd(n: number) {
+	dropdownShow.value = false
+	uni.showToast({ title: '选了' + n, icon: 'none' })
+}
+</script>
+
+<style lang="scss">
+@import '../_demo-common.scss';
+</style>

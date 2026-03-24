@@ -49,6 +49,9 @@
 			<view class="demo-row">
 				<mms-button type="primary" btnSize="mini">迷你按钮</mms-button>
 			</view>
+			<view class="demo-row">
+				<mms-button type="primary" btnSize="tiny">超级迷你</mms-button>
+			</view>
 		</view>
 
 		<view class="demo-section">
@@ -110,7 +113,7 @@
 	color: #333333;
 	margin-bottom: 24rpx;
 	padding-left: 16rpx;
-	border-left: 6rpx solid #ff2727;
+	border-left: 6rpx solid #ff0844;
 }
 
 .demo-row {

@@ -1,0 +1,72 @@
+<template>
+	<view class="mms-picture-cropper">
+		<image v-if="imageUrl !== ''" class="mms-picture-cropper__img" :src="imageUrl" mode="widthFix"></image>
+		<text class="mms-picture-cropper__tip">uni-app x 端裁剪能力因平台差异较大，本组件仅作选图预览与确认占位；真裁剪请使用各端原生能力或服务端处理。</text>
+		<view class="mms-picture-cropper__bar">
+			<text class="mms-picture-cropper__btn" @tap="emitCrop">确认（回传当前图）</text>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsPictureCropper',
+	emits: ['ready', 'imageLoad', 'cropper'],
+	props: {
+		imageUrl: {
+			type: String,
+			default: ''
+		}
+	},
+	mounted() {
+		this.$emit('ready', {} as UTSJSONObject)
+	},
+	methods: {
+		emitCrop() {
+			const u = this.imageUrl as string
+			this.$emit('cropper', {
+				url: u,
+				base64: '',
+				width: 0,
+				height: 0
+			} as UTSJSONObject)
+		}
+	}
+}
+</script>
+
+<style scoped lang="scss">
+.mms-picture-cropper {
+	width: 100%;
+	padding: 24rpx;
+	box-sizing: border-box;
+}
+
+.mms-picture-cropper__img {
+	width: 100%;
+	border-radius: 12rpx;
+}
+
+.mms-picture-cropper__tip {
+	display: block;
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.5;
+	margin-top: 20rpx;
+}
+
+.mms-picture-cropper__bar {
+	margin-top: 32rpx;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.mms-picture-cropper__btn {
+	padding: 20rpx 48rpx;
+	background-color: #5677fc;
+	color: #ffffff;
+	font-size: 28rpx;
+	border-radius: 40rpx;
+}
+</style>

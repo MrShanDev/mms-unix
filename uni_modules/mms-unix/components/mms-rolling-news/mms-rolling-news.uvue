@@ -1,0 +1,175 @@
+<template>
+	<view class="mms-rolling-news" :style="{ backgroundColor: backgroundColor }">
+		<view v-if="showIconSlot" class="mms-rolling-news__prefix">
+			<slot name="icon"></slot>
+		</view>
+		<swiper
+			class="mms-rolling-news__swiper"
+			:style="{ height: swiperHeight }"
+			:vertical="vertical"
+			:autoplay="autoplay"
+			:circular="circular"
+			:interval="intervalNum"
+			:duration="durationNum"
+		>
+			<swiper-item v-for="(line, idx) in lines" :key="idx" class="mms-rolling-news__item">
+				<view class="mms-rolling-news__row" @tap="onLineTap(idx, line)">
+					<text class="mms-rolling-news__text" :style="textStyle">{{ line }}</text>
+				</view>
+			</swiper-item>
+		</swiper>
+	</view>
+</template>
+
+<script lang="uts">
+import { toCssLength } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+
+export default {
+	name: 'mmsRollingNews',
+	emits: ['click', 'change'],
+	props: {
+		list: {
+			type: Array,
+			default(): any[] {
+				return []
+			}
+		},
+		vertical: {
+			type: Boolean,
+			default: true
+		},
+		autoplay: {
+			type: Boolean,
+			default: true
+		},
+		circular: {
+			type: Boolean,
+			default: true
+		},
+		interval: {
+			type: [Number, String],
+			default: 3000
+		},
+		duration: {
+			type: [Number, String],
+			default: 400
+		},
+		fontSize: {
+			type: [Number, String],
+			default: 28
+		},
+		color: {
+			type: String,
+			default: '#333333'
+		},
+		height: {
+			type: [Number, String],
+			default: 50
+		},
+		backgroundColor: {
+			type: String,
+			default: 'transparent'
+		},
+		showIconSlot: {
+			type: Boolean,
+			default: false
+		}
+	},
+	computed: {
+		lines(): string[] {
+			const raw = this.list as any[]
+			const out = [] as string[]
+			for (let i = 0; i < raw.length; i++) {
+				const v = raw[i]
+				if (typeof v === 'string') {
+					out.push(v)
+				} else {
+					out.push('' + v)
+				}
+			}
+			if (out.length === 0) {
+				out.push('')
+			}
+			return out
+		},
+		intervalNum(): number {
+			const v = this.interval as number | string
+			if (typeof v === 'number') {
+				return v
+			}
+			const n = parseInt(v as string)
+			if (isNaN(n)) {
+				return 3000
+			}
+			return n
+		},
+		durationNum(): number {
+			const v = this.duration as number | string
+			if (typeof v === 'number') {
+				return v
+			}
+			const n = parseInt(v as string)
+			if (isNaN(n)) {
+				return 400
+			}
+			return n
+		},
+		textStyle(): UTSJSONObject {
+			return {
+				fontSize: toCssLength(this.fontSize as number | string),
+				color: this.color
+			}
+		},
+		swiperHeight(): string {
+			return toCssLength(this.height as number | string)
+		}
+	},
+	methods: {
+		onLineTap(idx: number, line: string) {
+			this.$emit('click', { index: idx, text: line } as UTSJSONObject)
+		}
+	}
+}
+</script>
+
+<style scoped lang="scss">
+.mms-rolling-news {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 12rpx 24rpx;
+}
+
+.mms-rolling-news__prefix {
+	margin-right: 12rpx;
+	flex-shrink: 0;
+}
+
+.mms-rolling-news__swiper {
+	flex: 1;
+	height: 50rpx;
+}
+
+.mms-rolling-news__item {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.mms-rolling-news__row {
+	flex: 1;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.mms-rolling-news__text {
+	line-height: 1.3;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	flex: 1;
+}
+</style>

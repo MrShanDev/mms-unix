@@ -1,5 +1,5 @@
 <template>
-	<view class="mms-grid-item" :class="{'mms-grid-item--border': border}" @click="handleClick">
+	<view class="mms-grid-item" :class="{'mms-grid-item--border': showItemBorder}" @click="handleClick">
 		<view class="mms-grid-item__content">
 			<slot name="icon">
 				<view v-if="icon" class="mms-grid-item__icon">
@@ -18,6 +18,12 @@
 export default {
 	name: 'mmsGridItem',
 	emits: ['click'],
+	inject: {
+		mmsGridBorder: {
+			from: 'mmsGridBorder',
+			default: null
+		}
+	},
 	props: {
 		// 图标名称
 		icon: {
@@ -55,6 +61,15 @@ export default {
 			default: 'navigateTo'
 		}
 	},
+	computed: {
+		showItemBorder(): boolean {
+			const fromGrid = this.mmsGridBorder
+			if (fromGrid !== null && fromGrid !== undefined) {
+				return fromGrid as boolean
+			}
+			return this.border as boolean
+		}
+	},
 	methods: {
 		handleClick() {
 			this.$emit('click')
@@ -80,6 +95,8 @@ export default {
 	justify-content: center;
 	padding: 24rpx 16rpx;
 	box-sizing: border-box;
+	/* 与 mms-grid 内 .mms-grid__item 一致：继承父级 --col-num，按列数均分一行宽度 */
+	width: calc(100% / var(--col-num, 4));
 
 	.mms-grid-item__content {
 		display: flex;

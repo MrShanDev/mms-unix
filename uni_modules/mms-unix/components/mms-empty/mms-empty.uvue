@@ -1,22 +1,31 @@
 <template>
-	<view class="mms-empty" :style="{ paddingTop: paddingTop + 'rpx' }">
-		<image v-if="!image && !icon" class="mms-empty__image" src="https://img.js.design/assets/img/6148c128d6f1ec44b18cbb1d.png" mode="aspectFit"></image>
-		<image v-if="image" class="mms-empty__image" :src="image" mode="aspectFit"></image>
-		<view v-if="icon" class="mms-empty__icon">
-			<slot name="icon"></slot>
-		</view>
-		<view class="mms-empty__text">
-			<slot>
-				<text class="mms-empty__description">{{ description }}</text>
+	<view class="mms-empty" :style="{ paddingTop: paddingTopCss }">
+		<image
+			v-if="showDefaultImage"
+			class="mms-empty__image"
+			:src="defaultEmptyImageSrc"
+			mode="aspectFit"
+		></image>
+		<image v-if="image !== ''" class="mms-empty__image" :src="image" mode="aspectFit"></image>
+		<view v-if="showIconBlock" class="mms-empty__icon">
+			<slot name="icon">
+				<mms-icon v-if="icon !== ''" :name="icon" size="96rpx" color="#c0c4cc"></mms-icon>
 			</slot>
 		</view>
-		<view v-if="$slots.default" class="mms-empty__bottom">
+		<view class="mms-empty__text">
+			<text class="mms-empty__description">{{ displayText }}</text>
+		</view>
+		<view v-if="hasBottomSlot" class="mms-empty__bottom">
+			<slot name="footer"></slot>
 			<slot></slot>
 		</view>
 	</view>
 </template>
 
 <script lang="uts">
+import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
+import { toCssLength } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+
 export default {
 	name: 'mmsEmpty',
 	props: {
@@ -30,10 +39,54 @@ export default {
 			type: String,
 			default: '暂无数据'
 		},
+		// 与 description 相同含义，非空时优先于 description（便于简写）
+		text: {
+			type: String,
+			default: ''
+		},
+		// mms-icon 的 name，与 image 互斥；也可改用 #icon 插槽完全自定义
+		icon: {
+			type: String,
+			default: ''
+		},
 		// 图片距离顶部的距离
 		paddingTop: {
 			type: [Number, String],
 			default: 200
+		}
+	},
+	computed: {
+		defaultEmptyImageSrc(): string {
+			return getMmsUiConfig().emptyDefaultImage
+		},
+		paddingTopCss(): string {
+			return toCssLength(this.paddingTop as number | string)
+		},
+		displayText(): string {
+			const t = (this.text as string).trim()
+			if (t.length > 0) {
+				return t
+			}
+			return this.description as string
+		},
+		showIconBlock(): boolean {
+			if ((this.image as string).trim().length > 0) {
+				return false
+			}
+			const ic = this.icon as string
+			if (ic != null && ic.trim().length > 0) {
+				return true
+			}
+			return this.$slots['icon'] != null
+		},
+		showDefaultImage(): boolean {
+			if (this.image as string !== '') {
+				return false
+			}
+			return !this.showIconBlock
+		},
+		hasBottomSlot(): boolean {
+			return this.$slots['footer'] != null || this.$slots.default != null
 		}
 	}
 };
@@ -52,8 +105,10 @@ export default {
 	}
 
 	.mms-empty__icon {
-		font-size: 96rpx;
-		color: #c0c4cc;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.mms-empty__text {
@@ -68,6 +123,13 @@ export default {
 
 	.mms-empty__bottom {
 		margin-top: 30rpx;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		box-sizing: border-box;
 	}
 }
 </style>

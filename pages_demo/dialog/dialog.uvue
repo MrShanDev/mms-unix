@@ -2,20 +2,41 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">基础对话框</text>
+			<text class="section-desc">底部「知道了」或点击遮罩关闭；关闭后遮罩不再拦截页面触摸。</text>
 			<mms-button type="primary" @click="showDialog1 = true">显示对话框</mms-button>
-			<mms-dialog :visible="showDialog1" title="提示" content="这是一个基础对话框" @close="showDialog1 = false"></mms-dialog>
+			<mms-dialog
+				v-model:visible="showDialog1"
+				title="提示"
+				content="这是一个基础对话框"
+				:buttons="dialog1Buttons"
+				@click="onDialog1Click"
+			></mms-dialog>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">确认对话框</text>
+			<text class="section-desc">showCancel 且未传 buttons 时使用「取消 / 确定」，并触发 cancel / confirm。</text>
 			<mms-button type="primary" @click="showDialog2 = true">显示确认框</mms-button>
-			<mms-dialog :visible="showDialog2" title="确认操作" content="确定要删除这条记录吗？" :showCancel="true" @confirm="onConfirm" @cancel="showDialog2 = false"></mms-dialog>
+			<mms-dialog
+				v-model:visible="showDialog2"
+				title="确认操作"
+				content="确定要删除这条记录吗？"
+				:showCancel="true"
+				@confirm="onConfirm"
+				@cancel="onCancel2"
+			></mms-dialog>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">无标题对话框</text>
+			<text class="section-desc">无标题时隐藏标题区；底部「知道了」或点遮罩关闭。</text>
 			<mms-button type="primary" @click="showDialog3 = true">无标题对话框</mms-button>
-			<mms-dialog :visible="showDialog3" content="这是一个没有标题的对话框" @close="showDialog3 = false"></mms-dialog>
+			<mms-dialog
+				v-model:visible="showDialog3"
+				content="这是一个没有标题的对话框"
+				:buttons="dialog3Buttons"
+				@click="onDialog3Click"
+			></mms-dialog>
 		</view>
 	</view>
 </template>
@@ -27,9 +48,28 @@ const showDialog1 = ref(false)
 const showDialog2 = ref(false)
 const showDialog3 = ref(false)
 
+const dialog1Buttons = [{ text: '知道了' }]
+const dialog3Buttons = [{ text: '知道了' }]
+
+function onDialog1Click(e: { index: number }) {
+	if (e.index === 0) {
+		showDialog1.value = false
+	}
+}
+
 function onConfirm() {
 	uni.showToast({ title: '已确认', icon: 'success' })
 	showDialog2.value = false
+}
+
+function onCancel2() {
+	showDialog2.value = false
+}
+
+function onDialog3Click(e: { index: number }) {
+	if (e.index === 0) {
+		showDialog3.value = false
+	}
 }
 </script>
 
@@ -51,8 +91,16 @@ function onConfirm() {
 	font-size: 28rpx;
 	font-weight: bold;
 	color: #333333;
-	margin-bottom: 24rpx;
+	margin-bottom: 16rpx;
 	padding-left: 16rpx;
-	border-left: 6rpx solid #ff2727;
+	border-left: 6rpx solid #ff0844;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.5;
+	margin-bottom: 24rpx;
+	display: block;
 }
 </style>

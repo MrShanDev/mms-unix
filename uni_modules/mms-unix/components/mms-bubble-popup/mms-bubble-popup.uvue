@@ -1,0 +1,239 @@
+<template>
+	<view v-if="show" class="mms-bubble-popup" :style="rootPosition">
+		<view
+			v-if="mask"
+			class="mms-bubble-popup__mask"
+			:style="{ backgroundColor: maskBgColor, zIndex: zIndexNum - 1 }"
+			@tap="onMask"
+		></view>
+		<view
+			class="mms-bubble-popup__box"
+			:style="boxStyle"
+		>
+			<view class="mms-bubble-popup__tri" :style="triStyle"></view>
+			<view class="mms-bubble-popup__inner" :style="{ color: color }">
+				<slot></slot>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+import { parseCssNumber } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+
+export default {
+	name: 'mmsBubblePopup',
+	emits: ['close'],
+	props: {
+		show: {
+			type: Boolean,
+			default: false
+		},
+		mask: {
+			type: Boolean,
+			default: true
+		},
+		maskBgColor: {
+			type: String,
+			default: 'rgba(0, 0, 0, 0.4)'
+		},
+		width: {
+			type: String,
+			default: '300rpx'
+		},
+		radius: {
+			type: String,
+			default: '8rpx'
+		},
+		left: {
+			type: String,
+			default: 'auto'
+		},
+		right: {
+			type: String,
+			default: 'auto'
+		},
+		top: {
+			type: String,
+			default: 'auto'
+		},
+		bottom: {
+			type: String,
+			default: 'auto'
+		},
+		translateX: {
+			type: String,
+			default: '0'
+		},
+		translateY: {
+			type: String,
+			default: '0'
+		},
+		backgroundColor: {
+			type: String,
+			default: '#4c4c4c'
+		},
+		color: {
+			type: String,
+			default: '#ffffff'
+		},
+		borderWidth: {
+			type: String,
+			default: '12rpx'
+		},
+		direction: {
+			type: String,
+			default: 'top'
+		},
+		triangleLeft: {
+			type: String,
+			default: 'auto'
+		},
+		triangleRight: {
+			type: String,
+			default: 'auto'
+		},
+		triangleTop: {
+			type: String,
+			default: 'auto'
+		},
+		triangleBottom: {
+			type: String,
+			default: 'auto'
+		},
+		position: {
+			type: String,
+			default: 'fixed'
+		},
+		zIndex: {
+			type: [Number, String],
+			default: 10080
+		}
+	},
+	computed: {
+		zIndexNum(): number {
+			const z = this.zIndex as number | string
+			if (typeof z === 'number') {
+				return z
+			}
+			return parseCssNumber(z)
+		},
+		rootPosition(): UTSJSONObject {
+			return {
+				position: this.position as string,
+				left: '0',
+				top: '0',
+				right: '0',
+				bottom: '0',
+				zIndex: this.zIndexNum
+			}
+		},
+		boxStyle(): UTSJSONObject {
+			const pos: UTSJSONObject = {
+				position: 'absolute',
+				width: this.width,
+				borderRadius: this.radius,
+				backgroundColor: this.backgroundColor,
+				left: this.left,
+				right: this.right,
+				top: this.top,
+				bottom: this.bottom,
+				transform: `translate3d(${this.translateX}, ${this.translateY}, 0)`
+			}
+			return pos
+		},
+		triStyle(): UTSJSONObject {
+			const d = this.direction as string
+			const bw = this.borderWidth
+			const c = this.backgroundColor
+			const st: UTSJSONObject = {
+				position: 'absolute',
+				width: '0',
+				height: '0',
+				left: this.triangleLeft,
+				right: this.triangleRight,
+				top: this.triangleTop,
+				bottom: this.triangleBottom
+			}
+			if (d === 'bottom') {
+				st['borderLeftWidth'] = bw
+				st['borderRightWidth'] = bw
+				st['borderTopWidth'] = bw
+				st['borderLeftStyle'] = 'solid'
+				st['borderRightStyle'] = 'solid'
+				st['borderTopStyle'] = 'solid'
+				st['borderLeftColor'] = 'transparent'
+				st['borderRightColor'] = 'transparent'
+				st['borderTopColor'] = c
+			} else if (d === 'top') {
+				st['borderLeftWidth'] = bw
+				st['borderRightWidth'] = bw
+				st['borderBottomWidth'] = bw
+				st['borderLeftStyle'] = 'solid'
+				st['borderRightStyle'] = 'solid'
+				st['borderBottomStyle'] = 'solid'
+				st['borderLeftColor'] = 'transparent'
+				st['borderRightColor'] = 'transparent'
+				st['borderBottomColor'] = c
+			} else if (d === 'left') {
+				st['borderTopWidth'] = bw
+				st['borderBottomWidth'] = bw
+				st['borderRightWidth'] = bw
+				st['borderTopStyle'] = 'solid'
+				st['borderBottomStyle'] = 'solid'
+				st['borderRightStyle'] = 'solid'
+				st['borderTopColor'] = 'transparent'
+				st['borderBottomColor'] = 'transparent'
+				st['borderRightColor'] = c
+			} else {
+				st['borderTopWidth'] = bw
+				st['borderBottomWidth'] = bw
+				st['borderLeftWidth'] = bw
+				st['borderTopStyle'] = 'solid'
+				st['borderBottomStyle'] = 'solid'
+				st['borderLeftStyle'] = 'solid'
+				st['borderTopColor'] = 'transparent'
+				st['borderBottomColor'] = 'transparent'
+				st['borderLeftColor'] = c
+			}
+			return st
+		}
+	},
+	methods: {
+		onMask() {
+			this.$emit('close')
+		}
+	}
+}
+</script>
+
+<style scoped lang="scss">
+.mms-bubble-popup {
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.mms-bubble-popup__mask {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.mms-bubble-popup__box {
+	overflow: visible;
+}
+
+.mms-bubble-popup__inner {
+	padding: 16rpx 20rpx;
+	box-sizing: border-box;
+}
+
+.mms-bubble-popup__tri {
+	z-index: 1;
+}
+</style>

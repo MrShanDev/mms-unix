@@ -7,8 +7,9 @@ alwaysApply: false
 ucss是css的子集，但可以跨平台使用。除了浏览器之外，还支持App原生平台。
 
 ## 布局规范
-- 禁用浮动、网格等布局，仅使用flex布局或绝对定位。
-- flex布局默认方向为垂直(通过 flex-direction:column 实现)。
+- 禁用浮动、网格等布局，仅使用 flex 布局或绝对定位。
+- 使用 `display: flex` 时**必须显式指定 `flex-direction`**（`column` 或 `row`），不要依赖各端对 flex 默认主轴方向的差异。
+- 纵向堆叠列表、整页主结构等多用 `flex-direction: column`；横向排列图标与文字等多用 `flex-direction: row`。
 
 ## 选择器规则
 - 仅支持基本的类选择器 (.class)，禁止使用其他选择器。

@@ -3,40 +3,44 @@
 		<view class="demo-section">
 			<text class="section-title">基础水印</text>
 			<view class="watermark-container">
-				<mms-watermark content="MMS-UNIX"></mms-watermark>
-				<view class="watermark-content">
-					<text class="content-text">这是带水印的内容区域</text>
-				</view>
+				<mms-watermark content="MMS-UNIX">
+					<view class="watermark-content">
+						<text class="content-text">这是带水印的内容区域</text>
+					</view>
+				</mms-watermark>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">自定义字体大小</text>
 			<view class="watermark-container">
-				<mms-watermark content="保密文件" :fontSize="32"></mms-watermark>
-				<view class="watermark-content">
-					<text class="content-text">这是较大的水印文字</text>
-				</view>
+				<mms-watermark content="保密文件" :fontSize="32">
+					<view class="watermark-content">
+						<text class="content-text">这是较大的水印文字</text>
+					</view>
+				</mms-watermark>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">自定义颜色</text>
 			<view class="watermark-container">
-				<mms-watermark content="MMS-UNIX" color="#ff2727"></mms-watermark>
-				<view class="watermark-content">
-					<text class="content-text">这是红色水印</text>
-				</view>
+				<mms-watermark content="MMS-UNIX" color="#ff0844">
+					<view class="watermark-content">
+						<text class="content-text">这是红色水印</text>
+					</view>
+				</mms-watermark>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">自定义透明度</text>
 			<view class="watermark-container">
-				<mms-watermark content="MMS-UNIX" :opacity="0.3"></mms-watermark>
-				<view class="watermark-content">
-					<text class="content-text">这是较淡的水印</text>
-				</view>
+				<mms-watermark content="MMS-UNIX" :opacity="0.35">
+					<view class="watermark-content">
+						<text class="content-text">这是较淡的水印（opacity）</text>
+					</view>
+				</mms-watermark>
 			</view>
 		</view>
 	</view>
@@ -65,25 +69,21 @@
 	color: #333333;
 	margin-bottom: 24rpx;
 	padding-left: 16rpx;
-	border-left: 6rpx solid #ff2727;
+	border-left: 6rpx solid #ff0844;
 }
 
 .watermark-container {
-	position: relative;
-	height: 300rpx;
-	overflow: hidden;
 	border-radius: 12rpx;
+	overflow: hidden;
 	background-color: #f9f9f9;
 }
 
 .watermark-content {
-	position: relative;
-	z-index: 1;
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	height: 100%;
+	height: 300rpx;
 }
 
 .content-text {

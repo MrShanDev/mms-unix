@@ -3,9 +3,16 @@
  */
 import { config } from '@/common/config'
 
-const tabBarPaths = ['/pages/index/index', '/pages/cases/cases', '/pages/hosting/hosting', '/pages/user/user']
+const tabBarPaths = [
+	'/pages/components/components',
+	'/pages/tools/tools',
+	'/pages/templates/templates',
+	'/pages/user/user',
+]
 
 export const configInfo = config.configInfo
+
+export { getMmsUiConfig, setMmsUiConfig, clearMmsUiRuntimeOverrides } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
 
 /** 跳转 - type: to=navigateTo, redirectTo=redirectTo */
 export function jumpTo(url: string, type: string = 'to') {
@@ -143,4 +150,84 @@ export function generateOrderNumber(): string {
 	const ms = date.getMilliseconds().toString().padEnd(3, '0')
 	const rand = Math.floor(1000 + Math.random() * 9000).toString()
 	return `${y}${m}${d}${h}${min}${s}${ms}${rand}`
+}
+
+/**
+ * 转为 CSS 长度：数字默认补 rpx；已含 rpx/px/%/em 则原样返回。
+ * 避免模板里 `size + 'rpx'` 在传入 `48rpx` 时变成 `48rpxrpx`。
+ */
+export function toCssLength(value: number | string): string {
+	if (typeof value === 'number') {
+		return value + 'rpx'
+	}
+	const s = (value as string).trim()
+	if (s.length === 0) {
+		return '0rpx'
+	}
+	const len = s.length
+	if (len >= 3 && s.substring(len - 3) === 'rpx') {
+		return s
+	}
+	if (len >= 2 && s.substring(len - 2) === 'px') {
+		return s
+	}
+	if (len >= 1 && s.substring(len - 1) === '%') {
+		return s
+	}
+	if (len >= 2 && s.substring(len - 2) === 'em') {
+		return s
+	}
+	const n = parseFloat(s)
+	if (!isNaN(n)) {
+		return n + 'rpx'
+	}
+	return s
+}
+
+/**
+ * 写入剪贴板（便于非包裹场景调用）
+ * @param data 要复制的文本
+ * @param callback 可选，成功或失败时回调
+ */
+export function copyToClipboard(data: string, callback?: (success: boolean) => void) {
+	if (data == null || data.length === 0) {
+		if (callback != null) {
+			callback(false)
+		}
+		return
+	}
+	uni.setClipboardData({
+		data,
+		success: () => {
+			uni.showToast({ title: '复制成功', icon: 'success' })
+			if (callback != null) {
+				callback(true)
+			}
+		},
+		fail: () => {
+			uni.showToast({ title: '复制失败', icon: 'none' })
+			if (callback != null) {
+				callback(false)
+			}
+		}
+	})
+}
+
+/** 去掉 rpx/px 等后缀得到数值，供 canvas、Number 计算使用 */
+export function parseCssNumber(value: number | string): number {
+	if (typeof value === 'number') {
+		return value
+	}
+	const s = (value as string).trim()
+	if (s.length === 0) {
+		return 0
+	}
+	const len = s.length
+	if (len >= 3 && s.substring(len - 3) === 'rpx') {
+		return parseFloat(s.substring(0, len - 3))
+	}
+	if (len >= 2 && s.substring(len - 2) === 'px') {
+		return parseFloat(s.substring(0, len - 2))
+	}
+	return parseFloat(s)
 }

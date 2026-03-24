@@ -29,7 +29,7 @@
 				<view class="form-item">
 					<view class="form-row switch-row">
 						<text class="label">设为默认地址</text>
-						<switch :checked="formData.tolerant == '1'" @change="switchChange" color="#ff2727" />
+						<switch :checked="formData.tolerant == '1'" @change="switchChange" color="#ff0844" />
 					</view>
 				</view>
 				<view class="bottom-placeholder"></view>
@@ -192,6 +192,7 @@
 .form-item {
 	.form-row {
 		display: flex;
+		flex-direction: row;
 		padding: 20rpx 30rpx;
 		gap: 20rpx;
 		.label { font-size: 28rpx; color: #979797; font-weight: 500; min-width: 160rpx; }
@@ -211,7 +212,7 @@
 	.save-btn {
 		width: 100%;
 		height: 88rpx;
-		background-color: #ff2727;
+		background-color: #ff0844;
 		color: #fff;
 		border: none;
 		border-radius: 50rpx;

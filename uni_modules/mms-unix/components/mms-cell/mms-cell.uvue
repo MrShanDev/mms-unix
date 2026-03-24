@@ -30,12 +30,12 @@ export default {
 	name: 'mmsCell',
 	emits: ['click'],
 	props: {
-		// 左侧标题（支持 title 和 label 两种写法）
+		// 左侧主标题
 		title: {
 			type: String,
 			default: ''
 		},
-		// 左侧标题（别名）
+		// 无 title 时作主标题；与 title 同时存在时作标题下方说明（与 brief 并存时优先展示 brief）
 		label: {
 			type: String,
 			default: ''
@@ -93,10 +93,19 @@ export default {
 	},
 	computed: {
 		actualTitle(): string {
-			return this.title || this.label
+			if (this.title !== '') {
+				return this.title
+			}
+			return this.label
 		},
 		actualLabel(): string {
-			return this.brief
+			if (this.brief !== '') {
+				return this.brief
+			}
+			if (this.title !== '' && this.label !== '') {
+				return this.label
+			}
+			return ''
 		}
 	},
 	methods: {
@@ -121,6 +130,7 @@ export default {
 <style scoped lang="scss">
 .mms-cell {
 	display: flex;
+	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
 	box-sizing: border-box;
@@ -130,6 +140,7 @@ export default {
 
 	.mms-cell__left {
 		display: flex;
+		flex-direction: row;
 		align-items: center;
 		flex: 1;
 		min-width: 0;
@@ -181,6 +192,7 @@ export default {
 
 	.mms-cell__right {
 		display: flex;
+		flex-direction: row;
 		align-items: center;
 		flex-shrink: 0;
 

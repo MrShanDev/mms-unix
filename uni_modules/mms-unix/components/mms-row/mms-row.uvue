@@ -32,6 +32,7 @@ export default {
 <style scoped lang="scss">
 .mms-row {
 	display: flex;
+	flex-direction: row;
 	flex-wrap: wrap;
 	box-sizing: border-box;
 

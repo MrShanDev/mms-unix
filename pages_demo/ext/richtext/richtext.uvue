@@ -1,0 +1,42 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">基础 HTML 字符串</text>
+			<mms-richtext :content="richBasic"></mms-richtext>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">样式混排</text>
+			<mms-richtext :content="richStyled"></mms-richtext>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+const richBasic = '<p style="color:#333;font-size:14px;">mms-richtext 支持 HTML 字符串渲染。</p>'
+const richStyled = '<p style="color:#333;font-size:14px;"><b>粗体</b> 与 <span style="color:#5677fc">主题色</span> 混排。</p>'
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff0844;
+}
+</style>

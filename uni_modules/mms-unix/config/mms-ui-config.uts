@@ -1,0 +1,174 @@
+/**
+ * mms-unix UI 资源与主题配置（库内默认值 + 项目覆盖）
+ *
+ * 覆盖优先级（从高到低，同一字段取第一个非空）：
+ * 1. setMmsUiConfig() 运行时写入
+ * 2. common/config.ts 中的 config.mmsUi
+ * 3. config.configInfo.logo（仅 appLogo）
+ * 4. config.api.qrCodeImageApiBase（仅 qrCodeImageApiBase，兼容旧配置）
+ * 5. 库内 MMS_UI_DEFAULTS
+ *
+ * 使用方式：
+ * - 在 common/config.ts 的 mmsUi 中填写需要覆盖的字段；
+ * - 或在 App onLaunch 中调用 setMmsUiConfig({ appLogo: '/static/img/xxx.png' })。
+ */
+import { config } from '@/common/config'
+
+/** 可由业务覆盖的字段（均为可选） */
+export type MmsUiPartial = {
+	appLogo?: string
+	emptyDefaultImage?: string
+	avatarDefault?: string
+	articlePlaceholder?: string
+	demoCardThumb?: string
+	cropperDemo?: string
+	/** H5/App 二维码 PNG 接口根地址，query 需兼容 size、color、bgcolor、data */
+	qrCodeImageApiBase?: string
+	/** 主题主色（供业务或后续组件使用） */
+	primaryColor?: string
+	serviceIconRead?: string
+	serviceIconCertificate?: string
+	serviceIconGroup?: string
+	serviceIconAddress?: string
+	serviceIconAbout?: string
+}
+
+/** 合并后的完整配置（只读语义，每次 getMmsUiConfig() 即时计算） */
+export type MmsUiConfig = {
+	appLogo: string
+	emptyDefaultImage: string
+	avatarDefault: string
+	articlePlaceholder: string
+	demoCardThumb: string
+	cropperDemo: string
+	qrCodeImageApiBase: string
+	primaryColor: string
+	serviceIconRead: string
+	serviceIconCertificate: string
+	serviceIconGroup: string
+	serviceIconAddress: string
+	serviceIconAbout: string
+}
+
+const MMS_UI_DEFAULTS: MmsUiConfig = {
+	appLogo: '/static/img/app-logo.png',
+	emptyDefaultImage: '/static/img/empty-default.png',
+	avatarDefault: '/static/img/heading.png',
+	articlePlaceholder: '/static/img/article-placeholder.png',
+	demoCardThumb: '/static/img/demo-card-thumb.png',
+	cropperDemo: '/static/img/cropper-demo.png',
+	qrCodeImageApiBase: '',
+	primaryColor: '#ff0844',
+	serviceIconRead: '/static/img/read.png',
+	serviceIconCertificate: '/static/img/zhengshu.png',
+	serviceIconGroup: '/static/img/group.png',
+	serviceIconAddress: '/static/img/address.png',
+	serviceIconAbout: '/static/img/about.png',
+}
+
+let mmsUiRuntime: MmsUiPartial | null = null
+
+function trimStr(s: string | null | undefined): string {
+	if (s == null) {
+		return ''
+	}
+	return s.trim()
+}
+
+/** 依次取第一个非空字符串，否则返回 defaultVal */
+function pickChain(a: string, b: string, c: string, defaultVal: string): string {
+	const x = trimStr(a)
+	if (x.length > 0) {
+		return x
+	}
+	const y = trimStr(b)
+	if (y.length > 0) {
+		return y
+	}
+	const z = trimStr(c)
+	if (z.length > 0) {
+		return z
+	}
+	return defaultVal
+}
+
+function pickChain2(a: string, b: string, defaultVal: string): string {
+	return pickChain(a, b, '', defaultVal)
+}
+
+export function getMmsUiConfig(): MmsUiConfig {
+	const r = mmsUiRuntime != null ? mmsUiRuntime : ({} as MmsUiPartial)
+	const f = config.mmsUi != null ? config.mmsUi : ({} as MmsUiPartial)
+	const ci = config.configInfo
+	const api = config.api
+	return {
+		appLogo: pickChain(trimStr(r.appLogo), trimStr(f.appLogo), trimStr(ci.logo), MMS_UI_DEFAULTS.appLogo),
+		emptyDefaultImage: pickChain2(trimStr(r.emptyDefaultImage), trimStr(f.emptyDefaultImage), MMS_UI_DEFAULTS.emptyDefaultImage),
+		avatarDefault: pickChain2(trimStr(r.avatarDefault), trimStr(f.avatarDefault), MMS_UI_DEFAULTS.avatarDefault),
+		articlePlaceholder: pickChain2(trimStr(r.articlePlaceholder), trimStr(f.articlePlaceholder), MMS_UI_DEFAULTS.articlePlaceholder),
+		demoCardThumb: pickChain2(trimStr(r.demoCardThumb), trimStr(f.demoCardThumb), MMS_UI_DEFAULTS.demoCardThumb),
+		cropperDemo: pickChain2(trimStr(r.cropperDemo), trimStr(f.cropperDemo), MMS_UI_DEFAULTS.cropperDemo),
+		qrCodeImageApiBase: pickChain(
+			trimStr(r.qrCodeImageApiBase),
+			trimStr(f.qrCodeImageApiBase),
+			trimStr(api.qrCodeImageApiBase),
+			MMS_UI_DEFAULTS.qrCodeImageApiBase
+		),
+		primaryColor: pickChain2(trimStr(r.primaryColor), trimStr(f.primaryColor), MMS_UI_DEFAULTS.primaryColor),
+		serviceIconRead: pickChain2(trimStr(r.serviceIconRead), trimStr(f.serviceIconRead), MMS_UI_DEFAULTS.serviceIconRead),
+		serviceIconCertificate: pickChain2(trimStr(r.serviceIconCertificate), trimStr(f.serviceIconCertificate), MMS_UI_DEFAULTS.serviceIconCertificate),
+		serviceIconGroup: pickChain2(trimStr(r.serviceIconGroup), trimStr(f.serviceIconGroup), MMS_UI_DEFAULTS.serviceIconGroup),
+		serviceIconAddress: pickChain2(trimStr(r.serviceIconAddress), trimStr(f.serviceIconAddress), MMS_UI_DEFAULTS.serviceIconAddress),
+		serviceIconAbout: pickChain2(trimStr(r.serviceIconAbout), trimStr(f.serviceIconAbout), MMS_UI_DEFAULTS.serviceIconAbout),
+	}
+}
+
+/** 运行时覆盖（可多次调用，未传入的字段保留上次运行时值） */
+export function setMmsUiConfig(p: MmsUiPartial): void {
+	const cur = mmsUiRuntime != null ? mmsUiRuntime : ({} as MmsUiPartial)
+	if (p.appLogo != null) {
+		cur.appLogo = p.appLogo
+	}
+	if (p.emptyDefaultImage != null) {
+		cur.emptyDefaultImage = p.emptyDefaultImage
+	}
+	if (p.avatarDefault != null) {
+		cur.avatarDefault = p.avatarDefault
+	}
+	if (p.articlePlaceholder != null) {
+		cur.articlePlaceholder = p.articlePlaceholder
+	}
+	if (p.demoCardThumb != null) {
+		cur.demoCardThumb = p.demoCardThumb
+	}
+	if (p.cropperDemo != null) {
+		cur.cropperDemo = p.cropperDemo
+	}
+	if (p.qrCodeImageApiBase != null) {
+		cur.qrCodeImageApiBase = p.qrCodeImageApiBase
+	}
+	if (p.primaryColor != null) {
+		cur.primaryColor = p.primaryColor
+	}
+	if (p.serviceIconRead != null) {
+		cur.serviceIconRead = p.serviceIconRead
+	}
+	if (p.serviceIconCertificate != null) {
+		cur.serviceIconCertificate = p.serviceIconCertificate
+	}
+	if (p.serviceIconGroup != null) {
+		cur.serviceIconGroup = p.serviceIconGroup
+	}
+	if (p.serviceIconAddress != null) {
+		cur.serviceIconAddress = p.serviceIconAddress
+	}
+	if (p.serviceIconAbout != null) {
+		cur.serviceIconAbout = p.serviceIconAbout
+	}
+	mmsUiRuntime = cur
+}
+
+/** 清除运行时覆盖（恢复仅文件 config + 默认值） */
+export function clearMmsUiRuntimeOverrides(): void {
+	mmsUiRuntime = null
+}

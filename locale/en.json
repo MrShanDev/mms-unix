@@ -2,10 +2,14 @@
 	"app.name": "MMS-UNIX",
 	"app.desc": "uni-app Component Library",
 
-	"tabbar.home": "Home",
+	"tabbar.components": "Components",
+	"tabbar.tools": "Tools",
+	"tabbar.templates": "Templates",
 	"tabbar.user": "Me",
 
-	"page.home": "Home",
+	"page.components": "Components",
+	"page.tools": "Tools",
+	"page.templates": "Templates",
 	"page.user": "Me",
 	"page.login": "Login",
 	"page.register": "Register",
@@ -16,6 +20,7 @@
 	"page.userAddress": "Addresses",
 	"page.address": "Address",
 	"page.aboutMe": "About Us",
+	"page.contact": "Contact",
 
 	"common.confirm": "Confirm",
 	"common.cancel": "Cancel",

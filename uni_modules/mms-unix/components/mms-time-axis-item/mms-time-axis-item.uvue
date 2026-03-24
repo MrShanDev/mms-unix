@@ -1,0 +1,53 @@
+<template>
+	<view class="mms-time-axis-item" :style="{ backgroundColor: backgroundColor }">
+		<view class="mms-time-axis-item__row">
+			<view class="mms-time-axis-item__node">
+				<slot name="node"></slot>
+			</view>
+			<view class="mms-time-axis-item__content">
+				<slot name="content"></slot>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsTimeAxisItem',
+	props: {
+		backgroundColor: {
+			type: String,
+			default: 'transparent'
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+.mms-time-axis-item {
+	margin-bottom: 32rpx;
+	margin-left: -38rpx;
+	box-sizing: border-box;
+}
+
+.mms-time-axis-item__row {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+}
+
+.mms-time-axis-item__node {
+	flex-shrink: 0;
+	width: 52rpx;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.mms-time-axis-item__content {
+	flex: 1;
+	padding-left: 16rpx;
+	box-sizing: border-box;
+}
+</style>

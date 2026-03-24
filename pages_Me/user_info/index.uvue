@@ -9,41 +9,35 @@
 				<view class="change" @click="changeAvatar">更换头像</view>
 			</view>
 
-			<!-- 昵称 -->
-			<view class="item flex flex-row justify-between align-center" @click="editNickname">
-				<view class="item_l">昵称</view>
-				<view class="item_r flex flex-row">
-					<text class="nickname">{{ userInfo.nickname || '暂无昵称' }}</text>
-					<text class="icon iconfont icon-youjiantou arrow-icon"></text>
-				</view>
-			</view>
-
-			<!-- 性别 -->
-			<view class="item flex flex-row justify-between align-center">
-				<view class="item_l">性别</view>
-				<view class="item_r">
-					<picker @change="bindPickerChange" :value="getGenderIndex(userInfo.sex)" :range="genderArray">
-						<view class="uni-input picker-text">
-							{{ getGenderText(userInfo.sex) }}
-							<text class="icon iconfont icon-youjiantou arrow-icon"></text>
-						</view>
-					</picker>
-				</view>
-			</view>
-
-			<!-- 生日 -->
-			<view class="item flex flex-row justify-between align-center">
-				<view class="item_l">生日</view>
-				<view class="item_r">
-					<picker mode="date" :value="birthdayValue" :start="startDate" :end="endDate" @change="bindDateChange">
-						<view class="uni-input picker-text">
-							{{ userInfo.birthday && userInfo.birthday != 'null' ? userInfo.birthday : '请选择生日' }}
-							<text class="icon iconfont icon-youjiantou arrow-icon"></text>
-						</view>
-					</picker>
-				</view>
-			</view>
+			<mms-cell-group>
+				<mms-cell title="昵称" :value="nicknameDisplay" :isLink="true" @click="editNickname"></mms-cell>
+				<mms-cell title="性别">
+					<template #right>
+						<picker @change="bindPickerChange" :value="getGenderIndex(userInfo.sex)" :range="genderArray">
+							<view class="cell-picker-row">
+								<text class="cell-picker-text">{{ getGenderText(userInfo.sex) }}</text>
+								<mms-icon name="arrow-right" size="24" color="#c0c4cc" />
+							</view>
+						</picker>
+					</template>
+				</mms-cell>
+				<mms-cell title="生日">
+					<template #right>
+						<picker mode="date" :value="birthdayValue" :start="startDate" :end="endDate" @change="bindDateChange">
+							<view class="cell-picker-row">
+								<text class="cell-picker-text">{{ userInfo.birthday && userInfo.birthday != 'null' ? userInfo.birthday : '请选择生日' }}</text>
+								<mms-icon name="arrow-right" size="24" color="#c0c4cc" />
+							</view>
+						</picker>
+					</template>
+				</mms-cell>
+				<mms-cell title="收货地址" :isLink="true" :border="false" @click="openUserAddress"></mms-cell>
+			</mms-cell-group>
 		</view>
+
+
+		
+
 
 		<!-- 修改昵称弹窗 -->
 		<view class="modal" v-if="showNicknameModal">
@@ -59,20 +53,32 @@
 				</view>
 			</view>
 		</view>
+
+		
 	</view>
 </template>
 
 <script setup lang="uts">
 	import { ref, computed } from 'vue'
+	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
 	import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
 	import { updateMemberInfo } from '@/common/api/mallApi'
+	import { jumpTo } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 
-	const defaultFace = '/static/img/heading.png'
+	const defaultFace = computed((): string => getMmsUiConfig().avatarDefault)
 	const genderArray = ['保密', '男', '女']
 	const showNicknameModal = ref(false)
 	const newNickname = ref('')
 
 	const userInfo = ref<UTSJSONObject>(storage.getUserInfo() ?? {} as UTSJSONObject)
+
+	const nicknameDisplay = computed((): string => {
+		const n = userInfo.value['nickname']
+		if (n == null || n === '') {
+			return '暂无昵称'
+		}
+		return `${n}`
+	})
 
 	// 生日显示值
 	const birthdayValue = computed((): string => {
@@ -152,6 +158,11 @@
 		showNicknameModal.value = true
 	}
 
+	// 打开收货地址列表
+	function openUserAddress() {
+		jumpTo('/pages_Me/user_address/index')
+	}
+
 	// 关闭昵称修改弹窗
 	function closeNicknameModal() {
 		showNicknameModal.value = false
@@ -223,7 +234,7 @@
 <style lang="scss" scoped>
 .container { min-height: 100vh; background-color: #f5f5f5; }
 
-.flex { display: flex; }
+.flex { display: flex; flex-direction: row; }
 .flex-row { flex-direction: row; }
 .align-center { align-items: center; }
 .justify-between { justify-content: space-between; }
@@ -249,22 +260,19 @@
 	overflow: hidden;
 }
 .avatar image { width: 100%; height: 100%; }
-.change { color: #ff2727; font-weight: 600; }
+.change { color: #ff0844; font-weight: 600; text-align: center; }
 
-// 列表项
-.item {
-	padding: 0 30rpx;
-	height: 100rpx;
-	margin-bottom: 2rpx;
-	background-color: #fff;
-	border-bottom: 1rpx solid #eee;
+.cell-picker-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-end;
 }
-.item_l { color: #303133; font-size: 32rpx; }
-.item_r { color: #909193; text-align: right; }
-.nickname { color: #606266; margin-right: 10rpx; }
-.arrow-icon { color: #c0c4cc; font-size: 28rpx; }
-.picker-text { color: #606266; }
-.uni-input { display: flex; flex-direction: row; }
+.cell-picker-text {
+	font-size: 28rpx;
+	color: #606266;
+	margin-right: 10rpx;
+}
 
 // 修改昵称弹窗
 .modal {
@@ -322,7 +330,7 @@
 		border-right: 1rpx solid #eee;
 	}
 	.confirm-btn {
-		color: #ff2727;
+		color: #ff0844;
 		font-weight: 500;
 	}
 }

@@ -142,7 +142,7 @@ function addAddress() {
 	justify-content: flex-end;
 	gap: 24rpx;
 	.action-btn { font-size: 26rpx; color: #666; }
-	.delete-text { color: #ff2727; }
+	.delete-text { color: #ff0844; }
 }
 .bottom-placeholder { height: 140rpx; }
 .bottom-bar {
@@ -156,7 +156,7 @@ function addAddress() {
 	.add-btn {
 		width: 100%;
 		height: 88rpx;
-		background-color: #ff2727;
+		background-color: #ff0844;
 		color: #fff;
 		border: none;
 		border-radius: 50rpx;

@@ -1,0 +1,27 @@
+<template>
+	<view class="ext-page">
+		<scroll-view class="ext-scroll" scroll-y>
+			<view class="ext-section">
+				<text class="ext-title">mms-picture-cropper（占位预览）</text>
+				<mms-picture-cropper :image-url="cropperDemoSrc" @cropper="onCrop"></mms-picture-cropper>
+			</view>
+			<view class="ext-footer-space"></view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { computed } from 'vue'
+import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
+
+const cropperDemoSrc = computed((): string => getMmsUiConfig().cropperDemo)
+
+function onCrop(e: UTSJSONObject) {
+	const u = e['url']
+	uni.showToast({ title: 'crop url 长度 ' + ('' + u).length, icon: 'none' })
+}
+</script>
+
+<style lang="scss">
+@import '../_demo-common.scss';
+</style>

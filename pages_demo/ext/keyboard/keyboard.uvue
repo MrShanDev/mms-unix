@@ -1,0 +1,138 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">数字键盘</text>
+			<mms-button type="primary" @click="showKeyboard = true">打开键盘</mms-button>
+			<text class="demo-desc">用于支付密码等场景，配合顶部自定义插槽展示掩码。</text>
+		</view>
+
+		<mms-keyboard :show="showKeyboard" @close="closeKb" @click="onKeyClick">
+			<view class="kb-top">
+				<text class="kb-tip">请输入密码（演示）</text>
+				<view class="kb-dots">
+					<view
+						v-for="n in 6"
+						:key="n"
+						class="kb-dot"
+						:class="n - 1 < numberArr.length ? 'kb-dot--filled' : 'kb-dot--empty'"
+					></view>
+				</view>
+			</view>
+		</mms-keyboard>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { ref } from 'vue'
+
+const showKeyboard = ref(false)
+const numberArr = ref([] as string[])
+
+function closeKb() {
+	showKeyboard.value = false
+	numberArr.value = []
+}
+
+function onKeyClick(e: UTSJSONObject) {
+	const idxRaw = e['index']
+	if (idxRaw == null) {
+		return
+	}
+	const idx = idxRaw as number
+	const len = 6
+	let nums = numberArr.value
+	if (nums.length >= len) {
+		return
+	}
+	if (idx === 9) {
+		closeKb()
+		return
+	}
+	if (idx === 11) {
+		if (nums.length > 0) {
+			const nextNums = [] as string[]
+			for (let i = 0; i < nums.length - 1; i++) {
+				nextNums.push(nums[i])
+			}
+			numberArr.value = nextNums
+		}
+		return
+	}
+	const digit = idx === 10 ? 0 : idx + 1
+	const nextNums = [] as string[]
+	for (let i = 0; i < nums.length; i++) {
+		nextNums.push(nums[i])
+	}
+	nextNums.push('' + digit)
+	numberArr.value = nextNums
+}
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff0844;
+}
+
+.demo-desc {
+	font-size: 26rpx;
+	color: #666666;
+	margin-top: 20rpx;
+	line-height: 1.5;
+	display: block;
+}
+
+.kb-top {
+	padding: 32rpx;
+}
+
+.kb-tip {
+	font-size: 28rpx;
+	color: #333333;
+	text-align: center;
+	margin-bottom: 20rpx;
+	display: block;
+}
+
+.kb-dots {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 16rpx;
+}
+
+.kb-dot {
+	width: 20rpx;
+	height: 20rpx;
+	border-radius: 50%;
+	box-sizing: border-box;
+}
+
+.kb-dot--filled {
+	background-color: #333333;
+}
+
+.kb-dot--empty {
+	border-width: 2rpx;
+	border-style: solid;
+	border-color: #cccccc;
+	background-color: transparent;
+}
+</style>

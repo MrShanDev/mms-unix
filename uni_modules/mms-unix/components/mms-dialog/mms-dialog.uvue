@@ -1,34 +1,46 @@
 <template>
 	<view>
-		<view v-if="show" class="mms-dialog" :style="{background:backgroundColor,borderRadius:radius}"
+		<view v-if="isOpen" class="mms-dialog" :style="{background:backgroundColor,borderRadius:radius}"
 			@tap.stop="stopEvent">
-			<view class="mms-dialog__hd">
+			<view class="mms-dialog__hd" v-if="title !== ''">
 				<view class="mms-dialog__title" :style="{color:titleColor}">{{title}}
 					<slot name="title"></slot>
 				</view>
 			</view>
 			<view class="mms-dialog__bd" :style="{color:contentColor}">
-				<slot name="content"></slot>
+				<slot name="content">{{ content }}</slot>
 			</view>
 			<view class="mms-dialog__ft">
-				<view v-if="Array.isArray(buttons) && buttons.length > 0" v-for="(item,index) in buttons" :key="index"
-					:style="{color:item.color || '#333'}" class="mms-dialog__btn" :data-index="index" @tap="buttonTap">
-					{{item.text}}</view>
+				<template v-if="effectiveButtons.length > 0">
+					<view v-for="(item,index) in effectiveButtons" :key="index"
+						:style="{color:item.color || '#333'}" class="mms-dialog__btn" @tap="buttonTap(index)">
+						{{item.text}}</view>
+				</template>
 				<slot name="footer" v-else></slot>
 			</view>
 		</view>
-		<view @tap="close" class="mms-dialog__mask" :class="{'mms-mask_hidden':!show}" v-if="mask"></view>
+		<view v-if="mask && isOpen" @tap="close" class="mms-dialog__mask"></view>
 	</view>
 </template>
 
 <script lang="uts">
 	export default {
 		name: 'mmsDialog',
-		emits: ['click', 'close'],
+		emits: ['click', 'close', 'confirm', 'cancel', 'update:show', 'update:visible'],
 		props: {
 			title: {
 				type: String as unknown as PropType<string>,
 				default: ''
+			},
+			// 正文纯文本（与 content 插槽二选一，插槽优先）
+			content: {
+				type: String as unknown as PropType<string>,
+				default: ''
+			},
+			// 为 true 且未传 buttons 时，使用「取消 / 确定」并触发 cancel、confirm
+			showCancel: {
+				type: Boolean,
+				default: false
 			},
 			maskClosable: {
 				type: Boolean,
@@ -39,6 +51,11 @@
 				default: true
 			},
 			show: {
+				type: Boolean,
+				default: false
+			},
+			// 与 show 等价，便于与演示页命名统一
+			visible: {
 				type: Boolean,
 				default: false
 			},
@@ -65,20 +82,42 @@
 				default: '#999'
 			}
 		},
+		computed: {
+			isOpen(): boolean {
+				return this.show || this.visible
+			},
+			effectiveButtons(): Array<{ text : string; color ?: string }> {
+				const list = this.buttons as Array<{ text : string; color ?: string }>
+				if (this.showCancel && list.length === 0) {
+					return [{ text: '取消' }, { text: '确定', color: '#586c94' }]
+				}
+				return list
+			},
+			useDefaultConfirmPair(): boolean {
+				return this.showCancel && (this.buttons as any[]).length === 0
+			}
+		},
 		methods: {
-			buttonTap(e : any) {
-				const {
-					index
-				} = e.currentTarget.dataset;
+			buttonTap(index : number) {
+				const item = this.effectiveButtons[index]
 				this.$emit('click', {
 					index,
-					item: this.buttons[index]
-				});
+					item
+				})
+				if (this.useDefaultConfirmPair) {
+					if (index === 0) {
+						this.$emit('cancel')
+					} else if (index === 1) {
+						this.$emit('confirm')
+					}
+				}
 			},
 
 			close() {
 				if (!this.maskClosable) return;
 				this.$emit('close', {});
+				this.$emit('update:show', false)
+				this.$emit('update:visible', false)
 			},
 
 			stopEvent() { }
@@ -178,14 +217,9 @@
 		transform: scaleX(.5)
 	}
 
-	.mms-dialog__mask.mms-mask_hidden {
-		opacity: 0;
-		transform: scale3d(1, 1, 0)
-	}
-
 	.mms-dialog__mask {
 		position: fixed;
-		z-index: 1000;
+		z-index: 4000;
 		top: 0;
 		right: 0;
 		left: 0;

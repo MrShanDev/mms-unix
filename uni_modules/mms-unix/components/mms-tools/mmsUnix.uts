@@ -10,6 +10,7 @@ import * as ut from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 import { useAuth } from '@/uni_modules/mms-unix/components/mms-tools/useAuth.uts'
 import { StoreMemberVo } from '@/utype/type.uts'
 import common from '@/common/common.uts'
+import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
 type HrefParams = object | boolean | string;
 
 /**
@@ -23,7 +24,7 @@ const configInfo = () => {
 		production: "https://api.sxpcwlkj.cn",
 		// 项目名称
 		name: "MMS商城",
-		logo: "https://sxpcwlkj.oss-cn-beijing.aliyuncs.com/mmsMall/logo.png",
+		logo: getMmsUiConfig().appLogo,
 		// 用户协议   路由 ps: 'pages/article/article?id=1'
 		agreement: "",
 		// 隐私政策   路由 ps: 'pages/article/article?id=1'

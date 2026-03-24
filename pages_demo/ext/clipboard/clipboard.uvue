@@ -1,0 +1,57 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">组件包裹（mms-clipboard）</text>
+			<text class="demo-desc">点击子节点（按钮）将 text 复制到剪贴板，适合在任意 UI 外包一层触发复制。</text>
+			<mms-clipboard text="mms-clipboard 示例文本">
+				<mms-button type="default">复制示例文案</mms-button>
+			</mms-clipboard>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">工具方法（Ut.copyToClipboard）</text>
+			<text class="demo-desc">不依赖组件，在脚本里直接调用工具方法复制字符串。</text>
+			<mms-button type="primary" @click="onCopyApi">复制数字 605135318</mms-button>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { copyToClipboard } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+
+function onCopyApi() {
+	copyToClipboard('605135318')
+}
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff0844;
+}
+
+.demo-desc {
+	font-size: 26rpx;
+	color: #666666;
+	margin-bottom: 20rpx;
+	line-height: 1.5;
+	display: block;
+}
+</style>

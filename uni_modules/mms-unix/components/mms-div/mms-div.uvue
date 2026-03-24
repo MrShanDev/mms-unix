@@ -1,10 +1,10 @@
 <template>
 	<view class="mms-div" :class="getDividerClass" :style="{ backgroundColor: backgroundColor, height: height }">
-		<view v-if="contentPosition !== 'center'" class="mms-div__content" :class="[`mms-div__content--${contentPosition}`, textClass ? textClass : '']" :style="{ color: textColor, fontSize: fontSize + 'rpx' }">
+		<view v-if="contentPosition !== 'center'" class="mms-div__content" :class="[`mms-div__content--${contentPosition}`, textClass ? textClass : '']" :style="{ color: textColor, fontSize: resolvedFontSize }">
 			<slot></slot>
 			<text v-if="text">{{ text }}</text>
 		</view>
-		<view v-else class="mms-div__content mms-div__content--center" :class="[textClass ? textClass : '']" :style="{ color: textColor, fontSize: fontSize + 'rpx' }">
+		<view v-else class="mms-div__content mms-div__content--center" :class="[textClass ? textClass : '']" :style="{ color: textColor, fontSize: resolvedFontSize }">
 			<slot></slot>
 			<text v-if="text">{{ text }}</text>
 		</view>
@@ -12,6 +12,8 @@
 </template>
 
 <script lang="uts">
+import { toCssLength } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+
 export default {
 	name: 'mmsDiv',
 	props: {
@@ -58,6 +60,9 @@ export default {
 				classes.push('mms-div--has-text')
 			}
 			return classes.join(' ')
+		},
+		resolvedFontSize(): string {
+			return toCssLength(this.fontSize as number | string)
 		}
 	}
 };

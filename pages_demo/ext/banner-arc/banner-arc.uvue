@@ -1,0 +1,75 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">渐变底 + 弧形底部</text>
+			<mms-banner-arc height="200" :percent="130" background="linear-gradient(90deg,#5473ff,#6da8ff)">
+				<view class="banner-inner">
+					<text class="banner-title">mms-banner-arc</text>
+					<text class="banner-sub">percent 控制弧度，height 为区域高度</text>
+				</view>
+			</mms-banner-arc>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">另一组参数</text>
+			<mms-banner-arc height="160" :percent="110" background="linear-gradient(135deg,#ff0844,#ff6b88)">
+				<view class="banner-inner banner-inner--light">
+					<text class="banner-title banner-title--on-red">活动头图区</text>
+				</view>
+			</mms-banner-arc>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff0844;
+}
+
+.banner-inner {
+	padding: 40rpx 32rpx;
+}
+
+.banner-inner--light {
+	padding: 32rpx;
+}
+
+.banner-title {
+	font-size: 32rpx;
+	color: #ffffff;
+	font-weight: bold;
+	display: block;
+	margin-bottom: 12rpx;
+}
+
+.banner-title--on-red {
+	margin-bottom: 0;
+}
+
+.banner-sub {
+	font-size: 26rpx;
+	color: rgba(255, 255, 255, 0.9);
+	display: block;
+}
+</style>

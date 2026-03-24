@@ -1,0 +1,91 @@
+<template>
+	<view class="mms-banner-arc" :style="bannerStyle">
+		<view class="mms-banner-arc__inner">
+			<slot></slot>
+		</view>
+		<view class="mms-banner-arc__arc" :style="arcStyle"></view>
+	</view>
+</template>
+
+<script lang="uts">
+import { toCssLength } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+
+export default {
+	name: 'mmsBannerArc',
+	props: {
+		height: {
+			type: [Number, String],
+			default: 400
+		},
+		percent: {
+			type: [Number, String],
+			default: 120
+		},
+		background: {
+			type: String,
+			default: 'linear-gradient(180deg, #5473ff 0%, #6da8ff 100%)'
+		},
+		arcColor: {
+			type: String,
+			default: '#f5f5f5'
+		}
+	},
+	computed: {
+		bannerStyle(): UTSJSONObject {
+			return {
+				height: toCssLength(this.height as number | string),
+				background: this.background as string
+			}
+		},
+		pctNum(): number {
+			const p = this.percent as number | string
+			let n = 120
+			if (typeof p === 'number') {
+				n = p
+			} else {
+				const x = parseFloat(p as string)
+				if (!isNaN(x)) {
+					n = x
+				}
+			}
+			if (n < 120) {
+				n = 120
+			}
+			return n
+		},
+		arcStyle(): UTSJSONObject {
+			const p = this.pctNum
+			const half = p / 2
+			return {
+				width: p + '%',
+				marginLeft: '-' + half + '%',
+				backgroundColor: this.arcColor as string
+			}
+		}
+	}
+}
+</script>
+
+<style scoped lang="scss">
+.mms-banner-arc {
+	width: 100%;
+	position: relative;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.mms-banner-arc__inner {
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+}
+
+.mms-banner-arc__arc {
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	height: 120rpx;
+	border-radius: 9999px;
+	transform: translateY(55%);
+}
+</style>

@@ -1,11 +1,23 @@
 /**
- * 服务入口（仅托管相关，无订单/合同）
- * requireLogin: true 表示需登录才能进入
+ * 「我的」页菜单：个人介绍、开源与演示、联系与业务等（路径须与 pages.json 一致）
+ * requireLogin: true 时需登录后进入
  */
-export default [
-	{ icon: '/static/img/read.png', title: '浏览记录', pages: '/pages_Hosting/hosting_records/hosting_records', requireLogin: true },
-	{ icon: '/static/img/zhengshu.png', title: '学习证书', pages: '/pages_Hosting/hosting_certificate/hosting_certificate', requireLogin: true },
-	{ icon: '/static/img/group.png', title: '合作机构', pages: '/pages_Hosting/cooperate_institution/cooperate_institution', requireLogin: false },
-	{ icon: '/static/img/address.png', title: '收货地址', pages: '/pages_Me/user_address/index', requireLogin: true },
-	{ icon: '/static/img/about.png', title: '关于我们', pages: '/pages_Me/about_me/about_me', requireLogin: false },
-]
+export type UserServiceItem = {
+	/** mms-icon 图标名，与 mms-cell 的 icon 一致 */
+	iconName: string
+	title: string
+	pages: string
+	requireLogin: boolean
+}
+
+export function getUserServiceItems(): UserServiceItem[] {
+	return [
+		{ iconName: 'user-filling', title: '介绍自己', pages: '/pages_Me/user_info/index', requireLogin: true },
+		{ iconName: 'share', title: '开源项目', pages: '/pages_Me/about_me/about_me', requireLogin: false },
+		{ iconName: 'layout-filling', title: '组件演示', pages: '/pages_demo/index', requireLogin: false },
+		{ iconName: 'telephone', title: '联系我们', pages: '/pages_Me/contact/contact', requireLogin: false },
+		{ iconName: 'browse', title: '案例展示', pages: '/pages_Article/articleList/articleList', requireLogin: false },
+		{ iconName: 'work-filling', title: '公司业务', pages: '/pages/templates/templates', requireLogin: false },
+		{ iconName: 'task-filling', title: '系统开发承接', pages: '/pages/tools/tools', requireLogin: false },
+	]
+}

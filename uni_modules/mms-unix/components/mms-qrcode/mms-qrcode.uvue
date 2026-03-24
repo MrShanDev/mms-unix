@@ -1,73 +1,185 @@
 <template>
-	<view class="mms-qrcode" :style="{ width: size + 'rpx', height: size + 'rpx' }">
-		<canvas canvas-id="mms-qrcode" :style="{ width: size + 'rpx', height: size + 'rpx', backgroundColor: bgColor }"></canvas>
+	<view class="mms-qrcode" :style="qrViewStyle">
+		<!-- #ifdef MP-WEIXIN -->
+		<canvas :canvas-id="canvasId" :style="qrCanvasStyle"></canvas>
+		<!-- #endif -->
+		<!-- #ifndef MP-WEIXIN -->
+		<image
+			v-if="networkQrSrc.length > 0"
+			class="mms-qrcode__img"
+			:src="networkQrSrc"
+			:style="qrCanvasStyle"
+			mode="aspectFit"
+		></image>
+		<!-- #endif -->
+		<image
+			v-if="logo.length > 0"
+			class="mms-qrcode__logo"
+			:src="logo"
+			mode="aspectFit"
+		></image>
 	</view>
 </template>
 
 <script lang="uts">
+import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
+import { toCssLength, parseCssNumber } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+
+function hexForQrApi(c: string): string {
+	const s = c.trim()
+	if (s.length === 0) {
+		return ''
+	}
+	if (s.startsWith('#')) {
+		return s.substring(1)
+	}
+	return s
+}
+
 export default {
 	name: 'mmsQrcode',
 	props: {
-		// 二维码内容
 		value: {
 			type: String,
 			default: ''
 		},
-		// 二维码大小，单位rpx
 		size: {
 			type: [Number, String],
 			default: 200
 		},
-		// 二维码颜色
 		color: {
 			type: String,
 			default: '#000000'
 		},
-		// 背景颜色
 		bgColor: {
 			type: String,
 			default: '#ffffff'
 		},
-		// 边距
 		margin: {
 			type: [Number, String],
 			default: 0
 		},
-		// 容错级别 L M Q H
 		errorLevel: {
 			type: String,
 			default: 'M'
+		},
+		// 中心 Logo 图片地址（叠在二维码上方，各端通用）
+		logo: {
+			type: String,
+			default: ''
 		}
+	},
+	data() {
+		return {
+			canvasId: ''
+		}
+	},
+	computed: {
+		qrViewStyle(): UTSJSONObject {
+			const w = toCssLength(this.size as number | string)
+			return { width: w, height: w }
+		},
+		qrCanvasStyle(): UTSJSONObject {
+			const w = toCssLength(this.size as number | string)
+			return { width: w, height: w, backgroundColor: this.bgColor }
+		},
+		/** App/H5：仅当 common/config.ts 中 api.qrCodeImageApiBase 配置为自建接口时请求；微信端用 canvas + makeQrCode */
+		networkQrSrc(): string {
+			const baseRaw = getMmsUiConfig().qrCodeImageApiBase
+			const base = baseRaw != null ? baseRaw.trim() : ''
+			if (base.length === 0) {
+				return ''
+			}
+			const v = (this.value as string).trim()
+			if (v.length === 0) {
+				return ''
+			}
+			const rpxN = parseCssNumber(toCssLength(this.size as number | string))
+			const si = uni.getSystemInfoSync()
+			let winW = si.windowWidth as number
+			if (winW == null || winW <= 0) {
+				winW = 375
+			}
+			const pxSize = Math.max(64, Math.round(rpxN * winW / 750))
+			let fg = hexForQrApi(this.color as string)
+			if (fg.length === 0) {
+				fg = '000000'
+			}
+			let bg = hexForQrApi(this.bgColor as string)
+			if (bg.length === 0) {
+				bg = 'ffffff'
+			}
+			const sep = base.indexOf('?') >= 0 ? '&' : '?'
+			return (
+				base +
+				sep +
+				'size=' +
+				pxSize +
+				'x' +
+				pxSize +
+				'&color=' +
+				fg +
+				'&bgcolor=' +
+				bg +
+				'&data=' +
+				encodeURIComponent(v)
+			)
+		}
+	},
+	created() {
+		this.canvasId = 'mms-qrcode-' + Date.now() + '-' + Math.floor(Math.random() * 100000)
 	},
 	watch: {
 		value() {
-			this.draw()
+			this.drawWx()
+		},
+		size() {
+			this.drawWx()
+		},
+		color() {
+			this.drawWx()
+		},
+		bgColor() {
+			this.drawWx()
+		},
+		margin() {
+			this.drawWx()
+		},
+		errorLevel() {
+			this.drawWx()
 		}
 	},
 	mounted() {
-		this.draw()
+		this.drawWx()
 	},
 	methods: {
-		draw() {
-			if (!this.value) {
+		drawWx() {
+			// #ifdef MP-WEIXIN
+			const text = (this.value as string).trim()
+			if (text.length === 0) {
+				const ctx0 = uni.createCanvasContext(this.canvasId, this)
+				const pixelRatio0 = uni.getSystemInfoSync().pixelRatio
+				const rpx0 = parseCssNumber(toCssLength(this.size as number | string))
+				const cw0 = rpx0 * pixelRatio0
+				const ch0 = rpx0 * pixelRatio0
+				ctx0.setFillStyle(this.bgColor as any)
+				ctx0.fillRect(0, 0, cw0, ch0)
+				ctx0.draw()
 				return
 			}
-			const size = uni.getSystemInfoSync().pixelRatio
-			const canvasWidth = Number(this.size) * size
-			const canvasHeight = Number(this.size) * size
-			const margin = Number(this.margin) * size
+			const pixelRatio = uni.getSystemInfoSync().pixelRatio
+			const rpxNum = parseCssNumber(toCssLength(this.size as number | string))
+			const canvasWidth = rpxNum * pixelRatio
+			const canvasHeight = rpxNum * pixelRatio
 
-			const ctx = uni.createCanvasContext('mms-qrcode', this)
-			// 绘制背景
+			const ctx = uni.createCanvasContext(this.canvasId, this)
 			ctx.setFillStyle(this.bgColor as any)
 			ctx.fillRect(0, 0, canvasWidth, canvasHeight)
 			ctx.fill()
 
-			// #ifdef MP-WEIXIN
-			// 调用uni-app接口绘制二维码（仅微信小程序支持）
 			uni.makeQrCode({
 				canvas: ctx,
-				text: this.value,
+				text: text,
 				width: canvasWidth,
 				height: canvasHeight,
 				color: this.color,
@@ -81,9 +193,6 @@ export default {
 				}
 			})
 			// #endif
-			// #ifndef MP-WEIXIN
-			console.warn('二维码生成仅在微信小程序支持')
-			// #endif
 		}
 	}
 };
@@ -92,8 +201,25 @@ export default {
 <style scoped lang="scss">
 .mms-qrcode {
 	display: flex;
+	flex-direction: row;
 	align-items: center;
 	justify-content: center;
 	box-sizing: border-box;
+	position: relative;
+}
+
+.mms-qrcode__img {
+	display: block;
+}
+
+.mms-qrcode__logo {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 22%;
+	height: 22%;
+	transform: translate(-50%, -50%);
+	background-color: #ffffff;
+	border-radius: 8rpx;
 }
 </style>

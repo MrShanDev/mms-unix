@@ -12,7 +12,10 @@
 		</view>
 		<view class="mms-notice-bar__right">
 			<slot name="right">
-				<text v-if="showRight" class="mms-notice-bar__close">更多<icon name="right-arrow" color="#c0c4cc" size="26"></icon></text>
+				<view v-if="showRight" class="mms-notice-bar__close">
+					<text>更多</text>
+					<mms-icon name="arrow-right" color="#c0c4cc" size="26rpx"></mms-icon>
+				</view>
 			</slot>
 		</view>
 	</view>
@@ -70,6 +73,7 @@ export default {
 <style scoped lang="scss">
 .mms-notice-bar {
 	display: flex;
+	flex-direction: row;
 	align-items: center;
 	box-sizing: border-box;
 	padding: 18rpx 24rpx;
@@ -101,6 +105,7 @@ export default {
 
 		.mms-notice-bar__close {
 			display: flex;
+			flex-direction: row;
 			align-items: center;
 			font-size: 26rpx;
 			color: #c0c4cc;

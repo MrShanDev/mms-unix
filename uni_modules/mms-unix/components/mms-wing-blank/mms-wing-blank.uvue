@@ -1,0 +1,88 @@
+<template>
+	<view class="mms-wing-blank" :style="boxStyle" @tap="onTap">
+		<slot></slot>
+	</view>
+</template>
+
+<script lang="uts">
+import { toCssLength } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+
+export default {
+	name: 'mmsWingBlank',
+	emits: ['click'],
+	props: {
+		size: {
+			type: String,
+			default: 'default'
+		},
+		gap: {
+			type: [Number, String],
+			default: 0
+		},
+		background: {
+			type: String,
+			default: 'transparent'
+		},
+		radius: {
+			type: [Number, String],
+			default: 0
+		},
+		marginTop: {
+			type: [Number, String],
+			default: 0
+		},
+		marginBottom: {
+			type: [Number, String],
+			default: 0
+		}
+	},
+	computed: {
+		boxStyle(): UTSJSONObject {
+			let g = 0 as number
+			const gv = this.gap as number | string
+			if (typeof gv === 'number' && gv > 0) {
+				g = gv
+			} else if (typeof gv === 'string' && gv !== '' && gv !== '0') {
+				const pad = toCssLength(gv)
+				return {
+					paddingLeft: pad,
+					paddingRight: pad,
+					backgroundColor: this.background,
+					borderRadius: toCssLength(this.radius as number | string),
+					marginTop: toCssLength(this.marginTop as number | string),
+					marginBottom: toCssLength(this.marginBottom as number | string)
+				}
+			} else {
+				const sz = this.size as string
+				if (sz === 'small') {
+					g = 10
+				} else if (sz === 'large') {
+					g = 30
+				} else {
+					g = 20
+				}
+			}
+			return {
+				paddingLeft: g + 'rpx',
+				paddingRight: g + 'rpx',
+				backgroundColor: this.background,
+				borderRadius: toCssLength(this.radius as number | string),
+				marginTop: toCssLength(this.marginTop as number | string),
+				marginBottom: toCssLength(this.marginBottom as number | string)
+			}
+		}
+	},
+	methods: {
+		onTap() {
+			this.$emit('click')
+		}
+	}
+}
+</script>
+
+<style scoped lang="scss">
+.mms-wing-blank {
+	width: 100%;
+	box-sizing: border-box;
+}
+</style>

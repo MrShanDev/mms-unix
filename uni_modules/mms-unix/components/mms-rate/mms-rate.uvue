@@ -1,0 +1,110 @@
+<template>
+	<view class="mms-rate" @tap.stop="">
+		<view
+			v-for="i in quantity"
+			:key="i"
+			class="mms-rate__star-wrap"
+			@tap="onStarTap(i)"
+		>
+			<text
+				class="mms-rate__star"
+				:style="{ fontSize: size + 'px', color: starColor(i) }"
+			>{{ hollow && i > effectiveCurrent ? '☆' : '★' }}</text>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mmsRate',
+	emits: ['change'],
+	props: {
+		quantity: {
+			type: Number,
+			default: 5
+		},
+		current: {
+			type: Number,
+			default: 0
+		},
+		score: {
+			type: [Number, String],
+			default: 1
+		},
+		disabled: {
+			type: Boolean,
+			default: false
+		},
+		size: {
+			type: Number,
+			default: 20
+		},
+		normal: {
+			type: String,
+			default: '#b2b2b2'
+		},
+		active: {
+			type: String,
+			default: '#EB0909'
+		},
+		hollow: {
+			type: Boolean,
+			default: false
+		},
+		params: {
+			type: [Number, String],
+			default: 0
+		}
+	},
+	computed: {
+		effectiveCurrent(): number {
+			const c = this.current as number
+			const q = this.quantity as number
+			if (c < 0) {
+				return 0
+			}
+			if (c > q) {
+				return q
+			}
+			return c
+		},
+	},
+	methods: {
+		starColor(i: number): string {
+			if (i <= this.effectiveCurrent) {
+				return this.active as string
+			}
+			return this.normal as string
+		},
+		onStarTap(i: number) {
+			if (this.disabled) {
+				return
+			}
+			const p = this.params
+			const np = typeof p === 'number' ? p as number : parseInt('' + p)
+			this.$emit('change', { index: i, params: isNaN(np) ? 0 : np })
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+.mms-rate {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.mms-rate__star-wrap {
+	position: relative;
+	margin-right: 8rpx;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.mms-rate__star {
+	line-height: 1;
+}
+</style>

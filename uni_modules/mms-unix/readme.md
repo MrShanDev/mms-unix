@@ -2,6 +2,8 @@
 
 专为 uni-app-x 项目定制的自研基础组件库，完全原创实现。
 
+**更新记录（按版本）：**见工程根目录 [`version/doc/README.md`](../../version/doc/README.md) 中的 `lib-x.y.z.md`（与 `package.json` 的 `version` 一致）。
+
 ## 特点
 
 - 🎯 **专为 uni-app-x** - 全部使用 `.uvue` + UTS 开发
