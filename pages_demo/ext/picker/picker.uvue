@@ -1,16 +1,47 @@
 <template>
 	<view class="demo-page">
 		<view class="demo-section">
-			<text class="section-title">联动 Picker</text>
-			<mms-button type="primary" @click="pickerShow = true">打开 picker</mms-button>
-			<text class="demo-desc">多列树形数据，确认后 toast 所选 labels。</text>
+			<text class="section-title">三级联动</text>
+			<mms-button type="primary" @click="pickerShow = true">打开（layer=3）</mms-button>
+			<text class="demo-desc">pickerData / tree + 多列，确认后 toast labels 与 values。</text>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">单列</text>
+			<mms-button @click="singleShow = true">选择国家（layer=1）</mms-button>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">双列</text>
+			<mms-button @click="doubleShow = true">省 / 市（layer=2）</mms-button>
 		</view>
 
 		<mms-picker
 			:show="pickerShow"
-			:tree="pickerTree"
+			:pickerData="pickerTree"
+			:layer="3"
+			title="地区（三级）"
+			confirmColor="#ff0844"
+			@update:show="setPickerShow"
 			@confirm="onPickerOk"
-			@cancel="pickerShow = false"
+		></mms-picker>
+
+		<mms-picker
+			:show="singleShow"
+			:pickerData="countries"
+			:layer="1"
+			title="国家"
+			@update:show="setSingleShow"
+			@confirm="onSingleOk"
+		></mms-picker>
+
+		<mms-picker
+			:show="doubleShow"
+			:pickerData="provinceCity"
+			:layer="2"
+			title="省市"
+			@update:show="setDoubleShow"
+			@confirm="onDoubleOk"
 		></mms-picker>
 	</view>
 </template>
@@ -30,13 +61,60 @@ const pickerTree = [
 		]
 	}
 ]
+const countries = [
+	{ text: '中国', value: 'cn' },
+	{ text: '美国', value: 'us' },
+	{ text: '日本', value: 'jp' }
+]
+const provinceCity = [
+	{
+		text: '广东省',
+		value: 'gd',
+		children: [
+			{ text: '广州市', value: 'gz' },
+			{ text: '深圳市', value: 'sz' }
+		]
+	},
+	{
+		text: '浙江省',
+		value: 'zj',
+		children: [{ text: '杭州市', value: 'hz' }]
+	}
+]
+
 const pickerShow = ref(false)
+const singleShow = ref(false)
+const doubleShow = ref(false)
+
+function setPickerShow(v: boolean) {
+	pickerShow.value = v
+}
+function setSingleShow(v: boolean) {
+	singleShow.value = v
+}
+function setDoubleShow(v: boolean) {
+	doubleShow.value = v
+}
 
 function onPickerOk(e: UTSJSONObject) {
-	pickerShow.value = false
+	const labels = e['labels']
+	const values = e['values']
+	if (labels != null && values != null) {
+		uni.showToast({ title: JSON.stringify(labels) + ' ' + JSON.stringify(values), icon: 'none' })
+	}
+}
+
+function onSingleOk(e: UTSJSONObject) {
 	const labels = e['labels']
 	if (labels != null) {
-		uni.showToast({ title: '已选 ' + JSON.stringify(labels), icon: 'none' })
+		uni.showToast({ title: '国家 ' + JSON.stringify(labels), icon: 'none' })
+	}
+}
+
+function onDoubleOk(e: UTSJSONObject) {
+	const labels = e['labels']
+	if (labels != null) {
+		uni.showToast({ title: '省市 ' + JSON.stringify(labels), icon: 'none' })
 	}
 }
 </script>

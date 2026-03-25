@@ -6,20 +6,43 @@
 				<mms-dropdown-list
 					:show="dropdownShow"
 					:top="88"
-					:height="320"
+					:height="400"
 					:is-mask="true"
-					mask-background="rgba(0,0,0,0.35)"
+					mask-background="rgba(0, 0, 0, 0.4)"
 					@close="dropdownShow = false"
 				>
 					<template #selectionbox>
-						<view class="ext-dd-head" @tap="dropdownShow = !dropdownShow">
-							<text class="ext-dd-head-text">{{ dropdownShow ? '点击遮罩关闭' : '点击展开下拉' }}</text>
+						<view
+							class="ext-dd-head"
+							:class="{ 'ext-dd-head--open': dropdownShow }"
+							@tap="dropdownShow = !dropdownShow"
+						>
+							<view class="ext-dd-head-main">
+								<text class="ext-dd-head-text">
+									{{ selectedDd > 0 ? '已选：选项 ' + selectedDd : '请选择' }}
+								</text>
+								<text class="ext-dd-head-hint">
+									{{ dropdownShow ? '点击遮罩关闭' : '点击展开列表' }}
+								</text>
+							</view>
+							<text
+								class="ext-dd-head-arrow"
+								:class="{ 'ext-dd-head-arrow--open': dropdownShow }"
+							>▼</text>
 						</view>
 					</template>
 					<template #dropdownbox>
 						<scroll-view scroll-y class="ext-dd-scroll">
-							<view class="ext-dd-item" v-for="n in 8" :key="n" @tap="pickDd(n)">
-								<text class="ext-dd-item-text">选项 {{ n }}</text>
+							<view class="ext-dd-scroll-inner">
+								<view
+									class="ext-dd-item"
+									v-for="n in 8"
+									:key="n"
+									@tap="pickDd(n)"
+								>
+									<text class="ext-dd-item-text">选项 {{ n }}</text>
+									<text class="ext-dd-item-desc">说明文案 · 第 {{ n }} 项</text>
+								</view>
 							</view>
 						</scroll-view>
 					</template>
@@ -34,10 +57,12 @@
 import { ref } from 'vue'
 
 const dropdownShow = ref(false)
+const selectedDd = ref(0)
 
 function pickDd(n: number) {
+	selectedDd.value = n
 	dropdownShow.value = false
-	uni.showToast({ title: '选了' + n, icon: 'none' })
+	uni.showToast({ title: '已选选项 ' + n, icon: 'none' })
 }
 </script>
 

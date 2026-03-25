@@ -1,0 +1,159 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">基础</text>
+			<text class="section-desc">点击后发请求，成功后父级递增 successTick</text>
+			<mms-countdown-verify
+				:successTick="tick1"
+				color="#1890ff"
+				borderColor="#1890ff"
+				@send="onSend1"
+			></mms-countdown-verify>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">自定义秒数与后缀</text>
+			<mms-countdown-verify
+				:successTick="tick2"
+				:seconds="120"
+				countdownSuffix="秒后可重发"
+				text="发送短信"
+				@send="onSend2"
+			></mms-countdown-verify>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">挂载即倒计时（start）</text>
+			<mms-countdown-verify :start="true" :seconds="15" text="冷却中"></mms-countdown-verify>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">重置 resetTick</text>
+			<view class="demo-row">
+				<mms-countdown-verify
+					:successTick="tick3"
+					:resetTick="reset3"
+					@send="onSend3"
+				></mms-countdown-verify>
+				<view class="demo-row__btn">
+					<mms-button type="primary" width="200rpx" height="64rpx" @tap="onReset3">重置</mms-button>
+				</view>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">与输入框同排（参考表单页）</text>
+			<text class="section-desc">使用 mms-input 的 #right 插槽</text>
+			<mms-input v-model="phone" label="手机" type="number" placeholder="11 位" :clearable="true">
+				<template #right>
+					<mms-countdown-verify
+						:successTick="tick4"
+						:resetTick="reset4"
+						color="#ff0844"
+						borderColor="#ff0844"
+						@send="onSend4"
+					></mms-countdown-verify>
+				</template>
+			</mms-input>
+		</view>
+
+		<view class="page-footer-spacer"></view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	data() {
+		return {
+			tick1: 0,
+			tick2: 0,
+			tick3: 0,
+			reset3: 0,
+			tick4: 0,
+			reset4: 0,
+			phone: ''
+		}
+	},
+	methods: {
+		onReset3() {
+			this.reset3++
+		},
+		onSend1() {
+			const vm = this
+			setTimeout(() => {
+				vm.tick1++
+			}, 500)
+		},
+		onSend2() {
+			const vm = this
+			setTimeout(() => {
+				vm.tick2++
+			}, 500)
+		},
+		onSend3() {
+			const vm = this
+			setTimeout(() => {
+				vm.tick3++
+			}, 500)
+		},
+		onSend4() {
+			if (this.phone.length !== 11) {
+				uni.showToast({ title: '请输入 11 位手机号', icon: 'none' })
+				this.reset4++
+				return
+			}
+			const vm = this
+			setTimeout(() => {
+				vm.tick4++
+			}, 500)
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+	box-sizing: border-box;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 12rpx;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff0844;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #999999;
+	margin-bottom: 20rpx;
+	padding-left: 16rpx;
+}
+
+.demo-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.demo-row__btn {
+	margin-left: 24rpx;
+	flex-shrink: 0;
+}
+
+.page-footer-spacer {
+	height: 48rpx;
+}
+</style>

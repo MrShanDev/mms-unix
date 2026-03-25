@@ -1,18 +1,55 @@
 <template>
 	<view class="demo-page">
 		<view class="demo-section">
-			<text class="section-title">固定高度纵向滚动</text>
+			<text class="section-title">自动纵向滚动（默认）</text>
+			<text class="section-desc">内容高于可视区时自动循环滚动；手指按住会暂停，松开后约 0.6s 恢复。</text>
 			<view class="demo-vertical-box">
-				<mms-notice-vertical :height="320" background="#fff8f0" :radius="12" padding="20rpx 24rpx">
+				<mms-notice-vertical
+					:height="320"
+					background="#fff8f0"
+					:radius="12"
+					padding="20rpx 24rpx"
+					:speed="22"
+					active-mode="forwards"
+				>
 					<text class="demo-v-title">放假通知</text>
 					<text class="demo-v-p">各位同事：节日期间请注意安全，祝大家春节愉快。</text>
 					<text class="demo-v-p">一、放假时间自 2 月 7 日至 2 月 13 日；</text>
 					<text class="demo-v-p">二、值班人员请保持通讯畅通。</text>
+					<text class="demo-v-p">三、离沪人员请提前在 OA 报备行程。</text>
+					<text class="demo-v-p">四、办公室请关闭门窗与电源，贵重物品妥善保管。</text>
+					<text class="demo-v-p">五、节后首个工作日 9:00 全员例会，请准时参加。</text>
+					<text class="demo-v-p">（本段用于拉高内容高度，便于观察纵向滚动。）</text>
+				</mms-notice-vertical>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">仅手动滑动</text>
+			<text class="section-desc">autoplay=false，无自动滚；scroll-view 高度已按 px 换算，可正常拖拽滚动。</text>
+			<view class="demo-vertical-box">
+				<mms-notice-vertical
+					:height="280"
+					:autoplay="false"
+					background="#f0f9ff"
+					:radius="12"
+					padding="20rpx 24rpx"
+				>
+					<text class="demo-v-title">仅手动</text>
+					<text v-for="n in manualLines" :key="'m-' + n" class="demo-v-p">{{ manualLineText(n) }}</text>
 				</mms-notice-vertical>
 			</view>
 		</view>
 	</view>
 </template>
+
+<script setup lang="uts">
+const manualLines = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+function manualLineText(n: number): string {
+	return '第 ' + n + ' 条：请上下滑动阅读全文，本示例关闭 autoplay。'
+}
+</script>
 
 <style lang="scss">
 .demo-page {
@@ -32,9 +69,18 @@
 	font-size: 28rpx;
 	font-weight: bold;
 	color: #333333;
-	margin-bottom: 24rpx;
+	margin-bottom: 12rpx;
 	padding-left: 16rpx;
 	border-left: 6rpx solid #ff0844;
+}
+
+.section-desc {
+	display: block;
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.5;
+	margin-bottom: 24rpx;
+	padding-left: 16rpx;
 }
 
 .demo-vertical-box {

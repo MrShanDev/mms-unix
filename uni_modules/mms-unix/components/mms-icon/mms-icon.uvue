@@ -119,7 +119,7 @@ function getIconChar(name: string): string {
 	if (name === 'attachment') return '\ue677'
 	if (name === 'code') return '\ue678'
 	if (name === 'close') return '\ue679'
-	if (name === 'check-item') return '\ue67a'
+	if (name === 'check' || name === 'check-item') return '\ue67a'
 	if (name === 'calendar') return '\ue67b'
 	if (name === 'comment') return '\ue67c'
 	if (name === 'complete') return '\ue67f'

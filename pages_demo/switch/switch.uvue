@@ -1,0 +1,140 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">基础（滑块）</text>
+			<text class="section-desc">v-model 绑定 boolean，type 默认 switch</text>
+			<view class="demo-row">
+				<text class="demo-label">通知</text>
+				<mms-switch v-model="s1"></mms-switch>
+			</view>
+			<text class="demo-tip">当前：{{ s1 ? '开' : '关' }}</text>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">默认打开 / 自定义色</text>
+			<view class="demo-row">
+				<text class="demo-label">深色主题</text>
+				<mms-switch v-model="s2" color="#07c160"></mms-switch>
+			</view>
+			<view class="demo-gap"></view>
+			<view class="demo-row">
+				<text class="demo-label">品牌色</text>
+				<mms-switch v-model="s3" color="#ff0844"></mms-switch>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">缩放 scale</text>
+			<view class="demo-row">
+				<text class="demo-label">0.85</text>
+				<mms-switch v-model="s4" :scale="0.85"></mms-switch>
+			</view>
+			<view class="demo-gap"></view>
+			<view class="demo-row">
+				<text class="demo-label">1.05</text>
+				<mms-switch v-model="s5" :scale="1.05" color="#1890ff"></mms-switch>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">禁用</text>
+			<view class="demo-row">
+				<text class="demo-label">关闭态</text>
+				<mms-switch v-model="s6" :disabled="true"></mms-switch>
+			</view>
+			<view class="demo-gap"></view>
+			<view class="demo-row">
+				<text class="demo-label">打开态</text>
+				<mms-switch v-model="s7" :disabled="true"></mms-switch>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">checkbox 样式</text>
+			<text class="section-desc">type="checkbox"，自绘方框，适合与多选视觉统一</text>
+			<view class="demo-row">
+				<text class="demo-label">协议</text>
+				<mms-switch v-model="s8" type="checkbox" color="#5677fc"></mms-switch>
+			</view>
+		</view>
+
+		<view class="page-footer-spacer"></view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	data() {
+		return {
+			s1: false,
+			s2: true,
+			s3: true,
+			s4: true,
+			s5: false,
+			s6: false,
+			s7: true,
+			s8: false
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+	box-sizing: border-box;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 12rpx;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #1890ff;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #999999;
+	margin-bottom: 20rpx;
+	padding-left: 16rpx;
+}
+
+.demo-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16rpx 8rpx;
+}
+
+.demo-label {
+	font-size: 32rpx;
+	color: #333333;
+}
+
+.demo-tip {
+	font-size: 26rpx;
+	color: #999999;
+	margin-top: 16rpx;
+	padding-left: 8rpx;
+}
+
+.demo-gap {
+	height: 24rpx;
+}
+
+.page-footer-spacer {
+	height: 48rpx;
+}
+</style>

@@ -1,0 +1,380 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">基础单行</text>
+			<text class="section-desc">无左侧标题，仅占位与底部分割线</text>
+			<mms-input
+				v-model="a1"
+				placeholder="请输入内容"
+				:borderBottom="true"
+				:clearable="true"
+			></mms-input>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">带标题与清除</text>
+			<text class="section-desc">label + clearable</text>
+			<mms-input
+				v-model="a2"
+				label="姓名"
+				placeholder="请输入姓名"
+				:clearable="true"
+			></mms-input>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">必填与校验文案</text>
+			<text class="section-desc">required、error</text>
+			<mms-input
+				v-model="a3"
+				label="手机号"
+				type="number"
+				placeholder="11 位手机号"
+				:required="true"
+				:maxlength="11"
+				:error="phoneError"
+				:clearable="true"
+			></mms-input>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">密码与右对齐</text>
+			<mms-input
+				v-model="a4"
+				label="密码"
+				placeholder="请输入密码"
+				:password="true"
+				:textRight="true"
+				:borderBottom="false"
+			></mms-input>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">输入框描边（inputBorder）</text>
+			<mms-input
+				v-model="a5"
+				label="备注"
+				placeholder="带边框的输入区域"
+				:inputBorder="true"
+				:borderTop="false"
+				:borderBottom="false"
+			></mms-input>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">mms-form 组合</text>
+			<text class="section-desc">卡片式分组，末行可去掉底部分割线</text>
+			<mms-form title="资料登记" padding="0" :marginX="0">
+				<mms-input
+					v-model="fName"
+					label="姓名"
+					placeholder="请输入"
+					:required="true"
+					:clearable="true"
+				></mms-input>
+				<mms-input
+					v-model="fPhone"
+					label="手机"
+					type="number"
+					placeholder="请输入手机号"
+					:clearable="true"
+				>
+					<template #right>
+						<mms-countdown-verify
+							:successTick="smsSuccessTick"
+							:resetTick="smsResetTick"
+							color="#ff0844"
+							borderColor="#ff0844"
+							:seconds="60"
+							@send="onSmsSend"
+						></mms-countdown-verify>
+					</template>
+				</mms-input>
+				<view class="form-gender">
+					<text class="form-gender__label">性别</text>
+					<mms-radio-group v-model="fGender" direction="row" color="#ff0844" borderColor="#cccccc">
+						<mms-radio value="m">
+							<text class="form-gender__opt">男</text>
+						</mms-radio>
+						<mms-radio value="f">
+							<text class="form-gender__opt">女</text>
+						</mms-radio>
+					</mms-radio-group>
+				</view>
+				<view class="form-hobbies">
+					<text class="form-hobbies__label">爱好</text>
+					<mms-checkbox-group v-model="fHobbies" direction="row" color="#ff0844" borderColor="#cccccc">
+						<mms-checkbox value="read">
+							<text class="form-hobbies__opt">阅读</text>
+						</mms-checkbox>
+						<mms-checkbox value="sport">
+							<text class="form-hobbies__opt">运动</text>
+						</mms-checkbox>
+						<mms-checkbox value="music">
+							<text class="form-hobbies__opt">音乐</text>
+						</mms-checkbox>
+					</mms-checkbox-group>
+				</view>
+				<view class="form-notify">
+					<text class="form-notify__label">短信通知</text>
+					<mms-switch v-model="fNotify" color="#ff0844"></mms-switch>
+				</view>
+				<view class="form-picker" @tap="regionPickerShow = true">
+					<text class="form-picker__label">地区</text>
+					<text
+						class="form-picker__value"
+						:class="{ 'form-picker__value--ph': fRegionText === '' }"
+					>{{ fRegionText !== '' ? fRegionText : '请选择' }}</text>
+					<mms-icon name="arrow-right" :size="28" color="#cccccc"></mms-icon>
+				</view>
+				<mms-picker
+					:show="regionPickerShow"
+					:pickerData="formRegionTree"
+					:layer="2"
+					title="选择地区"
+					confirmColor="#ff0844"
+					@update:show="onRegionPickerShow"
+					@confirm="onRegionConfirm"
+				></mms-picker>
+				<mms-textarea
+					v-model="fRemark"
+					label="备注"
+					placeholder="选填，可输入多行"
+					:flexStart="true"
+					:isCounter="true"
+					:maxlength="200"
+					height="180rpx"
+					minHeight="180rpx"
+					:borderBottom="false"
+				></mms-textarea>
+			</mms-form>
+			<view class="demo-submit">
+				<mms-button type="primary" shape="circle" @click="onSubmitForm">提交</mms-button>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	data() {
+		return {
+			a1: '',
+			a2: '',
+			a3: '',
+			a4: '',
+			a5: '',
+			phoneError: '',
+			fName: '',
+			fPhone: '',
+			fGender: 'm',
+			fHobbies: [] as string[],
+			fNotify: false,
+			regionPickerShow: false,
+			fRegionText: '',
+			smsSuccessTick: 0,
+			smsResetTick: 0,
+			fRemark: '',
+			formRegionTree: [
+				{
+					text: '广东省',
+					value: 'gd',
+					children: [
+						{ text: '广州市', value: 'gz' },
+						{ text: '深圳市', value: 'sz' }
+					]
+				},
+				{
+					text: '浙江省',
+					value: 'zj',
+					children: [{ text: '杭州市', value: 'hz' }]
+				}
+			]
+		}
+	},
+	watch: {
+		a3(val: string) {
+			if (val.length > 0 && val.length < 11) {
+				this.phoneError = '手机号应为 11 位'
+			} else {
+				this.phoneError = ''
+			}
+		}
+	},
+	methods: {
+		onSmsSend(_e: UTSJSONObject) {
+			if (this.fPhone.length !== 11) {
+				uni.showToast({ title: '请先输入 11 位手机号', icon: 'none' })
+				this.smsResetTick++
+				return
+			}
+			setTimeout(() => {
+				this.smsSuccessTick++
+				uni.showToast({ title: '演示：已发送', icon: 'none' })
+			}, 600)
+		},
+		onRegionPickerShow(v: boolean) {
+			this.regionPickerShow = v
+		},
+		onRegionConfirm(e: UTSJSONObject) {
+			const labels = e['labels'] as string[] | null
+			if (labels != null) {
+				const parts: string[] = []
+				for (let i = 0; i < labels.length; i++) {
+					const t = labels[i] as string
+					if (t !== '') {
+						parts.push(t)
+					}
+				}
+				this.fRegionText = parts.join(' ')
+			}
+		},
+		onSubmitForm() {
+			const parts: string[] = []
+			parts.push('姓名：' + this.fName)
+			parts.push('手机：' + this.fPhone)
+			parts.push('性别：' + (this.fGender === 'f' ? '女' : '男'))
+			parts.push('爱好：' + this.fHobbies.join('、'))
+			parts.push('短信通知：' + (this.fNotify ? '开启' : '关闭'))
+			parts.push('地区：' + (this.fRegionText !== '' ? this.fRegionText : '未选'))
+			parts.push('备注：' + this.fRemark)
+			uni.showToast({ title: parts.join(' '), icon: 'none', duration: 2500 })
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 12rpx;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff0844;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #999999;
+	margin-bottom: 20rpx;
+	padding-left: 16rpx;
+}
+
+.demo-submit {
+	margin-top: 28rpx;
+	padding: 0 20rpx;
+}
+
+.form-gender {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 26rpx 30rpx;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: rgba(0, 0, 0, 0.08);
+	background-color: #ffffff;
+}
+
+.form-gender__label {
+	min-width: 140rpx;
+	font-size: 32rpx;
+	color: #333333;
+	margin-right: 16rpx;
+	flex-shrink: 0;
+}
+
+.form-gender__opt {
+	font-size: 32rpx;
+	color: #333333;
+}
+
+.form-hobbies {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	padding: 26rpx 30rpx;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: rgba(0, 0, 0, 0.08);
+	background-color: #ffffff;
+}
+
+.form-hobbies__label {
+	min-width: 140rpx;
+	font-size: 32rpx;
+	color: #333333;
+	margin-right: 16rpx;
+	flex-shrink: 0;
+	padding-top: 4rpx;
+}
+
+.form-hobbies__opt {
+	font-size: 32rpx;
+	color: #333333;
+}
+
+.form-notify {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	padding: 26rpx 30rpx;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: rgba(0, 0, 0, 0.08);
+	background-color: #ffffff;
+}
+
+.form-notify__label {
+	font-size: 32rpx;
+	color: #333333;
+	flex-shrink: 0;
+	margin-right: 24rpx;
+}
+
+.form-picker {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 26rpx 30rpx;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: rgba(0, 0, 0, 0.08);
+	background-color: #ffffff;
+}
+
+.form-picker__label {
+	min-width: 140rpx;
+	font-size: 32rpx;
+	color: #333333;
+	margin-right: 16rpx;
+	flex-shrink: 0;
+}
+
+.form-picker__value {
+	flex: 1;
+	font-size: 32rpx;
+	color: #333333;
+	text-align: right;
+	margin-right: 12rpx;
+}
+
+.form-picker__value--ph {
+	color: #c0c4cc;
+}
+</style>

@@ -94,6 +94,11 @@
 			color: '#1890ff',
 			items: [
 				{ name: '搜索', path: '/pages_demo/search/search', icon: 'search' },
+				{ name: '输入框', path: '/pages_demo/form/form', icon: 'edit' },
+				{ name: '多行输入', path: '/pages_demo/textarea/textarea', icon: 'edit' },
+				{ name: '单选框', path: '/pages_demo/radio/radio', icon: 'check' },
+				{ name: '多选框', path: '/pages_demo/checkbox/checkbox', icon: 'check' },
+				{ name: '开关', path: '/pages_demo/switch/switch', icon: 'switch-filling' },
 				{ name: '上传', path: '/pages_demo/upload/upload', icon: 'upload' },
 			],
 		},
@@ -114,6 +119,7 @@
 				{ name: '空状态', path: '/pages_demo/empty/empty', icon: 'folder-close' },
 				{ name: '价格', path: '/pages_demo/price/price', icon: 'wallet' },
 				{ name: '倒计时', path: '/pages_demo/countdown/countdown', icon: 'time' },
+				{ name: '验证码倒计时', path: '/pages_demo/smsCountdown/smsCountdown', icon: 'time' },
 				{ name: '宫格', path: '/pages_demo/grid/grid', icon: 'layers' },
 				{ name: '轮播图', path: '/pages_demo/ext/swiper/swiper', icon: 'picture' },
 				{ name: '二维码', path: '/pages_demo/qrcode/qrcode', icon: 'scanning' },
@@ -132,10 +138,10 @@
 			title: '扩展 / 分页与通告',
 			color: '#fa541c',
 			items: [
-				{ name: '分页器', path: '/pages_demo/ext/pagination/pagination', icon: 'listview' },
-				{ name: '分段器', path: '/pages_demo/ext/segmented-control/segmented-control', icon: 'category' },
-				{ name: '通告栏', path: '/pages_demo/ext/notice-bar/notice-bar', icon: 'message-fill' },
-				{ name: '纵向通告', path: '/pages_demo/ext/notice-vertical/notice-vertical', icon: 'explain-fill' },
+				{ name: '分页器', path: '/pages_demo/ext/pagination/pagination', icon: 'arrow-double-right' },
+				{ name: '分段器', path: '/pages_demo/ext/segmented-control/segmented-control', icon: 'switch-filling' },
+				{ name: '通告栏', path: '/pages_demo/ext/notice-bar/notice-bar', icon: 'notification-filling' },
+				{ name: '纵向通告', path: '/pages_demo/ext/notice-vertical/notice-vertical', icon: 'news-filling' },
 				{ name: '滚动资讯', path: '/pages_demo/ext/rolling-news/rolling-news', icon: 'news-filling' },
 			],
 		},
@@ -194,7 +200,22 @@
 	]
 
 	function navigateTo(url: string) {
-		uni.navigateTo({ url })
+		if (url == null || url === '') {
+			return
+		}
+		uni.navigateTo({
+			url: url,
+			fail: (err: any) => {
+				let msg = '页面打开失败'
+				if (err != null) {
+					const em = err['errMsg']
+					if (em != null && ('' + em).length > 0) {
+						msg = '' + em
+					}
+				}
+				uni.showToast({ title: msg, icon: 'none', duration: 2500 })
+			}
+		})
 	}
 </script>
 

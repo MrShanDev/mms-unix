@@ -234,9 +234,13 @@ export default {
 		&.mms-popup--center {
 			top: 50%;
 			left: 50%;
-			max-width: 80%;
+			width: auto;
+			min-width: 520rpx;
+			max-width: 86%;
 			opacity: 0;
 			transform: translate(-50%, -46%) scale(0.94);
+			box-shadow: 0 12rpx 48rpx rgba(0, 0, 0, 0.12);
+			overflow-x: hidden;
 
 			&.mms-popup__content--show {
 				opacity: 1;
@@ -244,7 +248,16 @@ export default {
 			}
 
 			&.mms-popup--round {
-				border-radius: 16rpx;
+				border-radius: 20rpx;
+			}
+
+			/* 居中弹层：内边距与底部/侧边区分，避免插槽内容贴边 */
+			.mms-popup__content-inner {
+				padding: 44rpx 48rpx 40rpx;
+			}
+
+			&.mms-popup--closeable .mms-popup__content-inner {
+				padding-top: 56rpx;
 			}
 		}
 

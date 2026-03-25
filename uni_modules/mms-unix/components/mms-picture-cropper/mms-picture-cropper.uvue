@@ -1,7 +1,26 @@
 <template>
 	<view class="mms-picture-cropper">
-		<image v-if="imageUrl !== ''" class="mms-picture-cropper__img" :src="imageUrl" mode="widthFix"></image>
-		<text class="mms-picture-cropper__tip">uni-app x 端裁剪能力因平台差异较大，本组件仅作选图预览与确认占位；真裁剪请使用各端原生能力或服务端处理。</text>
+		<view class="mms-picture-cropper__stage">
+			<view v-if="resolvedUrl !== ''" class="mms-picture-cropper__img-wrap">
+				<image
+					class="mms-picture-cropper__img"
+					:src="resolvedUrl"
+					mode="aspectFit"
+					@load="onImageLoad"
+					@error="onImageError"
+				></image>
+			</view>
+			<view v-else class="mms-picture-cropper__empty">
+				<text class="mms-picture-cropper__empty-t">暂无图片</text>
+				<text class="mms-picture-cropper__empty-d">请设置 image-url，或使用演示页「选择图片」</text>
+			</view>
+			<view v-if="resolvedUrl !== ''" class="mms-picture-cropper__frame-outer" :style="frameOuterStyle">
+				<view class="mms-picture-cropper__frame" :style="frameInnerStyle"></view>
+			</view>
+		</view>
+		<text class="mms-picture-cropper__tip">
+			框内为示意裁剪区域；像素级裁剪请用各端原生裁剪或 Canvas / 服务端处理。
+		</text>
 		<view class="mms-picture-cropper__bar">
 			<text class="mms-picture-cropper__btn" @tap="emitCrop">确认（回传当前图）</text>
 		</view>
@@ -11,24 +30,85 @@
 <script lang="uts">
 export default {
 	name: 'mmsPictureCropper',
-	emits: ['ready', 'imageLoad', 'cropper'],
+	emits: ['ready', 'imageLoad', 'cropper', 'imageError'],
 	props: {
 		imageUrl: {
 			type: String,
 			default: ''
+		},
+		/** 裁剪框宽度占舞台宽度的比例 0.35~0.92 */
+		frameWidthRatio: {
+			type: Number,
+			default: 0.72
+		},
+		/** 裁剪框宽高比 width / height */
+		aspectRatio: {
+			type: Number,
+			default: 1
+		},
+		frameColor: {
+			type: String,
+			default: '#5677fc'
+		}
+	},
+	data() {
+		return {
+			imgW: 0 as number,
+			imgH: 0 as number
+		}
+	},
+	computed: {
+		resolvedUrl(): string {
+			const u = this.imageUrl as string
+			return u == null ? '' : u.trim()
+		},
+		frameOuterStyle(): UTSJSONObject {
+			const r = this.frameWidthRatio as number
+			const wPct = Math.max(35, Math.min(92, Math.round((r > 0 ? r : 0.72) * 100)))
+			return {
+				width: wPct + '%'
+			} as UTSJSONObject
+		},
+		frameInnerStyle(): UTSJSONObject {
+			const ar = this.aspectRatio as number
+			const safeAr = ar > 0 ? ar : 1
+			const pbNum = 100 / safeAr
+			const c = this.frameColor as string
+			return {
+				paddingBottom: pbNum + '%',
+				borderColor: c,
+				boxShadow: '0 0 0 4000px rgba(0,0,0,0.48)'
+			} as UTSJSONObject
 		}
 	},
 	mounted() {
 		this.$emit('ready', {} as UTSJSONObject)
 	},
 	methods: {
+		onImageLoad(e: UTSJSONObject) {
+			this.$emit('imageLoad', e)
+			const d = e['detail'] as UTSJSONObject | null
+			if (d != null) {
+				const w = d['width']
+				const h = d['height']
+				if (w != null) {
+					this.imgW = w as number
+				}
+				if (h != null) {
+					this.imgH = h as number
+				}
+			}
+		},
+		onImageError(_e: UTSJSONObject) {
+			this.$emit('imageError', {} as UTSJSONObject)
+		},
 		emitCrop() {
-			const u = this.imageUrl as string
+			const u = this.resolvedUrl
 			this.$emit('cropper', {
 				url: u,
 				base64: '',
-				width: 0,
-				height: 0
+				width: this.imgW,
+				height: this.imgH
 			} as UTSJSONObject)
 		}
 	}
@@ -42,9 +122,79 @@ export default {
 	box-sizing: border-box;
 }
 
+.mms-picture-cropper__stage {
+	position: relative;
+	width: 100%;
+	min-height: 480rpx;
+	height: 520rpx;
+	background-color: #1a1a1a;
+	border-radius: 12rpx;
+	overflow: visible;
+	box-sizing: border-box;
+}
+
+.mms-picture-cropper__img-wrap {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 12rpx;
+	overflow: hidden;
+	z-index: 1;
+	box-sizing: border-box;
+}
+
 .mms-picture-cropper__img {
 	width: 100%;
+	height: 100%;
+}
+
+.mms-picture-cropper__empty {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 32rpx;
+	box-sizing: border-box;
+	z-index: 1;
+}
+
+.mms-picture-cropper__empty-t {
+	font-size: 30rpx;
+	color: #cccccc;
+	margin-bottom: 12rpx;
+}
+
+.mms-picture-cropper__empty-d {
+	font-size: 24rpx;
+	color: #888888;
+	text-align: center;
+	line-height: 1.5;
+}
+
+.mms-picture-cropper__frame-outer {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 2;
+	pointer-events: none;
+	box-sizing: border-box;
+}
+
+.mms-picture-cropper__frame {
+	width: 100%;
+	height: 0;
+	border-width: 2rpx;
+	border-style: solid;
 	border-radius: 12rpx;
+	box-sizing: border-box;
 }
 
 .mms-picture-cropper__tip {
