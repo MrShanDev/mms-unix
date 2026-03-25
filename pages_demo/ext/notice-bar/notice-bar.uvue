@@ -1,0 +1,47 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">横向滚动</text>
+			<mms-notice-bar
+				content="这是一条较长的通知内容，用于演示横向跑马灯滚动效果。"
+				:scrollable="true"
+				:duration="20"
+				:is-left="true"
+				:show-icon="true"
+			></mms-notice-bar>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">单行静态</text>
+			<mms-notice-bar
+				content="不开启 scrollable，配合 single 单行省略"
+				:scrollable="false"
+				single
+			></mms-notice-bar>
+		</view>
+	</view>
+</template>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff0844;
+}
+</style>

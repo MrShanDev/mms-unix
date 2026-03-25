@@ -1,0 +1,93 @@
+<template>
+	<view class="mms-notice-vertical" :style="outerStyle">
+		<scroll-view class="mms-notice-vertical__scroll" :style="scrollStyle" scroll-y :show-scrollbar="false">
+			<view class="mms-notice-vertical__inner" :style="innerPadStyle">
+				<slot></slot>
+			</view>
+		</scroll-view>
+	</view>
+</template>
+
+<script lang="uts">
+import { toCssLength } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+
+export default {
+	name: 'mmsNoticeVertical',
+	emits: [],
+	props: {
+		width: {
+			type: [Number, String],
+			default: 0
+		},
+		height: {
+			type: [Number, String],
+			default: 400
+		},
+		background: {
+			type: String,
+			default: 'transparent'
+		},
+		radius: {
+			type: [Number, String],
+			default: 0
+		},
+		padding: {
+			type: String,
+			default: '0'
+		},
+		speed: {
+			type: [Number, String],
+			default: 20
+		},
+		activeMode: {
+			type: String,
+			default: 'backwards'
+		}
+	},
+	computed: {
+		outerStyle(): UTSJSONObject {
+			const w = this.width as number | string
+			const wNum = typeof w === 'number' ? w : parseFloat(w as string)
+			const widthCss =
+				wNum === 0 || (typeof w === 'string' && (w as string).trim() === '0')
+					? '100%'
+					: toCssLength(w as number | string)
+			const r = toCssLength(this.radius as number | string)
+			return {
+				width: widthCss,
+				backgroundColor: this.background,
+				borderRadius: r,
+				boxSizing: 'border-box'
+			}
+		},
+		scrollStyle(): UTSJSONObject {
+			const h = toCssLength(this.height as number | string)
+			return {
+				height: h,
+				width: '100%'
+			}
+		},
+		innerPadStyle(): UTSJSONObject {
+			return {
+				padding: this.padding
+			}
+		}
+	}
+}
+</script>
+
+<style scoped lang="scss">
+.mms-notice-vertical {
+	overflow: hidden;
+}
+
+.mms-notice-vertical__scroll {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.mms-notice-vertical__inner {
+	width: 100%;
+	box-sizing: border-box;
+}
+</style>

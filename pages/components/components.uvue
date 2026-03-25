@@ -57,7 +57,7 @@
 		}
 		// TabBar 高度按 rpx 转 px（120rpx 约等于栏高+余量），避免算小导致内容压在菜单下
 		let tabBarPx = 88
-		const u = uni.upx2px(120)
+		const u = uni.rpx2px(120)
 		if (u != null && u > 0) {
 			tabBarPx = u
 		}
@@ -115,6 +115,7 @@
 				{ name: '价格', path: '/pages_demo/price/price', icon: 'wallet' },
 				{ name: '倒计时', path: '/pages_demo/countdown/countdown', icon: 'time' },
 				{ name: '宫格', path: '/pages_demo/grid/grid', icon: 'layers' },
+				{ name: '轮播图', path: '/pages_demo/ext/swiper/swiper', icon: 'picture' },
 				{ name: '二维码', path: '/pages_demo/qrcode/qrcode', icon: 'scanning' },
 				{ name: '水印', path: '/pages_demo/watermark/watermark', icon: 'lock' },
 			],
@@ -125,6 +126,17 @@
 			items: [
 				{ name: '吸顶', path: '/pages_demo/ext/sticky/sticky', icon: 'layout-filling' },
 				{ name: '底部导航', path: '/pages_demo/ext/bottom-nav/bottom-nav', icon: 'apps' },
+			],
+		},
+		{
+			title: '扩展 / 分页与通告',
+			color: '#fa541c',
+			items: [
+				{ name: '分页器', path: '/pages_demo/ext/pagination/pagination', icon: 'listview' },
+				{ name: '分段器', path: '/pages_demo/ext/segmented-control/segmented-control', icon: 'category' },
+				{ name: '通告栏', path: '/pages_demo/ext/notice-bar/notice-bar', icon: 'message-fill' },
+				{ name: '纵向通告', path: '/pages_demo/ext/notice-vertical/notice-vertical', icon: 'explain-fill' },
+				{ name: '滚动资讯', path: '/pages_demo/ext/rolling-news/rolling-news', icon: 'news-filling' },
 			],
 		},
 		{
@@ -155,7 +167,6 @@
 				{ name: '区块标题', path: '/pages_demo/ext/section/section', icon: 'filter-filling' },
 				{ name: '左右留白', path: '/pages_demo/ext/wing-blank/wing-blank', icon: 'fullscreen-expand-filling' },
 				{ name: '富文本', path: '/pages_demo/ext/richtext/richtext', icon: 'edit-filling' },
-				{ name: '滚动资讯', path: '/pages_demo/ext/rolling-news/rolling-news', icon: 'news-filling' },
 				{ name: '文本', path: '/pages_demo/ext/text/text', icon: 'text' },
 				{ name: '链接', path: '/pages_demo/ext/link/link', icon: 'link' },
 				{ name: '弧形横幅', path: '/pages_demo/ext/banner-arc/banner-arc', icon: 'top-filling' },

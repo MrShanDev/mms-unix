@@ -1,7 +1,7 @@
 <template>
 	<view class="demo-page">
 		<view class="demo-section">
-			<text class="section-title">带图标插槽</text>
+			<text class="section-title">带图标插槽（字符串列表）</text>
 			<mms-rolling-news :list="rollList" :show-icon-slot="true">
 				<template #icon>
 					<mms-icon name="news-filling" size="32rpx" color="#5677fc"></mms-icon>
@@ -10,14 +10,36 @@
 		</view>
 
 		<view class="demo-section">
+			<text class="section-title">对象列表 + prop 字段</text>
+			<mms-rolling-news :list="rollObjects" prop="name" :radius="16" :show-icon-slot="true">
+				<template #icon>
+					<mms-icon name="news-filling" size="32rpx" color="#5677fc"></mms-icon>
+				</template>
+			</mms-rolling-news>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">横向轮播</text>
+			<mms-rolling-news :list="rollLines" :vertical="false"></mms-rolling-news>
+		</view>
+
+		<view class="demo-section">
 			<text class="section-title">说明</text>
-			<text class="demo-desc">list 为字符串数组，纵向滚动轮播；可关闭图标插槽仅展示文案。</text>
+			<text class="demo-desc">list 可为字符串数组或对象数组；对象数组时用 prop 指定展示字段（默认 title）。</text>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
-const rollList = ['滚动资讯第一条', '滚动资讯第二条', '滚动资讯第三条']
+	const rollList = ['滚动资讯第一条', '滚动资讯第二条', '滚动资讯第三条']
+
+	const rollObjects = [
+		{ name: '热点：人工智能治理原则发布' },
+		{ name: '热点：春季穿搭推荐' },
+		{ name: '热点：本地生活服务升级' }
+	]
+
+	const rollLines = ['横向轮播第一条', '横向轮播第二条']
 </script>
 
 <style lang="scss">

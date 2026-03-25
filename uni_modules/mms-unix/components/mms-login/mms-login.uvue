@@ -77,8 +77,15 @@
 			}
 		},
 		created() {
-			var than = this;
-			than.configInfo = than.$mms.configInfo();
+			const than = this
+			const ci = config.configInfo
+			const aid = ci.userAgreementArticleId
+			const pid = ci.privacyPolicyArticleId
+			than.configInfo = {
+				name: ci.name,
+				agreementId: aid != null && aid.length > 0 ? aid : '',
+				privacyId: pid != null && pid.length > 0 ? pid : ''
+			}
 			than.$mms.httpGet(config.api.login.tokenLogin, {}).then((res : StoreMemberVo) => {
 				// Token登录成功
 				this.$mms.login(res);

@@ -73,6 +73,7 @@
 				{ "path": "ext/collapse/collapse", "style": { "navigationBarTitleText": "折叠面板" } },
 				{ "path": "ext/skeleton/skeleton", "style": { "navigationBarTitleText": "骨架屏" } },
 				{ "path": "ext/steps/steps", "style": { "navigationBarTitleText": "步骤条" } },
+				{ "path": "ext/swiper/swiper", "style": { "navigationBarTitleText": "轮播图" } },
 				{ "path": "ext/swipe-action/swipe-action", "style": { "navigationBarTitleText": "滑动操作" } },
 				{ "path": "ext/section/section", "style": { "navigationBarTitleText": "区块标题" } },
 				{ "path": "ext/wing-blank/wing-blank", "style": { "navigationBarTitleText": "左右留白" } },
@@ -86,7 +87,11 @@
 				{ "path": "ext/action-sheet/action-sheet", "style": { "navigationBarTitleText": "操作菜单" } },
 				{ "path": "ext/alert/alert", "style": { "navigationBarTitleText": "提醒弹框" } },
 				{ "path": "ext/clipboard/clipboard", "style": { "navigationBarTitleText": "剪贴板" } },
-				{ "path": "ext/fab/fab", "style": { "navigationBarTitleText": "悬浮按钮" } }
+				{ "path": "ext/fab/fab", "style": { "navigationBarTitleText": "悬浮按钮" } },
+				{ "path": "ext/notice-bar/notice-bar", "style": { "navigationBarTitleText": "通告栏" } },
+				{ "path": "ext/notice-vertical/notice-vertical", "style": { "navigationBarTitleText": "纵向通告" } },
+				{ "path": "ext/pagination/pagination", "style": { "navigationBarTitleText": "分页器" } },
+				{ "path": "ext/segmented-control/segmented-control", "style": { "navigationBarTitleText": "分段器" } }
 			]
 		},
 		{

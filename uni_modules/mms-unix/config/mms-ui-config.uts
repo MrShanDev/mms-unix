@@ -57,7 +57,8 @@ const MMS_UI_DEFAULTS: MmsUiConfig = {
 	articlePlaceholder: '/static/img/article-placeholder.png',
 	demoCardThumb: '/static/img/demo-card-thumb.png',
 	cropperDemo: '/static/img/cropper-demo.png',
-	qrCodeImageApiBase: '',
+	/** 与 qrserver 兼容的 PNG 接口根地址；小程序端无 uni.makeQrCode 时依赖此地址拉图，正式环境请改为自建并在小程序后台配置 download 合法域名 */
+	qrCodeImageApiBase: 'https://api.qrserver.com/v1/create-qr-code/',
 	primaryColor: '#ff0844',
 	serviceIconRead: '/static/img/read.png',
 	serviceIconCertificate: '/static/img/zhengshu.png',

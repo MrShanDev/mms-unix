@@ -1,0 +1,59 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">基础</text>
+			<mms-pagination
+				:total="total"
+				:page-size="10"
+				v-model:current="pageCurrent"
+				@change="onPageChange"
+			></mms-pagination>
+			<text class="demo-hint">当前页：{{ pageCurrent }}，事件：{{ lastPageEvt }}</text>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { ref } from 'vue'
+
+	const total = ref(95)
+	const pageCurrent = ref(1)
+	const lastPageEvt = ref('')
+
+	function onPageChange(e: UTSJSONObject) {
+		const t = e['type']
+		const c = e['current']
+		lastPageEvt.value = '' + t + ' → ' + c
+	}
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 24rpx;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #ff0844;
+}
+
+.demo-hint {
+	font-size: 24rpx;
+	color: #999999;
+	margin-top: 16rpx;
+	display: block;
+}
+</style>

@@ -16,6 +16,7 @@
 	 * 加载自定义图标字体
 	 */
 	function loadIconFont() {
+		// #ifndef MP
 		uni.loadFontFace({
 			family: 'iconfont',
 			source: 'url("/static/iconfont/iconfont.ttf")',
@@ -26,6 +27,7 @@
 				console.log('图标字体加载失败', err)
 			}
 		})
+		// #endif
 	}
 
 	/**

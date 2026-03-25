@@ -1,5 +1,5 @@
 import { StorageEnum } from '@/uni_modules/mms-unix/components/mms-tools/uenum/SysEnum.uts'
-import {StoreMemberVo} from '@/utype/type.uts'
+import { StoreMemberVo } from '@/uni_modules/mms-unix/components/mms-tools/utype/type.uts'
 import CacheUtil from "@/uni_modules/mms-unix/components/mms-tools/CacheUtil.uts"
 /**
  * 登录对象

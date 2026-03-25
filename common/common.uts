@@ -1,0 +1,6 @@
+/**
+ * mms-unix 的 mmsUnix.uts 依赖此模块。
+ * 留空则 mmsUnix 内 configInfo() 使用库内默认 development/production 等；
+ * 若需覆盖，可在此导出 default 并实现 configInfo(): object。
+ */
+export default {}

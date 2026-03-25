@@ -118,7 +118,10 @@ export default {
 			height: 0;
 			padding-top: calc((100% / var(--col-num)) - 20rpx);
 
-			> * {
+			/* 小程序 WXSS 不支持通用选择器 *，需写具体标签名 */
+			> view,
+			> text,
+			> image {
 				position: absolute;
 				top: 50%;
 				left: 50%;

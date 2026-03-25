@@ -10,7 +10,7 @@
 	import { toCssLength, parseCssNumber } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 
 	export default {
-		name: "mmsWingBlank",
+		name: 'mmsContent',
 		emits: ['click'],
 		props: {
 			//边距大小

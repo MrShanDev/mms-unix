@@ -8,7 +8,7 @@ import { isLoggedIn, checkLogin, needLogin } from '@/uni_modules/mms-unix/compon
 import { http, request, ApiResponse } from '@/uni_modules/mms-unix/components/mms-tools/Request.uts'
 import * as ut from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 import { useAuth } from '@/uni_modules/mms-unix/components/mms-tools/useAuth.uts'
-import { StoreMemberVo } from '@/utype/type.uts'
+import { StoreMemberVo } from '@/uni_modules/mms-unix/components/mms-tools/utype/type.uts'
 import common from '@/common/common.uts'
 import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
 type HrefParams = object | boolean | string;

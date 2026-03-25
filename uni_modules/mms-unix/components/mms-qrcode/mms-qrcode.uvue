@@ -1,7 +1,16 @@
 <template>
 	<view class="mms-qrcode" :style="qrViewStyle">
 		<!-- #ifdef MP-WEIXIN -->
-		<canvas :canvas-id="canvasId" :style="qrCanvasStyle"></canvas>
+		<!-- uni-app x 微信小程序运行时可能未实现 uni.makeQrCode，此时改用 qrCodeImageApiBase 联网图（需在小程序后台配置 download 合法域名） -->
+		<image
+			v-if="mpWxUseNetworkQr"
+			class="mms-qrcode__img"
+			:src="networkQrSrc"
+			:style="qrCanvasStyle"
+			mode="aspectFit"
+			@error="onMpNetworkQrImageError"
+		></image>
+		<canvas v-else :canvas-id="canvasId" :style="qrCanvasStyle"></canvas>
 		<!-- #endif -->
 		<!-- #ifndef MP-WEIXIN -->
 		<image
@@ -71,7 +80,9 @@ export default {
 	},
 	data() {
 		return {
-			canvasId: ''
+			canvasId: '',
+			/** 微信小程序：运行时是否存在 uni.makeQrCode（uni-app x 可能未实现） */
+			mpHasMakeQrCode: true
 		}
 	},
 	computed: {
@@ -83,7 +94,17 @@ export default {
 			const w = toCssLength(this.size as number | string)
 			return { width: w, height: w, backgroundColor: this.bgColor }
 		},
-		/** App/H5：仅当 common/config.ts 中 api.qrCodeImageApiBase 配置为自建接口时请求；微信端用 canvas + makeQrCode */
+		/** App/H5：qrCodeImageApiBase 有值时生成 PNG 地址；微信端有 makeQrCode 用 canvas，否则无 makeQrCode 时用同地址回退为 image */
+		mpWxUseNetworkQr(): boolean {
+			// #ifdef MP-WEIXIN
+			if (this.mpHasMakeQrCode) {
+				return false
+			}
+			const src = this.networkQrSrc as string
+			return src.length > 0
+			// #endif
+			return false
+		},
 		networkQrSrc(): string {
 			const baseRaw = getMmsUiConfig().qrCodeImageApiBase
 			const base = baseRaw != null ? baseRaw.trim() : ''
@@ -128,6 +149,10 @@ export default {
 	},
 	created() {
 		this.canvasId = 'mms-qrcode-' + Date.now() + '-' + Math.floor(Math.random() * 100000)
+		// #ifdef MP-WEIXIN
+		const uniAny = uni as any
+		this.mpHasMakeQrCode = typeof uniAny.makeQrCode === 'function'
+		// #endif
 	},
 	watch: {
 		value() {
@@ -153,8 +178,29 @@ export default {
 		this.drawWx()
 	},
 	methods: {
+		onMpNetworkQrImageError(_err: any) {
+			// #ifdef MP-WEIXIN
+			console.error(
+				'mms-qrcode: 网络二维码图片加载失败。请在微信小程序后台「downloadFile 合法域名」中添加接口域名（默认使用 api.qrserver.com），或在开发者工具中勾选「不校验合法域名」'
+			)
+			// #endif
+		},
 		drawWx() {
 			// #ifdef MP-WEIXIN
+			if (this.mpWxUseNetworkQr) {
+				return
+			}
+			if (!this.mpHasMakeQrCode) {
+				const ctxNo = uni.createCanvasContext(this.canvasId, this)
+				const pr = uni.getSystemInfoSync().pixelRatio
+				const rpxN = parseCssNumber(toCssLength(this.size as number | string))
+				const cw = rpxN * pr
+				const ch = rpxN * pr
+				ctxNo.setFillStyle(this.bgColor as any)
+				ctxNo.fillRect(0, 0, cw, ch)
+				ctxNo.draw()
+				return
+			}
 			const text = (this.value as string).trim()
 			if (text.length === 0) {
 				const ctx0 = uni.createCanvasContext(this.canvasId, this)

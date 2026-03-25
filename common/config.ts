@@ -134,6 +134,7 @@ export const config: AppConfig = {
 		upload: {
 			image: '/api/v1/common/upload/image',
 		},
+		/** 留空则使用 mms-unix 库内默认（演示用公网 qrserver）；正式请改为自建接口根地址 */
 		qrCodeImageApiBase: '',
 	},
 	// 应用基础信息

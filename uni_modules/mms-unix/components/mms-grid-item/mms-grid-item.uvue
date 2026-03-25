@@ -15,76 +15,79 @@
 </template>
 
 <script lang="uts">
-export default {
-	name: 'mmsGridItem',
-	emits: ['click'],
-	inject: {
-		mmsGridBorder: {
-			from: 'mmsGridBorder',
-			default: null
-		}
-	},
-	props: {
-		// 图标名称
-		icon: {
-			type: String,
-			default: ''
-		},
-		// 文字
-		text: {
-			type: String,
-			default: ''
-		},
-		// 图标大小
-		iconSize: {
-			type: String,
-			default: '48rpx'
-		},
-		// 图标颜色
-		iconColor: {
-			type: String,
-			default: '#333333'
-		},
-		// 是否显示边框
-		border: {
-			type: Boolean,
-			default: true
-		},
-		// 跳转链接
-		url: {
-			type: String,
-			default: ''
-		},
-		// 跳转类型
-		linkType: {
-			type: String,
-			default: 'navigateTo'
-		}
-	},
-	computed: {
-		showItemBorder(): boolean {
-			const fromGrid = this.mmsGridBorder
-			if (fromGrid !== null && fromGrid !== undefined) {
-				return fromGrid as boolean
+	import { PropType } from 'vue'
+
+	export default {
+		name: 'mmsGridItem',
+		emits: ['click'],
+		inject: {
+			mmsGridBorder: {
+				from: 'mmsGridBorder',
+				default: null,
+				type: Boolean as unknown as PropType<boolean | null>
 			}
-			return this.border as boolean
-		}
-	},
-	methods: {
-		handleClick() {
-			this.$emit('click')
-			if (this.url) {
-				if (this.linkType === 'navigateTo') {
-					uni.navigateTo({ url: this.url })
-				} else if (this.linkType === 'redirectTo') {
-					uni.redirectTo({ url: this.url })
-				} else if (this.linkType === 'switchTab') {
-					uni.switchTab({ url: this.url })
+		},
+		props: {
+			// 图标名称
+			icon: {
+				type: String,
+				default: ''
+			},
+			// 文字
+			text: {
+				type: String,
+				default: ''
+			},
+			// 图标大小
+			iconSize: {
+				type: String,
+				default: '48rpx'
+			},
+			// 图标颜色
+			iconColor: {
+				type: String,
+				default: '#333333'
+			},
+			// 是否显示边框
+			border: {
+				type: Boolean,
+				default: true
+			},
+			// 跳转链接
+			url: {
+				type: String,
+				default: ''
+			},
+			// 跳转类型
+			linkType: {
+				type: String,
+				default: 'navigateTo'
+			}
+		},
+		computed: {
+			showItemBorder(): boolean {
+				const fromGrid = this.mmsGridBorder
+				if (fromGrid !== null && fromGrid !== undefined) {
+					return fromGrid as boolean
+				}
+				return this.border as boolean
+			}
+		},
+		methods: {
+			handleClick() {
+				this.$emit('click')
+				if (this.url) {
+					if (this.linkType === 'navigateTo') {
+						uni.navigateTo({ url: this.url })
+					} else if (this.linkType === 'redirectTo') {
+						uni.redirectTo({ url: this.url })
+					} else if (this.linkType === 'switchTab') {
+						uni.switchTab({ url: this.url })
+					}
 				}
 			}
 		}
 	}
-}
 </script>
 
 <style scoped lang="scss">

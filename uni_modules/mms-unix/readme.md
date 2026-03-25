@@ -2,7 +2,9 @@
 
 专为 uni-app-x 项目定制的自研基础组件库，完全原创实现。
 
-**更新记录（按版本）：**见工程根目录 [`version/doc/README.md`](../../version/doc/README.md) 中的 `lib-x.y.z.md`（与 `package.json` 的 `version` 一致）。
+**更新日志（规范）：**本包根目录 [`changelog.md`](./changelog.md)（uni_modules / uni-app-x 约定）。
+
+**详细验收（按版本）：**工程根目录 [`version/doc/README.md`](../../version/doc/README.md) 中的 `lib-x.y.z.md`（与 `package.json` 的 `version` 一致）。
 
 ## 特点
 
@@ -44,7 +46,12 @@
 | mms-empty | 空状态 |
 | mms-loading | 加载中 |
 | mms-loadmore | 加载更多 |
+| mms-swiper | 轮播图 |
 | mms-notice-bar | 公告栏 |
+| mms-notice-vertical | 纵向通告（可滚动长文） |
+| mms-pagination | 分页器 |
+| mms-rolling-news | 滚动消息 |
+| mms-segmented-control | 分段器 |
 | mms-price | 价格展示 |
 | mms-tag | 标签 |
 | mms-tree | 树形结构 |

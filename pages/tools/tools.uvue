@@ -182,8 +182,9 @@
 	}
 
 	function onOpenPermissionSetting() {
-		if (uni.canIUse('openSetting')) {
-			uni.openSetting({})
+		const uniAny = uni as any
+		if (typeof uniAny.canIUse === 'function' && uniAny.canIUse('openSetting')) {
+			uniAny.openSetting({})
 			return
 		}
 		msg('当前端无 openSetting：App 请在 manifest 配置权限；H5 由浏览器管理授权')
