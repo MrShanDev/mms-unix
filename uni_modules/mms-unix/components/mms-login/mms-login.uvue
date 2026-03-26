@@ -1,46 +1,104 @@
 <template>
 	<mms-bottom-popup :zIndex="1002" :maskZIndex="1001" :show="popupShow" @close="hiddenPopup">
-		<mms-content gap="40" margin-top="24">
-			<view class="mms-placeholder">
-				<view class="login_policy">
-
-					<view class="login_policy_desc">
-						<mms-icon name="square-fill" :size="16" @click="isArgee = false" v-if="isArgee"
-							margin="10rpx"></mms-icon>
-						<mms-icon name="square" :size="16" color="#19be6b" @click="isArgee = true" v-else
-							margin="10rpx"></mms-icon>
-						<text class="">您还未登录 {{configInfo.name}} ，进行登陆将代表您已同意并阅读</text>
-						<text class="text" @click="$mms.href('/son_me/article-details/article-details?id='+configInfo.agreementId)">《用户协议》</text>与
-						<text class="text" @click="$mms.href('/son_me/article-details/article-details?id='+configInfo.privacyId)">《隐私协议》</text>
+		<mms-content gap="32" margin-top="24">
+			<view class="login-body">
+				<text class="login-title">登录 {{ configInfo.name }}</text>
+				<view class="login-agreement-row">
+					<view class="login-agreement-cb">
+						<mms-checkbox
+							:checked="isAgree"
+							:size="40"
+							:scale="0.9"
+							color="#ff0844"
+							border-color="#cccccc"
+							@update:checked="onAgreeUpdate"
+						/>
+					</view>
+					<view class="login-agreement-text">
+						<text class="login-agreement-desc">
+							登录即表示您已阅读并同意
+						</text>
+						<view class="login-agreement-links">
+							<text
+								v-if="configInfo.agreementId.length > 0"
+								class="login-link"
+								@tap.stop="openAgreement"
+							>《用户协议》</text>
+							<text v-else class="login-link login-link--muted">《用户协议》</text>
+							<text class="login-agreement-desc">与</text>
+							<text
+								v-if="configInfo.privacyId.length > 0"
+								class="login-link"
+								@tap.stop="openPrivacy"
+							>《隐私政策》</text>
+							<text v-else class="login-link login-link--muted">《隐私政策》</text>
+						</view>
 					</view>
 				</view>
-				<view class="m-b-10">
-					<!--  -->
-					<mms-button v-if="isArgee" type="danger" shadow bold shape="circle" open-type="getPhoneNumber"
-						@getphonenumber="getPhone">同意并登录</mms-button>
-					<mms-button v-else type="danger" shadow bold shape="circle" @click="getPhone">同意并登录</mms-button>
+				<view class="login-actions">
+					<!-- #ifdef MP-WEIXIN -->
+					<mms-button
+						v-if="isAgree"
+						type="danger"
+						shadow
+						bold
+						shape="circle"
+						open-type="getPhoneNumber"
+						@getphonenumber="getPhone"
+					>同意并登录</mms-button>
+					<mms-button
+						v-else
+						type="danger"
+						shadow
+						bold
+						shape="circle"
+						@tap="onLoginTap"
+					>同意并登录</mms-button>
+					<!-- #endif -->
+					<!-- #ifndef MP-WEIXIN -->
+					<mms-button
+						v-if="isAgree"
+						type="danger"
+						shadow
+						bold
+						shape="circle"
+						@tap="onLoginAfterAgree"
+					>同意并登录</mms-button>
+					<mms-button
+						v-else
+						type="danger"
+						shadow
+						bold
+						shape="circle"
+						@tap="onLoginTap"
+					>同意并登录</mms-button>
+					<!-- #endif -->
 				</view>
 			</view>
 		</mms-content>
-		
 	</mms-bottom-popup>
-	<mms-dialog :buttons="buttons" :show="show" title="提示" @close="close" @click="buttonTap">
+	<mms-dialog
+		:show="showAgreementDialog"
+		:buttons="agreementDialogButtons"
+		title="提示"
+		@click="onAgreementDialogClick"
+		@update:show="onAgreementDialogShowUpdate"
+	>
 		<template v-slot:content>
-			您需要阅读并同意《用户协议》，是否同意？
+			请先阅读并勾选同意《用户协议》与《隐私政策》后再登录。
 		</template>
 	</mms-dialog>
 </template>
 
 <script lang="uts">
 	import { config } from '@/common/config'
-	import { R, StoreMemberVo } from '@/uni_modules/mms-unix/components/mms-tools/utype/type.uts'
+	import { StoreMemberVo } from '@/uni_modules/mms-unix/components/mms-tools/utype/type.uts'
 
 	export default {
 
 		name: 'mmsLogin',
 		emits: ['update:popupShow'],
 		props: {
-			// 0隐藏 1：显示
 			popupShow: {
 				type: Boolean,
 				default: false
@@ -56,24 +114,21 @@
 		},
 		data() {
 			return {
-				//项目配置
-				configInfo: { name: "", agreementId: "", privacyId: "" },
-				//是否同意用户协议
-				isArgee: false as boolean,
-				//获取手机号授权对象
+				configInfo: { name: '', agreementId: '', privacyId: '' },
+				isAgree: false as boolean,
 				weixinInfo: {
 					encryptedData: '',
 					code: '',
 					iv: '',
-					mId: ""
+					mId: ''
 				},
-				show: false,
-				buttons: [{
+				showAgreementDialog: false,
+				agreementDialogButtons: [{
 					text: '取消'
 				}, {
-					text: '确定',
+					text: '同意并勾选',
 					color: '#586c94'
-				}]
+				}] as Array<{ text: string; color?: string }>
 			}
 		},
 		created() {
@@ -87,145 +142,171 @@
 				privacyId: pid != null && pid.length > 0 ? pid : ''
 			}
 			than.$mms.httpGet(config.api.login.tokenLogin, {}).then((res : StoreMemberVo) => {
-				// Token登录成功
-				this.$mms.login(res);
-				than.hiddenPopup();
-			}).catch(() => {
-				//Token登录失败
-				this.$mms.logout();
-
-				//CODE 方式登录
+				this.$mms.login(res)
+				than.hiddenPopup()
+			}).catch((_e : any) => {
+				this.$mms.logout()
 				// #ifdef MP-WEIXIN
 				uni.login({
 					provider: 'weixin',
 					success: function (loginRes) {
-						
 						than.$mms.httpGet(config.api.login.codeGetOpenIdLogin, {
 							code: loginRes.code
 						}).then((rese : StoreMemberVo) => {
-							//登录成功
 							than.$mms.login(rese)
-							than.hiddenPopup();
+							than.hiddenPopup()
 						}).catch(() => {
-							//登录失败
-							than.$mms.logout();
-							setTimeout(() => {
-								//显示手机授权弹框，进行手机号方式登录
-								//than.showPopup();
-							}, 3000)
-						});
-
+							than.$mms.logout()
+							setTimeout(() => {}, 3000)
+						})
 					}
-				});
+				})
 				// #endif
 				// #ifndef MP-WEIXIN
-				console.log("登录失效了！")
-				const pages = getCurrentPages(); // 获取页面栈数组
-				const currentPage = pages[pages.length - 1]; // 当前页面实例
-				const pagePath = currentPage.route; // 页面路径（如 "pages/components/components"）
-
-				console.log('当前页面路径:', pagePath);
-				if ("/son_me/login/login" != pagePath&&pagePath!="/pages/tab/index/index") {
-					this.$mms.href("/son_me/login/login")
+				const pages = getCurrentPages()
+				if (pages.length < 1) {
+					return
+				}
+				const currentPage = pages[pages.length - 1]
+				const pagePath = currentPage.route as string
+				const loginTarget = config.loginPagePath
+				let loginPathNorm = loginTarget
+				if (loginPathNorm.length > 0 && loginPathNorm.charAt(0) == '/') {
+					loginPathNorm = loginPathNorm.substring(1)
+				}
+				const onLoginPage =
+					pagePath != null &&
+					(pagePath === loginPathNorm || pagePath.indexOf('login/login') >= 0)
+				if (!onLoginPage && pagePath != null && pagePath.indexOf('tab/index') < 0) {
+					than.$mms.href(loginTarget)
 				}
 				// #endif
-
-
-			}).catch((e : string) => {
-				console.log("B:" + e)
 			})
 		},
 		methods: {
 			showPopup() {
-				//console.log("打开")
-				this.$emit('update:popupShow', true);
+				this.$emit('update:popupShow', true)
 			},
 			hiddenPopup() {
-				//console.log("关闭")
-				this.$emit('update:popupShow', false);
+				this.$emit('update:popupShow', false)
+			},
+			openAgreement() {
+				const id = this.configInfo.agreementId
+				if (id.length < 1) {
+					return
+				}
+				this.$mms.href('/son_me/article-details/article-details?id=' + id)
+			},
+			openPrivacy() {
+				const id = this.configInfo.privacyId
+				if (id.length < 1) {
+					return
+				}
+				this.$mms.href('/son_me/article-details/article-details?id=' + id)
+			},
+			onLoginTap() {
+				if (!this.isAgree) {
+					this.showAgreementDialog = true
+				}
+			},
+			onAgreeUpdate(next : boolean) {
+				this.isAgree = next
+			},
+			onAgreementDialogShowUpdate(next : boolean) {
+				this.showAgreementDialog = next
+			},
+			onAgreementDialogClick(e : { index : number }) {
+				if (e.index === 1) {
+					this.isAgree = true
+				}
+			},
+			onLoginAfterAgree() {
+				this.$mms.toast('非微信端请对接业务登录接口')
 			},
 			getPhone(e : { iv : string, encryptedData : string }) {
-				var than = this;
-				if (!than.isArgee) {
-					than.show = true
-					return;
+				const than = this
+				if (!than.isAgree) {
+					than.showAgreementDialog = true
+					return
 				}
 				uni.login({
 					provider: 'weixin',
 					success: function (loginRes) {
-						than.weixinInfo.code = loginRes.code;
-						than.weixinInfo.iv = e.iv;
-						than.weixinInfo.encryptedData = e.encryptedData;
-						let mid = uni.getStorageSync('mId');
-						than.weixinInfo.mId = (mid == null || mid == '') ? 0 : mid;
-						than.$mms.httpGet(config.api.login.codeGetPhoneRegisterOrLogin, than.weixinInfo).then((data:StoreMemberVo) => {
-							//登录成功
+						than.weixinInfo.code = loginRes.code
+						than.weixinInfo.iv = e.iv
+						than.weixinInfo.encryptedData = e.encryptedData
+						let mid = uni.getStorageSync('mId')
+						than.weixinInfo.mId = (mid == null || mid == '') ? 0 : mid
+						than.$mms.httpGet(config.api.login.codeGetPhoneRegisterOrLogin, than.weixinInfo).then((data : StoreMemberVo) => {
 							than.$mms.login(data)
-							than.hiddenPopup();
-							than.$mms.toast("登录成功!");
-						}).catch((error:string) => {
-							than.$mms.toast(error);
-							return;
+							than.hiddenPopup()
+							than.$mms.toast('登录成功!')
+						}).catch((error : string) => {
+							than.$mms.toast(error)
 						})
 					}
-				});
+				})
 			},
-			close() {
-				this.show = false
-			},
-			buttonTap(e:{index:number}) {
-				//console.log(e)
-				if(e.index==1){
-					this.isArgee=true;
-				}
-				this.close()
-			}
-
 		},
 	}
 </script>
 
 <style lang="scss" scoped>
-	.mms-placeholder {}
-
-	.logo-view {
-		margin-top: 100rpx;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-bottom: 34rpx;
-		justify-content: center;
-		height: 30vh;
-
-		.logo {
-			width: 281rpx;
-			height: 277rpx;
-			margin-left: auto;
-			margin-right: auto;
-			margin-top: 100px;
-		}
+	.login-body {
+		padding: 0 8rpx 24rpx;
 	}
 
-	.login_policy {
-		display: flex;
-		flex-direction: column;
+	.login-title {
+		font-size: 32rpx;
+		font-weight: 600;
+		color: #333333;
 		text-align: center;
-		padding: 10rpx 0;
-		width: 95%;
-		margin: 0 auto 34rpx;
+		margin-bottom: 32rpx;
+	}
 
-		.login_policy_desc {
-			display: block;
-			font-size: 28rpx;
-			color: #B3BBC0;
-			margin-left: 8rpx;
-			vertical-align: middle;
-			line-height: 48rpx;
+	.login-agreement-row {
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		margin-bottom: 40rpx;
+	}
 
-			.text {
-				color: #43ad47;
-				margin: 0 8rpx;
-			}
-		}
+	.login-agreement-cb {
+		flex-shrink: 0;
+		padding-top: 4rpx;
+	}
+
+	.login-agreement-text {
+		flex: 1;
+		margin-left: 16rpx;
+	}
+
+	.login-agreement-desc {
+		font-size: 26rpx;
+		color: #666666;
+		line-height: 1.65;
+	}
+
+	.login-agreement-links {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		margin-top: 8rpx;
+	}
+
+	.login-link {
+		font-size: 26rpx;
+		line-height: 1.65;
+		color: #5677fc;
+		margin-right: 4rpx;
+	}
+
+	.login-link--muted {
+		color: #bbbbbb;
+	}
+
+	.login-actions {
+		width: 100%;
 	}
 </style>

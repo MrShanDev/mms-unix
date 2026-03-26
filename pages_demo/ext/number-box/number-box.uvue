@@ -1,53 +1,244 @@
 <template>
-	<view class="demo-page">
-		<view class="demo-section">
-			<text class="section-title">步进器</text>
-			<mms-number-box :value="numVal" :min="1" :max="10" @change="onNumChange"></mms-number-box>
-			<text class="demo-desc">当前值：{{ numVal }}</text>
-		</view>
+	<view class="ext-page nb-page">
+		<scroll-view class="ext-scroll" scroll-y>
+			<view class="nb-body">
+				<view class="ext-section nb-doc">
+					<text class="section-title">使用说明</text>
+					<text class="ext-hint nb-line">
+						通过两侧「− / +」调整数值；推荐使用 v-model:value 双向绑定，亦可配合 @change 做埋点。中间为数值展示（只读，不可直接输入）。
+					</text>
+					<text class="ext-hint nb-line">
+						变更到达 min / max 时仍会回调，数值会被钳制在范围内。可设置 step 为小数以实现小数步进（如 0.25）。
+					</text>
+					<text class="ext-hint nb-line">
+						多实例并存时可用 index、custom 在回调中区分来源（见下方「标识与回调」）。
+					</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">基础</text>
+					<view class="nb-row">
+						<mms-number-box v-model:value="valBasic" :min="1" :max="10"></mms-number-box>
+					</view>
+					<text class="nb-desc">当前值：{{ valBasic }}（范围 1～10，步长默认 1）</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">步长</text>
+					<text class="ext-hint nb-line">每次加减变化 2。</text>
+					<view class="nb-row">
+						<mms-number-box v-model:value="valStep" :min="0" :max="20" :step="2"></mms-number-box>
+					</view>
+					<text class="nb-desc">当前值：{{ valStep }}</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">范围限制</text>
+					<text class="ext-hint nb-line">min / max 约束可输入区间；适合数量上下限场景。</text>
+					<view class="nb-row">
+						<mms-number-box
+							v-model:value="valRange"
+							:min="5"
+							:max="15"
+						></mms-number-box>
+					</view>
+					<text class="nb-desc">当前值：{{ valRange }}（5～15）</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">小数步进</text>
+					<text class="ext-hint nb-line">step 为小数时，中间展示会保留小数（内部按浮点运算，显示已做简单格式化）。</text>
+					<view class="nb-row">
+						<mms-number-box
+							v-model:value="valDecimal"
+							:min="0"
+							:max="5"
+							:step="0.25"
+						></mms-number-box>
+					</view>
+					<text class="nb-desc">当前值：{{ valDecimal }}（步长 0.25，最大 5）</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">禁用</text>
+					<view class="nb-row">
+						<mms-number-box v-model:value="valDisabled" :disabled="disabledOn"></mms-number-box>
+					</view>
+					<view class="nb-tools">
+						<mms-button type="primary" btnSize="small" @tap="disabledOn = !disabledOn">
+							{{ disabledOn ? '启用' : '禁用' }}步进器
+						</mms-button>
+					</view>
+					<text class="nb-desc">当前值：{{ valDisabled }}；状态：{{ disabledOn ? '已禁用' : '可操作' }}</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">标识与回调</text>
+					<text class="ext-hint nb-line">change 载荷含 value、type（plus / reduce）、index、custom，便于列表或多购物车行区分。</text>
+					<view class="nb-dual">
+						<view class="nb-dual-item">
+							<text class="nb-dual-label">行 A · index=0</text>
+							<mms-number-box
+								v-model:value="valA"
+								:min="0"
+								:max="99"
+								:index="0"
+								:custom="1"
+								@change="onTaggedChange"
+							></mms-number-box>
+						</view>
+						<view class="nb-dual-item">
+							<text class="nb-dual-label">行 B · index=1</text>
+							<mms-number-box
+								v-model:value="valB"
+								:min="0"
+								:max="99"
+								:index="1"
+								:custom="2"
+								@change="onTaggedChange"
+							></mms-number-box>
+						</view>
+					</view>
+					<text class="nb-desc nb-desc--mono">最近回调：{{ lastTagged }}</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">外观与尺寸</text>
+					<text class="ext-hint nb-line">可调整中间区宽高、文字与图标颜色、按钮背景等。</text>
+					<view class="nb-row nb-row--theme">
+						<mms-number-box
+							v-model:value="valTheme"
+							:min="1"
+							:max="9"
+							:height="48"
+							:width="96"
+							:size="32"
+							:iconSize="30"
+							color="#ffffff"
+							background-color="#2979ff"
+							iconColor="#ffffff"
+							iconBgColor="#1e5fbb"
+						></mms-number-box>
+					</view>
+					<text class="nb-desc">当前值：{{ valTheme }}（示例为主题色高对比样式）</text>
+				</view>
+
+				<view class="ext-section nb-foot">
+					<text class="ext-title">补充说明</text>
+					<text class="ext-hint nb-line">
+						若业务需要在服务端校验后再改数量，可在 @change 内发起请求，成功后再通过 v-model:value 或父级状态写回；失败则保持原值不动。
+					</text>
+					<text class="ext-hint nb-line">
+						props 中的 radius 控制两侧按钮是否为圆形背景；设为 false 时可配合纯色底做方形按钮（依设计稿调整）。
+					</text>
+				</view>
+			</view>
+			<view class="ext-footer-space"></view>
+		</scroll-view>
 	</view>
 </template>
 
 <script setup lang="uts">
 import { ref } from 'vue'
 
-const numVal = ref(2)
+const valBasic = ref(2)
+const valStep = ref(4)
+const valRange = ref(10)
+const valDecimal = ref(1)
+const valDisabled = ref(3)
+const disabledOn = ref(false)
 
-function onNumChange(e: UTSJSONObject) {
+const valA = ref(1)
+const valB = ref(2)
+const lastTagged = ref('尚未触发')
+
+const valTheme = ref(3)
+
+function onTaggedChange(e: UTSJSONObject) {
 	const v = e['value']
-	if (v != null) {
-		numVal.value = v as number
-	}
+	const typ = e['type']
+	const idx = e['index']
+	const cust = e['custom']
+	const vs = v != null ? '' + (v as number) : ''
+	const ts = typ != null ? '' + typ : ''
+	const is = idx != null ? '' + idx : ''
+	const cs = cust != null ? '' + cust : ''
+	lastTagged.value = 'value=' + vs + ' type=' + ts + ' index=' + is + ' custom=' + cs
 }
 </script>
 
 <style lang="scss">
-.demo-page {
-	min-height: 100vh;
+@import '../_demo-common.scss';
+@import '../../_demo-common.scss';
+
+.nb-page {
 	background-color: #f5f5f5;
-	padding: 20rpx;
 }
 
-.demo-section {
-	background-color: #ffffff;
-	border-radius: 16rpx;
-	padding: 30rpx;
-	margin-bottom: 24rpx;
+.nb-page .section-title {
+	margin-bottom: 12rpx;
 }
 
-.section-title {
-	font-size: 28rpx;
-	font-weight: bold;
-	color: #333333;
-	margin-bottom: 24rpx;
-	padding-left: 16rpx;
-	border-left: 6rpx solid #ff0844;
+.nb-line {
+	display: block;
+	margin-top: 12rpx;
 }
 
-.demo-desc {
+.nb-body {
+	padding-bottom: 24rpx;
+	box-sizing: border-box;
+}
+
+.nb-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-top: 16rpx;
+}
+
+.nb-row--theme {
+	margin-top: 20rpx;
+}
+
+.nb-desc {
 	font-size: 26rpx;
 	color: #666666;
 	margin-top: 20rpx;
 	display: block;
+	line-height: 1.45;
+}
+
+.nb-desc--mono {
+	font-size: 24rpx;
+	color: #333333;
+}
+
+.nb-tools {
+	margin-top: 20rpx;
+}
+
+.nb-dual {
+	margin-top: 16rpx;
+	display: flex;
+	flex-direction: column;
+	gap: 28rpx;
+}
+
+.nb-dual-item {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.nb-dual-label {
+	font-size: 26rpx;
+	color: #333333;
+	margin-right: 24rpx;
+	flex-shrink: 0;
+}
+
+.nb-foot {
+	margin-bottom: 8rpx;
 }
 </style>

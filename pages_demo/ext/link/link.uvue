@@ -7,7 +7,7 @@
 
 		<view class="demo-section">
 			<text class="section-title">无下划线</text>
-			<mms-link href="https://mmsadmin.cn" text="陕西品创 / 文档站 mmsadmin.cn" :underline="false"></mms-link>
+			<mms-link href="https://www.example.com/page" text="示例内页链接（无下划线）" :underline="false"></mms-link>
 		</view>
 	</view>
 </template>
@@ -16,6 +16,11 @@
 </script>
 
 <style lang="scss">
+@import '../../_demo-common.scss';
+.section-title {
+	margin-bottom: 24rpx;
+}
+
 .demo-page {
 	min-height: 100vh;
 	background-color: #f5f5f5;
@@ -29,12 +34,5 @@
 	margin-bottom: 24rpx;
 }
 
-.section-title {
-	font-size: 28rpx;
-	font-weight: bold;
-	color: #333333;
-	margin-bottom: 24rpx;
-	padding-left: 16rpx;
-	border-left: 6rpx solid #ff0844;
-}
+
 </style>

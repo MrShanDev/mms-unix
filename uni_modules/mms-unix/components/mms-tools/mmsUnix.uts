@@ -40,6 +40,46 @@ const msg = (text : string) => {
 		duration: 2000
 	})
 }
+
+/** 将 uni.request 的 data 转为 R<T>；服务端返回 HTML/纯文本时避免 JSON.parse 抛 SyntaxError */
+function parseApiEnvelope<T>(raw : any) : R<T> | null {
+	if (raw == null) {
+		return null
+	}
+	if (typeof raw === 'object') {
+		return raw as R<T>
+	}
+	if (typeof raw === 'string') {
+		const s = raw.trim()
+		if (s.length === 0) {
+			return null
+		}
+		try {
+			return JSON.parse(s) as R<T>
+		} catch (e) {
+			const preview = s.length > 80 ? s.substring(0, 80) + '…' : s
+			throw new Error('接口返回非JSON：' + preview)
+		}
+	}
+	throw new Error('无法解析的响应类型')
+}
+
+/** 非 2xx 时附带响应体片段，便于排查 426 Upgrade Required、网关 HTML 等 */
+function httpStatusError(statusCode : number, resData : any) : Error {
+	let detail = ''
+	if (typeof resData === 'string') {
+		const s = resData.trim()
+		if (s.length > 0) {
+			detail = s.length > 160 ? s.substring(0, 160) + '…' : s
+		}
+	}
+	const base = 'HTTP错误[' + statusCode.toString() + ']'
+	if (detail.length > 0) {
+		return new Error(base + '：' + detail)
+	}
+	return new Error(base)
+}
+
 const getReqUrl = () => {
 	const envConfig = {
 		// 开发环境
@@ -385,35 +425,43 @@ const tools = {
 					'Authorization': new LoginObject().getToken()
 				},
 				method: 'GET',
-				dataType: 'json',
+				// 使用 text，避免服务端返回 HTML/纯文本（如 401 Unauthorized）时框架层 JSON.parse 抛 SyntaxError
+				dataType: 'text',
 				success: (res) => {
 					clearTimeout(timeoutId);
 					uni.hideLoading();
 
 					if (res.statusCode === HttpStatus.SUCCESS) {
-						const response = res.data as R<T>;
+						let response : R<T> | null = null
+						try {
+							response = parseApiEnvelope<T>(res.data)
+						} catch (e) {
+							const m = e instanceof Error ? e.message : String(e)
+							reject(new Error(m))
+							return
+						}
 						if (!response) {
-							resolve(response);
-							return;
+							resolve(null as T)
+							return
 						}
 
 						// 处理权限问题
 						if (response.code === 403) {
-							// tools.href("/pages/me/login", false);
-							reject(new Error(response.msg || '请重新登录'));
-							return;
+							reject(new Error(response.msg != null && response.msg.length > 0 ? response.msg : '请重新登录'));
+							return
 						}
 
 						// 处理业务成功状态
 						if (response.code === HttpStatus.SUCCESS) {
 							resolve(response.data);
 						} else {
-							if(showMgs)msg(response.msg || '请求处理失败');
-							
-							reject(new Error(response.msg));
+							if (showMgs) {
+								msg(response.msg != null && response.msg.length > 0 ? response.msg : '请求处理失败');
+							}
+							reject(new Error(response.msg != null ? response.msg : '请求处理失败'));
 						}
 					} else {
-						reject(new Error(`HTTP错误[${res.statusCode}]`));
+						reject(httpStatusError(res.statusCode, res.data));
 					}
 				},
 				fail: (err) => {
@@ -466,51 +514,51 @@ const tools = {
 					'Content-Type': 'application/json' // 新增 JSON 内容类型头
 				},
 				data: params, // POST 数据直接放在请求体
-				dataType: 'json',
+				dataType: 'text',
 				success: (res) => {
 					clearTimeout(timeoutId);
 					uni.hideLoading();
 
-					// HTTP 状态码过滤（通常 200 表示成功）
 					if (res.statusCode === HttpStatus.SUCCESS) {
-						const response = res.data as R<T>;
-
-						// 空响应处理
+						let response : R<T> | null = null
+						try {
+							response = parseApiEnvelope<T>(res.data)
+						} catch (e) {
+							const m = e instanceof Error ? e.message : String(e)
+							reject(new Error(m))
+							return
+						}
 						if (!response) {
-							resolve(response);
-							return;
+							resolve(null as T)
+							return
 						}
 
-						// 权限异常处理（403 跳转登录）
 						if (response.code === 403) {
-							// tools.href("/pages/me/login", false);
-							reject(new Error(response.msg || '请重新登录'));
-							return;
+							reject(new Error(response.msg != null && response.msg.length > 0 ? response.msg : '请重新登录'));
+							return
 						}
 
-						// 业务状态码处理（200 为业务成功）
 						if (response.code === HttpStatus.SUCCESS) {
 							resolve(response.data);
 						} else {
-							msg(response.msg || '请求处理失败');
-							reject(new Error(response.msg));
+							msg(response.msg != null && response.msg.length > 0 ? response.msg : '请求处理失败');
+							reject(new Error(response.msg != null ? response.msg : '请求处理失败'));
 						}
 					} else {
-						reject(new Error(`HTTP错误[${res.statusCode}]`));
+						reject(httpStatusError(res.statusCode, res.data));
 					}
 				},
 				fail: (err) => {
 					clearTimeout(timeoutId);
 					uni.hideLoading();
 
-					// 过滤主动取消的请求（超时除外）
 					if (!isTimeout && err.errMsg !== 'request:fail abort') {
 						msg("网络连接异常，请检查网络");
 					}
 					reject(err);
 				},
 				complete: () => {
-					requestTask = null; // 清理请求任务引用
+					requestTask = null;
 				}
 			});
 		});
@@ -532,7 +580,18 @@ const tools = {
 				},
 				success: function (res) {
 					uni.hideLoading()
-					let d = JSON.parse(res.data.replace(/\ufeff/g, "") || "{}") as R<T>
+					let d : R<T> | null = null
+					try {
+						d = JSON.parse(res.data.replace(/\ufeff/g, "") || "{}") as R<T>
+					} catch (e) {
+						reject(e)
+						msg("上传响应解析失败");
+						return
+					}
+					if (d == null) {
+						reject(new Error('empty upload response'))
+						return
+					}
 					if (d.code == 200) {
 						let fileObj = d.data;
 						resolve(fileObj)

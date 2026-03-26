@@ -2,12 +2,49 @@
 	<view class="ext-page sticky-page">
 		<scroll-view id="sticky-demo-scroll" class="ext-scroll" scroll-y @scroll="onScroll">
 			<view class="sticky-page-body">
-				<view class="sticky-demo-intro ext-section">
-					<text class="ext-title">mms-sticky · stickyTop 留白</text>
-					<text class="ext-hint sticky-demo-tip">
-						吸顶后与滚动区域顶边保留间距（本页为约 80rpx 转 px）。scroll-view 内需设置 scrollViewportId 与外层 id 一致，isNativeHeader=false，@scroll 递增 scrollTick。
+				<view class="ext-section sticky-doc">
+					<text class="section-title">使用说明</text>
+					<text class="ext-hint sticky-doc-line">
+						吸顶区域应贴近滚动容器子级，避免多层 overflow/transform 包裹导致判定异常；与 CSS position: sticky 类似，偏移相对「最近滚动祖先」与包含块。
+					</text>
+					<text class="ext-hint sticky-doc-line">
+						本页为 scroll-view 内滚动：请设置与外层 scroll-view 一致的 id，并传入 scroll-viewport-id；每次 @scroll 递增 scrollTick；放在非原生导航场景时 is-native-header 设为 false，避免 H5 下重复叠加导航栏偏移。
+					</text>
+					<text class="ext-hint sticky-doc-line">
+						sticky-height 声明吸顶条占位高度（如 80rpx），与头部实际高度一致可减少布局跳动；scroll-top 为滚动偏移，来自页面 onPageScroll 或 scroll-view 的 detail.scrollTop。
+					</text>
+					<text class="ext-hint sticky-doc-line">
+						sticky-top 为吸顶后与滚动视口顶边的间距（px）；可用 rpx2px 将设计稿留白转为像素。整页滚动且 H5 使用原生导航时，可将 is-native-header 设为 true，内部会叠加常见导航栏偏移；本页为 scroll-view 故统一 false。
+					</text>
+					<text class="ext-hint sticky-doc-line">
+						事件：@sticky 返回 isFixed、index；@change 返回 top（相对判定坐标）、index。异步增高内容后递增 recalc 以重新测量。
+					</text>
+					<text class="ext-hint sticky-doc-line">
+						下方示例：A 为 stickyTop 留白；B 为贴顶；C 为开启 container 并带 content 插槽。
 					</text>
 				</view>
+
+				<view class="sticky-demo-pre ext-section">
+					<text class="ext-title">前置内容（便于向下滚动观察吸顶）</text>
+					<view v-for="n in preOffset" :key="'pre-' + n" class="sticky-demo-line-wrap">
+						<text class="sticky-demo-line">前置行 {{ n }} · 继续下滑查看吸顶</text>
+					</view>
+				</view>
+
+				<view class="sticky-inline-tools ext-section">
+					<text class="ext-title">触发重新测量（recalc）</text>
+					<text class="ext-hint sticky-doc-line">
+						异步增高内容后递增 recalc，可促使占位高度与吸顶判定刷新。
+					</text>
+					<mms-button type="primary" btnSize="small" @tap="togglePreExtra">
+						{{ preExtraOn ? '收起' : '展开' }}前置额外区块
+					</mms-button>
+				</view>
+
+				<view v-if="preExtraOn" class="sticky-demo-pre ext-section sticky-demo-pre--extra">
+					<text class="sticky-demo-line" v-for="k in 4" :key="'ex-' + k">动态插入的第 {{ k }} 行</text>
+				</view>
+
 				<mms-sticky
 					scroll-viewport-id="sticky-demo-scroll"
 					:scroll-tick="scrollTick"
@@ -17,18 +54,127 @@
 					:sticky-top="stickyTopOffsetPx"
 					background-color="#f6ffed"
 					:index="0"
+					:recalc="recalcTick"
+					sticky-anchor-id="sticky-demo-a"
+					@sticky="onStickyA"
+					@change="onChangeA"
 				>
 					<template #header>
 						<view class="ext-sticky-bar sticky-demo-bar">
-							<text class="ext-sticky-text">stickyTop 留白 · 低于顶边</text>
+							<text class="ext-sticky-text">吸顶区 A · 距顶留白（stickyTop）</text>
 						</view>
 					</template>
 				</mms-sticky>
+
+				<view class="sticky-state ext-section">
+					<text class="sticky-state-t">状态 A：{{ stickyAFixed ? '已吸顶' : '未吸顶' }}</text>
+					<text class="sticky-state-sub">change 最近 top（px，相对视口）：{{ lastTopA.toFixed(0) }}</text>
+				</view>
+
 				<view class="sticky-demo-list ext-section">
 					<view v-for="n in postList" :key="'p-' + n" class="sticky-demo-row">
-						<text class="sticky-demo-row-t">列表 {{ n }}</text>
+						<text class="sticky-demo-row-t">列表 A · 第 {{ n }} 行</text>
 					</view>
 				</view>
+
+				<view class="sticky-between ext-section">
+					<text class="ext-title">第二段吸顶（贴顶）</text>
+					<text class="ext-hint sticky-doc-line">
+						index 用于区分多段吸顶实例；事件回调中会带回 index。第二段使用 sticky-top 0，背景色与 A 区分。
+					</text>
+				</view>
+
+				<mms-sticky
+					scroll-viewport-id="sticky-demo-scroll"
+					:scroll-tick="scrollTick"
+					:scroll-top="scrollTopFromView"
+					:is-native-header="false"
+					sticky-height="72rpx"
+					:sticky-top="0"
+					background-color="#fff7e6"
+					:index="1"
+					:recalc="recalcTick"
+					sticky-anchor-id="sticky-demo-b"
+					@sticky="onStickyB"
+					@change="onChangeB"
+				>
+					<template #header>
+						<view class="ext-sticky-bar sticky-demo-bar sticky-demo-bar--b">
+							<text class="ext-sticky-text">吸顶区 B · 贴顶（stickyTop = 0）</text>
+						</view>
+					</template>
+				</mms-sticky>
+
+				<view class="sticky-state ext-section">
+					<text class="sticky-state-t">状态 B：{{ stickyBFixed ? '已吸顶' : '未吸顶' }}</text>
+					<text class="sticky-state-sub">change 最近 top（px）：{{ lastTopB.toFixed(0) }}</text>
+				</view>
+
+				<view class="sticky-demo-list ext-section">
+					<view v-for="n in postListB" :key="'pb-' + n" class="sticky-demo-row">
+						<text class="sticky-demo-row-t">列表 B · 第 {{ n }} 行</text>
+					</view>
+				</view>
+
+				<view class="sticky-between ext-section">
+					<text class="ext-title">指定容器（container + content）</text>
+					<text class="ext-hint sticky-doc-line">
+						开启 container 后，除 header 插槽外可增加 content 插槽，用于放置与吸顶条配套的列表、筛选结果等（同一组件根下纵向排列）。下滑时观察吸顶条与下方块一起参与滚动。
+					</text>
+				</view>
+
+				<mms-sticky
+					scroll-viewport-id="sticky-demo-scroll"
+					:scroll-tick="scrollTick"
+					:scroll-top="scrollTopFromView"
+					:is-native-header="false"
+					sticky-height="80rpx"
+					:sticky-top="0"
+					background-color="#e6f4ff"
+					:index="2"
+					:recalc="recalcTick"
+					:container="true"
+					sticky-anchor-id="sticky-demo-c"
+					@sticky="onStickyC"
+					@change="onChangeC"
+				>
+					<template #header>
+						<view class="ext-sticky-bar sticky-demo-bar sticky-demo-bar--c">
+							<text class="ext-sticky-text">吸顶区 C · 带内容区（container）</text>
+						</view>
+					</template>
+					<template #content>
+						<view class="sticky-container-panel">
+							<text class="sticky-container-panel-t">content 插槽区域</text>
+							<text class="sticky-container-panel-p">此处可放分类下的商品列表、说明文案等；与 header 同属一块吸顶结构下的内容。</text>
+							<view v-for="n in containerLines" :key="'ct-' + n" class="sticky-container-line">
+								<text class="sticky-container-line-t">配套内容行 {{ n }}</text>
+							</view>
+						</view>
+					</template>
+				</mms-sticky>
+
+				<view class="sticky-state ext-section">
+					<text class="sticky-state-t">状态 C：{{ stickyCFixed ? '已吸顶' : '未吸顶' }}</text>
+					<text class="sticky-state-sub">change 最近 top（px）：{{ lastTopC.toFixed(0) }} · index=2</text>
+				</view>
+
+				<view class="sticky-demo-list ext-section">
+					<view v-for="n in postListC" :key="'pc-' + n" class="sticky-demo-row">
+						<text class="sticky-demo-row-t">列表 C 后文 · 第 {{ n }} 行</text>
+					</view>
+				</view>
+
+				<view class="sticky-foot-note ext-section">
+					<text class="ext-title">整页滚动（非 scroll-view）</text>
+					<text class="ext-hint sticky-doc-line">
+						若吸顶写在页面根滚动区域，请使用页面 onPageScroll 将 scrollTop 传入组件，此时可按需保持 is-native-header 默认（H5 会叠加常见导航栏高度）。本页为 scroll-view 演示，故统一为 false。
+					</text>
+					<text class="ext-hint sticky-doc-line">
+						吸顶层 z-index 由组件内置；背景色通过 background-color 控制吸顶态铺色。
+					</text>
+				</view>
+
 				<view class="sticky-page-footer"></view>
 			</view>
 		</scroll-view>
@@ -38,14 +184,6 @@
 <script setup lang="uts">
 import { ref } from 'vue'
 
-const scrollTick = ref(0)
-const scrollTopFromView = ref(0)
-/** 约 80rpx 转 px，作吸顶距顶留白 */
-const stickyTopOffsetPx = ref(0)
-
-const preOffset = buildRange(1, 18)
-const postList = buildRange(1, 12)
-
 function buildRange(from: number, to: number): number[] {
 	const out = [] as number[]
 	for (let i = from; i <= to; i++) {
@@ -54,14 +192,72 @@ function buildRange(from: number, to: number): number[] {
 	return out
 }
 
-function preLineText(n: number): string {
-	return '前置区第 ' + n + ' 行'
-}
+const scrollTick = ref(0)
+const scrollTopFromView = ref(0)
+const stickyTopOffsetPx = ref(0)
+
+const preOffset = buildRange(1, 14)
+const postList = buildRange(1, 10)
+const postListB = buildRange(1, 8)
+
+const preExtraOn = ref(false)
+const recalcTick = ref(0)
+
+const stickyAFixed = ref(false)
+const stickyBFixed = ref(false)
+const stickyCFixed = ref(false)
+const lastTopA = ref(0)
+const lastTopB = ref(0)
+const lastTopC = ref(0)
+
+const containerLines = buildRange(1, 5)
+const postListC = buildRange(1, 6)
 
 function applyStickyTopOffset() {
 	const u = uni.rpx2px(80)
 	if (u != null && u > 0) {
 		stickyTopOffsetPx.value = u
+	}
+}
+
+function togglePreExtra() {
+	preExtraOn.value = !preExtraOn.value
+	recalcTick.value = recalcTick.value + 1
+}
+
+function onStickyA(e: UTSJSONObject) {
+	const f = e['isFixed'] as boolean
+	stickyAFixed.value = f
+}
+
+function onStickyB(e: UTSJSONObject) {
+	const f = e['isFixed'] as boolean
+	stickyBFixed.value = f
+}
+
+function onStickyC(e: UTSJSONObject) {
+	const f = e['isFixed'] as boolean
+	stickyCFixed.value = f
+}
+
+function onChangeA(e: UTSJSONObject) {
+	const t = e['top'] as number
+	if (t != null) {
+		lastTopA.value = t
+	}
+}
+
+function onChangeB(e: UTSJSONObject) {
+	const t = e['top'] as number
+	if (t != null) {
+		lastTopB.value = t
+	}
+}
+
+function onChangeC(e: UTSJSONObject) {
+	const t = e['top'] as number
+	if (t != null) {
+		lastTopC.value = t
 	}
 }
 
@@ -91,9 +287,19 @@ function onScroll(e: UTSJSONObject) {
 
 <style lang="scss">
 @import '../_demo-common.scss';
+@import '../../_demo-common.scss';
 
 .sticky-page {
 	background-color: #f5f5f5;
+}
+
+.sticky-page .section-title {
+	margin-bottom: 12rpx;
+}
+
+.sticky-doc-line {
+	display: block;
+	margin-top: 12rpx;
 }
 
 .sticky-page-body {
@@ -101,16 +307,19 @@ function onScroll(e: UTSJSONObject) {
 	box-sizing: border-box;
 }
 
-.sticky-demo-tip {
-	display: block;
-	margin-top: 12rpx;
+.sticky-demo-pre {
+	margin-left: 24rpx;
+	margin-right: 24rpx;
 }
 
-.sticky-demo-pre {
-	padding: 16rpx 24rpx 32rpx;
-	background-color: #ffffff;
-	margin: 0 24rpx 24rpx;
-	border-radius: 16rpx;
+.sticky-demo-pre--extra {
+	background-color: #e6f7ff;
+}
+
+.sticky-demo-line-wrap {
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: #f0f0f0;
 }
 
 .sticky-demo-line {
@@ -119,14 +328,64 @@ function onScroll(e: UTSJSONObject) {
 	color: #666666;
 	line-height: 2;
 	padding: 8rpx 0;
-	border-bottom-width: 1rpx;
-	border-bottom-style: solid;
-	border-bottom-color: #f0f0f0;
+}
+
+.sticky-inline-tools {
+	margin-left: 24rpx;
+	margin-right: 24rpx;
+	margin-bottom: 16rpx;
 }
 
 .sticky-demo-bar {
 	background-color: #f6ffed;
 	border-bottom-color: #b7eb8f;
+}
+
+.sticky-demo-bar--b {
+	background-color: #fff7e6;
+	border-bottom-color: #ffd591;
+}
+
+.sticky-demo-bar--c {
+	background-color: #e6f4ff;
+	border-bottom-color: #91caff;
+}
+
+.sticky-container-panel {
+	padding: 24rpx;
+	background-color: #fafafa;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: #f0f0f0;
+	box-sizing: border-box;
+}
+
+.sticky-container-panel-t {
+	font-size: 28rpx;
+	color: #333333;
+	font-weight: bold;
+	display: block;
+	margin-bottom: 12rpx;
+}
+
+.sticky-container-panel-p {
+	font-size: 26rpx;
+	color: #666666;
+	line-height: 1.5;
+	display: block;
+	margin-bottom: 16rpx;
+}
+
+.sticky-container-line {
+	padding: 16rpx 0;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: #eeeeee;
+}
+
+.sticky-container-line-t {
+	font-size: 26rpx;
+	color: #333333;
 }
 
 .sticky-demo-list {
@@ -144,6 +403,38 @@ function onScroll(e: UTSJSONObject) {
 	font-size: 28rpx;
 	color: #333333;
 	line-height: 1.5;
+}
+
+.sticky-state {
+	margin-left: 24rpx;
+	margin-right: 24rpx;
+	margin-bottom: 16rpx;
+}
+
+.sticky-state-t {
+	font-size: 26rpx;
+	color: #333333;
+	font-weight: bold;
+	display: block;
+}
+
+.sticky-state-sub {
+	font-size: 24rpx;
+	color: #888888;
+	margin-top: 8rpx;
+	display: block;
+}
+
+.sticky-between {
+	margin-left: 24rpx;
+	margin-right: 24rpx;
+	margin-top: 24rpx;
+}
+
+.sticky-foot-note {
+	margin-left: 24rpx;
+	margin-right: 24rpx;
+	margin-top: 16rpx;
 }
 
 .sticky-page-footer {

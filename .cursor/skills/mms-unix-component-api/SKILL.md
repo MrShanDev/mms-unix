@@ -49,7 +49,7 @@ description: >-
 ### 4. 事件别名与生态命名
 
 - 规范层面事件名用 **kebab-case** 拼在模板上（如 `@update:visible`、`@overlay-click`）；`$emit` 字符串使用与之对应的 camelCase 段（如 `overlay-click` 保持带连字符时与 Vue 文档一致）。
-- 若希望与某 UI 库习惯一致（如 **`afterRead` 对应选图回调**），而内部已用 `choose`：
+- 若业务侧已使用历史事件名（如 **`afterRead` 对应选图回调**），而内部已用 `choose`：
   - **可同时 `$emit('choose', payload)` 与 `$emit('afterRead', payload)`**（同一 payload），并在 `emits` 中两者都声明，避免只改演示不改组件。
 
 ### 5. 平台差异（如选图）

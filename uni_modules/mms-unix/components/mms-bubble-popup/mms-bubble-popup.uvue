@@ -1,17 +1,9 @@
 <template>
-	<view v-if="show" class="mms-bubble-popup" :style="rootPosition">
-		<view
-			v-if="mask"
-			class="mms-bubble-popup__mask"
-			:style="{ backgroundColor: maskBgColor, zIndex: zIndexNum - 1 }"
-			@tap="onMask"
-		></view>
-		<view
-			class="mms-bubble-popup__box"
-			:style="boxStyle"
-		>
+	<view v-if="show" class="mms-bubble-popup" :style="rootStyle">
+		<view v-if="mask" class="mms-bubble-popup__mask" :style="maskBgOnly" @tap="onMaskTap"></view>
+		<view class="mms-bubble-popup__box" :style="boxStyle">
 			<view class="mms-bubble-popup__tri" :style="triStyle"></view>
-			<view class="mms-bubble-popup__inner" :style="{ color: color }">
+			<view class="mms-bubble-popup__inner" :style="innerStyle">
 				<slot></slot>
 			</view>
 		</view>
@@ -23,7 +15,7 @@ import { parseCssNumber } from '@/uni_modules/mms-unix/components/mms-tools/Ut.u
 
 export default {
 	name: 'mmsBubblePopup',
-	emits: ['close'],
+	emits: ['close', 'update:show'],
 	props: {
 		show: {
 			type: Boolean,
@@ -116,17 +108,24 @@ export default {
 			if (typeof z === 'number') {
 				return z
 			}
-			return parseCssNumber(z)
+			return parseCssNumber(z as string)
 		},
-		rootPosition(): UTSJSONObject {
+		rootStyle(): UTSJSONObject {
+			const zi = this.zIndexNum
 			return {
 				position: this.position as string,
 				left: '0',
 				top: '0',
 				right: '0',
 				bottom: '0',
-				zIndex: this.zIndexNum
-			}
+				'z-index': zi.toString()
+			} as UTSJSONObject
+		},
+		/** 蒙层仅用背景色；定位与层级在 scss，与 mms-alert 一致，避免 fixed 蒙层盖住 absolute 气泡 */
+		maskBgOnly(): UTSJSONObject {
+			return {
+				backgroundColor: this.maskBgColor as string
+			} as UTSJSONObject
 		},
 		boxStyle(): UTSJSONObject {
 			const pos: UTSJSONObject = {
@@ -134,13 +133,21 @@ export default {
 				width: this.width,
 				borderRadius: this.radius,
 				backgroundColor: this.backgroundColor,
-				left: this.left,
-				right: this.right,
-				top: this.top,
-				bottom: this.bottom,
-				transform: `translate3d(${this.translateX}, ${this.translateY}, 0)`
-			}
+				transform: `translate3d(${this.translateX}, ${this.translateY}, 0)`,
+				overflow: 'visible'
+			} as UTSJSONObject
+			this.applyEdge(pos, 'left', this.left as string)
+			this.applyEdge(pos, 'right', this.right as string)
+			this.applyEdge(pos, 'top', this.top as string)
+			this.applyEdge(pos, 'bottom', this.bottom as string)
 			return pos
+		},
+		innerStyle(): UTSJSONObject {
+			return {
+				color: this.color as string,
+				position: 'relative',
+				zIndex: '2'
+			} as UTSJSONObject
 		},
 		triStyle(): UTSJSONObject {
 			const d = this.direction as string
@@ -153,8 +160,9 @@ export default {
 				left: this.triangleLeft,
 				right: this.triangleRight,
 				top: this.triangleTop,
-				bottom: this.triangleBottom
-			}
+				bottom: this.triangleBottom,
+				zIndex: '1'
+			} as UTSJSONObject
 			if (d === 'bottom') {
 				st['borderLeftWidth'] = bw
 				st['borderRightWidth'] = bw
@@ -200,8 +208,16 @@ export default {
 		}
 	},
 	methods: {
-		onMask() {
+		applyEdge(st: UTSJSONObject, key: string, val: string) {
+			const v = val.trim()
+			if (v.length === 0 || v === 'auto') {
+				return
+			}
+			st[key] = val
+		},
+		onMaskTap() {
 			this.$emit('close')
+			this.$emit('update:show', false)
 		}
 	}
 }
@@ -209,23 +225,24 @@ export default {
 
 <style scoped lang="scss">
 .mms-bubble-popup {
-	position: fixed;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
+	box-sizing: border-box;
 }
 
+/* 相对根节点铺满，勿用 fixed，否则与气泡同为视口 fixed 时部分端层级异常 */
 .mms-bubble-popup__mask {
 	position: absolute;
 	left: 0;
 	top: 0;
 	right: 0;
 	bottom: 0;
+	z-index: 1;
+	box-sizing: border-box;
 }
 
 .mms-bubble-popup__box {
-	overflow: visible;
+	position: absolute;
+	z-index: 2;
+	box-sizing: border-box;
 }
 
 .mms-bubble-popup__inner {
@@ -234,6 +251,6 @@ export default {
 }
 
 .mms-bubble-popup__tri {
-	z-index: 1;
+	box-sizing: border-box;
 }
 </style>

@@ -75,7 +75,7 @@
 }
 ```
 
-3. 完整图标映射表，请参考项目根目录下载包中 `iconfont.css` 文件。
+3. 完整图标映射表见本仓库 `mms-unix-doc/mms-icon-font/iconfont.css`（或 `iconfont.json`）。
 
 ### 已下载的图标清单（部分示例）
 

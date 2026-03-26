@@ -1,15 +1,9 @@
 <template>
 	<view class="mms-empty" :style="{ paddingTop: paddingTopCss }">
-		<image
-			v-if="showDefaultImage"
-			class="mms-empty__image"
-			:src="defaultEmptyImageSrc"
-			mode="aspectFit"
-		></image>
 		<image v-if="image !== ''" class="mms-empty__image" :src="image" mode="aspectFit"></image>
 		<view v-if="showIconBlock" class="mms-empty__icon">
 			<slot name="icon">
-				<mms-icon v-if="icon !== ''" :name="icon" size="96rpx" color="#c0c4cc"></mms-icon>
+				<mms-icon :name="resolvedIconName" size="96rpx" color="#c0c4cc"></mms-icon>
 			</slot>
 		</view>
 		<view class="mms-empty__text">
@@ -23,7 +17,6 @@
 </template>
 
 <script lang="uts">
-import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
 import { toCssLength } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 
 export default {
@@ -44,7 +37,7 @@ export default {
 			type: String,
 			default: ''
 		},
-		// mms-icon 的 name，与 image 互斥；也可改用 #icon 插槽完全自定义
+		/** mms-icon 的 name；不传 image 时未指定 icon 则使用内置默认图标 file-common-filling */
 		icon: {
 			type: String,
 			default: ''
@@ -56,9 +49,6 @@ export default {
 		}
 	},
 	computed: {
-		defaultEmptyImageSrc(): string {
-			return getMmsUiConfig().emptyDefaultImage
-		},
 		paddingTopCss(): string {
 			return toCssLength(this.paddingTop as number | string)
 		},
@@ -69,21 +59,16 @@ export default {
 			}
 			return this.description as string
 		},
-		showIconBlock(): boolean {
-			if ((this.image as string).trim().length > 0) {
-				return false
+		/** 未传 icon 时使用字库内「文档」类填充图标，避免依赖 /static 插图缺失导致无图 */
+		resolvedIconName(): string {
+			const ic = (this.icon as string).trim()
+			if (ic.length > 0) {
+				return ic
 			}
-			const ic = this.icon as string
-			if (ic != null && ic.trim().length > 0) {
-				return true
-			}
-			return this.$slots['icon'] != null
+			return 'file-common-filling'
 		},
-		showDefaultImage(): boolean {
-			if (this.image as string !== '') {
-				return false
-			}
-			return !this.showIconBlock
+		showIconBlock(): boolean {
+			return (this.image as string).trim().length === 0
 		},
 		hasBottomSlot(): boolean {
 			return this.$slots['footer'] != null || this.$slots.default != null

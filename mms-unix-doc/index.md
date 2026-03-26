@@ -1,5 +1,7 @@
 # mms-unix 安装与配置教程
 
+> **组件 API 与演示索引**（属性、默认值、事件、示例路径）：见 [components-catalog.md](./components-catalog.md)。文档与 `pages_demo` 演示均为自研说明，不引用外部商业组件库名称。
+
 ## 安装教程
 
 ### 1. 环境要求

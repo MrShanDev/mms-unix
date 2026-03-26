@@ -17,7 +17,7 @@
 <script lang="uts">
 export default {
 	name: 'mmsRate',
-	emits: ['change'],
+	emits: ['change', 'update:current'],
 	props: {
 		quantity: {
 			type: Number,
@@ -82,6 +82,7 @@ export default {
 			}
 			const p = this.params
 			const np = typeof p === 'number' ? p as number : parseInt('' + p)
+			this.$emit('update:current', i)
 			this.$emit('change', { index: i, params: isNaN(np) ? 0 : np })
 		}
 	}

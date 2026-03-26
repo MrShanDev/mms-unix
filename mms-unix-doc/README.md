@@ -1,6 +1,6 @@
 # mmsUnx - uni-app-x 基础组件库
 
-mmsUnx 是为 uni-app-x 项目定制的基础组件库，完全自研原创实现，遵循 uni-app-x 规范。
+mmsUnx 是为 uni-app-x 项目定制的基础组件库，自研实现，遵循 uni-app-x 规范。说明文档与演示代码均不使用外部商业组件库名称；详见 [components-catalog.md](./components-catalog.md) 与 [index.md](./index.md) 教程。
 
 ## 特点
 
@@ -43,6 +43,8 @@ mmsUnx 是为 uni-app-x 项目定制的基础组件库，完全自研原创实�
 | mms-datetime-picker | 日期时间选择 | [文档](./datetime-picker.md) |
 | mms-picker | 联动选择（1～3 列） | [文档](./picker.md) |
 | mms-clipboard | 剪贴板复制 | [文档](./clipboard.md) |
+| mms-number-box | 步进器 | [文档](./number-box.md) |
+| mms-rate | 评分 | [文档](./rate.md) |
 
 ### 展示
 | 组件 | 说明 | 文档 |
@@ -64,6 +66,7 @@ mmsUnx 是为 uni-app-x 项目定制的基础组件库，完全自研原创实�
 |------|------|------|
 | mms-overlay | 遮罩层 | [文档](./overlay.md) |
 | mms-popup | 弹出层 | [文档](./popup.md) |
+| mms-bubble-popup | 气泡弹层（三角菜单） | [文档](./bubble-popup.md) |
 | mms-toast | 提示框 | [文档](./toast.md) |
 
 ### 功能组件

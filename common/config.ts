@@ -29,6 +29,8 @@ type AppConfig = {
 	storage: StorageConfig
 	/** 需要登录才能访问的页面路径（不含 pages/ 前缀） */
 	loginRequiredPaths: string[]
+	/** token 失效等非微信端跳转的登录页路径（与 pages.json 一致，需前导 /） */
+	loginPagePath: string
 	/** API 接口路径配置 */
 	api: ApiConfig
 	/** 应用基础信息 */
@@ -121,6 +123,8 @@ export const config: AppConfig = {
 	},
 	// 需要登录的页面路径（不含 pages/ 前缀）
 	loginRequiredPaths: ['user_address', 'user_info'],
+	// 组件库演示登录页（mms-login 非微信端跳转用）
+	loginPagePath: '/pages_demo/login/login',
 	// API 接口路径配置
 	api: {
 		login: {

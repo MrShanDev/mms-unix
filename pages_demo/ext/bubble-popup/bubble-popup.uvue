@@ -1,67 +1,103 @@
 <template>
-	<view class="demo-page">
-		<view class="demo-section">
-			<text class="section-title">气泡菜单</text>
-			<view class="bubble-wrap">
-				<mms-button type="default" @click="bubbleShow = true">展开气泡</mms-button>
-				<mms-bubble-popup
-					:show="bubbleShow"
-					:mask="true"
-					width="240rpx"
-					left="40rpx"
-					top="120rpx"
-					direction="top"
-					@close="bubbleShow = false"
-				>
-					<text class="bubble-item" @tap="bubbleShow = false">选项一</text>
-					<text class="bubble-item" @tap="bubbleShow = false">选项二</text>
-				</mms-bubble-popup>
+	<view class="ext-page">
+		<scroll-view class="ext-scroll" scroll-y>
+			<view class="ext-section">
+				<text class="ext-title">mms-bubble-popup</text>
+				<text class="ext-hint ext-bubble-doc-lead">
+					气泡须放在 scroll-view 外或使用 fixed，否则易被滚动容器裁剪；本页为右上角 fixed 示例。
+				</text>
+				<mms-button type="default" @tap="menuShow = true">展开气泡</mms-button>
 			</view>
-		</view>
+			<view class="ext-footer-space"></view>
+		</scroll-view>
+		<!-- 与 scroll-view 同级，避免气泡被 overflow 裁掉；fixed 贴页面右上角 -->
+		<mms-bubble-popup
+			v-model:show="menuShow"
+			:mask="true"
+			position="fixed"
+			width="260rpx"
+			right="24rpx"
+			:top="bubbleTop"
+			translate-x="0"
+			translate-y="0"
+			direction="top"
+			triangle-right="40rpx"
+			triangle-bottom="0"
+			background-color="#333333"
+			mask-bg-color="rgba(0, 0, 0, 0.35)"
+			@close="menuShow = false"
+		>
+			<view class="ext-bubble-menu">
+				<text class="ext-bubble-menu-item" @tap="onPick(1)">选项一</text>
+				<text class="ext-bubble-menu-item" @tap="onPick(2)">选项二</text>
+				<text class="ext-bubble-menu-item ext-bubble-menu-item--last" @tap="onPick(3)">选项三</text>
+			</view>
+		</mms-bubble-popup>
 	</view>
 </template>
 
 <script setup lang="uts">
 import { ref } from 'vue'
 
-const bubbleShow = ref(false)
+const menuShow = ref(false)
+/** 距视口顶：状态栏 + 导航栏内容区约 44px + 间距（px 字符串，与 right 搭配固定右上角） */
+const bubbleTop = ref('120rpx')
+
+function applyBubbleTop() {
+	const w = uni.getWindowInfo()
+	if (w == null) {
+		return
+	}
+	const st = w.statusBarHeight as number
+	if (st != null && st > 0) {
+		const gap = 8
+		const navContent = 44
+		bubbleTop.value = (st + navContent + gap).toString() + 'px'
+	}
+}
+
+onReady(() => {
+	applyBubbleTop()
+})
+
+function onPick(n: number) {
+	menuShow.value = false
+	uni.showToast({ title: '选项 ' + n, icon: 'none' })
+}
 </script>
 
 <style lang="scss">
-.demo-page {
-	min-height: 100vh;
-	background-color: #f5f5f5;
-	padding: 20rpx;
-}
+@import '../_demo-common.scss';
 
-.demo-section {
-	background-color: #ffffff;
-	border-radius: 16rpx;
-	padding: 30rpx;
-	margin-bottom: 24rpx;
-}
-
-.section-title {
-	font-size: 28rpx;
-	font-weight: bold;
-	color: #333333;
-	margin-bottom: 24rpx;
-	padding-left: 16rpx;
-	border-left: 6rpx solid #ff0844;
-}
-
-.bubble-wrap {
-	position: relative;
-	min-height: 200rpx;
-}
-
-.bubble-item {
+.ext-bubble-doc-lead {
 	display: block;
-	padding: 20rpx 24rpx;
+	margin-bottom: 20rpx;
+	line-height: 1.55;
+}
+
+.ext-bubble-menu {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.ext-bubble-menu-item {
+	display: block;
+	padding: 22rpx 24rpx;
 	font-size: 28rpx;
 	color: #ffffff;
+	line-height: 1.4;
 	border-bottom-width: 1rpx;
 	border-bottom-style: solid;
-	border-bottom-color: rgba(255, 255, 255, 0.2);
+	border-bottom-color: rgba(255, 255, 255, 0.15);
+	box-sizing: border-box;
+}
+
+.ext-bubble-menu-item--last {
+	border-bottom-width: 0;
 }
 </style>
+
+<｜tool▁calls▁begin｜><｜tool▁call▁begin｜>
+Read

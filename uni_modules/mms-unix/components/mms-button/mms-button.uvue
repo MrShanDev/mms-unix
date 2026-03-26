@@ -331,6 +331,8 @@
 <style scoped lang="scss">
 	.mms-button__wrap {
 		position: relative;
+		overflow: visible;
+		box-sizing: border-box;
 	}
 
 	.mms-button__hover:active::after {
@@ -370,16 +372,17 @@
 		flex: 1;
 	}
 
+	/* 镂空边框：与内容区同尺寸，避免 200% + scale(0.5) 在部分端右侧被裁切 */
 	.mms-button__border {
 		position: absolute;
-		width: 200%;
-		height: 200%;
-		transform-origin: 0 0;
-		transform: scale(0.5, 0.5) translateZ(0);
-		box-sizing: border-box;
 		left: 0;
 		top: 0;
-		border-radius: 12rpx;
+		right: 0;
+		bottom: 0;
+		width: 100%;
+		height: 100%;
+		box-sizing: border-box;
+		border-radius: 6rpx;
 		border: 1px solid transparent;
 		pointer-events: none;
 	}

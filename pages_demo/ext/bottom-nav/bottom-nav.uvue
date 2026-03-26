@@ -1,45 +1,331 @@
 <template>
-	<view class="ext-page">
+	<view class="ext-page bottom-nav-page">
 		<scroll-view class="ext-scroll" scroll-y>
-			<view class="ext-section ext-section--nav">
-				<text class="ext-title">mms-bottom-navigation（非 fixed 演示）</text>
+			<view class="ext-section">
+				<text class="section-title">基础用法</text>
+				<text class="ext-hint bottom-nav-lead">
+					通过 itemList 配置文案，current 与选中项对应；点击某项时在 @click 中更新 current 即可完成切换。
+				</text>
 				<view class="ext-nav-box">
 					<mms-bottom-navigation
-						:current="navCur"
-						:item-list="navItems"
+						:current="curBasic"
+						:item-list="listBasic"
 						:is-fixed="false"
 						:safe-bottom="false"
-						@click="onNavClick"
+						@click="onNavBasic"
+					></mms-bottom-navigation>
+				</view>
+				<text class="bottom-nav-log">当前选中索引：{{ curBasic }}（{{ labelBasic }}）</text>
+			</view>
+
+			<view class="ext-section">
+				<text class="section-title">图文标签</text>
+				<text class="ext-hint bottom-nav-lead">
+					每项可配置 iconPath、selectedIconPath，选中时显示高亮图；路径需为可访问的本地或网络地址。
+				</text>
+				<view class="ext-nav-box">
+					<mms-bottom-navigation
+						:current="curIcon"
+						:item-list="listIcon"
+						:is-fixed="false"
+						:safe-bottom="false"
+						:selected-color="'#ff0844'"
+						@click="onNavIcon"
+					></mms-bottom-navigation>
+				</view>
+				<text class="bottom-nav-log">当前：{{ labelIcon }}</text>
+			</view>
+
+			<view class="ext-section">
+				<text class="section-title">颜色与背景</text>
+				<text class="ext-hint bottom-nav-lead">
+					使用 color、selectedColor、backgroundColor 调整未选中/选中文字色与栏背景；fontSize、bold 可微调字号与选中加粗。
+				</text>
+				<view class="ext-nav-box ext-nav-box--theme">
+					<mms-bottom-navigation
+						:current="curTheme"
+						:item-list="listTheme"
+						:is-fixed="false"
+						:safe-bottom="false"
+						color="#888888"
+						selected-color="#ff0844"
+						background-color="#f0f0f0"
+						font-size="26rpx"
+						:bold="true"
+						@click="onNavTheme"
 					></mms-bottom-navigation>
 				</view>
 			</view>
+
+			<view class="ext-section">
+				<text class="section-title">顶部分割线</text>
+				<text class="ext-hint bottom-nav-lead">
+					unlined 为 true 时隐藏栏上方的装饰分割线（与默认带线效果对比如下）。
+				</text>
+				<text class="bottom-nav-subttl">默认（有顶线区域）</text>
+				<view class="ext-nav-box">
+					<mms-bottom-navigation
+						:current="0"
+						:item-list="listLine"
+						:is-fixed="false"
+						:safe-bottom="false"
+						:unlined="false"
+						@click="onNavNoop"
+					></mms-bottom-navigation>
+				</view>
+				<text class="bottom-nav-subttl">unlined</text>
+				<view class="ext-nav-box">
+					<mms-bottom-navigation
+						:current="0"
+						:item-list="listLine"
+						:is-fixed="false"
+						:safe-bottom="false"
+						:unlined="true"
+						@click="onNavNoop"
+					></mms-bottom-navigation>
+				</view>
+			</view>
+
+			<view class="ext-section">
+				<text class="section-title">中间项展开子菜单</text>
+				<text class="ext-hint bottom-nav-lead">
+					将某项 type 设为 3，并配置 itemList，点击后会在该项上方弹出子项；点遮罩关闭。子项点击在 @click 中带 menu=sub。
+				</text>
+				<view class="ext-nav-box">
+					<mms-bottom-navigation
+						:current="curSub"
+						:item-list="listSub"
+						:is-fixed="false"
+						:safe-bottom="false"
+						:selected-color="'#ff0844'"
+						@click="onNavSub"
+					></mms-bottom-navigation>
+				</view>
+				<text class="bottom-nav-log">{{ subLog }}</text>
+			</view>
+
+			<view class="ext-section">
+				<text class="section-title">切换前校验</text>
+				<text class="ext-hint bottom-nav-lead">
+					可在 @click 内先判断业务条件：不满足时用提示说明原因，且不更新 current，避免选中态切换。
+				</text>
+				<view class="ext-nav-box">
+					<mms-bottom-navigation
+						:current="curGuard"
+						:item-list="listGuard"
+						:is-fixed="false"
+						:safe-bottom="false"
+						:selected-color="'#ff0844'"
+						@click="onNavGuard"
+					></mms-bottom-navigation>
+				</view>
+				<text class="bottom-nav-log">{{ guardTip }}</text>
+				<mms-button type="primary" btnSize="small" @tap="onGuardUnlock">演示：通过校验</mms-button>
+			</view>
+
+			<view class="ext-section">
+				<text class="section-title">固定定位与安全区</text>
+				<text class="ext-hint bottom-nav-lead">
+					isFixed 为 true 时栏贴屏幕底缘悬浮，适合真实页面底部；需为正文预留底部高度，避免最后一行被遮挡。safeBottom 为 true 时会增加底部安全区内边距（如全面屏手势条）。本页其余示例使用嵌入滚动区的非固定模式，便于一次浏览多组对比。
+				</text>
+			</view>
+
 			<view class="ext-footer-space"></view>
 		</scroll-view>
 	</view>
 </template>
 
 <script setup lang="uts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
-const navCur = ref(0)
-const navItems = [
+const tabIcon = {
+	home: '/static/tabbar/tab-components.png',
+	homeOn: '/static/tabbar/tab-components-active.png',
+	cate: '/static/tabbar/tab-tools.png',
+	cateOn: '/static/tabbar/tab-tools-active.png',
+	user: '/static/tabbar/tab-user.png',
+	userOn: '/static/tabbar/tab-user-active.png'
+}
+
+const listBasic = [
 	{ text: '首页', type: 1, color: '#666666' },
 	{ text: '分类', type: 1, color: '#666666' },
 	{ text: '我的', type: 1, color: '#666666' }
 ]
 
-function onNavClick(e: UTSJSONObject) {
-	const menu = e['menu']
-	const idx = e['index']
-	if (menu === 'main' && idx != null) {
-		const ty = e['type']
+const listIcon = [
+	{ text: '首页', type: 1, color: '#666666', iconPath: tabIcon.home, selectedIconPath: tabIcon.homeOn },
+	{ text: '发现', type: 1, color: '#666666', iconPath: tabIcon.cate, selectedIconPath: tabIcon.cateOn },
+	{ text: '我的', type: 1, color: '#666666', iconPath: tabIcon.user, selectedIconPath: tabIcon.userOn }
+]
+
+const listTheme = [
+	{ text: '待办', type: 1, color: '#888888' },
+	{ text: '进行中', type: 1, color: '#888888' },
+	{ text: '已完成', type: 1, color: '#888888' }
+]
+
+const listLine = [
+	{ text: '项 A', type: 1, color: '#666666' },
+	{ text: '项 B', type: 1, color: '#666666' }
+]
+
+const listSub = [
+	{ text: '首页', type: 1, color: '#666666', iconPath: tabIcon.home, selectedIconPath: tabIcon.homeOn },
+	{
+		text: '全部',
+		type: 3,
+		color: '#666666',
+		iconPath: tabIcon.cate,
+		selectedIconPath: tabIcon.cateOn,
+		itemList: [
+			{ text: '分组一', parameter: 'g1' },
+			{ text: '分组二', parameter: 'g2' },
+			{ text: '分组三', parameter: 'g3' }
+		]
+	},
+	{ text: '我的', type: 1, color: '#666666', iconPath: tabIcon.user, selectedIconPath: tabIcon.userOn }
+]
+
+const listGuard = [
+	{ text: '首页', type: 1, color: '#666666' },
+	{ text: '消息', type: 1, color: '#666666' },
+	{ text: '我的', type: 1, color: '#666666' }
+]
+
+const curBasic = ref(0)
+const curIcon = ref(0)
+const curTheme = ref(1)
+const curSub = ref(0)
+const curGuard = ref(0)
+
+const labelBasic = computed((): string => {
+	const i = curBasic.value
+	if (i >= 0 && i < listBasic.length) {
+		return listBasic[i].text as string
+	}
+	return ''
+})
+
+const labelIcon = computed((): string => {
+	const i = curIcon.value
+	if (i >= 0 && i < listIcon.length) {
+		return listIcon[i].text as string
+	}
+	return ''
+})
+
+const subLog = ref('子菜单：未操作')
+const guardTip = ref('第二项模拟需先通过校验才可选中。')
+const guardUnlocked = ref(false)
+
+function onNavBasic(e: UTSJSONObject) {
+	const menu = e['menu'] as string
+	const idx = e['index'] as number
+	if (menu === 'main') {
+		const ty = e['type'] as number
 		if (ty === 1) {
-			navCur.value = idx as number
+			curBasic.value = idx
 		}
 	}
+}
+
+function onNavIcon(e: UTSJSONObject) {
+	const menu = e['menu'] as string
+	const idx = e['index'] as number
+	if (menu === 'main') {
+		const ty = e['type'] as number
+		if (ty === 1) {
+			curIcon.value = idx
+		}
+	}
+}
+
+function onNavTheme(e: UTSJSONObject) {
+	const menu = e['menu'] as string
+	const idx = e['index'] as number
+	if (menu === 'main') {
+		const ty = e['type'] as number
+		if (ty === 1) {
+			curTheme.value = idx
+		}
+	}
+}
+
+function onNavNoop(_e: UTSJSONObject) {
+	/* 对比用静态示例，不切换状态 */
+}
+
+function onNavSub(e: UTSJSONObject) {
+	const menu = e['menu'] as string
+	if (menu === 'sub') {
+		const sidx = e['subIndex'] as number
+		const anchor = e['index'] as number
+		subLog.value = '子菜单：主项索引 ' + anchor + '，子项索引 ' + sidx
+		return
+	}
+	const idx = e['index'] as number
+	const ty = e['type'] as number
+	if (menu === 'main' && ty === 1) {
+		curSub.value = idx
+	}
+}
+
+function onGuardUnlock() {
+	guardUnlocked.value = true
+	guardTip.value = '已通过校验，可再次点击「消息」切换选中。'
+	uni.showToast({ title: '校验通过（演示）', icon: 'none' })
+}
+
+function onNavGuard(e: UTSJSONObject) {
+	const menu = e['menu'] as string
+	const idx = e['index'] as number
+	if (menu !== 'main') {
+		return
+	}
+	const ty = e['type'] as number
+	if (ty !== 1) {
+		return
+	}
+	if (idx === 1 && !guardUnlocked.value) {
+		uni.showToast({ title: '演示：请先完成校验', icon: 'none' })
+		guardTip.value = '已拦截：未通过校验前不会切换到「消息」。可点击下方按钮通过校验后再点「消息」。'
+		return
+	}
+	curGuard.value = idx
+	guardTip.value = '当前选中索引：' + idx
 }
 </script>
 
 <style lang="scss">
 @import '../_demo-common.scss';
+@import '../../_demo-common.scss';
+
+.bottom-nav-page .section-title {
+	margin-bottom: 12rpx;
+}
+
+.bottom-nav-lead {
+	margin-bottom: 16rpx;
+}
+
+.bottom-nav-subttl {
+	font-size: 24rpx;
+	color: #999999;
+	margin-bottom: 8rpx;
+	display: block;
+}
+
+.bottom-nav-log {
+	font-size: 24rpx;
+	color: #666666;
+	margin-top: 16rpx;
+	display: block;
+}
+
+.ext-nav-box--theme {
+	background-color: #e8e8e8;
+	border-radius: 12rpx;
+	overflow: hidden;
+}
 </style>

@@ -1,53 +1,319 @@
 <template>
-	<view class="demo-page">
-		<view class="demo-section">
-			<text class="section-title">评分</text>
-			<mms-rate :current="rateVal" @change="onRateChange"></mms-rate>
-			<text class="demo-desc">当前星数索引：{{ rateVal }}</text>
-		</view>
+	<view class="ext-page rate-page">
+		<scroll-view class="ext-scroll" scroll-y>
+			<view class="rate-body">
+				<view class="ext-section rate-doc">
+					<text class="section-title">使用说明</text>
+					<text class="ext-hint rate-line">
+						用 quantity 控制星（或同类符号）个数，用 current 表示当前选中档位数（1～quantity，0 表示未选）。推荐使用 v-model:current 双向绑定；@change 仍可用于埋点或联动（载荷含 index、params）。
+					</text>
+					<text class="ext-hint rate-line">
+						change 回调形如 { index, params }：index 为点击的档位（1 起计）；params 为传入的数值标识经组件回传，用于多组评分区分（见下方「多实例」）。
+					</text>
+					<text class="ext-hint rate-line">
+						尺寸 size 单位为 px（非 rpx）。半星、滑动手势、可配置星间距等需自行扩展；最少颗星等业务规则可在 @change 内拦截。
+					</text>
+					<text class="ext-hint rate-line">
+						与常见「score」用法对应关系：本组件用整数档位 current 表示当前星数，回调中的 index 即新档位，可写入与 score 等价的本地状态。
+					</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">基础与变更回显</text>
+					<text class="ext-hint rate-line">v-model:current 同步当前分；下方「最近一次 change」仅作事件监听演示。</text>
+					<view class="rate-row">
+						<mms-rate v-model:current="valBasic" :quantity="5" @change="onBasicChange"></mms-rate>
+					</view>
+					<text class="rate-desc">当前档位：{{ valBasic }} / 5</text>
+					<text class="rate-desc rate-desc--mono">最近一次 change：{{ lastBasic }}</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">初始未选（current = 0）</text>
+					<text class="ext-hint rate-line">可从 0 开始，表示尚未打分，用户点选后变为 1～quantity。</text>
+					<view class="rate-row">
+						<mms-rate v-model:current="valZero" :quantity="5"></mms-rate>
+					</view>
+					<text class="rate-desc">当前档位：{{ valZero === 0 ? '未选' : '' + valZero }} / 5</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">星数（quantity）</text>
+					<text class="ext-hint rate-line">总档位数可自定义，例如 4 档、8 档（多星时注意小屏换行，可配合缩小 size）。</text>
+					<view class="rate-row">
+						<mms-rate v-model:current="valFour" :quantity="4"></mms-rate>
+					</view>
+					<text class="rate-desc">当前档位：{{ valFour }} / 4</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">八档（quantity = 8）</text>
+					<text class="ext-hint rate-line">细粒度评价时可增加星数；建议同步略减 size 以免占满屏宽。</text>
+					<view class="rate-row">
+						<mms-rate v-model:current="valEight" :quantity="8" :size="18"></mms-rate>
+					</view>
+					<text class="rate-desc">当前档位：{{ valEight }} / 8</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">选中 / 未选中颜色</text>
+					<text class="ext-hint rate-line">active 与 normal 分别对应已选与未选颜色。</text>
+					<view class="rate-row">
+						<mms-rate
+							v-model:current="valColor"
+							:quantity="5"
+							active="#FA3534"
+							normal="#b2b2b2"
+						></mms-rate>
+					</view>
+					<text class="rate-desc">当前档位：{{ valColor }}</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">暖色主题（小尺寸）</text>
+					<text class="ext-hint rate-line">小星标 + 灰/橙对比，适合卡片内嵌或次要评价位。</text>
+					<view class="rate-row">
+						<mms-rate
+							v-model:current="valWarm"
+							:quantity="5"
+							:size="16"
+							normal="#cccccc"
+							active="#ff7900"
+						></mms-rate>
+					</view>
+					<text class="rate-desc">当前档位：{{ valWarm }}（size=16px）</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">尺寸</text>
+					<text class="ext-hint rate-line">size 为单个符号的像素大小，可按页面密度调整。</text>
+					<view class="rate-row">
+						<mms-rate v-model:current="valSize" :quantity="5" :size="28"></mms-rate>
+					</view>
+					<text class="rate-desc">当前档位：{{ valSize }}（size=28px）</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">空心未选（hollow）</text>
+					<text class="ext-hint rate-line">开启 hollow 时，未选档显示为「☆」，已选档为「★」；关闭时统一用实心星并通过颜色区分。</text>
+					<view class="rate-compare">
+						<view class="rate-compare-block">
+							<text class="rate-compare-label">hollow=true</text>
+							<mms-rate
+								v-model:current="valHollow"
+								:quantity="5"
+								:hollow="true"
+							></mms-rate>
+						</view>
+						<view class="rate-compare-block">
+							<text class="rate-compare-label">hollow=false</text>
+							<mms-rate
+								v-model:current="valSolid"
+								:quantity="5"
+								:hollow="false"
+							></mms-rate>
+						</view>
+					</view>
+					<text class="rate-desc">左：{{ valHollow }} · 右：{{ valSolid }}</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">禁用（展示分数）</text>
+					<text class="ext-hint rate-line">disabled 时不可点击，适合订单详情等仅展示评分的场景。</text>
+					<view class="rate-row">
+						<mms-rate :current="3" :quantity="5" :disabled="true" active="#EB0909" normal="#b2b2b2"></mms-rate>
+					</view>
+					<text class="rate-desc">固定为 3 / 5，不可交互</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">星与星之间的间距</text>
+					<text class="ext-hint rate-line">
+						常见文档会提供「星宽度 / 间距」类属性；本组件内部为固定间隔。若设计稿要求更疏或更密，可修改组件内星项外边距、或用自定义行列布局拼接触控区。
+					</text>
+				</view>
+
+				<view class="ext-section">
+					<text class="ext-title">多实例与 params</text>
+					<text class="ext-hint rate-line">多行评价可为每条传入不同 params（数字），在 change 里区分来源；回调载荷含 index 与 params，便于与表单项对齐。</text>
+					<view class="rate-multi">
+						<view class="rate-multi-row">
+							<text class="rate-multi-label">描述相符</text>
+							<mms-rate
+								v-model:current="valM1"
+								:quantity="5"
+								:params="1"
+								@change="onMultiChange"
+							></mms-rate>
+						</view>
+						<view class="rate-multi-row">
+							<text class="rate-multi-label">物流服务</text>
+							<mms-rate
+								v-model:current="valM2"
+								:quantity="5"
+								:params="2"
+								@change="onMultiChange"
+							></mms-rate>
+						</view>
+						<view class="rate-multi-row">
+							<text class="rate-multi-label">服务态度</text>
+							<mms-rate
+								v-model:current="valM3"
+								:quantity="5"
+								:params="3"
+								@change="onMultiChange"
+							></mms-rate>
+						</view>
+					</view>
+					<text class="rate-desc">三项均分（整数）：{{ avgThree }} / 5</text>
+					<text class="rate-desc rate-desc--mono">最近回调：{{ lastMulti }}</text>
+				</view>
+
+				<view class="ext-section rate-foot">
+					<text class="ext-title">补充说明</text>
+					<text class="ext-hint rate-line">
+						若需「至少选 N 颗星」等业务规则，可在 @change 内判断 index，不满足时提示并保持原 current 不变。
+					</text>
+					<text class="ext-hint rate-line">
+						半星（如 2.5 档）需业务层自绘叠层或扩展组件；本示例为整档点击。
+					</text>
+					<text class="ext-hint rate-line">
+						触摸滑动连续选分、PC 端鼠标拖拽等交互未内置；可在容器上监听 touchmove 换算为档位，或外层嵌滑块。
+					</text>
+				</view>
+			</view>
+			<view class="ext-footer-space"></view>
+		</scroll-view>
 	</view>
 </template>
 
 <script setup lang="uts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
-const rateVal = ref(0)
+const valBasic = ref(2)
+const lastBasic = ref('尚未触发')
+const valZero = ref(0)
+const valFour = ref(2)
+const valEight = ref(5)
+const valColor = ref(3)
+const valWarm = ref(3)
+const valSize = ref(4)
+const valHollow = ref(2)
+const valSolid = ref(2)
 
-function onRateChange(e: UTSJSONObject) {
+const valM1 = ref(4)
+const valM2 = ref(5)
+const valM3 = ref(5)
+const lastMulti = ref('尚未触发')
+
+const avgThree = computed((): number => {
+	const a = valM1.value + valM2.value + valM3.value
+	return Math.round(a / 3)
+})
+
+function onBasicChange(e: UTSJSONObject) {
 	const idx = e['index']
 	if (idx != null) {
-		rateVal.value = idx as number
+		lastBasic.value = 'index=' + (idx as number)
+	}
+}
+
+function onMultiChange(e: UTSJSONObject) {
+	const idx = e['index']
+	const p = e['params']
+	if (idx != null) {
+		const nv = idx as number
+		const pid = p != null ? p as number : 0
+		lastMulti.value = 'index=' + nv + ' params=' + pid
 	}
 }
 </script>
 
 <style lang="scss">
-.demo-page {
-	min-height: 100vh;
+@import '../_demo-common.scss';
+@import '../../_demo-common.scss';
+
+.rate-page {
 	background-color: #f5f5f5;
-	padding: 20rpx;
 }
 
-.demo-section {
-	background-color: #ffffff;
-	border-radius: 16rpx;
-	padding: 30rpx;
-	margin-bottom: 24rpx;
+.rate-page .section-title {
+	margin-bottom: 12rpx;
 }
 
-.section-title {
-	font-size: 28rpx;
-	font-weight: bold;
-	color: #333333;
-	margin-bottom: 24rpx;
-	padding-left: 16rpx;
-	border-left: 6rpx solid #ff0844;
+.rate-line {
+	display: block;
+	margin-top: 12rpx;
 }
 
-.demo-desc {
+.rate-body {
+	padding-bottom: 24rpx;
+	box-sizing: border-box;
+}
+
+.rate-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-top: 16rpx;
+}
+
+.rate-desc {
 	font-size: 26rpx;
 	color: #666666;
 	margin-top: 20rpx;
 	display: block;
+	line-height: 1.45;
+}
+
+.rate-desc--mono {
+	font-size: 24rpx;
+	color: #333333;
+}
+
+.rate-compare {
+	margin-top: 16rpx;
+	display: flex;
+	flex-direction: column;
+	gap: 28rpx;
+}
+
+.rate-compare-block {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 16rpx;
+}
+
+.rate-compare-label {
+	font-size: 26rpx;
+	color: #333333;
+	min-width: 200rpx;
+}
+
+.rate-multi {
+	margin-top: 16rpx;
+	display: flex;
+	flex-direction: column;
+	gap: 24rpx;
+}
+
+.rate-multi-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.rate-multi-label {
+	font-size: 28rpx;
+	color: #333333;
+	margin-right: 24rpx;
+	flex-shrink: 0;
+}
+
+.rate-foot {
+	margin-bottom: 8rpx;
 }
 </style>

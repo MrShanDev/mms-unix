@@ -17,17 +17,24 @@ export default {
 			type: [Number, String],
 			default: 400
 		},
+		/** 弧形宽度相对横幅的百分比，越大弧越平，建议 ≥150 */
 		percent: {
 			type: [Number, String],
-			default: 120
+			default: 180
 		},
 		background: {
 			type: String,
 			default: 'linear-gradient(180deg, #5473ff 0%, #6da8ff 100%)'
 		},
+		/** 与下方页面衔接色，与卡片/页面底色一致时弧边才明显 */
 		arcColor: {
 			type: String,
-			default: '#f5f5f5'
+			default: '#ffffff'
+		},
+		/** 弧形层高度（rpx），与 bottom 偏移联动，决定弧的“深度” */
+		arcHeight: {
+			type: [Number, String],
+			default: 100
 		}
 	},
 	computed: {
@@ -39,7 +46,7 @@ export default {
 		},
 		pctNum(): number {
 			const p = this.percent as number | string
-			let n = 120
+			let n = 180
 			if (typeof p === 'number') {
 				n = p
 			} else {
@@ -53,14 +60,41 @@ export default {
 			}
 			return n
 		},
+		arcHeightPxNum(): number {
+			const h = this.arcHeight as number | string
+			if (typeof h === 'number') {
+				return h > 0 ? h : 100
+			}
+			const s = (h as string).trim()
+			if (s.length >= 3 && s.substring(s.length - 3) === 'rpx') {
+				const v = parseFloat(s.substring(0, s.length - 3))
+				return !isNaN(v) && v > 0 ? v : 100
+			}
+			const v2 = parseFloat(s)
+			return !isNaN(v2) && v2 > 0 ? v2 : 100
+		},
+		/** 底部外偏一半高度：椭圆中心落在横幅底边，overflow 裁出上半弧（常见弧形横幅做法） */
+		arcBottomOffset(): string {
+			const half = this.arcHeightPxNum / 2
+			return '-' + half.toString() + 'rpx'
+		},
+		arcHeightStr(): string {
+			return toCssLength(this.arcHeight as number | string)
+		},
 		arcStyle(): UTSJSONObject {
 			const p = this.pctNum
-			const half = p / 2
 			return {
+				position: 'absolute',
+				left: '50%',
+				bottom: this.arcBottomOffset,
 				width: p + '%',
-				marginLeft: '-' + half + '%',
-				backgroundColor: this.arcColor as string
-			}
+				height: this.arcHeightStr,
+				backgroundColor: this.arcColor as string,
+				borderRadius: '50%',
+				transform: 'translate3d(-50%, 0, 0)',
+				zIndex: '2',
+				pointerEvents: 'none'
+			} as UTSJSONObject
 		}
 	}
 }
@@ -75,17 +109,11 @@ export default {
 }
 
 .mms-banner-arc__inner {
+	position: relative;
+	z-index: 1;
 	width: 100%;
 	height: 100%;
 	box-sizing: border-box;
-}
-
-.mms-banner-arc__arc {
-	position: absolute;
-	left: 50%;
-	bottom: 0;
-	height: 120rpx;
-	border-radius: 9999px;
-	transform: translateY(55%);
+	background-color: transparent;
 }
 </style>

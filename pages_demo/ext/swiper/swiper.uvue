@@ -2,6 +2,7 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">字符串列表</text>
+			<text class="demo-desc">演示图使用内嵌 SVG data URI，无需外网图片。</text>
 			<mms-swiper :list="urlsSimple" :indicator="true" :height="300" :slide-padding="8"></mms-swiper>
 		</view>
 
@@ -57,32 +58,46 @@
 </template>
 
 <script setup lang="uts">
-	import { ref } from 'vue'
+import { ref } from 'vue'
 
-	const loadingDemo = ref(false)
+const loadingDemo = ref(false)
 
-	const urlsSimple = [
-		'https://picsum.photos/id/29/750/360',
-		'https://picsum.photos/id/15/750/360',
-		'https://picsum.photos/id/42/750/360'
-	]
+/** 内嵌 SVG，避免依赖外部图床 */
+function svgDataUrl(label: string, fill: string): string {
+	const svg =
+		'<svg xmlns="http://www.w3.org/2000/svg" width="750" height="360"><rect width="100%" height="100%" fill="' +
+		fill +
+		'"/><text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" fill="#333333" font-size="36">' +
+		label +
+		'</text></svg>'
+	return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg)
+}
 
-	/** 卡片露边示例：固定不同 id，便于区分左右露边 */
-	const urlsCard = [
-		'https://picsum.photos/id/237/750/360',
-		'https://picsum.photos/id/433/750/360',
-		'https://picsum.photos/id/292/750/360'
-	]
+const urlsSimple = [
+	svgDataUrl('1', '#e3f2fd'),
+	svgDataUrl('2', '#e8f5e9'),
+	svgDataUrl('3', '#fff3e0')
+]
 
-	const slidesWithTitle = [
-		{ src: 'https://picsum.photos/id/10/750/360', title: '示例标题一' },
-		{ src: 'https://picsum.photos/id/28/750/360', title: '示例标题二' },
-		{ src: 'https://picsum.photos/id/48/750/360', title: '示例标题三' }
-	]
+const urlsCard = [
+	svgDataUrl('A', '#fce4ec'),
+	svgDataUrl('B', '#f3e5f5'),
+	svgDataUrl('C', '#e0f7fa')
+]
 
+const slidesWithTitle = [
+	{ src: svgDataUrl('甲', '#e8eaf6'), title: '示例标题一' },
+	{ src: svgDataUrl('乙', '#f1f8e9'), title: '示例标题二' },
+	{ src: svgDataUrl('丙', '#fff8e1'), title: '示例标题三' }
+]
 </script>
 
 <style lang="scss">
+@import '../../_demo-common.scss';
+.section-title {
+	margin-bottom: 24rpx;
+}
+
 .demo-page {
 	min-height: 100vh;
 	background-color: #f5f5f5;
@@ -94,15 +109,6 @@
 	border-radius: 16rpx;
 	padding: 30rpx;
 	margin-bottom: 24rpx;
-}
-
-.section-title {
-	font-size: 28rpx;
-	font-weight: bold;
-	color: #333333;
-	margin-bottom: 24rpx;
-	padding-left: 16rpx;
-	border-left: 6rpx solid #ff0844;
 }
 
 .demo-desc {

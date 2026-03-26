@@ -111,6 +111,9 @@
 						this.$emit('confirm')
 					}
 				}
+				// 底部按钮点击后关闭弹窗，与遮罩关闭一致，便于 v-model:show / v-model:visible 同步
+				this.$emit('update:show', false)
+				this.$emit('update:visible', false)
 			},
 
 			close() {

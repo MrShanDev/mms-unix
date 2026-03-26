@@ -17,14 +17,14 @@
 | `image` | 自定义图片 URL | `string` | `''` |
 | `description` | 文字说明 | `string` | `暂无数据` |
 | `text` | 与 `description` 相同含义，非空时优先显示 | `string` | `''` |
-| `icon` | `mms-icon` 的 `name`，与 `image`、默认插图互斥 | `string` | `''` |
+| `icon` | `mms-icon` 的 `name`；未传且未使用 `image` 时，默认使用内置图标 `file-common-filling`（不依赖 `/static` 插图） | `string` | `''` |
 | `paddingTop` | 区域距离顶部距离（数字默认 rpx） | `number \| string` | `200` |
 
 ## 插槽
 
 | 名称 | 说明 |
 |------|------|
-| `icon` | 自定义图标（不传则当设置了 `icon` 属性时用内置 `mms-icon`） |
+| `icon` | 自定义图标；不写则用默认 `mms-icon`（`file-common-filling`） |
 | `footer` | 底部内容，一般放按钮 |
 | `default` | 底部内容，与 `footer` 可同时使用 |
 

@@ -112,4 +112,4 @@
 </mms-form>
 ```
 
-更多交互见演示页：`/pages_demo/form/form`。
+更多交互见演示页：`/pages_demo/form/input`。

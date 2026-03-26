@@ -1,53 +1,174 @@
 <template>
 	<view class="demo-page">
-		<view class="demo-section">
-			<text class="section-title">基础</text>
-			<mms-segmented-control :values="segValues" v-model:current="segIndex"></mms-segmented-control>
-			<text class="demo-hint">选中：{{ segValues[segIndex] }}（index={{ segIndex }}）</text>
-		</view>
+		<scroll-view class="demo-scroll" scroll-y>
+			<view class="demo-section">
+				<text class="section-title">基础用法</text>
+				<text class="demo-lead">
+					通过 values 传入各段文案；使用 v-model:current 与选中索引双向绑定（从 0 开始）。
+				</text>
+				<mms-segmented-control :values="segBasic" v-model:current="idxBasic"></mms-segmented-control>
+				<text class="demo-hint">当前：{{ segBasic[idxBasic] }}（index = {{ idxBasic }}）</text>
+			</view>
 
-		<view class="demo-section">
-			<text class="section-title">自定义主色</text>
-			<mms-segmented-control
-				:values="segValues2"
-				v-model:current="segIndex2"
-				active-color="#07c160"
-			></mms-segmented-control>
-		</view>
+			<view class="demo-section">
+				<text class="section-title">默认选中项</text>
+				<text class="demo-lead">
+					将 current 的初始值设为 1、2 等即可默认高亮对应段，常用于订单、任务状态等场景。
+				</text>
+				<mms-segmented-control :values="segOrder" v-model:current="idxOrder"></mms-segmented-control>
+				<text class="demo-hint">初始为「待评价」（index = 1），可切换观察选中态。</text>
+			</view>
+
+			<view class="demo-section">
+				<text class="section-title">配色</text>
+				<text class="demo-lead">
+					activeColor 为选中段的主色（描边与文字）；inactiveColor 为未选中文字；backgroundColor 为整条轨道背景。
+				</text>
+				<mms-segmented-control
+					:values="segColor"
+					v-model:current="idxColor"
+					active-color="#ff0844"
+					inactive-color="#888888"
+					background-color="#fff0f3"
+				></mms-segmented-control>
+			</view>
+
+			<view class="demo-section">
+				<text class="section-title">尺寸与圆角</text>
+				<text class="demo-lead">
+					height 控制整体高度，size 为文字字号，radius 控制外轮廓圆角（支持带单位的字符串，如 8px、16rpx）。
+				</text>
+				<mms-segmented-control
+					:values="segSize"
+					v-model:current="idxSize"
+					height="64rpx"
+					size="26rpx"
+					radius="12px"
+					active-color="#1890ff"
+				></mms-segmented-control>
+			</view>
+
+			<view class="demo-section">
+				<text class="section-title">禁用</text>
+				<text class="demo-lead">disabled 为 true 时不响应点击，用于只读展示或流程未就绪时。</text>
+				<mms-segmented-control
+					:values="segDis"
+					:current="1"
+					:disabled="true"
+					active-color="#5677fc"
+				></mms-segmented-control>
+			</view>
+
+			<view class="demo-section">
+				<text class="section-title">change 事件</text>
+				<text class="demo-lead">
+					除 v-model 外可监听 @change（或 @click），在回调里做统计、拉取列表等；payload 含 index。
+				</text>
+				<mms-segmented-control
+					:values="segEvt"
+					v-model:current="idxEvt"
+					active-color="#07c160"
+					@change="onSegChange"
+				></mms-segmented-control>
+				<text class="demo-hint">上次 change：index = {{ lastChangeIdx }}</text>
+			</view>
+
+			<view class="demo-section">
+				<text class="section-title">仅父级绑定 current</text>
+				<text class="demo-lead">
+					若只用 :current 传入、未用 v-model，须在 @change 或 @click 里自行把父级 current 设为新的 index，否则再次点击同一段时可能无法触发更新。
+				</text>
+				<mms-segmented-control
+					:values="segManual"
+					:current="idxManual"
+					active-color="#fa8c16"
+					@change="onManualChange"
+				></mms-segmented-control>
+				<text class="demo-hint">父级 index：{{ idxManual }}</text>
+			</view>
+
+			<view class="demo-section">
+				<text class="section-title">弹层、抽屉内使用</text>
+				<text class="demo-lead">
+					在弹窗、底部弹出层等场景，若首次打开时宽度或选中态异常，可将分段器放在内容展示之后用 v-if 挂载，待容器尺寸稳定再渲染。
+				</text>
+			</view>
+
+			<view class="demo-footer-space"></view>
+		</scroll-view>
 	</view>
 </template>
 
 <script setup lang="uts">
-	import { ref } from 'vue'
+import { ref } from 'vue'
 
-	const segValues = ['选项 A', '选项 B', '选项 C']
-	const segIndex = ref(0)
+const segBasic = ['选项一', '选项二', '选项三']
+const idxBasic = ref(0)
 
-	const segValues2 = ['未开始', '进行中', '已完成']
-	const segIndex2 = ref(1)
+const segOrder = ['待付款', '待评价', '已完成']
+const idxOrder = ref(1)
+
+const segColor = ['全部', '进行中', '已结束']
+const idxColor = ref(0)
+
+const segSize = ['日', '周', '月']
+const idxSize = ref(0)
+
+const segDis = ['低', '中', '高']
+
+const segEvt = ['列表', '网格', '地图']
+const idxEvt = ref(0)
+const lastChangeIdx = ref(-1)
+
+const segManual = ['A', 'B', 'C']
+const idxManual = ref(0)
+
+function onSegChange(e: UTSJSONObject) {
+	const i = e['index'] as number
+	lastChangeIdx.value = i
+}
+
+function onManualChange(e: UTSJSONObject) {
+	const i = e['index'] as number
+	idxManual.value = i
+}
 </script>
 
 <style lang="scss">
+@import '../../_demo-common.scss';
+
+.section-title {
+	margin-bottom: 12rpx;
+}
+
 .demo-page {
 	min-height: 100vh;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 	background-color: #f5f5f5;
-	padding: 20rpx;
+}
+
+.demo-scroll {
+	flex: 1;
+	height: 0;
+	box-sizing: border-box;
 }
 
 .demo-section {
 	background-color: #ffffff;
 	border-radius: 16rpx;
 	padding: 30rpx;
+	margin: 20rpx;
 	margin-bottom: 24rpx;
 }
 
-.section-title {
-	font-size: 28rpx;
-	font-weight: bold;
-	color: #333333;
-	margin-bottom: 24rpx;
-	padding-left: 16rpx;
-	border-left: 6rpx solid #ff0844;
+.demo-lead {
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.5;
+	margin-bottom: 20rpx;
+	display: block;
 }
 
 .demo-hint {
@@ -55,5 +176,9 @@
 	color: #999999;
 	margin-top: 16rpx;
 	display: block;
+}
+
+.demo-footer-space {
+	height: 48rpx;
 }
 </style>
