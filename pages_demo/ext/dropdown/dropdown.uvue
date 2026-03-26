@@ -3,32 +3,34 @@
 		<scroll-view class="ext-scroll" scroll-y>
 			<view class="ext-section">
 				<text class="ext-title">mms-dropdown-list</text>
+				<text class="ext-hint ext-dd-doc-lead">
+					通过 show、top、isMask、maskBackground、@close 控制；列表区域高度由内部 scroll-view 样式决定。
+				</text>
 				<mms-dropdown-list
 					:show="dropdownShow"
-					:top="88"
-					:height="400"
+					:top="94"
 					:is-mask="true"
-					mask-background="rgba(0, 0, 0, 0.4)"
+					mask-background="rgba(0, 0, 0, 0.1)"
 					@close="dropdownShow = false"
 				>
 					<template #selectionbox>
-						<view
-							class="ext-dd-head"
-							:class="{ 'ext-dd-head--open': dropdownShow }"
-							@tap="dropdownShow = !dropdownShow"
-						>
-							<view class="ext-dd-head-main">
-								<text class="ext-dd-head-text">
-									{{ selectedDd > 0 ? '已选：选项 ' + selectedDd : '请选择' }}
-								</text>
-								<text class="ext-dd-head-hint">
-									{{ dropdownShow ? '点击遮罩关闭' : '点击展开列表' }}
-								</text>
+						<view class="ext-dd-trigger-outer">
+							<view
+								class="ext-dd-head"
+								:class="{ 'ext-dd-head--open': dropdownShow }"
+								@tap="dropdownShow = !dropdownShow"
+							>
+								<view class="ext-dd-head-main">
+									<text class="ext-dd-head-text">
+										{{ selectedDd > 0 ? '已选：选项 ' + selectedDd : '点击选择内容块' }}
+									</text>
+									<text v-if="!dropdownShow" class="ext-dd-head-hint">下拉列表 · 支持 scroll-view</text>
+								</view>
+								<text
+									class="ext-dd-head-arrow"
+									:class="{ 'ext-dd-head-arrow--open': dropdownShow }"
+								>▼</text>
 							</view>
-							<text
-								class="ext-dd-head-arrow"
-								:class="{ 'ext-dd-head-arrow--open': dropdownShow }"
-							>▼</text>
 						</view>
 					</template>
 					<template #dropdownbox>
@@ -41,7 +43,7 @@
 									@tap="pickDd(n)"
 								>
 									<text class="ext-dd-item-text">选项 {{ n }}</text>
-									<text class="ext-dd-item-desc">说明文案 · 第 {{ n }} 项</text>
+									<text class="ext-dd-item-desc">副标题示例</text>
 								</view>
 							</view>
 						</scroll-view>
@@ -68,4 +70,10 @@ function pickDd(n: number) {
 
 <style lang="scss">
 @import '../_demo-common.scss';
+
+.ext-dd-doc-lead {
+	display: block;
+	margin-bottom: 24rpx;
+	line-height: 1.55;
+}
 </style>

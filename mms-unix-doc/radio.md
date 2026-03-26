@@ -1,6 +1,8 @@
 # mms-radio / mms-radio-group 单项选择
 
-`mms-radio-group` 与 `mms-radio` 配合使用，在一组互斥选项中选中一项，通过 `v-model` 绑定当前选中项的 `value`（字符串）。实现为本库自研，与常见单选交互一致；请勿与第三方商业组件源码混用。
+`mms-radio-group` 与 `mms-radio` 配合使用，在一组互斥选项中选中一项，通过 `v-model` 绑定当前选中项的 `value`（字符串）。
+
+> **自研说明**：本组件为 MMS-UNIX 自研；请勿与外部未授权商业组件源码混用或逐字对照非本库文档，以免授权风险。
 
 ## 使用
 

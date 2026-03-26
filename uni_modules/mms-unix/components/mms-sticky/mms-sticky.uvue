@@ -20,10 +20,10 @@
 
 <script lang="uts">
 /**
- * 吸顶容器（API 对齐 ThorUI tui-sticky 思路：https://thorui.cn/doc/docs/thorui/tui-sticky.html）
+ * 吸顶容器：scrollTop / stickyTop / scrollTick 等见组件 props
  * - scrollTop：页面 onPageScroll 或 scroll-view 的滚动距离，用于触发重算
  * - scrollTick：部分端 scrollTop 无效时，在 @scroll 内递增以强制测量（uni-app x 推荐）
- * - 吸顶判定：页面滚动时用占位块相对窗口的 top；放在 scroll-view 内时请传 scrollViewportId（对应 scroll-view 的 id），用「组件根相对视口 top」判定，避免 top 永远压不到 0 导致不吸顶。
+ * - 吸顶判定：页面滚动时用占位块相对窗口的 top；放在 scroll-view 内时请传 scrollViewportId（对应 scroll-view 的 id），用「组件根相对滚动视口顶边」判定。注意：组件根 id 在页面级 selector 中无法命中自定义组件内部节点，须用 .in(this) 查询 .mms-sticky。
  */
 export default {
 	name: 'mmsSticky',
@@ -36,7 +36,7 @@ export default {
 		},
 		/**
 		 * 吸顶后与可视区顶部的间距（px）。String 时按十进制解析整数。
-		 * H5 且 isNativeHeader 为 true 时会再叠加约 44px（原生导航内容区），与 ThorUI 文档一致。
+		 * H5 且 isNativeHeader 为 true 时会再叠加约 44px（原生导航内容区常见偏移）。
 		 */
 		stickyTop: {
 			type: [Number, String],
@@ -47,7 +47,7 @@ export default {
 			type: String,
 			default: ''
 		},
-		/** 是否展示 content 插槽（ThorUI 的 container） */
+		/** 是否展示 content 插槽（与头部同一块吸顶区域） */
 		container: {
 			type: Boolean,
 			default: false
@@ -235,19 +235,14 @@ export default {
 			const that = this
 			const vid = (this.scrollViewportId as string).trim()
 			if (vid.length > 0) {
-				const anchor = that.resolvedAnchorId
-				uni.createSelectorQuery()
-					.select('#' + vid)
-					.boundingClientRect()
-					.select('#' + anchor)
-					.boundingClientRect()
-					.exec(function (res: any) {
-						if (res == null) {
-							return
-						}
-						const vrect = res[0]
-						const srect = res[1]
-						if (vrect == null || srect == null) {
+				const qPage = uni.createSelectorQuery()
+				qPage.select('#' + vid).boundingClientRect(function (vrect: any) {
+					if (vrect == null) {
+						return
+					}
+					const qSelf = uni.createSelectorQuery().in(that)
+					qSelf.select('.mms-sticky').boundingClientRect(function (srect: any) {
+						if (srect == null) {
 							return
 						}
 						const relTop = (srect.top as number) - (vrect.top as number)
@@ -256,6 +251,9 @@ export default {
 						that.emitStickyIfNeeded(nextFixed)
 						that.emitChange(relTop)
 					})
+					qSelf.exec()
+				})
+				qPage.exec()
 				return
 			}
 			const q = uni.createSelectorQuery().in(this)

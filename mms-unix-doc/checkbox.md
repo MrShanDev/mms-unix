@@ -1,6 +1,8 @@
 # mms-checkbox / mms-checkbox-group 多项选择
 
-`mms-checkbox-group` 与 `mms-checkbox` 配合使用，可在同一组内多选；`v-model` 绑定值为**字符串数组**（各选中项的 `value`）。实现为本库自研，交互与常见多选框一致；请勿与第三方商业组件源码混用。
+`mms-checkbox-group` 与 `mms-checkbox` 配合使用，可在同一组内多选；`v-model` 绑定值为**字符串数组**（各选中项的 `value`）。
+
+> **自研说明**：本组件为 MMS-UNIX 自研；请勿与外部未授权商业组件源码混用或逐字对照非本库文档，以免授权风险。
 
 ## 使用
 

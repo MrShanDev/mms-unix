@@ -2,7 +2,7 @@
 
 短信/邮箱等「获取验证码」按钮：**点击后**由业务请求接口，**成功后在父级递增 `successTick`** 即开始本地倒计时；支持 **重置**、**挂载即倒计时**、样式与 `mms-input` 右侧插槽组合。
 
-> 本组件为 MMS-UNIX 自研，交互上贴近常见验证码按钮习惯；请勿与 [ThorUI tui-countdown-verify](https://thorui.cn/doc/docs/extend/tui-countdown-verify.html) 等第三方源码混用，以免授权风险。
+> **自研说明**：本组件为 MMS-UNIX 自研；请勿与外部未授权商业组件源码混用或逐字对照非本库文档，以免授权风险。
 
 ## 使用流程
 

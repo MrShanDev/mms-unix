@@ -1,13 +1,13 @@
 <template>
 	<view class="mms-dropdown-list" :style="{ backgroundColor: backgroundColor }">
-		<view class="mms-dropdown-list__selection">
+		<view class="mms-dropdown-list__selection" :class="{ 'mms-dropdown-list__selection--raised': show }">
 			<view class="mms-dropdown-list__anchor">
 				<view class="mms-dropdown-list__trigger">
 					<slot name="selectionbox"></slot>
 				</view>
 			</view>
 		</view>
-		<!-- fixed 脱离 scroll-view 裁切；面板在遮罩之上，紧贴触发条下沿 -->
+		<!-- 遮罩单独一层；面板与遮罩同级，避免 fixed 嵌套导致部分端 top/left 相对错位 -->
 		<view v-if="show" class="mms-dropdown-list__overlay">
 			<view
 				v-if="isMask"
@@ -15,9 +15,9 @@
 				:style="{ backgroundColor: maskBackground }"
 				@tap="onMaskTap"
 			></view>
-			<view v-if="layoutReady" class="mms-dropdown-list__panel" :style="panelFixedStyle">
-				<slot name="dropdownbox"></slot>
-			</view>
+		</view>
+		<view v-if="show && layoutReady" class="mms-dropdown-list__panel" :style="panelFixedStyle">
+			<slot name="dropdownbox"></slot>
 		</view>
 	</view>
 </template>
@@ -54,6 +54,11 @@ export default {
 		maskBackground: {
 			type: String,
 			default: 'transparent'
+		},
+		/** 面板顶边相对触发器底边的额外间距（px），避免列表压住下拉框；默认 1，可设为 0 与框底紧贴 */
+		offsetBottomPx: {
+			type: Number,
+			default: 50
 		}
 	},
 	data() {
@@ -77,6 +82,10 @@ export default {
 		}
 	},
 	computed: {
+		panelBottomGapPx(): number {
+			const o = this.offsetBottomPx as number
+			return o >= 0 ? o : 1
+		},
 		panelFixedStyle(): UTSJSONObject {
 			const h = this.height as number
 			const st = {
@@ -115,30 +124,69 @@ export default {
 					that.layoutReady = true
 				}
 			}, 320) as number
-			const q = uni.createSelectorQuery().in(this)
-			q.select('.mms-dropdown-list__trigger').boundingClientRect(function (rect) {
-				if (!that.show) {
-					return
-				}
-				if (rect != null) {
-					const t = rect.top as number
-					const hh = rect.height as number
-					const l = rect.left as number
-					const w = rect.width as number
-					that.panelTopPx = t + hh
-					if (w > 0) {
-						that.panelLeftPx = l
-						that.panelWidthPx = w
-					} else {
-						that.panelLeftPx = -1
-						that.panelWidthPx = -1
+			const runQuery = function () {
+				const q = uni.createSelectorQuery().in(that)
+				q.select('.mms-dropdown-list__trigger').boundingClientRect(function (rect) {
+					if (!that.show) {
+						return
 					}
-				} else {
-					that.applyFallbackLayout()
-				}
-				that.layoutReady = true
+					if (rect != null) {
+						const t = rect.top as number
+						const hh = rect.height as number
+						const l = rect.left as number
+						const w = rect.width as number
+						const gap = that.panelBottomGapPx as number
+						that.panelTopPx = Math.ceil(t + hh) + gap
+						if (w > 0) {
+							that.panelLeftPx = l
+							that.panelWidthPx = w
+						} else {
+							that.panelLeftPx = -1
+							that.panelWidthPx = -1
+						}
+						that.layoutReady = true
+					} else {
+						setTimeout(function () {
+							if (!that.show) {
+								return
+							}
+							const q2 = uni.createSelectorQuery().in(that)
+							q2.select('.mms-dropdown-list__trigger').boundingClientRect(function (rect2) {
+								if (!that.show) {
+									return
+								}
+								if (rect2 != null) {
+									const t2 = rect2.top as number
+									const hh2 = rect2.height as number
+									const l2 = rect2.left as number
+									const w2 = rect2.width as number
+									const gap2 = that.panelBottomGapPx as number
+									that.panelTopPx = Math.ceil(t2 + hh2) + gap2
+									if (w2 > 0) {
+										that.panelLeftPx = l2
+										that.panelWidthPx = w2
+									} else {
+										that.panelLeftPx = -1
+										that.panelWidthPx = -1
+									}
+								} else {
+									that.applyFallbackLayout()
+								}
+								that.layoutReady = true
+							})
+							q2.exec()
+						}, 48) as number
+					}
+				})
+				q.exec()
+			}
+			this.$nextTick(() => {
+				this.$nextTick(() => {
+					setTimeout(function () {
+						runQuery()
+					}, 32) as number
+				})
 			})
-			q.exec()
 		},
 		applyFallbackLayout() {
 			const tProp = this.top as number
@@ -171,6 +219,12 @@ export default {
 	flex-direction: row;
 	justify-content: flex-start;
 	align-items: flex-start;
+}
+
+/* 展开时高于遮罩与面板，避免半透明层或列表视觉上压住下拉触发区 */
+.mms-dropdown-list__selection--raised {
+	position: relative;
+	z-index: 1003;
 }
 
 .mms-dropdown-list__anchor {
@@ -207,9 +261,11 @@ export default {
 }
 
 .mms-dropdown-list__panel {
+	position: fixed;
+	z-index: 1002;
 	box-sizing: border-box;
 	background-color: #ffffff;
-	border-radius: 0 0 12rpx 12rpx;
+	border-radius: 0 0 8rpx 8rpx;
 	overflow: hidden;
 	border-left-width: 1rpx;
 	border-right-width: 1rpx;
@@ -218,10 +274,10 @@ export default {
 	border-left-style: solid;
 	border-right-style: solid;
 	border-bottom-style: solid;
-	border-left-color: #eaeaea;
-	border-right-color: #eaeaea;
-	border-bottom-color: #eaeaea;
-	box-shadow: 0 12rpx 24rpx rgba(0, 0, 0, 0.08);
+	border-left-color: #e5e5e5;
+	border-right-color: #e5e5e5;
+	border-bottom-color: #e5e5e5;
+	box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.1);
 	pointer-events: auto;
 }
 </style>
