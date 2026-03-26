@@ -9,18 +9,22 @@
 
 ## [Unreleased]
 
-> 以下条目已合入仓库，待与下一正式版号一并写入 `package.json` 后可将本节并入对应版本。
+> 下一版本发版前将本节内容并入新版本标题，并同步提升 `package.json` 的 `version`。
+
+---
+
+## 1.2.0（2026-03-25）
 
 ### 新增
 
-- **mms-swiper**：图片轮播；支持 `list`（字符串或对象）、`imageKey` / `titleKey`、`showTitle`、指示器（dot/line）、`slidePadding` 单页内左右留白、`previousMargin` / `nextMargin` 卡片露边、`circular` 衔接（露边时建议列表 ≥3 项）、`bgColor` 空则不透出默认灰底、`v-model:current` 等。
+- **mms-swiper**：图片轮播；支持 `list`（字符串或对象）、`imageKey` / `titleKey`、`showTitle`、指示器（dot/line）、`slidePadding` 单页内左右留白、`previousMargin` / `nextMargin` 卡片露边、`circular` 衔接（露边时建议列表 ≥3 项）、`bgColor` 空则不写背景色由父级透出、`v-model:current` 等。
 - **mms-pagination**：分页器；`change` / `update:current`、自定义插槽等。
 - **mms-segmented-control**：分段器；`update:current`、`click` / `change`。
 - **mms-notice-vertical**：纵向可滚动长文通告容器。
 
 ### 变更
 
-- **mms-notice-bar**：对齐常见通告能力（`content`、跑马灯/单行、`padding` 数组、`isLeft`/`isRight`、`leftClick`/`rightClick`、`params` 等）；修正横向滚动与插槽结构。
+- **mms-notice-bar**：对齐常见通告能力（`content`、跑马灯/单行、`padding` 数组、`isLeft`/`isRight`、`leftClick`/`rightClick`、`params` 等）；修正横向滚动与结构。
 - **mms-rolling-news**：支持对象列表与 `prop` 字段、`lines` 多行截断、`background`、右侧插槽、`change` 等事件。
 
 ### 修复
@@ -30,6 +34,10 @@
 ### 演示工程（非组件包运行时依赖）
 
 - `pages_demo`：分页、分段器、通告栏、纵向通告、滚动资讯、轮播等独立演示页；组件 Tab 分类「扩展 / 分页与通告」等。
+
+### 文档
+
+- 本包根目录增加 `changelog.md`（与 `package.json` 版本同步维护）。
 
 ---
 
@@ -77,5 +85,5 @@
 
 ## 维护约定
 
-1. 发版前：在 `changelog.md` 顶部的 `[Unreleased]` 整理条目，写入新版本标题与日期，并同步 `package.json` 的 `version`。
-2. 若项目要求双份说明，可在 `version/doc/` 增加 `lib-x.y.z.md` 做验收级补充，避免与本文长期重复两套事实源。
+1. 发版前：在 `changelog.md` 的 `[Unreleased]` 整理条目，写入新版本标题与日期，并同步 `package.json` 的 `version`。
+2. 若项目要求双份说明，在 `version/doc/` 增加 `lib-x.y.z.md` 做验收级补充，避免与本文长期重复两套事实源。
