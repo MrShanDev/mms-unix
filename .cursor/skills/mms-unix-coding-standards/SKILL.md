@@ -70,6 +70,7 @@ mms-unix/
 
 - 面向使用者的长文说明（API、示例、注意事项）放在 `mms-unix-doc/*.md`；`uni_modules/mms-unix/readme.md` 保持组件库入口与安装说明即可。
 - 新增组件时：**演示页（pages_demo）+ 可选 mms-unix-doc 一篇**；二者描述与 props/emits 须与实现一致（细节见 component-api skill）。
+- **措辞**：不引用其它商业组件库名称或外链；需要授权/合规提示时，与现有文档一致使用统一「**自研说明**」引用块（见 `input.md`、`checkbox.md` 等文首）。
 
 ### VS Code 扩展（`mms-unix-vscode/`）
 

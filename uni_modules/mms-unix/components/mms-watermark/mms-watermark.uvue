@@ -1,22 +1,23 @@
 <template>
 	<view class="mms-watermark" :style="rootStyle">
+		<!-- 叠层放在 slot 容器内并绝对铺满，避免与根节点兄弟布局时部分端高度为 0 导致不绘制 -->
 		<view class="mms-watermark__slot">
 			<slot></slot>
-		</view>
-		<!-- 无原图时：用叠层文字盖在插槽内容上（不依赖 canvas 透明） -->
-		<view
-			v-if="showTextOverlay"
-			class="mms-watermark__overlay"
-			:style="overlayWrapStyle"
-		>
+			<!-- 无原图时：用叠层文字盖在插槽内容上（不依赖 canvas 透明） -->
 			<view
-				v-for="idx in tileList"
-				:key="idx"
-				class="mms-watermark__cell"
-				:style="cellMarginStyle"
+				v-if="showTextOverlay"
+				class="mms-watermark__overlay"
+				:style="overlayWrapStyle"
 			>
-				<view class="mms-watermark__rot" :style="tileRotateStyle">
-					<text class="mms-watermark__tile" :style="tileFontStyle">{{ content }}</text>
+				<view
+					v-for="idx in tileList"
+					:key="idx"
+					class="mms-watermark__cell"
+					:style="cellMarginStyle"
+				>
+					<view class="mms-watermark__rot" :style="tileRotateStyle">
+						<text class="mms-watermark__tile" :style="tileFontStyle">{{ content }}</text>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -32,6 +33,7 @@
 </template>
 
 <script lang="uts">
+import { PropType } from 'vue'
 import { toCssLength, parseCssNumber } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 
 export default {
@@ -49,9 +51,13 @@ export default {
 			type: [Number, String],
 			default: 20
 		},
+		/**
+		 * 水印文字颜色。uni-app x 部分端对 text 的 rgba 支持不稳定，默认用实色 #hex；
+		 * 需要更淡时配合 opacity，深色图/底可改用 #ffffff 等浅色。
+		 */
 		color: {
 			type: String,
-			default: 'rgba(255, 255, 255, 0.5)'
+			default: '#c8c8c8'
 		},
 		gap: {
 			type: Array as PropType<number[]>,
@@ -104,7 +110,7 @@ export default {
 		overlayWrapStyle(): UTSJSONObject {
 			const o = this.opacity as number
 			if (o >= 0 && o <= 1) {
-				return { opacity: String(o) } as UTSJSONObject
+				return { opacity: o } as UTSJSONObject
 			}
 			return {} as UTSJSONObject
 		},
@@ -269,9 +275,9 @@ export default {
 
 .mms-watermark__slot {
 	position: relative;
-	z-index: 1;
 	width: 100%;
 	min-height: 1rpx;
+	overflow: hidden;
 }
 
 .mms-watermark__overlay {
@@ -280,7 +286,7 @@ export default {
 	top: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 2;
+	z-index: 10;
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;

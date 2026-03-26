@@ -1,23 +1,64 @@
 <template>
 	<view class="mms-time-axis">
-		<slot></slot>
+		<view class="mms-time-axis__line" :style="lineStyle"></view>
+		<view class="mms-time-axis__body">
+			<slot></slot>
+		</view>
 	</view>
 </template>
 
 <script lang="uts">
+/** 与 mms-time-axis-item 内节点列宽一致，轴线水平居中于该列 */
+const TRACK_WIDTH_RPX = 48
+
 export default {
-	name: 'mmsTimeAxis'
+	name: 'mmsTimeAxis',
+	props: {
+		lineColor: {
+			type: String,
+			default: '#e5e5e5'
+		},
+		lineWidth: {
+			type: Number,
+			default: 2
+		}
+	},
+	computed: {
+		lineStyle(): UTSJSONObject {
+			const w = this.lineWidth as number
+			const lw = w > 0 ? w : 2
+			const center = TRACK_WIDTH_RPX / 2
+			const leftPx = center - lw / 2
+			return {
+				backgroundColor: this.lineColor as string,
+				width: lw + 'rpx',
+				left: leftPx + 'rpx'
+			} as UTSJSONObject
+		}
+	}
 }
 </script>
 
 <style lang="scss">
 .mms-time-axis {
+	position: relative;
 	display: flex;
 	flex-direction: column;
-	padding-left: 24rpx;
-	border-left-width: 2rpx;
-	border-left-style: solid;
-	border-left-color: #e5e5e5;
+	box-sizing: border-box;
+}
+
+.mms-time-axis__line {
+	position: absolute;
+	top: 22rpx;
+	bottom: 22rpx;
+	z-index: 0;
+	border-radius: 1rpx;
+}
+
+.mms-time-axis__body {
+	position: relative;
+	z-index: 1;
+	width: 100%;
 	box-sizing: border-box;
 }
 </style>

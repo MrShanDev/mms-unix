@@ -1,0 +1,207 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">基础（纵向）</text>
+			<text class="section-desc">mms-checkbox-group 的 v-model 为 string[]，可多选</text>
+			<view class="demo-body">
+				<mms-checkbox-group v-model="tags">
+					<mms-checkbox value="a">
+						<text class="opt-text">选项 A</text>
+					</mms-checkbox>
+					<mms-checkbox value="b">
+						<text class="opt-text">选项 B</text>
+					</mms-checkbox>
+					<mms-checkbox value="c">
+						<text class="opt-text">选项 C</text>
+					</mms-checkbox>
+				</mms-checkbox-group>
+			</view>
+			<text class="demo-tip">当前：{{ tagsDisplay }}</text>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">横向排列</text>
+			<text class="section-desc">direction="row"</text>
+			<view class="demo-body">
+				<mms-checkbox-group v-model="week" direction="row" color="#1890ff">
+					<mms-checkbox value="1">
+						<text class="opt-text">一</text>
+					</mms-checkbox>
+					<mms-checkbox value="2">
+						<text class="opt-text">二</text>
+					</mms-checkbox>
+					<mms-checkbox value="3">
+						<text class="opt-text">三</text>
+					</mms-checkbox>
+				</mms-checkbox-group>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">组级颜色</text>
+			<text class="section-desc">group 上设置 color / borderColor</text>
+			<view class="demo-body">
+				<mms-checkbox-group v-model="pay" color="#07c160" borderColor="#999999">
+					<mms-checkbox value="wx">
+						<text class="opt-text">微信</text>
+					</mms-checkbox>
+					<mms-checkbox value="ali">
+						<text class="opt-text">支付宝</text>
+					</mms-checkbox>
+				</mms-checkbox-group>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">单项禁用 / 整组禁用</text>
+			<text class="section-desc">第二项 disabled；下一组整组不可点</text>
+			<view class="demo-body">
+				<mms-checkbox-group v-model="set1" direction="row">
+					<mms-checkbox value="x">
+						<text class="opt-text">可选</text>
+					</mms-checkbox>
+					<mms-checkbox value="y" :disabled="true">
+						<text class="opt-text">禁用</text>
+					</mms-checkbox>
+				</mms-checkbox-group>
+			</view>
+			<view class="demo-gap"></view>
+			<view class="demo-body">
+				<mms-checkbox-group v-model="set2" :disabled="true" direction="row">
+					<mms-checkbox value="p">
+						<text class="opt-text">整组禁</text>
+					</mms-checkbox>
+					<mms-checkbox value="q">
+						<text class="opt-text">不可选</text>
+					</mms-checkbox>
+				</mms-checkbox-group>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">仅对号（checkOnly）</text>
+			<text class="section-desc">选中时仅显示对勾，无填充底</text>
+			<view class="demo-body">
+				<mms-checkbox-group v-model="mode" direction="row">
+					<mms-checkbox value="u" :checkOnly="true">
+						<text class="opt-text">甲</text>
+					</mms-checkbox>
+					<mms-checkbox value="v" :checkOnly="true" color="#fa541c">
+						<text class="opt-text">乙</text>
+					</mms-checkbox>
+				</mms-checkbox-group>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">独立使用</text>
+			<text class="section-desc">不在 group 内时用 :checked + @update:checked（或 @change）</text>
+			<view class="demo-body row-align">
+				<mms-checkbox :checked="alone" value="agree" @update:checked="onAloneChecked">
+					<text class="opt-text">同意协议</text>
+				</mms-checkbox>
+			</view>
+			<text class="demo-tip">alone = {{ alone }}</text>
+		</view>
+
+		<view class="page-footer-spacer"></view>
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	data() {
+		return {
+			tags: ['a'] as string[],
+			week: ['2'] as string[],
+			pay: ['wx'] as string[],
+			set1: ['x'] as string[],
+			set2: ['p'] as string[],
+			mode: ['u'] as string[],
+			alone: false
+		}
+	},
+	computed: {
+		tagsDisplay(): string {
+			const t = this.tags
+			if (t == null || t.length === 0) {
+				return '[]'
+			}
+			return JSON.stringify(t)
+		}
+	},
+	methods: {
+		onAloneChecked(v: boolean) {
+			this.alone = v
+		}
+	}
+}
+</script>
+
+<style lang="scss">
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 32rpx 28rpx 48rpx 28rpx;
+	box-sizing: border-box;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 20rpx;
+	padding: 36rpx 32rpx 40rpx 32rpx;
+	margin-bottom: 36rpx;
+	box-sizing: border-box;
+}
+
+.section-title {
+	font-size: 30rpx;
+	font-weight: bold;
+	color: #333333;
+	margin-bottom: 16rpx;
+	padding-left: 16rpx;
+	border-left: 6rpx solid #1890ff;
+	line-height: 1.4;
+}
+
+.section-desc {
+	font-size: 26rpx;
+	color: #999999;
+	margin-bottom: 28rpx;
+	padding-left: 16rpx;
+	line-height: 1.5;
+}
+
+.demo-body {
+	padding-top: 8rpx;
+	padding-bottom: 4rpx;
+}
+
+.demo-body.row-align {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.opt-text {
+	font-size: 32rpx;
+	color: #333333;
+	line-height: 1.5;
+}
+
+.demo-tip {
+	font-size: 26rpx;
+	color: #999999;
+	margin-top: 28rpx;
+	padding-left: 8rpx;
+	line-height: 1.5;
+}
+
+.demo-gap {
+	height: 40rpx;
+}
+
+.page-footer-spacer {
+	height: 48rpx;
+}
+</style>

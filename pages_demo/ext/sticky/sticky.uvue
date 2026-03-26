@@ -1,25 +1,36 @@
 <template>
-	<view class="ext-page">
-		<scroll-view class="ext-scroll" scroll-y @scroll="onScroll">
-			<view class="ext-spacer">
-				<text class="ext-hint">向下滚动查看 mms-sticky 吸顶（scroll-view 内同步 scrollTop）</text>
-			</view>
-
-			<mms-sticky :scroll-top="scrollTop" sticky-height="88rpx" sticky-top="0" background-color="#ffffff">
-				<template #header>
-					<view class="ext-sticky-bar">
-						<text class="ext-sticky-text">吸顶区域 mms-sticky</text>
+	<view class="ext-page sticky-page">
+		<scroll-view id="sticky-demo-scroll" class="ext-scroll" scroll-y @scroll="onScroll">
+			<view class="sticky-page-body">
+				<view class="sticky-demo-intro ext-section">
+					<text class="ext-title">mms-sticky · stickyTop 留白</text>
+					<text class="ext-hint sticky-demo-tip">
+						吸顶后与滚动区域顶边保留间距（本页为约 80rpx 转 px）。scroll-view 内需设置 scrollViewportId 与外层 id 一致，isNativeHeader=false，@scroll 递增 scrollTick。
+					</text>
+				</view>
+				<mms-sticky
+					scroll-viewport-id="sticky-demo-scroll"
+					:scroll-tick="scrollTick"
+					:scroll-top="scrollTopFromView"
+					:is-native-header="false"
+					sticky-height="88rpx"
+					:sticky-top="stickyTopOffsetPx"
+					background-color="#f6ffed"
+					:index="0"
+				>
+					<template #header>
+						<view class="ext-sticky-bar sticky-demo-bar">
+							<text class="ext-sticky-text">stickyTop 留白 · 低于顶边</text>
+						</view>
+					</template>
+				</mms-sticky>
+				<view class="sticky-demo-list ext-section">
+					<view v-for="n in postList" :key="'p-' + n" class="sticky-demo-row">
+						<text class="sticky-demo-row-t">列表 {{ n }}</text>
 					</view>
-				</template>
-			</mms-sticky>
-
-			<view class="ext-block">
-				<text class="ext-p">占位内容，用于产生滚动。</text>
-				<text class="ext-p">占位内容，用于产生滚动。</text>
-				<text class="ext-p">占位内容，用于产生滚动。</text>
+				</view>
+				<view class="sticky-page-footer"></view>
 			</view>
-
-			<view class="ext-footer-space"></view>
 		</scroll-view>
 	</view>
 </template>
@@ -27,19 +38,115 @@
 <script setup lang="uts">
 import { ref } from 'vue'
 
-const scrollTop = ref(0)
+const scrollTick = ref(0)
+const scrollTopFromView = ref(0)
+/** 约 80rpx 转 px，作吸顶距顶留白 */
+const stickyTopOffsetPx = ref(0)
+
+const preOffset = buildRange(1, 18)
+const postList = buildRange(1, 12)
+
+function buildRange(from: number, to: number): number[] {
+	const out = [] as number[]
+	for (let i = from; i <= to; i++) {
+		out.push(i)
+	}
+	return out
+}
+
+function preLineText(n: number): string {
+	return '前置区第 ' + n + ' 行'
+}
+
+function applyStickyTopOffset() {
+	const u = uni.rpx2px(80)
+	if (u != null && u > 0) {
+		stickyTopOffsetPx.value = u
+	}
+}
+
+onReady(() => {
+	applyStickyTopOffset()
+})
+
+onShow(() => {
+	applyStickyTopOffset()
+})
 
 function onScroll(e: UTSJSONObject) {
-	const d = e['detail'] as UTSJSONObject
-	if (d != null) {
-		const st = d['scrollTop']
-		if (st != null) {
-			scrollTop.value = st as number
-		}
+	scrollTick.value = scrollTick.value + 1
+	if (e == null) {
+		return
+	}
+	const detail = e['detail'] as UTSJSONObject | null
+	if (detail == null) {
+		return
+	}
+	const st = detail['scrollTop']
+	if (st != null) {
+		scrollTopFromView.value = st as number
 	}
 }
 </script>
 
 <style lang="scss">
 @import '../_demo-common.scss';
+
+.sticky-page {
+	background-color: #f5f5f5;
+}
+
+.sticky-page-body {
+	padding-bottom: 48rpx;
+	box-sizing: border-box;
+}
+
+.sticky-demo-tip {
+	display: block;
+	margin-top: 12rpx;
+}
+
+.sticky-demo-pre {
+	padding: 16rpx 24rpx 32rpx;
+	background-color: #ffffff;
+	margin: 0 24rpx 24rpx;
+	border-radius: 16rpx;
+}
+
+.sticky-demo-line {
+	display: block;
+	font-size: 28rpx;
+	color: #666666;
+	line-height: 2;
+	padding: 8rpx 0;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: #f0f0f0;
+}
+
+.sticky-demo-bar {
+	background-color: #f6ffed;
+	border-bottom-color: #b7eb8f;
+}
+
+.sticky-demo-list {
+	margin-top: 0;
+}
+
+.sticky-demo-row {
+	padding: 24rpx 0;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: #f0f0f0;
+}
+
+.sticky-demo-row-t {
+	font-size: 28rpx;
+	color: #333333;
+	line-height: 1.5;
+}
+
+.sticky-page-footer {
+	height: 200rpx;
+}
 </style>

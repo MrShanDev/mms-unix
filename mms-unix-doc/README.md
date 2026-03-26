@@ -30,9 +30,18 @@ mmsUnx 是为 uni-app-x 项目定制的基础组件库，完全自研原创实�
 | 组件 | 说明 | 文档 |
 |------|------|------|
 | mms-button | 按钮 | [文档](./button.md) |
+| mms-input | 单行输入 | [文档](./input.md) |
+| mms-textarea | 多行输入 | [文档](./textarea.md) |
+| mms-form | 表单分组容器 | [文档](./input.md#mms-form-表单分组容器) |
+| mms-radio-group | 单选组 | [文档](./radio.md) |
+| mms-radio | 单选项 | [文档](./radio.md) |
+| mms-checkbox-group | 多选组 | [文档](./checkbox.md) |
+| mms-checkbox | 多选项 | [文档](./checkbox.md) |
+| mms-switch | 开关 | [文档](./switch.md) |
 | mms-search | 搜索框 | [文档](./search.md) |
 | mms-upload | 图片上传 | [文档](./upload.md) |
 | mms-datetime-picker | 日期时间选择 | [文档](./datetime-picker.md) |
+| mms-picker | 联动选择（1～3 列） | [文档](./picker.md) |
 | mms-clipboard | 剪贴板复制 | [文档](./clipboard.md) |
 
 ### 展示
@@ -61,6 +70,7 @@ mmsUnx 是为 uni-app-x 项目定制的基础组件库，完全自研原创实�
 | 组件 | 说明 | 文档 |
 |------|------|------|
 | mms-countdown | 倒计时 | [文档](./countdown.md) |
+| mms-countdown-verify | 验证码倒计时 | [文档](./countdown-verify.md) |
 | mms-grid | 宫格 | [文档](./grid.md) |
 | mms-icon | 图标 | [文档](./icon.md) |
 | mms-sticky-bottom | 粘性底部 | [文档](./sticky-bottom.md) |
