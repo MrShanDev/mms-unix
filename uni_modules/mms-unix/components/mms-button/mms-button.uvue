@@ -26,10 +26,14 @@
 				getDisabledClass(disabled, type, plain),
 				getShapeClass(shape, plain),
 				bold ? 'mms-text-bold' : '',
-				link ? 'mms-btn__link' : ''
+				link ? 'mms-btn__link' : '',
+				loading ? 'mms-btn--loading' : ''
 			]" :style="{ width: getWidth, height: getHeight, lineHeight: getHeight, fontSize: fontSizeCss,background:getBgColor(type,plain),color:getColor(type,plain),boxShadow:shadow?getShadow(type,plain):'none' }"
 			:form-type="formType" :disabled="disabled" @tap="handleClick">
-			<slot></slot>
+			<view class="mms-btn__inner">
+				<mms-loading v-if="loading" text="" size="14rpx" :color="loadingSpinnerColor" />
+				<slot></slot>
+			</view>
 		</button>
 		<!-- #endif -->
 		<view class="mms-button__border" :class="[getShapeClass(shape, plain),getDisabledClass(disabled, type, plain)]"
@@ -187,6 +191,10 @@
 			},
 			fontSizeCss(): string {
 				return toCssLength(this.getSize as number | string)
+			},
+			/** 非微信端 loading 小圆点与按钮字色一致 */
+			loadingSpinnerColor(): string {
+				return this.getColor(this.type as string, this.plain as boolean)
 			}
 		},
 		data() {
@@ -259,6 +267,7 @@
 			},
 			handleClick() {
 				if (this.disabled) return;
+				if (this.loading) return;
 				if (this.preventClick) {
 					if (new Date().getTime() - this.time <= 200) return;
 					this.time = new Date().getTime();
@@ -362,6 +371,19 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
+	}
+
+	.mms-btn__inner {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		gap: 12rpx;
+	}
+
+	.mms-btn--loading {
+		pointer-events: none;
 	}
 
 	.mms-btn::after {

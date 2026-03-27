@@ -8,6 +8,7 @@
 </template>
 
 <script lang="uts">
+import { PropType } from 'vue'
 import { toCssLength } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 
 export default {
@@ -41,14 +42,18 @@ export default {
 	},
 	computed: {
 		rootStyle(): UTSJSONObject {
-			return {
+			const st = {
 				backgroundColor: this.backgroundColor,
 				borderRadius: toCssLength(this.radius as number | string),
 				marginLeft: toCssLength(this.marginX as number | string),
 				marginRight: toCssLength(this.marginX as number | string),
 				padding: this.padding,
 				overflow: 'hidden'
+			} as UTSJSONObject
+			if (this.customStyle != null) {
+				Object.assign(st, this.customStyle)
 			}
+			return st
 		}
 	}
 }

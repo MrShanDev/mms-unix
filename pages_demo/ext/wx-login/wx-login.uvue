@@ -1,0 +1,90 @@
+<template>
+	<scroll-view class="page-scroll" scroll-y style="flex:1">
+		<view class="demo-page">
+			<view class="demo-section">
+				<text class="section-title">微信一键登录（mms-wx-login）</text>
+				<text class="section-desc">type=code 时走 uni.login 取 code；type=userInfo 时走 getUserProfile。仅微信小程序端有效。</text>
+				<!-- #ifdef MP-WEIXIN -->
+				<view class="wx-slot">
+					<mms-wx-login text="微信一键登录（code）" type="code" @success="onCodeSuccess" @fail="onFail"></mms-wx-login>
+				</view>
+				<mms-gap :height="24"></mms-gap>
+				<view class="wx-slot">
+					<mms-wx-login text="获取用户信息（userInfo）" type="userInfo" @success="onUserSuccess" @fail="onFail"></mms-wx-login>
+				</view>
+				<!-- #endif -->
+				<!-- #ifndef MP-WEIXIN -->
+				<text class="demo-result">当前运行环境非微信小程序，请在微信开发者工具中打开本页查看 mms-wx-login。</text>
+				<!-- #endif -->
+				<text v-if="resultText !== ''" class="demo-result">{{ resultText }}</text>
+			</view>
+		</view>
+	</scroll-view>
+</template>
+
+<script setup lang="uts">
+import { ref } from 'vue'
+
+const resultText = ref('')
+
+function onCodeSuccess(e: UTSJSONObject) {
+	const c = e['code']
+	resultText.value = 'success(code): ' + (c != null ? '' + c : '')
+}
+
+function onUserSuccess(e: UTSJSONObject) {
+	resultText.value = 'success(userInfo): 已获取（见控制台）'
+	console.log('wx-login userInfo', e)
+}
+
+function onFail(_e: UTSJSONObject) {
+	resultText.value = 'fail'
+}
+</script>
+
+<style lang="scss">
+@import '../../_demo-common.scss';
+
+.page-scroll {
+	height: 100%;
+}
+
+.demo-page {
+	min-height: 100%;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+	padding-bottom: 48rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	margin-bottom: 16rpx;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.55;
+	margin-bottom: 24rpx;
+	display: block;
+}
+
+.wx-slot {
+	width: 100%;
+}
+
+.demo-result {
+	font-size: 24rpx;
+	color: #666666;
+	margin-top: 20rpx;
+	display: block;
+	line-height: 1.5;
+	word-break: break-all;
+}
+</style>

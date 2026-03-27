@@ -18,6 +18,7 @@
 
 <script lang="uts">
 import { toCssLength } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+import { getMmsUiConfig } from '@/uni_modules/mms-unix/config.uts'
 
 export default {
 	name: 'mmsEmpty',
@@ -37,7 +38,7 @@ export default {
 			type: String,
 			default: ''
 		},
-		/** mms-icon 的 name；不传 image 时未指定 icon 则使用内置默认图标 file-common-filling */
+		/** mms-icon 的 name；不传 image 且未指定 icon 时使用 mmsUi.emptyDefaultIcon（默认 file-common-filling） */
 		icon: {
 			type: String,
 			default: ''
@@ -59,13 +60,13 @@ export default {
 			}
 			return this.description as string
 		},
-		/** 未传 icon 时使用字库内「文档」类填充图标，避免依赖 /static 插图缺失导致无图 */
+		/** 未传 icon 时使用 config.uts 的 emptyDefaultIcon（图标字体，不依赖静态 PNG） */
 		resolvedIconName(): string {
 			const ic = (this.icon as string).trim()
 			if (ic.length > 0) {
 				return ic
 			}
-			return 'file-common-filling'
+			return getMmsUiConfig().emptyDefaultIcon
 		},
 		showIconBlock(): boolean {
 			return (this.image as string).trim().length === 0

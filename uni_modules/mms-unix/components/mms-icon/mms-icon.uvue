@@ -100,6 +100,11 @@ function getIconChar(name: string): string {
 	if (name === 'top-filling') return '\ue714'
 	if (name === 'home-filling') return '\ue715'
 	if (name === 'sorting') return '\ue716'
+	// 分栏/列表（字库 glyph，与 iconfont.json 一致）
+	if (name === 'column-3' || name === 'category') return '\ue663'
+	if (name === 'column-4') return '\ue664'
+	if (name === 'column-vertical' || name === 'listview') return '\ue67d'
+	if (name === 'column-horizontal') return '\ue67e'
 	// 其他常用图标
 	if (name === 'add') return '\ue665'
 	if (name === 'add-circle') return '\ue666'
@@ -149,6 +154,7 @@ function getIconChar(name: string): string {
 	if (name === 'minus-circle') return '\ue6b5'
 	if (name === 'more') return '\ue6b9'
 	if (name === 'notification' || name === 'message') return '\ue6b7'
+	if (name === 'wechat') return '\ue641'
 	if (name === 'play') return '\ue6bc'
 	if (name === 'film') return '\ue69b'
 	// 字库无 good-filling，与 fabulous（点赞）共用字形

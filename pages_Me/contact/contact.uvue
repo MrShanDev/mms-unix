@@ -6,38 +6,41 @@
 					<mms-link href="https://mmsadmin.cn" text="mmsadmin.cn" underline></mms-link>
 				</template>
 			</mms-cell>
-			<mms-cell title="商务咨询" value="欢迎邮件/电话沟通合作" :border="false"></mms-cell>
+			<mms-cell title="组件文档" :border="true">
+				<template #right>
+					<mms-link href="https://mmsadmin.cn/mms-unix/README.html" text="README" underline></mms-link>
+				</template>
+			</mms-cell>
+			<mms-cell title="商务合作" value="服务范围与承接说明" :isLink="true" :border="true" @click="goCooperation"></mms-cell>
+			<mms-cell title="商务咨询" value="欢迎邮件、微信沟通合作" :border="false"></mms-cell>
 		</mms-cell-group>
-		<mms-cell-group title="沟通方式（请按实际修改）">
-			<mms-cell title="电话" :value="contactPhone" :isLink="true" @click="onDial"></mms-cell>
-			<mms-cell title="邮箱" :border="false">
+		<mms-cell-group title="联系方式">
+			<mms-cell title="邮箱" :border="true">
 				<template #right>
 					<mms-link :href="'mailto:' + contactEmail" :text="contactEmail" underline></mms-link>
 				</template>
 			</mms-cell>
+			<mms-cell title="微信" :value="contactWechat" :isLink="true" :border="false" @click="onCopyWechat"></mms-cell>
 		</mms-cell-group>
 		<view class="tip">
-			<text class="tip-text">以上联系方式可在本页 script 中修改常量；也可后续接入 config。</text>
+			<text class="tip-text">点击微信可复制微信号。</text>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
-	/** 替换为贵司真实号码与邮箱 */
-	const contactPhone = '029-88888888'
-	const contactEmail = 'contact@example.com'
+	import { copyToClipboard, msg } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 
-	function onDial() {
-		uni.makePhoneCall({
-			phoneNumber: contactPhone,
-			fail: () => {
-				uni.showModal({
-					title: '联系电话',
-					content: contactPhone,
-					showCancel: false,
-				})
-			},
-		})
+	const contactEmail = 'sxpcwlkj@163.com'
+	const contactWechat = 'qq942879858'
+
+	function onCopyWechat() {
+		copyToClipboard(contactWechat)
+		msg('已复制微信号')
+	}
+
+	function goCooperation() {
+		jumpTo('/pages_Me/cooperation/cooperation')
 	}
 </script>
 

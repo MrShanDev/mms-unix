@@ -1,5 +1,5 @@
 <template>
-	<mms-dialog v-if="showUpdateDialog" :show="true" :title="updateInfo.title" :buttons="updateButtons" @click="handleButtonClick">
+	<mms-dialog v-if="showUpdateDialog" :show="true" :title="updateInfo.title" :buttons="updateButtons()" @click="handleButtonClick">
 		<template v-slot:content>
 			<view class="mms-update__content">
 				<text class="mms-update__desc">{{ updateInfo.desc }}</text>

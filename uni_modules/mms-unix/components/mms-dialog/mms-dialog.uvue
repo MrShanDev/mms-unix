@@ -7,7 +7,11 @@
 					<slot name="title"></slot>
 				</view>
 			</view>
-			<view class="mms-dialog__bd" :style="{color:contentColor}">
+			<view
+				class="mms-dialog__bd"
+				:class="{ 'mms-dialog__bd--no-title': title === '' }"
+				:style="{ color: contentColor }"
+			>
 				<slot name="content">{{ content }}</slot>
 			</view>
 			<view class="mms-dialog__ft">
@@ -145,7 +149,10 @@
 	}
 
 	.mms-dialog__hd {
-		padding: 32px 24px 16px
+		padding: 32px 24px 16px;
+		align-self: stretch;
+		width: 100%;
+		box-sizing: border-box;
 	}
 
 	.mms-dialog__title {
@@ -164,6 +171,21 @@
 		word-wrap: break-word;
 		-webkit-hyphens: auto;
 		hyphens: auto;
+		align-self: stretch;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	/* 无标题时正文区域水平、垂直居中（短文案在可视区域内居中；过长仍可滚动） */
+	.mms-dialog__bd--no-title {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		padding: 32px 24px 24px;
+		margin-bottom: 32px;
+		min-height: 88px;
 	}
 
 

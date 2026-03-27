@@ -65,18 +65,28 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+/* 未用 scoped：插槽内 mms-radio 根节点需能应用间距；ucss 对 gap 不稳定，用 margin */
 .mms-radio-group {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	gap: 28rpx;
 }
 
+.mms-radio-group > .mms-radio:not(:first-child) {
+	margin-top: 28rpx;
+}
+
+/* 横向子项间距由 mms-radio 根节点内联 margin 实现 */
 .mms-radio-group--row {
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 20rpx 40rpx;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.mms-radio-group.mms-radio-group--row > .mms-radio:not(:first-child) {
+	margin-top: 0;
 }
 </style>

@@ -1,62 +1,79 @@
 <template>
-	<view
-		class="mms-countdown"
-		:class="rootClass"
-		@tap="onTap"
-	>
-		<text class="mms-countdown__text" :class="textClass">{{ displayStr }}</text>
+	<view class="mms-countdown" :class="rootClass" @tap="onTap">
+		<view v-if="showCellsLayout" class="mms-countdown__cells">
+			<view v-for="(part, idx) in cellParts" :key="'cp-' + idx" class="mms-countdown__cellItem">
+				<view v-if="part.kind === 'box'" class="mms-countdown__cell">
+					<text class="mms-countdown__cellText">{{ part.text }}</text>
+				</view>
+				<text v-else class="mms-countdown__sep">{{ part.text }}</text>
+			</view>
+		</view>
+		<text v-else class="mms-countdown__text" :class="textClass">{{ displayStr }}</text>
 	</view>
 </template>
 
 <script lang="uts">
+type CellPart = {
+	kind: 'box' | 'sep'
+	text: string
+}
+
 export default {
 	name: 'mmsCountdown',
 	emits: ['change', 'finish', 'tap'],
 	props: {
-		// 倒计时秒数（与文档一致）
 		time: {
 			type: Number,
 			default: 60
 		},
-		// 与 time 同义，演示页常用；大于 0 时覆盖 time
 		seconds: {
 			type: Number,
 			default: 0
 		},
-		// 格式化 DD HH mm ss（非短信文案模式时生效）
+		/**
+		 * 占位符：YYYY MM DD HH mm ss（MM 为大写表示月，mm 为小写表示分）
+		 * 示例：HH:mm:ss、DD天HH时mm分ss秒、YYYY-MM-DD HH:mm:ss
+		 */
 		format: {
 			type: String,
 			default: 'HH:mm:ss'
 		},
-		// 是否自动开始
 		autoStart: {
 			type: Boolean,
 			default: true
 		},
-		// 展示类型：空/text 为纯文字；button 为块状按钮样式
+		// 空 / text / button / cells（分格小方格，与 button 互斥）
 		type: {
 			type: String,
 			default: ''
 		},
-		// 倒计时进行中前缀数字后的文案，如「秒后重试」，显示为「59秒后重试」
 		suffix: {
 			type: String,
 			default: ''
 		},
-		// 结束且可点击重置时展示（需配合 tap 或 restartOnTap）
 		endText: {
 			type: String,
 			default: ''
 		},
-		// 未开始时的文案（仅 autoStart 为 false 时首帧有意义）
 		startText: {
 			type: String,
 			default: ''
 		},
-		// 结束后点击是否重新开始倒计时
 		restartOnTap: {
 			type: Boolean,
 			default: true
+		},
+		primary: {
+			type: Boolean,
+			default: false
+		},
+		/**
+		 * 为 true 时按「年(365天)/月(30天)/日/时/分/秒」拆分剩余秒数，用于 YYYY-MM-DD HH:mm:ss 等长周期展示
+		 * 为 false 时 DD 表示总天数（不足一天进 HH:mm:ss）
+		 */
+		calendar: {
+			type: Boolean,
+			default: false
 		}
 	},
 	data() {
@@ -82,13 +99,22 @@ export default {
 		isButtonType(): boolean {
 			return (this.type as string) === 'button'
 		},
+		isCellsType(): boolean {
+			return (this.type as string) === 'cells'
+		},
+		showCellsLayout(): boolean {
+			return this.isCellsType && !this.isSmsStyle
+		},
 		isCounting(): boolean {
 			return this.remaining > 0
 		},
 		rootClass(): string[] {
 			const list: string[] = []
-			if (this.isButtonType) {
+			if (this.isButtonType && !this.isCellsType) {
 				list.push('mms-countdown--button')
+			}
+			if (this.isCellsType) {
+				list.push('mms-countdown--cells')
 			}
 			if (this.isCounting) {
 				list.push('mms-countdown--counting')
@@ -96,11 +122,14 @@ export default {
 			if (this.canTapRestart) {
 				list.push('mms-countdown--clickable')
 			}
+			if (this.primary === true) {
+				list.push('mms-countdown--primary')
+			}
 			return list
 		},
 		textClass(): string[] {
 			const list: string[] = []
-			if (this.isButtonType && this.isCounting) {
+			if (this.isButtonType && this.isCounting && !this.isCellsType) {
 				list.push('mms-countdown__text--muted')
 			}
 			if (this.canTapRestart) {
@@ -121,15 +150,37 @@ export default {
 			return (this.endText as string).length > 0
 		},
 		clockDisplay(): string {
-			let { day, hour, minute, second } = this.parseFormat(this.remaining)
-			let result = this.format as string
-			if (day > 0) {
-				result = result.replace('DD', this.padZero(day))
+			const fmt = this.format as string
+			if (this.calendar === true) {
+				const lb = this.longBreakdown(this.remaining)
+				return this.applyFormatString(
+					fmt,
+					lb.y,
+					lb.M,
+					lb.d,
+					lb.h,
+					lb.m,
+					lb.s,
+					true
+				)
 			}
-			result = result.replace('HH', this.padZero(hour))
-			result = result.replace('mm', this.padZero(minute))
-			result = result.replace('ss', this.padZero(second))
-			return result
+			const sh = this.parseFormatShort(this.remaining)
+			return this.applyFormatString(fmt, 0, 0, sh.day, sh.hour, sh.minute, sh.second, false)
+		},
+		cellParts(): CellPart[] {
+			if (!this.showCellsLayout) {
+				return []
+			}
+			const fmt = this.format as string
+			let br: { y: number; M: number; d: number; h: number; mi: number; s: number }
+			if (this.calendar === true) {
+				const lb = this.longBreakdown(this.remaining)
+				br = { y: lb.y, M: lb.M, d: lb.d, h: lb.h, mi: lb.m, s: lb.s }
+			} else {
+				const sh = this.parseFormatShort(this.remaining)
+				br = { y: 0, M: 0, d: sh.day, h: sh.hour, mi: sh.minute, s: sh.second }
+			}
+			return this.scanFormatToCells(fmt, br)
 		},
 		displayStr(): string {
 			if (this.autoStart !== true && !this.hasStarted) {
@@ -171,7 +222,26 @@ export default {
 		padZero(num: number): string {
 			return num < 10 ? '0' + num : String(num)
 		},
-		parseFormat(seconds: number) {
+		pad4(num: number): string {
+			if (num < 10) {
+				return '000' + num
+			}
+			if (num < 100) {
+				return '00' + num
+			}
+			if (num < 1000) {
+				return '0' + num
+			}
+			return String(num)
+		},
+		padDD(d: number): string {
+			if (d >= 100) {
+				return String(d)
+			}
+			return this.padZero(d)
+		},
+		/** 总秒数拆成：天(0~)、时(0~23)、分、秒（duration 模式） */
+		parseFormatShort(seconds: number) {
 			let sec = seconds
 			const day = Math.floor(sec / (60 * 60 * 24))
 			sec = sec % (60 * 60 * 24)
@@ -186,9 +256,116 @@ export default {
 				second: sec
 			}
 		},
+		/** 年=365天、月=30天、日、时、分、秒（calendar 模式，近似） */
+		longBreakdown(seconds: number) {
+			let s = seconds
+			const y = Math.floor(s / (365 * 24 * 3600))
+			s = s % (365 * 24 * 3600)
+			const M = Math.floor(s / (30 * 24 * 3600))
+			s = s % (30 * 24 * 3600)
+			const d = Math.floor(s / (24 * 3600))
+			s = s % (24 * 3600)
+			const h = Math.floor(s / 3600)
+			s = s % 3600
+			const m = Math.floor(s / 60)
+			const sec = s % 60
+			return { y, M, d, h, m, s: sec }
+		},
+		applyFormatString(
+			fmt: string,
+			y: number,
+			M: number,
+			d: number,
+			h: number,
+			mi: number,
+			s: number,
+			isLong: boolean
+		): string {
+			let r = fmt
+			if (isLong) {
+				r = r.replace('YYYY', this.pad4(y))
+				r = r.replace('MM', this.padZero(M))
+				r = r.replace('DD', this.padZero(d))
+			} else {
+				r = r.replace('YYYY', this.pad4(0))
+				r = r.replace('MM', this.padZero(0))
+				r = r.replace('DD', this.padDD(d))
+			}
+			r = r.replace('HH', this.padZero(h))
+			r = r.replace('mm', this.padZero(mi))
+			r = r.replace('ss', this.padZero(s))
+			return r
+		},
+		scanFormatToCells(
+			fmt: string,
+			br: { y: number; M: number; d: number; h: number; mi: number; s: number }
+		): CellPart[] {
+			const out: CellPart[] = []
+			let i = 0
+			const len = fmt.length
+			while (i < len) {
+				if (i + 4 <= len && fmt.substring(i, i + 4) === 'YYYY') {
+					out.push({ kind: 'box', text: this.pad4(br.y) })
+					i += 4
+					continue
+				}
+				if (i + 2 <= len) {
+					const two = fmt.substring(i, i + 2)
+					if (two === 'MM') {
+						out.push({ kind: 'box', text: this.padZero(br.M) })
+						i += 2
+						continue
+					}
+					if (two === 'DD') {
+						out.push({ kind: 'box', text: this.padDD(br.d) })
+						i += 2
+						continue
+					}
+					if (two === 'HH') {
+						out.push({ kind: 'box', text: this.padZero(br.h) })
+						i += 2
+						continue
+					}
+					if (two === 'mm') {
+						out.push({ kind: 'box', text: this.padZero(br.mi) })
+						i += 2
+						continue
+					}
+					if (two === 'ss') {
+						out.push({ kind: 'box', text: this.padZero(br.s) })
+						i += 2
+						continue
+					}
+				}
+				const ch = fmt.charAt(i)
+				out.push({ kind: 'sep', text: ch })
+				i++
+			}
+			return out
+		},
+		getBreakdownForEmit(seconds: number): UTSJSONObject {
+			if (this.calendar === true) {
+				const lb = this.longBreakdown(seconds)
+				return {
+					year: lb.y,
+					month: lb.M,
+					day: lb.d,
+					hour: lb.h,
+					minute: lb.m,
+					second: lb.s
+				} as UTSJSONObject
+			}
+			const sh = this.parseFormatShort(seconds)
+			return {
+				day: sh.day,
+				hour: sh.hour,
+				minute: sh.minute,
+				second: sh.second
+			} as UTSJSONObject
+		},
 		tick() {
 			this.remaining--
-			this.$emit('change', this.parseFormat(this.remaining))
+			this.$emit('change', this.getBreakdownForEmit(this.remaining))
 			if (this.remaining <= 0) {
 				this.stop()
 				this.$emit('finish')
@@ -226,7 +403,7 @@ export default {
 			}
 		}
 	}
-};
+}
 </script>
 
 <style scoped lang="scss">
@@ -257,6 +434,56 @@ export default {
 		background-color: #f5f7fa;
 	}
 
+	&.mms-countdown--cells {
+		flex-wrap: wrap;
+		align-self: stretch;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
+	}
+
+	.mms-countdown__cells {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.mms-countdown__cellItem {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.mms-countdown__cell {
+		min-width: 40rpx;
+		padding: 10rpx 14rpx;
+		border-radius: 8rpx;
+		border-width: 1px;
+		border-style: solid;
+		border-color: #dcdfe6;
+		background-color: #f5f7fa;
+		box-sizing: border-box;
+	}
+
+	.mms-countdown__cellText {
+		font-size: 26rpx;
+		font-weight: 600;
+		color: #303133;
+		line-height: 1.2;
+	}
+
+	.mms-countdown__sep {
+		font-size: 24rpx;
+		color: #909399;
+		line-height: 1.2;
+		padding: 0 4rpx;
+	}
+
 	&.mms-countdown--clickable {
 		opacity: 1;
 	}
@@ -267,6 +494,43 @@ export default {
 
 	.mms-countdown__text--action {
 		color: #5677fc;
+	}
+
+	&.mms-countdown--primary {
+		.mms-countdown__text {
+			color: #ff0844;
+		}
+
+		&.mms-countdown--button {
+			background-color: #fff5f7;
+			border-color: #ff0844;
+		}
+
+		&.mms-countdown--button.mms-countdown--counting {
+			background-color: #fff5f7;
+			border-color: #ffc6d4;
+		}
+
+		.mms-countdown__text--muted {
+			color: #c0c4cc;
+		}
+
+		.mms-countdown__text--action {
+			color: #ff0844;
+		}
+
+		.mms-countdown__cell {
+			background-color: #fff5f7;
+			border-color: #ff0844;
+		}
+
+		.mms-countdown__cellText {
+			color: #ff0844;
+		}
+
+		.mms-countdown__sep {
+			color: #ff0844;
+		}
 	}
 }
 </style>

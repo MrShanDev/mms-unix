@@ -2,14 +2,39 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">悬浮扩展按钮</text>
-			<text class="demo-desc">右下角 FAB，点击展开子项；可点击遮罩关闭。</text>
+			<text class="demo-desc">主按钮使用 mms-icon（more）；下方开关可控制是否可拖动、松手是否吸边；点击展开子项，可点遮罩关闭。</text>
+			<view class="fab-opts">
+				<view class="fab-opts__row">
+					<text class="fab-opts__label">可拖动</text>
+					<mms-switch v-model="fabDrag" color="#5677fc"></mms-switch>
+				</view>
+				<view class="fab-opts__row">
+					<text class="fab-opts__label">松手吸边</text>
+					<mms-switch v-model="fabSnap" color="#5677fc" :disabled="!fabDrag"></mms-switch>
+				</view>
+			</view>
 		</view>
 
-		<mms-fab :btn-list="fabBtns" :mask-closable="true" @click="onFabClick"></mms-fab>
+		<mms-fab
+			icon="more"
+			:icon-size="56"
+			:draggable="fabDrag"
+			:snap-edge="fabSnap"
+			:btn-list="fabBtns"
+			:mask-closable="true"
+			@click="onFabClick"
+		></mms-fab>
 	</view>
 </template>
 
 <script setup lang="uts">
+import { ref } from 'vue'
+
+/** 演示：是否允许拖动主按钮 */
+const fabDrag = ref(true)
+/** 演示：拖动结束后是否吸附到左/右边缘（需开启可拖动） */
+const fabSnap = ref(true)
+
 const fabBtns = [
 	{ bgColor: '#16C2C2', text: '关于', fontSize: 28, color: '#fff' },
 	{ bgColor: '#64B532', text: '分享', fontSize: 28, color: '#fff' }
@@ -47,5 +72,30 @@ function onFabClick(e: UTSJSONObject) {
 	color: #666666;
 	line-height: 1.5;
 	display: block;
+	margin-bottom: 20rpx;
+}
+
+.fab-opts {
+	margin-top: 8rpx;
+	padding: 20rpx;
+	background-color: #f8f8f8;
+	border-radius: 12rpx;
+}
+
+.fab-opts__row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 20rpx;
+}
+
+.fab-opts__row:last-of-type {
+	margin-bottom: 0;
+}
+
+.fab-opts__label {
+	font-size: 28rpx;
+	color: #333333;
 }
 </style>

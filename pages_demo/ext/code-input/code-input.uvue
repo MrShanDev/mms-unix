@@ -1,9 +1,37 @@
 <template>
 	<view class="demo-page">
 		<view class="demo-section">
-			<text class="section-title">验证码输入框</text>
+			<text class="section-title">基础（默认尺寸）</text>
+			<text class="section-desc">默认每格 108rpx、字号 48；也可分别传 width / height / size。</text>
 			<mms-code-input :length="4" type="number" @complete="onCodeComplete"></mms-code-input>
 			<text class="code-hint">输入完成：{{ codeCompleteMsg }}</text>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">统一大小 boxSize</text>
+			<text class="section-desc">
+				boxSize 为格子边长（rpx），会按比例设置数字字号、光标高度、密码圆点；与单独传 width/height 二选一。
+			</text>
+			<text class="code-sub">小 · boxSize=72</text>
+			<mms-code-input :length="4" type="number" :boxSize="72" @complete="onCodeComplete"></mms-code-input>
+			<text class="code-sub">中 · boxSize=90（接近默认）</text>
+			<mms-code-input :length="4" type="number" :boxSize="90" @complete="onCodeComplete"></mms-code-input>
+			<text class="code-sub">大 · boxSize=100</text>
+			<mms-code-input :length="4" type="number" :boxSize="100" @complete="onCodeComplete"></mms-code-input>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">格子间距 cellGap</text>
+			<text class="section-desc">cellGap 控制格子之间水平间距（rpx），默认 16。</text>
+			<text class="code-sub">cellGap=8</text>
+			<mms-code-input :length="4" type="number" :boxSize="96" :cellGap="8"></mms-code-input>
+			<text class="code-sub">cellGap=24</text>
+			<mms-code-input :length="4" type="number" :boxSize="96" :cellGap="24"></mms-code-input>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">密码模式</text>
+			<mms-code-input :length="4" password :boxSize="100"></mms-code-input>
 		</view>
 	</view>
 </template>
@@ -38,7 +66,25 @@ function onCodeComplete(e: UTSJSONObject) {
 	margin-bottom: 24rpx;
 }
 
+.section-desc {
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.5;
+	margin-bottom: 20rpx;
+	display: block;
+}
 
+.code-sub {
+	display: block;
+	font-size: 26rpx;
+	color: #333333;
+	margin-top: 24rpx;
+	margin-bottom: 12rpx;
+}
+
+.section-desc + .code-sub {
+	margin-top: 8rpx;
+}
 
 .code-hint {
 	font-size: 26rpx;

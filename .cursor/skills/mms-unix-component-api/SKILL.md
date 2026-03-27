@@ -20,6 +20,12 @@ description: >-
 
 ## 核心规则
 
+### 0. 根节点外覆样式：`customStyle`
+
+- 业务侧用 **`:customStyle`** 传入 **`UTSJSONObject`**（与内置 `rootStyle` / `boxStyle` 等合并，**后写覆盖先写**）。
+- **不要**依赖在自定义组件标签上写原生 `style`（各端透传不一致）；以各组件文档与实现为准。
+- 本库已支持或已合并 `customStyle` 的示例：`mms-card`、`mms-tag`、`mms-cell`，以及带 `rootStyle` 的 `mms-banner-arc`、`mms-section`、`mms-form`、`mms-code-input`、`mms-tabs`、`mms-notice-bar`、`mms-rolling-news`、`mms-segmented-control`、`mms-bubble-popup`、`mms-watermark`、`mms-countdown-verify` 等。
+
 ### 1. `emits` 与 `$emit` 必须一致
 
 - 组件内每出现一种 `this.$emit('eventName', ...)`，**必须在 `emits` 数组中声明**同名事件（含 `update:modelValue`、`update:show` 等）。

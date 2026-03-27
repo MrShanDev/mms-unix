@@ -2,9 +2,7 @@
 
 专为 uni-app-x 项目定制的自研基础组件库，完全原创实现。
 
-**更新日志（规范）：**本包根目录 [`changelog.md`](./changelog.md)（uni_modules / uni-app-x 约定）。
-
-**详细验收（按版本）：**工程根目录 [`version/doc/README.md`](../../version/doc/README.md) 中的 `lib-x.y.z.md`（与 `package.json` 的 `version` 一致）。
+**更新日志与对外信息（插件市场 / 文档 / 联系方式）：**本包根目录 [`changelog.md`](./changelog.md)（**唯一随包发布的变更与文档入口说明**，不依赖其它目录的 Markdown）。
 
 ## 特点
 
@@ -80,7 +78,7 @@
 | utils | 常用工具函数 |
 | request | 网络请求封装 |
 
-完整文档请查看 [mms-doc/mmsunx](https://github.com/your-project/mms-doc/mmsunx)。
+完整说明、版本历史与 **在线文档地址** 见 [`changelog.md`](./changelog.md) 开头章节；上架 DCloud 插件市场后请在 `changelog.md` 中填写文档链接与联系方式。
 
 ## 使用
 

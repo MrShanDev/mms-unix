@@ -3,7 +3,7 @@
 		<scroll-view class="ext-scroll" scroll-y>
 			<view class="ext-section">
 				<text class="ext-title">mms-picture-cropper</text>
-				<text class="ext-crop-hint">默认展示项目内 /static/logo.png；也可选相册图片查看裁剪框与压暗区域。</text>
+				<text class="ext-crop-hint">默认使用 mmsUi.demoImage（库内默认外链示例图）；也可选相册图片。裁剪区内可单指拖动、双指缩放构图，工具栏可「重置」视图。</text>
 				<view class="ext-crop-actions">
 					<text class="ext-crop-btn" @tap="chooseImage">选择图片</text>
 					<text v-if="pickedSrc !== ''" class="ext-crop-btn ext-crop-btn--ghost" @tap="clearPicked">使用默认图</text>
@@ -17,11 +17,11 @@
 
 <script setup lang="uts">
 import { computed, ref } from 'vue'
-import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
+import { getMmsUiConfig } from '@/uni_modules/mms-unix/config.uts'
 
 const pickedSrc = ref('')
 
-const cropperDemoSrc = computed((): string => getMmsUiConfig().cropperDemo)
+const cropperDemoSrc = computed((): string => getMmsUiConfig().demoImage)
 
 const displaySrc = computed((): string => {
 	const p = pickedSrc.value
@@ -82,8 +82,11 @@ function onCrop(e: UTSJSONObject) {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	gap: 16rpx;
 	margin-bottom: 24rpx;
+}
+
+.ext-crop-actions .ext-crop-btn + .ext-crop-btn {
+	margin-left: 16rpx;
 }
 
 .ext-crop-btn {

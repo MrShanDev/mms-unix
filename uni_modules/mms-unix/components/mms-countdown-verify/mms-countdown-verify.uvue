@@ -10,6 +10,7 @@
 </template>
 
 <script lang="uts">
+import { PropType } from 'vue'
 import { toCssLength } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 
 export default {
@@ -117,6 +118,10 @@ export default {
 		params: {
 			type: [Number, String],
 			default: 0
+		},
+		customStyle: {
+			type: Object as PropType<UTSJSONObject>,
+			default: () => ({})
 		}
 	},
 	data() {
@@ -177,6 +182,9 @@ export default {
 				st['opacity'] = 0.55
 			} else if (this.waitingSuccess === true) {
 				st['opacity'] = 0.75
+			}
+			if (this.customStyle != null) {
+				Object.assign(st, this.customStyle)
 			}
 			return st
 		},

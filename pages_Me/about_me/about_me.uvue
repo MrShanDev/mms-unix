@@ -16,9 +16,22 @@
 					</text>
 				</view>
 				<view class="doc-block">
-					<text class="doc-label">官方文档</text>
+					<text class="doc-label">组件文档</text>
 					<view class="doc-link-row">
-						<mms-link href="https://mmsadmin.cn" text="mmsadmin.cn" underline></mms-link>
+						<mms-link
+							href="https://mmsadmin.cn/mms-unix/README.html"
+							text="mmsUnix · README"
+							underline
+						></mms-link>
+					</view>
+					<view class="doc-link-row doc-link-row--sub">
+						<mms-link href="https://mmsadmin.cn" text="mmsadmin.cn 站点首页" underline></mms-link>
+					</view>
+				</view>
+				<view class="doc-block">
+					<text class="doc-label">开源仓库</text>
+					<view class="doc-link-row">
+						<mms-link href="https://gitee.com/mmsAdmin/mms-unix.git" text="Gitee · mms-unix" underline></mms-link>
 					</view>
 				</view>
 				<view class="features">
@@ -118,6 +131,10 @@
 		flex-direction: row;
 		align-items: center;
 		flex-wrap: wrap;
+	}
+
+	.doc-link-row--sub {
+		margin-top: 12rpx;
 	}
 
 	.features {

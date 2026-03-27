@@ -11,6 +11,7 @@
 </template>
 
 <script lang="uts">
+import { PropType } from 'vue'
 import { parseCssNumber } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 
 export default {
@@ -112,7 +113,7 @@ export default {
 		},
 		rootStyle(): UTSJSONObject {
 			const zi = this.zIndexNum
-			return {
+			const st = {
 				position: this.position as string,
 				left: '0',
 				top: '0',
@@ -120,6 +121,10 @@ export default {
 				bottom: '0',
 				'z-index': zi.toString()
 			} as UTSJSONObject
+			if (this.customStyle != null) {
+				Object.assign(st, this.customStyle)
+			}
+			return st
 		},
 		/** 蒙层仅用背景色；定位与层级在 scss，与 mms-alert 一致，避免 fixed 蒙层盖住 absolute 气泡 */
 		maskBgOnly(): UTSJSONObject {

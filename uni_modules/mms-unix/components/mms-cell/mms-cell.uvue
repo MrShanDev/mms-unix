@@ -1,5 +1,10 @@
 <template>
-	<view class="mms-cell" :class="{'mms-cell--center': center, 'mms-cell--border': border}" @click="handleClick">
+	<view
+		class="mms-cell"
+		:class="{ 'mms-cell--center': center, 'mms-cell--border': border }"
+		:style="cellWrapStyle"
+		@click="handleClick"
+	>
 		<view class="mms-cell__left">
 			<slot name="icon">
 				<view v-if="icon" class="mms-cell__icon">
@@ -26,6 +31,8 @@
 </template>
 
 <script lang="uts">
+import { PropType } from 'vue'
+
 export default {
 	name: 'mmsCell',
 	emits: ['click'],
@@ -92,6 +99,13 @@ export default {
 		}
 	},
 	computed: {
+		cellWrapStyle(): UTSJSONObject {
+			const st = {} as UTSJSONObject
+			if (this.customStyle != null) {
+				Object.assign(st, this.customStyle)
+			}
+			return st
+		},
 		actualTitle(): string {
 			if (this.title !== '') {
 				return this.title

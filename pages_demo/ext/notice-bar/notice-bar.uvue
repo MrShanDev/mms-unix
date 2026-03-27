@@ -1,7 +1,8 @@
 <template>
 	<view class="demo-page">
 		<view class="demo-section">
-			<text class="section-title">横向滚动</text>
+			<text class="section-title">横向滚动 + 左侧图标</text>
+			<text class="section-desc">默认不显示图标；需设置 show-icon；icon 为 mms-icon 的 name。</text>
 			<mms-notice-bar
 				content="这是一条较长的通知内容，用于演示横向跑马灯滚动效果。"
 				:scrollable="true"
@@ -12,11 +13,39 @@
 		</view>
 
 		<view class="demo-section">
-			<text class="section-title">单行静态</text>
+			<text class="section-title">单行静态（无图标）</text>
 			<mms-notice-bar
 				content="不开启 scrollable，配合 single 单行省略"
 				:scrollable="false"
 				single
+			></mms-notice-bar>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">背景色、文字色与自定义图标</text>
+			<text class="section-desc">backgroundColor / bgColor；color / textColor；icon、iconColor、iconSize（可选）。</text>
+			<mms-notice-bar
+				content="自定义浅蓝背景与深蓝文字，左侧为 notification 图标。"
+				:scrollable="false"
+				:show-icon="true"
+				icon="notification-filling"
+				background-color="#e6f4ff"
+				color="#0958d9"
+				icon-color="#1677ff"
+				icon-size="32rpx"
+			></mms-notice-bar>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">主色风格</text>
+			<mms-notice-bar
+				content="bgColor 优先于 backgroundColor；textColor 优先于 color。"
+				:scrollable="false"
+				:show-icon="true"
+				icon="prompt-filling"
+				bg-color="#fff0f3"
+				text-color="#ff0844"
+				icon-color="#ff0844"
 			></mms-notice-bar>
 		</view>
 	</view>
@@ -26,6 +55,14 @@
 @import '../../_demo-common.scss';
 .section-title {
 	margin-bottom: 24rpx;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.5;
+	margin-bottom: 20rpx;
+	display: block;
 }
 
 .demo-page {
@@ -40,6 +77,4 @@
 	padding: 30rpx;
 	margin-bottom: 24rpx;
 }
-
-
 </style>

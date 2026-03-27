@@ -120,25 +120,33 @@ export default {
 	flex-wrap: wrap;
 	padding: 12rpx 8rpx 20rpx;
 	box-sizing: border-box;
+	width: 100%;
 }
 
 .mms-keyboard__cell {
-	width: 33.33%;
+	flex: 0 0 33.333333%;
+	width: 33.333333%;
+	max-width: 33.333333%;
 	box-sizing: border-box;
 	padding: 8rpx;
 	display: flex;
 	flex-direction: row;
-	align-items: center;
+	align-items: stretch;
 	justify-content: center;
+	min-width: 0;
 }
 
 .mms-keyboard__key-text {
-	font-size: 36rpx;
+	font-size: 34rpx;
 	color: #333333;
 	background-color: #ffffff;
 	border-radius: 8rpx;
 	width: 100%;
 	text-align: center;
-	padding: 28rpx 0;
+	padding: 28rpx 12rpx;
+	box-sizing: border-box;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 </style>

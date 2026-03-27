@@ -71,6 +71,10 @@ export default {
 		opacity: {
 			type: Number,
 			default: -1
+		},
+		customStyle: {
+			type: Object as PropType<UTSJSONObject>,
+			default: () => ({})
 		}
 	},
 	data() {
@@ -91,11 +95,15 @@ export default {
 			return this.hasContent && !this.hasImage
 		},
 		rootStyle(): UTSJSONObject {
-			return {
+			const st = {
 				position: 'relative',
 				width: '100%',
 				overflow: 'hidden'
+			} as UTSJSONObject
+			if (this.customStyle != null) {
+				Object.assign(st, this.customStyle)
 			}
+			return st
 		},
 		canvasStyle(): UTSJSONObject {
 			return {

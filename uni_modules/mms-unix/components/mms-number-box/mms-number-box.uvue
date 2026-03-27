@@ -111,6 +111,10 @@ export default {
 		},
 		btnStyle(): UTSJSONObject {
 			const st = {} as UTSJSONObject
+			const h = this.height as number
+			/* 与中间区同高，避免写死 56rpx 与 height prop 不一致导致加减号视觉不居中 */
+			st['width'] = h + 'rpx'
+			st['height'] = h + 'rpx'
 			st['backgroundColor'] = this.iconBgColor as string
 			if (this.radius as boolean) {
 				st['borderRadius'] = '50%'
@@ -178,16 +182,18 @@ export default {
 }
 
 .mms-number-box__btn {
-	width: 56rpx;
-	height: 56rpx;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
+	flex-shrink: 0;
+	box-sizing: border-box;
 }
 
 .mms-number-box__btn-text {
 	font-weight: bold;
+	line-height: 1;
+	/* 避免部分端默认行高把 +/- 顶偏 */
 }
 
 .mms-number-box__input-wrap {

@@ -14,7 +14,7 @@
 					<text class="card-desc">左侧为缩略图，右侧为标题区；以下为自定义插槽内容。</text>
 					<view class="card-footer">
 						<mms-price price="199.00"></mms-price>
-						<mms-button type="primary" btnSize="small">购买</mms-button>
+						<mms-button type="danger" btnSize="mini">购买</mms-button>
 					</view>
 				</view>
 			</mms-card>
@@ -56,8 +56,9 @@
 				<text class="card-content">正文区域。</text>
 				<template #footer>
 					<view class="card-footer-actions">
-						<mms-button type="gray" btnSize="small" width="200rpx">取消</mms-button>
-						<mms-button type="primary" btnSize="small" width="200rpx">确定</mms-button>
+						<!-- btnSize 存在时 width 会被组件内部覆盖；间距不用 gap（ucss 可能无效），用 margin -->
+						<mms-button type="gray" btnSize="mini" margin="0">取消</mms-button>
+						<mms-button type="primary" btnSize="mini" margin="0 0 0 24rpx">确定</mms-button>
 					</view>
 				</template>
 			</mms-card>
@@ -67,9 +68,9 @@
 
 <script setup lang="uts">
 	import { computed } from 'vue'
-	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
+	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config.uts'
 
-	const demoThumb = computed((): string => getMmsUiConfig().demoCardThumb)
+	const demoThumb = computed((): string => getMmsUiConfig().demoImage)
 </script>
 
 <style lang="scss">
@@ -136,6 +137,7 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
-	gap: 24rpx;
+	align-items: center;
+	flex-wrap: nowrap;
 }
 </style>

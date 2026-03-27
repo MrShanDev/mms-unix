@@ -1,0 +1,125 @@
+<template>
+	<scroll-view class="page-scroll" scroll-y style="flex:1">
+		<view class="demo-page">
+			<view class="demo-section">
+				<text class="section-title">分割线（mms-div）</text>
+				<text class="section-desc">有文案时中间断线样式；contentPosition 控制文案左/中/右。</text>
+				<mms-div text="默认居中"></mms-div>
+				<mms-gap :height="24"></mms-gap>
+				<mms-div content-position="left" text="左侧"></mms-div>
+				<mms-gap :height="24"></mms-gap>
+				<mms-div content-position="right" text="右侧"></mms-div>
+			</view>
+
+			<view class="demo-section">
+				<text class="section-title">间距块（mms-gap）</text>
+				<text class="section-desc">固定高度占位，可设背景色便于观察。</text>
+				<view class="demo-strip">
+					<text class="demo-label">上方文案</text>
+					<mms-gap :height="16" background="#e8f4ff"></mms-gap>
+					<text class="demo-label">下方文案（中间为 gap）</text>
+				</view>
+			</view>
+
+			<view class="demo-section">
+				<text class="section-title">占位（mms-white-space）</text>
+				<text class="section-desc">size：small / default / large；或 height 精确高度（rpx）。</text>
+				<view class="demo-strip">
+					<text class="demo-label">small</text>
+					<mms-white-space size="small" background="#fff0f6"></mms-white-space>
+					<text class="demo-label">default</text>
+					<mms-white-space size="default" background="#f6ffed"></mms-white-space>
+					<text class="demo-label">large</text>
+					<mms-white-space size="large" background="#e6f7ff"></mms-white-space>
+				</view>
+			</view>
+
+			<view class="demo-section">
+				<text class="section-title">栅格（mms-row + mms-col）</text>
+				<text class="section-desc">24 栅格；gutter 为子列左右内边距（与 row 配套）；offset 为左侧偏移列数。</text>
+				<mms-row :gutter="16">
+					<mms-col :span="12">
+						<view class="col-demo">span=12</view>
+					</mms-col>
+					<mms-col :span="12">
+						<view class="col-demo col-demo--b">span=12</view>
+					</mms-col>
+				</mms-row>
+				<mms-gap :height="16"></mms-gap>
+				<mms-row :gutter="12">
+					<mms-col :span="8">
+						<view class="col-demo">8</view>
+					</mms-col>
+					<mms-col :span="8" :offset="8">
+						<view class="col-demo col-demo--b">8 offset=8</view>
+					</mms-col>
+				</mms-row>
+			</view>
+		</view>
+	</scroll-view>
+</template>
+
+<script setup lang="uts">
+</script>
+
+<style lang="scss">
+@import '../../_demo-common.scss';
+
+.page-scroll {
+	height: 100%;
+}
+
+.demo-page {
+	min-height: 100%;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+	padding-bottom: 48rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	margin-bottom: 16rpx;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.55;
+	margin-bottom: 20rpx;
+	display: block;
+}
+
+.demo-strip {
+	border-radius: 12rpx;
+	overflow: hidden;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #eeeeee;
+	padding: 16rpx;
+}
+
+.demo-label {
+	font-size: 26rpx;
+	color: #666666;
+	display: block;
+}
+
+.col-demo {
+	background-color: #fff0f6;
+	border-radius: 8rpx;
+	padding: 20rpx;
+	font-size: 24rpx;
+	color: #333333;
+	text-align: center;
+}
+
+.col-demo--b {
+	background-color: #e6f7ff;
+}
+</style>

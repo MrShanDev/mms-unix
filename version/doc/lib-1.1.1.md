@@ -4,7 +4,7 @@
 
 ## 主题与样式基线
 
-- **默认主色**：`mms-ui-config.uts` 中 `primaryColor` 默认值由 `#ff2727` 调整为 **`#ff0844`**，与演示工程 `common/config.ts` 的 `mmsUi.primaryColor` 推荐配置一致。
+- **默认主色**：`config.uts` 中 `primaryColor` 默认值由 `#ff2727` 调整为 **`#ff0844`**，与演示工程 `common/config.ts` 的 `mmsUi.primaryColor` 推荐配置一致。
 - **工具类**：`libs/css/mms.scss` 中与主色相关的文字色、背景色同步为 `#ff0844`。
 
 ## 说明

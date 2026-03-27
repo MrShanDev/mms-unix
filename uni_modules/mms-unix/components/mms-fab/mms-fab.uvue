@@ -26,11 +26,16 @@
 				</view>
 			</view>
 			<view
-				class="mms-fab__main"
+				:class="mainDragClass"
 				:style="mainStyle"
 				@tap="onMainTap"
+				@touchstart.stop="onDragStart"
+				@touchmove.stop.prevent="onDragMove"
+				@touchend="onDragEnd"
+				@touchcancel="onDragEnd"
 			>
 				<slot v-if="custom"></slot>
+				<mms-icon v-else-if="iconName !== ''" :name="iconName" :size="iconSize" :color="color" />
 				<text v-else class="mms-fab__plus" :style="{ color: color }">+</text>
 			</view>
 		</view>
@@ -42,7 +47,7 @@ type FabBtn = UTSJSONObject
 
 export default {
 	name: 'mmsFab',
-	emits: ['click'],
+	emits: ['click', 'dragend'],
 	props: {
 		left: {
 			type: [Number, String],
@@ -80,6 +85,31 @@ export default {
 			type: Boolean,
 			default: false
 		},
+		/** mms-icon 名称；非空且非 custom 时显示图标，否则显示「+」 */
+		icon: {
+			type: String,
+			default: ''
+		},
+		/** 主按钮图标字号（rpx，与 mms-icon size 一致） */
+		iconSize: {
+			type: [Number, String],
+			default: 52
+		},
+		/** 为 true 时可按住主按钮拖动，松手后可选吸边 */
+		draggable: {
+			type: Boolean,
+			default: false
+		},
+		/** 拖动结束后是否吸附到左右近侧（需 draggable） */
+		snapEdge: {
+			type: Boolean,
+			default: true
+		},
+		/** 吸边与拖动边界留白（rpx） */
+		snapPadding: {
+			type: [Number, String],
+			default: 16
+		},
 		bgColor: {
 			type: String,
 			default: '#5677fc'
@@ -113,10 +143,31 @@ export default {
 	},
 	data() {
 		return {
-			expanded: false as boolean
+			expanded: false as boolean,
+			winW: 0 as number,
+			winH: 0 as number,
+			dragLeftPx: 0 as number,
+			dragTopPx: 0 as number,
+			dragReady: false as boolean,
+			wrapWpx: 0 as number,
+			wrapHpx: 0 as number,
+			dragStartTouchX: 0 as number,
+			dragStartTouchY: 0 as number,
+			dragStartLeftPx: 0 as number,
+			dragStartTopPx: 0 as number,
+			dragMoved: false as boolean,
+			dragSuppressedTap: false as boolean
 		}
 	},
 	computed: {
+		iconName(): string {
+			const s = this.icon as string
+			if (s == null) {
+				return ''
+			}
+			const t = s.trim()
+			return t
+		},
 		baseZ(): number {
 			const zi = this.zIndex
 			const n = typeof zi === 'number' ? zi as number : parseInt('' + zi)
@@ -126,6 +177,19 @@ export default {
 			return this.baseZ - 1
 		},
 		wrapStyle(): UTSJSONObject {
+			if (this.draggable as boolean) {
+				const st = {} as UTSJSONObject
+				st['zIndex'] = this.baseZ
+				st['position'] = 'fixed'
+				st['left'] = this.dragLeftPx + 'px'
+				st['top'] = this.dragTopPx + 'px'
+				st['right'] = 'auto'
+				st['bottom'] = 'auto'
+				st['display'] = 'flex'
+				st['flexDirection'] = 'column'
+				st['alignItems'] = 'flex-end'
+				return st
+			}
 			const st = {} as UTSJSONObject
 			st['zIndex'] = this.baseZ
 			st['position'] = 'fixed'
@@ -158,9 +222,207 @@ export default {
 			st['borderRadius'] = this.radius as string
 			st['backgroundColor'] = this.bgColor as string
 			return st
+		},
+		/** 内置图标/「+」时子节点不抢触摸；custom 插槽不关闭子节点事件 */
+		mainDragClass(): string[] {
+			const out = [] as string[]
+			out.push('mms-fab__main')
+			const d = this.draggable as boolean
+			if (d) {
+				out.push('mms-fab__main--drag')
+				if (!(this.custom as boolean)) {
+					out.push('mms-fab__main--drag-pass')
+				}
+			}
+			return out
 		}
 	},
+	watch: {
+		expanded() {
+			this.$nextTick(() => {
+				this.measureWrapSize()
+			})
+		}
+	},
+	mounted() {
+		this.initDragMetrics()
+		this.$nextTick(() => {
+			this.measureWrapSize()
+		})
+	},
 	methods: {
+		snapPaddingRpx(): number {
+			const sp = this.snapPadding as number | string
+			const n = typeof sp === 'number' ? sp as number : parseInt('' + sp)
+			return isNaN(n) ? 16 : n
+		},
+		mainWidthPx(): number {
+			const w = this.width as number | string
+			const n = typeof w === 'number' ? w as number : parseInt('' + w)
+			return uni.rpx2px(isNaN(n) ? 108 : n)
+		},
+		mainHeightPx(): number {
+			const h = this.height as number | string
+			const n = typeof h === 'number' ? h as number : parseInt('' + h)
+			return uni.rpx2px(isNaN(n) ? 108 : n)
+		},
+		wrapWOrDefault(): number {
+			if (this.wrapWpx > 0) {
+				return this.wrapWpx
+			}
+			return this.mainWidthPx()
+		},
+		wrapHOrDefault(): number {
+			if (this.wrapHpx > 0) {
+				return this.wrapHpx
+			}
+			return this.mainHeightPx()
+		},
+		initDragMetrics() {
+			if (!(this.draggable as boolean)) {
+				return
+			}
+			const sys = uni.getSystemInfoSync()
+			this.winW = sys.windowWidth as number
+			this.winH = sys.windowHeight as number
+			const fabW = this.mainWidthPx()
+			const fabH = this.mainHeightPx()
+			const t = this.top as number | string
+			const tp = typeof t === 'number' ? t as number : parseInt('' + t)
+			const l = this.left as number | string
+			const ln = typeof l === 'number' ? l as number : parseInt('' + l)
+			const r = this.right as number | string
+			const rn = typeof r === 'number' ? r as number : parseInt('' + r)
+			const b = this.bottom as number | string
+			const bn = typeof b === 'number' ? b as number : parseInt('' + b)
+			if (!isNaN(tp) && tp > 0) {
+				const lr = !isNaN(ln) && ln > 0 ? uni.rpx2px(ln) : uni.rpx2px(80)
+				this.dragLeftPx = lr
+				this.dragTopPx = uni.rpx2px(tp)
+			} else {
+				this.dragTopPx = this.winH - fabH - uni.rpx2px(isNaN(bn) ? 100 : bn)
+				if (!isNaN(ln) && ln > 0) {
+					this.dragLeftPx = uni.rpx2px(ln)
+				} else {
+					this.dragLeftPx = this.winW - fabW - uni.rpx2px(isNaN(rn) ? 80 : rn)
+				}
+			}
+			this.dragReady = true
+		},
+		measureWrapSize() {
+			const self = this
+			try {
+				const q = uni.createSelectorQuery().in(self as any)
+				q.select('.mms-fab__wrap')
+					.boundingClientRect((rect: any) => {
+						if (rect == null) {
+							return
+						}
+						const w = rect.width as number
+						const h = rect.height as number
+						if (w > 0 && h > 0) {
+							self.wrapWpx = w
+							self.wrapHpx = h
+						}
+					})
+					.exec()
+			} catch (_e) {
+				// ignore
+			}
+		},
+		applySnap() {
+			const pad = uni.rpx2px(this.snapPaddingRpx())
+			const w = this.wrapWOrDefault()
+			const cx = this.dragLeftPx + w / 2
+			if (cx < this.winW / 2) {
+				this.dragLeftPx = pad
+			} else {
+				this.dragLeftPx = this.winW - w - pad
+			}
+			const h = this.wrapHOrDefault()
+			this.dragTopPx = Math.max(pad, Math.min(this.dragTopPx, this.winH - h - pad))
+		},
+		/** 与 mms-swipe-action 一致：优先 clientX/Y，兼容 pageX/Y（各端触摸对象字段不一致） */
+		touchClientXY(e: any): number[] | null {
+			const touches = e['touches'] as any[] | null
+			if (touches == null || touches.length == 0) {
+				return null
+			}
+			const t0 = touches[0] as UTSJSONObject
+			let x = t0['clientX'] as number | null
+			let y = t0['clientY'] as number | null
+			if (x == null) {
+				x = t0['pageX'] as number | null
+			}
+			if (y == null) {
+				y = t0['pageY'] as number | null
+			}
+			if (x == null || y == null) {
+				return null
+			}
+			return [x as number, y as number]
+		},
+		onDragStart(e: any) {
+			if (!(this.draggable as boolean)) {
+				return
+			}
+			if (this.winW <= 0 || this.winH <= 0) {
+				this.initDragMetrics()
+			}
+			const xy = this.touchClientXY(e)
+			if (xy == null) {
+				return
+			}
+			this.dragStartTouchX = xy[0]
+			this.dragStartTouchY = xy[1]
+			this.dragStartLeftPx = this.dragLeftPx
+			this.dragStartTopPx = this.dragTopPx
+			this.dragMoved = false
+		},
+		onDragMove(e: any) {
+			if (!(this.draggable as boolean)) {
+				return
+			}
+			const xy = this.touchClientXY(e)
+			if (xy == null) {
+				return
+			}
+			const dx = xy[0] - this.dragStartTouchX
+			const dy = xy[1] - this.dragStartTouchY
+			if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+				this.dragMoved = true
+			}
+			const pad = uni.rpx2px(this.snapPaddingRpx())
+			const w = this.wrapWOrDefault()
+			const h = this.wrapHOrDefault()
+			let nx = this.dragStartLeftPx + dx
+			let ny = this.dragStartTopPx + dy
+			nx = Math.max(pad, Math.min(nx, this.winW - w - pad))
+			ny = Math.max(pad, Math.min(ny, this.winH - h - pad))
+			this.dragLeftPx = nx
+			this.dragTopPx = ny
+		},
+		onDragEnd() {
+			if (!(this.draggable as boolean)) {
+				return
+			}
+			const didMove = this.dragMoved
+			if (didMove && (this.snapEdge as boolean)) {
+				this.applySnap()
+			}
+			if (didMove) {
+				this.dragSuppressedTap = true
+				this.$emit('dragend', {
+					leftPx: this.dragLeftPx,
+					topPx: this.dragTopPx
+				} as UTSJSONObject)
+				const self = this
+				setTimeout(() => {
+					self.dragSuppressedTap = false
+				}, 120)
+			}
+			this.dragMoved = false
+		},
 		subText(btn: FabBtn): string {
 			const k = this.textField as string
 			const v = btn[k]
@@ -196,6 +458,9 @@ export default {
 			this.expanded = false
 		},
 		onMainTap() {
+			if (this.dragSuppressedTap) {
+				return
+			}
 			const list = this.btnList as any[]
 			if (list.length > 0) {
 				this.expanded = !this.expanded
@@ -254,6 +519,16 @@ export default {
 	align-items: center;
 	justify-content: center;
 	box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.15);
+}
+
+.mms-fab__main--drag {
+	/* 减少拖动时误触页面滚动（H5 等端） */
+	touch-action: none;
+}
+
+/* 避免图标/文字子节点成为触摸目标，导致 touchmove 无法稳定派发到主按钮（H5 常见） */
+.mms-fab__main--drag-pass > * {
+	pointer-events: none;
 }
 
 .mms-fab__plus {

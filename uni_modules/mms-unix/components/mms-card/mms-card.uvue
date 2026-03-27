@@ -32,6 +32,8 @@
 </template>
 
 <script lang="uts">
+import { PropType } from 'vue'
+
 export default {
 	name: 'mmsCard',
 	props: {

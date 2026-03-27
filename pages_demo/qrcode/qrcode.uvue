@@ -50,7 +50,7 @@
 
 <script setup lang="uts">
 	import { computed } from 'vue'
-	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
+	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config.uts'
 
 	const qrValue = 'https://www.example.com'
 	const logoUrl = computed((): string => getMmsUiConfig().avatarDefault)

@@ -1,114 +1,115 @@
 <template>
-	<view class="demo-page">
-		<view class="demo-section">
-			<text class="section-title">基础图标</text>
-			<view class="icon-grid">
-				<view class="icon-item" v-for="(item, index) in icons" :key="index">
-					<mms-icon :name="item" size="48rpx"></mms-icon>
-					<text class="icon-name">{{ item }}</text>
+	<scroll-view class="page-scroll" scroll-y style="flex:1">
+		<view class="demo-page">
+			<view class="demo-section demo-section--hint">
+				<text class="hint-text">以下为 iconfont 字库中 mms-icon 已映射的全部名称（含别名）。每个格子使用 mms-clipboard 组件，点击复制一行 mms-icon 标签代码，可直接粘贴到页面使用。</text>
+			</view>
+
+			<view class="demo-section">
+				<text class="section-title">筛选</text>
+				<view class="search-row">
+					<input
+						class="search-input"
+						type="text"
+						:value="filterText"
+						placeholder="输入英文名称关键字筛选"
+						@input="onFilterInput"
+					/>
 				</view>
 			</view>
-		</view>
 
-		<view class="demo-section">
-			<text class="section-title">图标颜色</text>
-			<view class="icon-row">
-				<mms-icon name="setting" size="48rpx" color="#ff0844"></mms-icon>
-				<mms-icon name="setting" size="48rpx" color="#1890ff"></mms-icon>
-				<mms-icon name="setting" size="48rpx" color="#52c41a"></mms-icon>
-				<mms-icon name="setting" size="48rpx" color="#fa8c16"></mms-icon>
-			</view>
-		</view>
-
-		<view class="demo-section">
-			<text class="section-title">图标大小</text>
-			<view class="icon-row">
-				<mms-icon name="setting" size="32rpx"></mms-icon>
-				<mms-icon name="setting" size="48rpx"></mms-icon>
-				<mms-icon name="setting" size="64rpx"></mms-icon>
-				<mms-icon name="setting" size="80rpx"></mms-icon>
-			</view>
-		</view>
-
-		<view class="demo-section">
-			<text class="section-title">方向图标</text>
-			<view class="icon-row">
-				<mms-icon name="arrow-up" size="48rpx"></mms-icon>
-				<mms-icon name="arrow-down" size="48rpx"></mms-icon>
-				<mms-icon name="arrow-left" size="48rpx"></mms-icon>
-				<mms-icon name="arrow-right" size="48rpx"></mms-icon>
-			</view>
-		</view>
-
-		<view class="demo-section">
-			<text class="section-title">填充图标</text>
-			<view class="icon-grid">
-				<view class="icon-item" v-for="(item, index) in fillingIcons" :key="index">
-					<mms-icon :name="item" size="48rpx" color="#ff0844"></mms-icon>
-					<text class="icon-name">{{ item }}</text>
+			<view class="demo-section">
+				<text class="section-title">示例：颜色与尺寸</text>
+				<view class="icon-row">
+					<mms-icon name="setting" size="48rpx" color="#ff0844"></mms-icon>
+					<mms-icon name="setting" size="48rpx" color="#1890ff"></mms-icon>
+					<mms-icon name="setting" size="32rpx" color="#333333"></mms-icon>
+					<mms-icon name="setting" size="64rpx" color="#52c41a"></mms-icon>
 				</view>
 			</view>
-		</view>
 
-		<view class="demo-section">
-			<text class="section-title">操作图标</text>
-			<view class="icon-row">
-				<mms-icon name="add" size="48rpx" color="#1890ff"></mms-icon>
-				<mms-icon name="close" size="48rpx" color="#ff0844"></mms-icon>
-				<mms-icon name="delete" size="48rpx" color="#ff4d4f"></mms-icon>
-				<mms-icon name="edit" size="48rpx" color="#52c41a"></mms-icon>
-				<mms-icon name="download" size="48rpx" color="#1890ff"></mms-icon>
-				<mms-icon name="upload" size="48rpx" color="#fa8c16"></mms-icon>
+			<view class="demo-section" v-for="(cat, cidx) in displayCategories" :key="cidx">
+				<text class="section-title">{{ cat.title }}</text>
+				<text class="section-count">共 {{ cat.icons.length }} 个</text>
+				<view class="icon-grid">
+					<mms-clipboard
+						class="icon-cell-wrap"
+						:text="snippetFor(name)"
+						v-for="(name, iidx) in cat.icons"
+						:key="name + '-' + iidx"
+					>
+						<view class="icon-cell" hover-class="icon-cell-hover">
+							<mms-icon :name="name" size="48rpx" color="#333333"></mms-icon>
+							<text class="icon-label">{{ name }}</text>
+						</view>
+					</mms-clipboard>
+				</view>
 			</view>
-		</view>
 
-		<view class="demo-section">
-			<text class="section-title">媒体图标</text>
-			<view class="icon-row">
-				<mms-icon name="camera" size="48rpx"></mms-icon>
-				<mms-icon name="picture" size="48rpx"></mms-icon>
-				<mms-icon name="film" size="48rpx"></mms-icon>
-				<mms-icon name="play" size="48rpx"></mms-icon>
-			</view>
+			<view class="demo-footer-space"></view>
 		</view>
-
-		<view class="demo-section">
-			<text class="section-title">状态图标</text>
-			<view class="icon-row">
-				<mms-icon name="success" size="48rpx" color="#52c41a"></mms-icon>
-				<mms-icon name="warning" size="48rpx" color="#faad14"></mms-icon>
-				<mms-icon name="error" size="48rpx" color="#ff4d4f"></mms-icon>
-				<mms-icon name="help" size="48rpx" color="#1890ff"></mms-icon>
-			</view>
-		</view>
-	</view>
+	</scroll-view>
 </template>
 
 <script setup lang="uts">
-// 基础图标列表
-const icons: string[] = [
-	'setting', 'home', 'search', 'user', 'lock',
-	'calendar', 'camera', 'picture', 'email', 'telephone',
-	'map', 'time', 'history', 'notification', 'more'
-]
+	import { ref, computed } from 'vue'
+	import { iconCategories, IconCategory } from './icon-catalog.uts'
 
-// 填充图标列表
-const fillingIcons: string[] = [
-	'home-filling', 'user-filling', 'setting-filling', 'success-filling',
-	'warning-filling', 'favorite-filling', 'good-filling', 'map-filling'
-]
+	const filterText = ref('')
+
+	function onFilterInput(e: any) {
+		const d = e.detail
+		if (d != null) {
+			const v = d.value
+			if (v != null) {
+				filterText.value = '' + v
+				return
+			}
+		}
+		filterText.value = ''
+	}
+
+	const displayCategories = computed((): IconCategory[] => {
+		const raw = filterText.value.trim()
+		if (raw.length === 0) {
+			return iconCategories
+		}
+		const q = raw.toLowerCase()
+		const out: IconCategory[] = []
+		for (let i = 0; i < iconCategories.length; i++) {
+			const cat = iconCategories[i]
+			const icons: string[] = []
+			for (let j = 0; j < cat.icons.length; j++) {
+				const n = cat.icons[j]
+				if (n.toLowerCase().indexOf(q) >= 0) {
+					icons.push(n)
+				}
+			}
+			if (icons.length > 0) {
+				out.push({ title: cat.title, icons: icons })
+			}
+		}
+		return out
+	})
+
+	/** 供 mms-clipboard 的 text，点击后复制整行组件代码 */
+	function snippetFor(name: string): string {
+		return '<mms-icon name="' + name + '" size="40rpx"></mms-icon>'
+	}
 </script>
 
 <style lang="scss">
 @import '../_demo-common.scss';
-.section-title {
-	margin-bottom: 24rpx;
+
+.page-scroll {
+	width: 100%;
 }
 
 .demo-page {
-	min-height: 100vh;
+	min-height: 100%;
 	background-color: #f5f5f5;
 	padding: 20rpx;
+	padding-bottom: 40rpx;
 }
 
 .demo-section {
@@ -118,7 +119,42 @@ const fillingIcons: string[] = [
 	margin-bottom: 24rpx;
 }
 
+.demo-section--hint {
+	background-color: #fff7f0;
+}
 
+.hint-text {
+	font-size: 26rpx;
+	color: #666666;
+	line-height: 1.55;
+}
+
+.section-title {
+	margin-bottom: 8rpx;
+}
+
+.section-count {
+	font-size: 22rpx;
+	color: #999999;
+	margin-bottom: 20rpx;
+}
+
+.search-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.search-input {
+	flex: 1;
+	height: 72rpx;
+	padding-left: 24rpx;
+	padding-right: 24rpx;
+	font-size: 28rpx;
+	color: #333333;
+	background-color: #f5f5f5;
+	border-radius: 12rpx;
+}
 
 .icon-grid {
 	display: flex;
@@ -126,19 +162,34 @@ const fillingIcons: string[] = [
 	flex-wrap: wrap;
 }
 
-.icon-item {
+.icon-cell-wrap {
 	width: 25%;
 	box-sizing: border-box;
+}
+
+.icon-cell {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 20rpx 0;
+	justify-content: flex-start;
+	padding: 20rpx 8rpx;
+	width: 100%;
+	box-sizing: border-box;
 }
 
-.icon-name {
-	font-size: 22rpx;
-	color: #999999;
+.icon-cell-hover {
+	opacity: 0.85;
+}
+
+.icon-label {
+	font-size: 20rpx;
+	color: #888888;
 	margin-top: 10rpx;
+	text-align: center;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .icon-row {
@@ -146,7 +197,11 @@ const fillingIcons: string[] = [
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
-	padding: 20rpx 0;
+	padding: 12rpx 0;
 	flex-wrap: wrap;
+}
+
+.demo-footer-space {
+	height: 40rpx;
 }
 </style>

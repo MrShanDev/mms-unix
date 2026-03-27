@@ -1,44 +1,54 @@
 <template>
 	<view class="demo-page">
 		<view class="demo-section">
-			<text class="section-title">基础上传（手动，不压缩）</text>
-			<text class="section-desc">选图后仅触发 afterRead，由页面把本地 path 写入列表。</text>
+			<text class="section-title">手动上传 / 自动上传（开关切换）</text>
+			<text class="section-desc">
+				关闭「自动上传」时需在 @afterRead 里把临时路径写入 fileList；开启后由组件请求接口并维护列表，勿在 afterRead 里再 push。切换模式会清空当前列表以免状态混乱。
+			</text>
+			<view class="upload-mode">
+				<view class="upload-mode__row">
+					<text class="upload-mode__label">自动上传</text>
+					<mms-switch v-model="modeAuto" color="#ff0844" @change="onAutoModeChange"></mms-switch>
+				</view>
+				<view class="upload-mode__row">
+					<text class="upload-mode__label">选图后压缩</text>
+					<mms-switch v-model="modeCompress" color="#ff0844"></mms-switch>
+				</view>
+				<text class="upload-mode__hint">{{ modeHint }}</text>
+			</view>
+			<mms-upload
+				v-model:fileList="comboList"
+				:autoUpload="modeAuto"
+				:compress="modeCompress"
+				:compressQuality="75"
+				:maxCount="9"
+				:columns="4"
+				@afterRead="onComboAfterRead"
+			></mms-upload>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">基础上传（无 v-model，仅选图）</text>
+			<text class="section-desc">不绑定列表，选图后仅触发 choose / afterRead，需自行接业务。</text>
 			<mms-upload></mms-upload>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">限制数量</text>
-			<mms-upload :maxCount="3"></mms-upload>
-		</view>
-
-		<view class="demo-section">
-			<text class="section-title">回显 + 手动追加（压缩后 emit）</text>
-			<text class="section-desc">compress 为 true 时，afterRead 里的 path 已是压缩后的临时路径。</text>
-			<mms-upload v-model:fileList="fileList" :compress="true" :compressQuality="75" @afterRead="afterRead"></mms-upload>
+			<mms-upload :maxCount="3" :columns="4"></mms-upload>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">仅回显（网络图）</text>
 			<text class="section-desc">绑定服务端 URL，可预览、删除（删的是前端列表）。</text>
-			<mms-upload v-model:fileList="remoteList"></mms-upload>
-		</view>
-
-		<view class="demo-section">
-			<text class="section-title">自动上传（需后端与 config.api.upload.image 一致）</text>
-			<text class="section-desc">开启 autoUpload 后勿在 afterRead 里再 push。失败可点击重试。</text>
-			<mms-upload
-				v-model:fileList="autoList"
-				:autoUpload="true"
-				:compress="true"
-				:maxCount="5"
-			></mms-upload>
+			<mms-upload v-model:fileList="remoteList" :columns="4"></mms-upload>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
-import { ref } from 'vue'
-import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
+import { computed, ref } from 'vue'
+import { getMmsUiConfig } from '@/uni_modules/mms-unix/config.uts'
 
 type FileItem = {
 	url: string
@@ -48,23 +58,37 @@ type FileItem = {
 }
 
 const _mmsUi = getMmsUiConfig()
-const fileList = ref<FileItem[]>([
-	{ url: _mmsUi.avatarDefault },
-	{ url: _mmsUi.avatarDefault },
-])
 
-const remoteList = ref<FileItem[]>([{ url: _mmsUi.appLogo }])
+/** 开关演示区：手动 / 自动 共用列表 */
+const modeAuto = ref(false)
+const modeCompress = ref(true)
+const comboList = ref<FileItem[]>([])
 
-const autoList = ref<FileItem[]>([])
+const modeHint = computed((): string => {
+	if (modeAuto.value) {
+		return '当前：自动上传（依赖 config.api.upload.image 或 uploadUrl；失败项可点重试）'
+	}
+	return '当前：手动维护列表（在 afterRead 中 push 压缩后的 path）'
+})
 
-function afterRead(evt: { tempFiles: { path: string }[] }) {
-	const next = [...fileList.value]
-	for (let i = 0; i < evt.tempFiles.length; i++) {
-		const f = evt.tempFiles[i]
+function onAutoModeChange(_next: boolean) {
+	comboList.value = []
+}
+
+function onComboAfterRead(evt: { tempFiles: { path: string }[] }) {
+	if (modeAuto.value) {
+		return
+	}
+	const next = [...comboList.value]
+	const tf = evt.tempFiles
+	for (let i = 0; i < tf.length; i++) {
+		const f = tf[i]
 		next.push({ url: f.path, path: f.path })
 	}
-	fileList.value = next
+	comboList.value = next
 }
+
+const remoteList = ref<FileItem[]>([{ url: _mmsUi.appLogo }])
 </script>
 
 <style lang="scss">
@@ -82,13 +106,41 @@ function afterRead(evt: { tempFiles: { path: string }[] }) {
 	margin-bottom: 24rpx;
 }
 
-
-
 .section-desc {
 	font-size: 24rpx;
 	color: #888888;
 	line-height: 1.5;
 	margin-bottom: 20rpx;
 	display: block;
+}
+
+.upload-mode {
+	margin-bottom: 24rpx;
+	padding: 20rpx;
+	background-color: #f8f8f8;
+	border-radius: 12rpx;
+}
+
+.upload-mode__row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 20rpx;
+}
+
+.upload-mode__row:last-of-type {
+	margin-bottom: 16rpx;
+}
+
+.upload-mode__label {
+	font-size: 28rpx;
+	color: #333333;
+}
+
+.upload-mode__hint {
+	font-size: 22rpx;
+	color: #999999;
+	line-height: 1.45;
 }
 </style>

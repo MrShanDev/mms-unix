@@ -2,6 +2,7 @@
 	<view
 		class="mms-checkbox"
 		:class="{ 'mms-checkbox--disabled': mergedDisabled }"
+		:style="rootGroupSpacingStyle"
 		@tap.stop="onTap"
 	>
 		<view class="mms-checkbox__icon-wrap" :style="iconWrapStyle">
@@ -192,6 +193,24 @@ export default {
 				width: wh,
 				height: wh
 			}
+		},
+		/**
+		 * 横向 group 时子项间距：部分端上父级 flex 的「> .mms-checkbox」选择器无法命中自定义组件根节点，故用内联 margin。
+		 */
+		rootGroupSpacingStyle(): UTSJSONObject {
+			const g = this.checkboxGroup
+			if (g == null) {
+				return {}
+			}
+			const dir = g.direction as string
+			if (dir !== 'row') {
+				return {}
+			}
+			const st: UTSJSONObject = {}
+			st['marginTop'] = '0'
+			st['marginRight'] = '40rpx'
+			st['marginBottom'] = '20rpx'
+			return st
 		}
 	},
 	methods: {

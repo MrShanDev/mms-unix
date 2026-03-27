@@ -60,7 +60,7 @@
 
 <script setup lang="uts">
 	import { ref, computed } from 'vue'
-	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
+	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config.uts'
 	import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
 	import { updateMemberInfo } from '@/common/api/mallApi'
 	import { jumpTo } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'

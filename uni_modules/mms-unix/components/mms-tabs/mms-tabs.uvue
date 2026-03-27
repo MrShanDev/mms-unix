@@ -25,8 +25,10 @@
 					</view>
 					<view v-else-if="tabDot(tab)" class="mms-tabs__dot" :style="{ backgroundColor: badgeBgColor }"></view>
 				</view>
+			</view>
+			<!-- 单条滑块随 currentTab 平移，带 transition（原每格 v-if 切换无法过渡） -->
+			<view v-if="isSlider && tabCount > 0" class="mms-tabs__slider-anchor" :style="sliderAnchorStyle">
 				<view
-					v-if="isSlider && (currentTab as number) === idx"
 					class="mms-tabs__slider"
 					:style="{ backgroundColor: sliderBgColor, height: sliderHeight + 'rpx', borderRadius: sliderRadius, width: sliderWidth + 'rpx' }"
 				></view>
@@ -37,6 +39,8 @@
 </template>
 
 <script lang="uts">
+import { PropType } from 'vue'
+
 type TabItem = UTSJSONObject
 
 export default {
@@ -140,6 +144,10 @@ export default {
 		zIndex: {
 			type: [Number, String],
 			default: 996
+		},
+		customStyle: {
+			type: Object as PropType<UTSJSONObject>,
+			default: () => ({})
 		}
 	},
 	computed: {
@@ -167,7 +175,28 @@ export default {
 				st['right'] = '0'
 				st['top'] = (this.top as number) + 'px'
 			}
+			if (this.customStyle != null) {
+				Object.assign(st, this.customStyle)
+			}
 			return st
+		},
+		sliderAnchorStyle(): UTSJSONObject {
+			const n = this.tabCount
+			if (n <= 0) {
+				return {}
+			}
+			let i = this.currentTab as number
+			if (i < 0) {
+				i = 0
+			}
+			if (i >= n) {
+				i = n - 1
+			}
+			const pct = ((i + 0.5) / n) * 100
+			return {
+				left: pct + '%',
+				transition: 'left 0.32s cubic-bezier(0.25, 0.8, 0.25, 1)'
+			}
 		}
 	},
 	methods: {
@@ -235,6 +264,7 @@ export default {
 	align-items: stretch;
 	width: 100%;
 	box-sizing: border-box;
+	position: relative;
 }
 
 .mms-tabs__item {
@@ -244,6 +274,7 @@ export default {
 	justify-content: center;
 	box-sizing: border-box;
 	position: relative;
+	z-index: 2;
 }
 
 .mms-tabs__item-inner {
@@ -258,6 +289,7 @@ export default {
 
 .mms-tabs__text {
 	line-height: 1.2;
+	transition: color 0.28s ease, transform 0.28s ease;
 }
 
 .mms-tabs__badge-wrap {
@@ -281,6 +313,15 @@ export default {
 	width: 12rpx;
 	height: 12rpx;
 	border-radius: 50%;
+}
+
+.mms-tabs__slider-anchor {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	transform: translateX(-50%);
+	z-index: 1;
+	pointer-events: none;
 }
 
 .mms-tabs__slider {

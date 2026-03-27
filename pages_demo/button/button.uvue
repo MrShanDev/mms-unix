@@ -77,8 +77,20 @@
 
 		<view class="demo-section">
 			<text class="section-title">加载状态</text>
+			<text class="section-desc">非微信小程序端会显示圆点动画；小程序使用原生 loading。</text>
 			<view class="demo-row">
 				<mms-button type="primary" :loading="true">加载中...</mms-button>
+			</view>
+			<view class="demo-row">
+				<mms-button type="primary" :plain="true" btnSize="medium" :loading="true">镂空加载</mms-button>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">加载中（交互）</text>
+			<text class="section-desc">点击后进入加载约 2 秒，可观察动画与防重复点击。</text>
+			<view class="demo-row">
+				<mms-button type="primary" :loading="submitLoading" @click="onSubmitDemo">提交</mms-button>
 			</view>
 		</view>
 
@@ -92,6 +104,19 @@
 </template>
 
 <script setup lang="uts">
+	import { ref } from 'vue'
+
+	const submitLoading = ref(false)
+
+	function onSubmitDemo() {
+		if (submitLoading.value) {
+			return
+		}
+		submitLoading.value = true
+		setTimeout(() => {
+			submitLoading.value = false
+		}, 2000)
+	}
 </script>
 
 <style lang="scss">

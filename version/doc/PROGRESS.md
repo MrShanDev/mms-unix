@@ -55,7 +55,7 @@
 
 | 项 | 状态 | 说明 |
 |----|------|------|
-| 库内模块 | ✅ 已完成 | `uni_modules/mms-unix/config/mms-ui-config.uts` |
+| 库内模块 | ✅ 已完成 | `uni_modules/mms-unix/config.uts` |
 | API | ✅ 已完成 | `getMmsUiConfig()`、`setMmsUiConfig()`、`clearMmsUiRuntimeOverrides()` |
 | 工程入口 | ✅ 已完成 | `common/config.ts`：`MmsUiUserConfig`、`config.mmsUi` |
 | 合并优先级 | ✅ 已实现 | 运行时 > `config.mmsUi` > `configInfo.logo`（仅 logo）> `api.qrCodeImageApiBase`（仅二维码）> 库默认 |
@@ -89,7 +89,7 @@
 
 | 项 | 状态 | 说明 |
 |----|------|------|
-| 全局主色 | ✅ 已完成 | `#ff0844`；`pages.json` 导航/Tab、`mms-ui-config`、`mms.scss`、`common/config.mmsUi` 及主要演示/业务页硬编码色已对齐 |
+| 全局主色 | ✅ 已完成 | `#ff0844`；`pages.json` 导航/Tab、`config.uts`、`mms.scss`、`common/config.mmsUi` 及主要演示/业务页硬编码色已对齐 |
 | 「我的」改版 | ✅ 已完成 | `mms-card` + `mms-cell-group`；`myServiceData.uts` 七项菜单与分包路径一致 |
 | 联系页 | ✅ 已完成 | `pages_Me/contact/contact`；`page.contact` 文案 |
 | 个人资料页 | ✅ 已完成 | `mms-cell` 化、`mms-icon` 箭头、收货地址跳转、字号/对齐 |
@@ -99,7 +99,7 @@
 
 ## 九、一句话结论
 
-**信息架构与 Tab、历史外部示例字样清理、本地资源路径、ucss 相关修复，以及可合并的 `mms-ui-config` + `config.mmsUi` 已在代码侧落地；2026-03-24 起主色与个人中心/资料/联系页改版及版本说明已写入 `version/doc/`（`app-*.md` / `lib-*.md`）。当前主要缺口仍是静态资源落盘、可选 Tab 图标精修、非宿主内置能力端的二维码服务配置与全端回归。**
+**信息架构与 Tab、历史外部示例字样清理、本地资源路径、ucss 相关修复，以及可合并的 `config.uts` + `config.mmsUi` 已在代码侧落地；2026-03-24 起主色与个人中心/资料/联系页改版及版本说明已写入 `version/doc/`（`app-*.md` / `lib-*.md`）。当前主要缺口仍是静态资源落盘、可选 Tab 图标精修、非宿主内置能力端的二维码服务配置与全端回归。**
 
 ---
 

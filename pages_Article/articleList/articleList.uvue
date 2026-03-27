@@ -1,106 +1,284 @@
 <template>
 	<view class="page">
-		<view class="p-10">
-			<view v-if="articleList.length > 0" class="content">
-				<view
-					v-for="(item, index) in articleList"
-					:key="index"
-					class="list-item flex flex--row"
-					@tap="navTo('/pages_Article/articleDetails/articleDetails?id=' + item.id)"
-				>
-					<view class="image">
-						<image :src="item.articleLitpic != null && item.articleLitpic != '' ? item.articleLitpic : imageUrl" mode="aspectFill"></image>
-					</view>
-					<view class="info">
-						<view class="item-title">{{ item.articleTitle != null ? item.articleTitle : '文章标题' }}</view>
-						<view class="time">{{ item.createdTime != null ? item.createdTime : '' }}</view>
+		<scroll-view
+			class="list-scroll"
+			scroll-y
+			refresher-enabled
+			:refresher-triggered="refresherTriggered"
+			@refresherrefresh="onRefresherRefresh"
+			@scrolltolower="onScrollToLower"
+			lower-threshold="100"
+		>
+			<view class="p-10">
+				<text class="demo-tip">以下为模拟数据（共 {{ articleTotal }} 条，每页 {{ articlePageSize }} 条）；配图为 picsum.photos 随机图（按条目标 seed）；上拉加载更多，底部分页可上一页/下一页。</text>
+
+				<view v-if="articleList.length > 0" class="content">
+					<view
+						v-for="(item, index) in articleList"
+						:key="item.id != null ? item.id : index"
+						class="list-item flex flex--row"
+						@tap="navTo('/pages_Article/articleDetails/articleDetails?id=' + item.id)"
+					>
+						<view class="image">
+							<image
+								:src="item.articleLitpic != null && item.articleLitpic != '' ? item.articleLitpic : imageUrl"
+								mode="aspectFill"
+							></image>
+						</view>
+						<view class="info">
+							<view class="item-title">{{ item.articleTitle != null ? item.articleTitle : '文章标题' }}</view>
+							<view class="time">{{ item.createdTime != null ? item.createdTime : '' }}</view>
+						</view>
 					</view>
 				</view>
+
+				<view v-else-if="!loading && !loadingMore" class="empty-tip">暂无数据</view>
+				<view class="loading-tip" v-if="loading && articleList.length == 0">加载中...</view>
+				<view class="loading-tip" v-if="loadingMore && articleList.length > 0">正在加载更多...</view>
+				<view class="loading-tip" v-if="articleNoMoreData && articleList.length > 0">已加载全部</view>
+
+				<view class="pagination-wrap">
+					<mms-pagination
+						:total="articleTotal"
+						:page-size="articlePageSize"
+						:current="paginationCurrent"
+						current-color="#ff0844"
+						color="#333333"
+						border-color="#e5e5e5"
+						@change="onPaginationChange"
+					></mms-pagination>
+				</view>
 			</view>
-			<view v-else-if="!loading" class="empty-tip">暂无数据</view>
-			<view class="loading-tip" v-if="loading && articleList.length == 0">加载中...</view>
-			<view class="loading-tip" v-if="articleLoading">正在加载更多...</view>
-			<view class="loading-tip" v-if="articleNoMoreData && articleList.length > 0">没有更多数据了</view>
-		</view>
+		</scroll-view>
 	</view>
 </template>
 
 <script setup lang="uts">
 	import { ref, computed } from 'vue'
-	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
-	import { articleList as fetchArticleList } from '@/common/api/mallApi'
+	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config.uts'
+	import { articleList as fetchArticleListApi } from '@/common/api/mallApi.uts'
+
+	/** 为 true 时使用本地模拟分页；改为 false 可接回 mallApi.articleList */
+	const USE_MOCK_DATA = true
 
 	const articleList = ref<any[]>([])
 	const cateId = ref('')
 	const title = ref('文章列表')
 	const imageUrl = computed((): string => getMmsUiConfig().articlePlaceholder)
-	const articlePageNum = ref(1)
-	const articlePageSize = 10
-	const articleTotal = ref(0)
-	const articleLoading = ref(false)
-	const articleNoMoreData = ref(false)
-	const loading = ref(false)
 
-	function goBack() {
-		uni.navigateBack()
+	const articlePageSize = 10
+	/** 模拟总条数 */
+	const MOCK_TOTAL = 47
+
+	const articleTotal = ref(0)
+	const nextPageToLoad = ref(1)
+	const loading = ref(false)
+	const loadingMore = ref(false)
+	const refresherTriggered = ref(false)
+
+	const articleNoMoreData = computed((): boolean => {
+		const t = articleTotal.value
+		if (t <= 0) {
+			return false
+		}
+		return articleList.value.length >= t
+	})
+
+	/** 与 mms-pagination 展示同步：已加载数据折合到第几页 */
+	const paginationCurrent = computed((): number => {
+		const len = articleList.value.length
+		if (len === 0) {
+			return 1
+		}
+		const cp = Math.ceil(len / articlePageSize)
+		const tp = Math.max(1, Math.ceil(articleTotal.value / articlePageSize))
+		return cp > tp ? tp : cp
+	})
+
+	function pad2(n: number): string {
+		if (n < 10) {
+			return '0' + n
+		}
+		return '' + n
+	}
+
+	/** 随机占位图：按序号 seed，每条不同且刷新列表后不变（Lorem Picsum） */
+	function mockArticlePic(n: number): string {
+		return 'https://picsum.photos/seed/mms-article-' + n + '/200/200'
+	}
+
+	/** 模拟分页：延迟返回，结构对齐接口 rows + total */
+	function mockArticleListPage(pageNum: number, pageSize: number): Promise<{ rows: any[]; total: number }> {
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				const total = MOCK_TOTAL
+				const start = (pageNum - 1) * pageSize
+				const rows: any[] = []
+				let i = 0
+				while (i < pageSize && start + i < total) {
+					const n = start + i + 1
+					const day = 10 + (n % 18)
+					rows.push({
+						id: 'mock-' + n,
+						articleTitle: '模拟文章 ' + n + ' · 下拉刷新 / 上拉加载 / 分页',
+						articleLitpic: mockArticlePic(n),
+						createdTime: '2025-01-' + pad2(day)
+					})
+					i++
+				}
+				resolve({ rows, total })
+			}, 360)
+		})
+	}
+
+	function fetchArticlePage(pageNum: number): Promise<{ rows: any[]; total: number }> {
+		if (USE_MOCK_DATA) {
+			return mockArticleListPage(pageNum, articlePageSize)
+		}
+		return fetchArticleListApi({
+			pageSize: articlePageSize,
+			pageNum: pageNum,
+			cateId: cateId.value
+		} as UTSJSONObject).then((res) => {
+			if (res.code == 200 && res.data != null) {
+				const data = res.data as UTSJSONObject
+				const rows = data['rows'] != null ? (data['rows'] as any[]) : []
+				const total = data['total'] != null ? (data['total'] as number) : 0
+				return { rows, total }
+			}
+			return { rows: [] as any[], total: 0 }
+		})
+	}
+
+	function resetListState() {
+		articleList.value = []
+		nextPageToLoad.value = 1
+		articleTotal.value = 0
+	}
+
+	function loadMore(): Promise<void> {
+		if (loadingMore.value) {
+			return Promise.resolve()
+		}
+		if (articleTotal.value > 0 && articleList.value.length >= articleTotal.value) {
+			return Promise.resolve()
+		}
+		loadingMore.value = true
+		const pn = nextPageToLoad.value
+		return fetchArticlePage(pn)
+			.then((pack) => {
+				const rows = pack.rows
+				const total = pack.total
+				articleTotal.value = total
+				if (rows.length === 0) {
+					return
+				}
+				const merged: any[] = []
+				for (let i = 0; i < articleList.value.length; i++) {
+					merged.push(articleList.value[i])
+				}
+				for (let j = 0; j < rows.length; j++) {
+					merged.push(rows[j])
+				}
+				articleList.value = merged
+				nextPageToLoad.value = pn + 1
+			})
+			.finally(() => {
+				loadingMore.value = false
+			})
+	}
+
+	function trimLastPage() {
+		if (articleList.value.length === 0) {
+			return
+		}
+		const len = articleList.value.length
+		const keep = len > articlePageSize ? len - articlePageSize : 0
+		const nextArr: any[] = []
+		for (let i = 0; i < keep; i++) {
+			nextArr.push(articleList.value[i])
+		}
+		articleList.value = nextArr
+		const loaded = articleList.value.length
+		nextPageToLoad.value = Math.ceil(loaded / articlePageSize) + 1
+	}
+
+	function onPaginationChange(e: UTSJSONObject) {
+		const t = e['type']
+		if (t === 'next') {
+			loadMore()
+		} else if (t === 'prev') {
+			trimLastPage()
+		}
+	}
+
+	function onRefresherRefresh() {
+		refresherTriggered.value = true
+		resetListState()
+		loadMore().finally(() => {
+			refresherTriggered.value = false
+		})
+	}
+
+	function onScrollToLower() {
+		loadMore()
 	}
 
 	function navTo(url: string) {
 		uni.navigateTo({ url })
 	}
 
-	function getArticleList() {
-		if (articleLoading.value || articleNoMoreData.value) return
-		articleLoading.value = true
-		if (articlePageNum.value === 1) loading.value = true
-		fetchArticleList({
-			pageSize: articlePageSize,
-			pageNum: articlePageNum.value,
-			cateId: cateId.value,
-		} as UTSJSONObject).then((res) => {
-			if (res.code == 200 && res.data != null) {
-				const data = res.data as UTSJSONObject
-				const rows = data['rows'] != null ? (data['rows'] as any[]) : []
-				articleTotal.value = data['total'] != null ? (data['total'] as number) : 0
-				if (articlePageNum.value === 1) {
-					articleList.value = rows
-				} else {
-					articleList.value = articleList.value.concat(rows)
-				}
-				if (articleList.value.length >= articleTotal.value) {
-					articleNoMoreData.value = true
-				}
-			} else {
-				articleNoMoreData.value = true
-			}
-		}).catch(() => {
-			articleNoMoreData.value = true
-		}).finally(() => {
-			articleLoading.value = false
+	onLoad((options) => {
+		cateId.value = options['cateId'] != null ? ('' + options['cateId']) : ''
+		title.value = options['title'] != null ? ('' + options['title']) : '文章列表'
+		loading.value = true
+		loadMore().finally(() => {
 			loading.value = false
 		})
-	}
-
-	onLoad((options) => {
-		cateId.value = options['cateId'] ?? ''
-		title.value = options['title'] ?? '文章列表'
-		getArticleList()
-	})
-
-	onReachBottom(() => {
-		if (!articleLoading.value && !articleNoMoreData.value) {
-			articlePageNum.value = articlePageNum.value + 1
-			getArticleList()
-		}
 	})
 </script>
 
 <style lang="scss" scoped>
-.page { min-height: 100vh; background-color: #f5f5f5; }
-.p-10 { padding: 20rpx; }
-.flex { display: flex; flex-direction: row; }
-.flex--row { flex-direction: row; }
-.content { display: flex; flex-direction: column; }
+.page {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	background-color: #f5f5f5;
+}
+
+.list-scroll {
+	flex: 1;
+	height: 0;
+	box-sizing: border-box;
+}
+
+.p-10 {
+	padding: 20rpx;
+	padding-bottom: 48rpx;
+}
+
+.demo-tip {
+	display: block;
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.45;
+	margin-bottom: 20rpx;
+}
+
+.flex {
+	display: flex;
+	flex-direction: row;
+}
+
+.flex--row {
+	flex-direction: row;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+}
+
 .list-item {
 	margin-top: 15rpx;
 	width: 100%;
@@ -109,6 +287,11 @@
 	border-radius: 10rpx;
 	align-items: center;
 }
+
+.list-item:first-child {
+	margin-top: 0;
+}
+
 .list-item .image {
 	width: 200rpx;
 	height: 200rpx;
@@ -116,10 +299,12 @@
 	border-radius: 8rpx;
 	overflow: hidden;
 }
+
 .list-item .image image {
 	width: 100%;
 	height: 100%;
 }
+
 .list-item .info {
 	flex: 1;
 	padding-left: 24rpx;
@@ -127,6 +312,7 @@
 	flex-direction: column;
 	justify-content: space-around;
 }
+
 .list-item .item-title {
 	font-size: 32rpx;
 	color: #333;
@@ -137,11 +323,32 @@
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 }
+
 .list-item .time {
 	font-size: 25rpx;
 	color: #838383;
 	margin-top: 12rpx;
 }
-.empty-tip { text-align: center; padding: 80rpx; font-size: 28rpx; color: #999; }
-.loading-tip { text-align: center; padding: 30rpx; font-size: 26rpx; color: #999; }
+
+.empty-tip {
+	text-align: center;
+	padding: 80rpx;
+	font-size: 28rpx;
+	color: #999;
+}
+
+.loading-tip {
+	text-align: center;
+	padding: 30rpx;
+	font-size: 26rpx;
+	color: #999;
+}
+
+.pagination-wrap {
+	margin-top: 32rpx;
+	padding-top: 24rpx;
+	border-top-width: 1rpx;
+	border-top-style: solid;
+	border-top-color: #eeeeee;
+}
 </style>

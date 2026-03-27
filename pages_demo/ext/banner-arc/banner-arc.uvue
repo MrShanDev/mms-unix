@@ -18,6 +18,17 @@
 				</view>
 			</mms-banner-arc>
 		</view>
+
+		<view class="demo-section">
+			<text class="section-title">外弧 arc-mode="out"</text>
+			<text class="section-hint">底部向外凸出，与下方灰底衔接；percent / arc-height 仍控制弧度</text>
+			<mms-banner-arc arc-mode="out" height="180" :percent="150" :arcHeight="88" background="linear-gradient(135deg,#5473ff,#6da8ff)">
+				<view class="banner-inner">
+					<text class="banner-title">外弧形头图</text>
+					<text class="banner-sub">个人中心可设 arc-mode="out"</text>
+				</view>
+			</mms-banner-arc>
+		</view>
 	</view>
 </template>
 
@@ -28,6 +39,14 @@
 @import '../../_demo-common.scss';
 .section-title {
 	margin-bottom: 24rpx;
+}
+
+.section-hint {
+	font-size: 24rpx;
+	color: #909399;
+	display: block;
+	margin-bottom: 16rpx;
+	line-height: 1.5;
 }
 
 .demo-page {

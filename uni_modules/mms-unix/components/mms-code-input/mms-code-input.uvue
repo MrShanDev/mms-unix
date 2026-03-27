@@ -29,7 +29,7 @@
 				<view
 					v-if="cursor && focused && !disabled && caretIndex === idx - 1"
 					class="mms-code-input__caret"
-					:style="{ backgroundColor: cursorColor, height: cursorHeight + 'rpx' }"
+					:style="{ backgroundColor: cursorColor, height: caretHeightCss }"
 				></view>
 			</view>
 		</view>
@@ -37,6 +37,7 @@
 </template>
 
 <script lang="uts">
+import { PropType } from 'vue'
 import { toCssLength, parseCssNumber } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 
 export default {
@@ -138,6 +139,23 @@ export default {
 		fontWeight: {
 			type: [Number, String],
 			default: 600
+		},
+		/**
+		 * 统一格子边长（rpx）。大于 0 时覆盖 width/height，并按比例设置字号、光标高度、密码圆点。
+		 * 与分别传 width、height、size 二选一即可。
+		 */
+		boxSize: {
+			type: Number,
+			default: 0
+		},
+		/** 格子之间的水平间距（rpx） */
+		cellGap: {
+			type: [Number, String],
+			default: 16
+		},
+		customStyle: {
+			type: Object as PropType<UTSJSONObject>,
+			default: () => ({})
 		}
 	},
 	data() {
@@ -168,35 +186,67 @@ export default {
 			return 'text'
 		},
 		rootStyle(): UTSJSONObject {
-			return {
+			const st = {
 				paddingLeft: toCssLength(this.gap as number | string),
 				paddingRight: toCssLength(this.gap as number | string),
 				marginTop: toCssLength(this.marginTop as number | string),
 				marginBottom: toCssLength(this.marginBottom as number | string)
+			} as UTSJSONObject
+			if (this.customStyle != null) {
+				Object.assign(st, this.customStyle)
 			}
+			return st
 		},
 		textStyle(): UTSJSONObject {
+			let fs = this.size as number | string
+			const bs = this.boxSize as number
+			if (bs > 0) {
+				const n = Math.floor(bs * 0.445)
+				fs = n < 20 ? 20 : n
+			}
 			return {
-				fontSize: toCssLength(this.size as number | string),
+				fontSize: toCssLength(fs as number | string),
 				color: this.color as string,
 				fontWeight: this.fontWeight
 			}
 		},
 		pwdDotStyle(): UTSJSONObject {
+			let d = 18
+			const bs = this.boxSize as number
+			if (bs > 0) {
+				const n = Math.floor(bs * 0.17)
+				d = n < 10 ? 10 : n
+			}
 			return {
 				backgroundColor: this.color as string,
-				width: '18rpx',
-				height: '18rpx',
+				width: d + 'rpx',
+				height: d + 'rpx',
 				borderRadius: '50%'
 			}
+		},
+		/** 光标条高度（与 boxSize 联动） */
+		caretHeightCss(): string {
+			const bs = this.boxSize as number
+			if (bs > 0) {
+				return toCssLength(Math.floor(bs * 0.56))
+			}
+			return toCssLength(this.cursorHeight as number | string)
 		},
 		borderW(): string {
 			return toCssLength(this.borderWidth as number | string)
 		},
 		cellW(): string {
+			const bs = this.boxSize as number
+			if (bs > 0) {
+				return toCssLength(bs)
+			}
 			return toCssLength(this.width as number | string)
 		},
 		cellH(): string {
+			const bs = this.boxSize as number
+			if (bs > 0) {
+				return toCssLength(bs)
+			}
 			return toCssLength(this.height as number | string)
 		},
 		radiusCss(): string {
@@ -289,6 +339,12 @@ export default {
 				height: this.cellH,
 				backgroundColor: this.background as string,
 				borderRadius: this.radiusCss
+			}
+			const last = i >= this.lengthNum - 1
+			if (last) {
+				st['marginRight'] = '0'
+			} else {
+				st['marginRight'] = toCssLength(this.cellGap as number | string)
 			}
 			const active = i === this.caretIndex && this.focused && !this.disabled
 			const bc = active ? (this.activeColor as string) : (this.borderColor as string)
@@ -385,13 +441,8 @@ export default {
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	margin-right: 16rpx;
 	box-sizing: border-box;
 	position: relative;
-}
-
-.mms-code-input__cell:last-child {
-	margin-right: 0;
 }
 
 .mms-code-input__t {

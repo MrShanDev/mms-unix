@@ -7,7 +7,12 @@
 	>
 		<view v-if="showLeftCol" class="mms-notice-bar__left" @tap.stop="onLeftTap">
 			<slot name="icon">
-				<mms-icon v-if="showIcon" name="volume" color="#ff7900" :size="iconSizeNum"></mms-icon>
+				<mms-icon
+					v-if="showIcon"
+					:name="iconNameStr"
+					:color="resolvedIconColor"
+					:size="iconSizeCss"
+				></mms-icon>
 			</slot>
 		</view>
 		<view class="mms-notice-bar__body">
@@ -45,6 +50,7 @@
 </template>
 
 <script lang="uts">
+import { PropType } from 'vue'
 import { toCssLength } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 
 export default {
@@ -59,9 +65,25 @@ export default {
 			type: String,
 			default: ''
 		},
+		/** 是否在左侧显示内置图标（仍可用 #icon 插槽完全自定义） */
 		showIcon: {
 			type: Boolean,
-			default: true
+			default: false
+		},
+		/** 内置图标名称，对应 mms-icon 的 name（默认 notification-filling） */
+		icon: {
+			type: String,
+			default: 'notification-filling'
+		},
+		/** 图标颜色；空则与正文字色 color/textColor 一致 */
+		iconColor: {
+			type: String,
+			default: ''
+		},
+		/** 图标尺寸，空则与 size 一致 */
+		iconSize: {
+			type: [Number, String],
+			default: ''
 		},
 		showRight: {
 			type: Boolean,
@@ -79,6 +101,7 @@ export default {
 			type: Boolean,
 			default: false
 		},
+		/** 与 backgroundColor 二选一，优先于 backgroundColor */
 		bgColor: {
 			type: String,
 			default: ''
@@ -87,10 +110,12 @@ export default {
 			type: String,
 			default: '#fff8d5'
 		},
+		/** 与 color 二选一，优先于 color */
 		textColor: {
 			type: String,
 			default: ''
 		},
+		/** 正文字体颜色 */
 		color: {
 			type: String,
 			default: '#ff7900'
@@ -136,6 +161,10 @@ export default {
 		duration: {
 			type: Number,
 			default: 18
+		},
+		customStyle: {
+			type: Object as PropType<UTSJSONObject>,
+			default: () => ({})
 		}
 	},
 	computed: {
@@ -160,6 +189,33 @@ export default {
 			}
 			return this.color as string
 		},
+		iconNameStr(): string {
+			const n = this.icon as string
+			if (n != null && n.length > 0) {
+				return n
+			}
+			return 'notification-filling'
+		},
+		resolvedIconColor(): string {
+			const ic = this.iconColor as string
+			if (ic != null && ic.length > 0) {
+				return ic
+			}
+			return this.resolvedColor
+		},
+		iconSizeCss(): string {
+			const raw = this.iconSize as number | string
+			if (raw == null) {
+				return toCssLength(this.size as number | string)
+			}
+			if (typeof raw === 'string' && raw.length === 0) {
+				return toCssLength(this.size as number | string)
+			}
+			if (typeof raw === 'number' && raw <= 0) {
+				return toCssLength(this.size as number | string)
+			}
+			return toCssLength(raw as number | string)
+		},
 		showLeftCol(): boolean {
 			if (this.isLeft as boolean) {
 				return true
@@ -171,14 +227,6 @@ export default {
 				return true
 			}
 			return this.showRight as boolean
-		},
-		iconSizeNum(): number {
-			const s = this.size as number | string
-			if (typeof s === 'number') {
-				return s > 0 ? s : 28
-			}
-			const n = parseInt(s as string)
-			return isNaN(n) ? 28 : n
 		},
 		paddingCss(): string {
 			const arr = this.padding as any[]
@@ -216,6 +264,9 @@ export default {
 			const pad = this.paddingCss
 			if (pad.length > 0) {
 				style['padding'] = pad
+			}
+			if (this.customStyle != null) {
+				Object.assign(style, this.customStyle)
 			}
 			return style
 		},

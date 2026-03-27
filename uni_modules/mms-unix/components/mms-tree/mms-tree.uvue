@@ -2,7 +2,12 @@
 	<view class="mms-tree">
 		<view v-for="item in data" :key="item.id" class="mms-tree-item">
 			<view class="mms-tree-item__title" @tap="toggleItem(item)">
-				<icon v-if="item.children && item.children.length > 0" :name="expandedMap[item.id] ? 'down' : 'right'" color="#909399" size="28"></icon>
+				<mms-icon
+					v-if="item.children && item.children.length > 0"
+					:name="expandedMap[item.id] ? 'arrow-down' : 'arrow-right'"
+					color="#909399"
+					size="28"
+				></mms-icon>
 				<view class="mms-tree-item__text">{{ item.label }}</view>
 				<slot name="item" :item="item"></slot>
 			</view>

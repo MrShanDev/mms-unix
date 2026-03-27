@@ -31,7 +31,7 @@
 </template>
 
 <script lang="uts">
-import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
+import { getMmsUiConfig } from '@/uni_modules/mms-unix/config.uts'
 import { toCssLength, parseCssNumber } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 
 function hexForQrApi(c: string): string {

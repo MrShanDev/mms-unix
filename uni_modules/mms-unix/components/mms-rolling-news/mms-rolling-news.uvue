@@ -26,6 +26,7 @@
 </template>
 
 <script lang="uts">
+import { PropType } from 'vue'
 import { toCssLength } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 
 export default {
@@ -105,6 +106,10 @@ export default {
 		showIconSlot: {
 			type: Boolean,
 			default: false
+		},
+		customStyle: {
+			type: Object as PropType<UTSJSONObject>,
+			default: () => ({})
 		}
 	},
 	computed: {
@@ -198,11 +203,15 @@ export default {
 		},
 		rootStyle(): UTSJSONObject {
 			const r = toCssLength(this.radius as number | string)
-			return {
+			const st = {
 				backgroundColor: this.resolvedBg,
 				borderRadius: r,
 				padding: this.padding as string
+			} as UTSJSONObject
+			if (this.customStyle != null) {
+				Object.assign(st, this.customStyle)
 			}
+			return st
 		}
 	},
 	methods: {

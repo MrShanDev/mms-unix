@@ -1,16 +1,18 @@
 <template>
-	<view class="mms-upload">
+	<view class="mms-upload" :style="uploadGridStyle">
 		<view
 			class="mms-upload__item"
 			v-for="(item, index) in resolvedFiles"
 			:key="index"
 		>
-			<image
-				class="mms-upload__thumb"
-				:src="item.url"
-				mode="aspectFill"
-				@click="onImageTap(index)"
-			></image>
+			<view class="mms-upload__item-inner">
+				<image
+					class="mms-upload__thumb"
+					:src="item.url"
+					mode="aspectFill"
+					@click="onImageTap(index)"
+				></image>
+			</view>
 			<view
 				v-if="deletable && item.status != 'uploading'"
 				class="mms-upload__delete"
@@ -35,7 +37,11 @@
 			:class="{ 'mms-upload__add--disabled': addDisabled }"
 			@click="chooseImage"
 		>
-			<mms-icon name="upload" size="56rpx" color="#c0c4cc"></mms-icon>
+			<view class="mms-upload__add-box">
+				<view class="mms-upload__add-icon">
+					<mms-icon name="upload" size="56rpx" color="#c0c4cc"></mms-icon>
+				</view>
+			</view>
 		</view>
 	</view>
 </template>
@@ -137,9 +143,32 @@ export default {
 		blockChooseWhenUploading: {
 			type: Boolean,
 			default: true
+		},
+		/** 每行格子数（与父级同宽时一行排满再换行；默认 4） */
+		columns: {
+			type: Number,
+			default: 4
+		},
+		/** 格子横向、纵向间距（rpx） */
+		gap: {
+			type: Number,
+			default: 20
 		}
 	},
 	computed: {
+		/** 由 columns、gap 生成每项宽度与间距 CSS 变量（ucss 对 gap 不稳定，用 margin） */
+		uploadGridStyle(): UTSJSONObject {
+			const cRaw = this.columns as number
+			const g = this.gap as number
+			let cols = cRaw
+			if (cols < 1) {
+				cols = 1
+			}
+			const st: UTSJSONObject = {}
+			st['--mu-gap'] = g + 'rpx'
+			st['--mu-item-w'] = 'calc((100% - ' + (cols - 1) + ' * ' + g + 'rpx) / ' + cols + ')'
+			return st
+		},
 		/** 保留列表项上的业务字段（如 id），仅约定使用 url / status / path / serverData */
 		resolvedFiles(): any[] {
 			const fl = this.fileList
@@ -444,17 +473,32 @@ export default {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	gap: 20rpx;
+	box-sizing: border-box;
+	/* 每项宽度由 uploadGridStyle 中 --mu-item-w 计算（一行 columns 个再换行） */
 
 	.mms-upload__item {
 		position: relative;
-		width: 160rpx;
-		height: 160rpx;
-		border-radius: 8rpx;
-		overflow: hidden;
-		background: #f5f5f5;
+		width: var(--mu-item-w);
+		margin-right: var(--mu-gap);
+		margin-bottom: var(--mu-gap);
+		box-sizing: border-box;
+
+		.mms-upload__item-inner {
+			width: 100%;
+			height: 0;
+			padding-bottom: 100%;
+			position: relative;
+			overflow: hidden;
+			border-radius: 8rpx;
+			background: #f5f5f5;
+		}
 
 		.mms-upload__thumb {
+			position: absolute;
+			left: 0;
+			top: 0;
+			right: 0;
+			bottom: 0;
 			width: 100%;
 			height: 100%;
 		}
@@ -501,11 +545,29 @@ export default {
 	}
 
 	.mms-upload__add {
-		width: 160rpx;
-		height: 160rpx;
+		width: var(--mu-item-w);
+		margin-right: var(--mu-gap);
+		margin-bottom: var(--mu-gap);
+		box-sizing: border-box;
+	}
+
+	.mms-upload__add-box {
+		width: 100%;
+		height: 0;
+		padding-bottom: 100%;
+		position: relative;
 		border-radius: 8rpx;
 		border: 2rpx dashed #dcdfe6;
 		background: #f5f5f5;
+		box-sizing: border-box;
+	}
+
+	.mms-upload__add-icon {
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
 		display: flex;
 		flex-direction: row;
 		align-items: center;

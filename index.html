@@ -2,6 +2,28 @@
 <html lang="zh-CN">
 	<head>
 		<meta charset="UTF-8" />
+		<!-- HMR / 部分 WebView 无 Promise.allSettled，需在任意 module 之前补齐 -->
+		<script>
+			;(function () {
+				if (typeof Promise === 'undefined' || Promise.allSettled) {
+					return
+				}
+				Promise.allSettled = function (promises) {
+					return Promise.all(
+						promises.map(function (p) {
+							return Promise.resolve(p).then(
+								function (v) {
+									return { status: 'fulfilled', value: v }
+								},
+								function (e) {
+									return { status: 'rejected', reason: e }
+								}
+							)
+						})
+					)
+				}
+			})()
+		</script>
 		<script>
 			var coverSupport = 'CSS' in window && typeof CSS.supports === 'function' && (CSS.supports('top: env(a)') ||
 				CSS.supports('top: constant(a)'))

@@ -5,7 +5,7 @@
 ## 主题
 
 - 全局主色由 `#ff2727` 调整为 **`#ff0844`**（导航栏、Tab 选中色、个人中心头图、登录/注册/找回密码渐变、工具页按钮、`mms.scss` 工具类、演示页示例色等）。
-- `common/config.ts` 中 `mmsUi.primaryColor` 与 `uni_modules/mms-unix/config/mms-ui-config.uts` 默认值对齐。
+- `common/config.ts` 中 `mmsUi.primaryColor` 与 `uni_modules/mms-unix/config.uts` 默认值对齐。
 
 ## 「我的」与个人相关页
 

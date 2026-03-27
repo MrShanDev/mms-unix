@@ -24,10 +24,16 @@
 
 	const categories: IdxCat[] = [
 		{
+			title: '样式',
+			items: [{ name: '过渡动画', path: '/pages_demo/animate/animate' }]
+		},
+		{
 			title: '布局与导航',
 			items: [
 				{ name: '吸顶', path: '/pages_demo/ext/sticky/sticky' },
-				{ name: '底部导航', path: '/pages_demo/ext/bottom-nav/bottom-nav' }
+				{ name: '底部导航', path: '/pages_demo/ext/bottom-nav/bottom-nav' },
+				{ name: '布局辅助', path: '/pages_demo/ext/layout-helpers/layout-helpers' },
+				{ name: '底部固定栏', path: '/pages_demo/ext/sticky-bottom/sticky-bottom' }
 			]
 		},
 		{
@@ -41,7 +47,8 @@
 				{ name: '气泡菜单', path: '/pages_demo/ext/bubble-popup/bubble-popup' },
 				{ name: '验证码输入', path: '/pages_demo/ext/code-input/code-input' },
 				{ name: '图形验证码', path: '/pages_demo/ext/vcode/vcode' },
-				{ name: '金额大写', path: '/pages_demo/ext/amount-inwords/amount-inwords' }
+				{ name: '金额大写', path: '/pages_demo/ext/amount-inwords/amount-inwords' },
+				{ name: '日期时间', path: '/pages_demo/ext/datetime-picker/datetime-picker' }
 			]
 		},
 		{
@@ -54,13 +61,15 @@
 				{ name: '步骤条', path: '/pages_demo/ext/steps/steps' },
 				{ name: '滑动操作', path: '/pages_demo/ext/swipe-action/swipe-action' },
 				{ name: '区块标题', path: '/pages_demo/ext/section/section' },
-				{ name: '左右留白', path: '/pages_demo/ext/wing-blank/wing-blank' },
+				{ name: '留白', path: '/pages_demo/ext/wing-blank/wing-blank' },
 				{ name: '富文本', path: '/pages_demo/ext/richtext/richtext' },
 				{ name: '滚动资讯', path: '/pages_demo/ext/rolling-news/rolling-news' },
 				{ name: '文本', path: '/pages_demo/ext/text/text' },
 				{ name: '链接', path: '/pages_demo/ext/link/link' },
 				{ name: '弧形横幅', path: '/pages_demo/ext/banner-arc/banner-arc' },
-				{ name: '图片裁剪', path: '/pages_demo/ext/cropper/cropper' }
+				{ name: '图片裁剪', path: '/pages_demo/ext/cropper/cropper' },
+				{ name: '树形', path: '/pages_demo/ext/tree/tree' },
+				{ name: '加载更多', path: '/pages_demo/ext/loadmore/loadmore' }
 			]
 		},
 		{
@@ -70,7 +79,16 @@
 				{ name: '操作菜单', path: '/pages_demo/ext/action-sheet/action-sheet' },
 				{ name: '提醒弹框', path: '/pages_demo/ext/alert/alert' },
 				{ name: '剪贴板', path: '/pages_demo/ext/clipboard/clipboard' },
-				{ name: '悬浮按钮', path: '/pages_demo/ext/fab/fab' }
+				{ name: '悬浮按钮', path: '/pages_demo/ext/fab/fab' },
+				{ name: '区域截图', path: '/pages_demo/ext/screenshot/screenshot' },
+				{ name: '提示条 mms-tips', path: '/pages_demo/ext/tips/tips' }
+			]
+		},
+		{
+			title: '业务与工具',
+			items: [
+				{ name: '应用更新', path: '/pages_demo/ext/app-update/app-update' },
+				{ name: '微信登录', path: '/pages_demo/ext/wx-login/wx-login' }
 			]
 		}
 	]

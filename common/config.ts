@@ -3,21 +3,25 @@
  * 组件库核心配置，所有项目通用配置在此定义
  */
 
-/** 与 mms-ui-config.uts 的 MmsUiPartial 字段对齐，供 TypeScript 项目配置 */
+/** 与 uni_modules/mms-unix/config.uts 的 MmsUiPartial 字段对齐，供 TypeScript 项目配置 */
 export type MmsUiUserConfig = {
+	/** 应用展示名（与 configInfo.name 合并，见 getMmsUiConfig().appName） */
+	appName?: string
+	/** 开发环境 API 根（未填时兜底为 config.baseUrl） */
+	apiDevelopmentBase?: string
+	/** 生产环境 API 根 */
+	apiProductionBase?: string
+	/** 用户协议路由 */
+	agreementRoute?: string
+	/** 隐私政策路由 */
+	privacyRoute?: string
 	appLogo?: string
-	emptyDefaultImage?: string
+	emptyDefaultIcon?: string
 	avatarDefault?: string
 	articlePlaceholder?: string
-	demoCardThumb?: string
-	cropperDemo?: string
+	/** 演示页示例图（card、cropper 等） */
+	demoImage?: string
 	qrCodeImageApiBase?: string
-	primaryColor?: string
-	serviceIconRead?: string
-	serviceIconCertificate?: string
-	serviceIconGroup?: string
-	serviceIconAddress?: string
-	serviceIconAbout?: string
 }
 
 type AppConfig = {
@@ -37,7 +41,7 @@ type AppConfig = {
 	configInfo: ConfigInfo
 	/**
 	 * mms-unix 组件库 UI 资源与主题（可选）
-	 * 与 uni_modules/mms-unix/config/mms-ui-config.uts 中默认值合并，未填则使用库内默认路径
+	 * 与 uni_modules/mms-unix/config.uts 中默认值合并，未填则使用库内默认路径
 	 */
 	mmsUi?: MmsUiUserConfig
 }
@@ -144,13 +148,9 @@ export const config: AppConfig = {
 	// 应用基础信息
 	configInfo: {
 		name: 'mms-unix',
-		logo: '/static/img/app-logo.png',
+		logo: '/uni_modules/mms-unix/static/mms-app-logo.png',
 		desc: 'uni-app 组件库',
 		versionCode: 2,
 		versionName: '1.0.1',
-	},
-	// mms-unix 演示/业务页资源覆盖示例（按需取消注释并修改路径）
-	mmsUi: {
-		primaryColor: '#ff0844',
 	},
 }

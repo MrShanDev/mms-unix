@@ -2,23 +2,34 @@
 	<view class="container">
 		<scroll-view class="page-scroll" scroll-y :show-scrollbar="false">
 			<view class="page-inner">
-				<view class="header-bg"></view>
-				<view class="profile-wrap">
-					<mms-card :shadow="true" :border="false">
-						<view class="profile-row" @tap.stop="onProfileTap">
-							<view class="avatar">
-								<image class="avatar-image" :src="userInfo.headPortrait || defaultFace" mode="aspectFill"></image>
+				<view class="header-banner">
+					<mms-banner-arc
+						arc-mode="out"
+						height="260"
+						:percent="168"
+						background="linear-gradient(135deg, #ff0844 0%, #ff6b88 100%)"
+						arcColor="#f5f5f5"
+						:arcHeight="96"
+					>
+						<view class="banner-arc-inner"></view>
+					</mms-banner-arc>
+					<view class="profile-wrap">
+						<mms-card :shadow="true" :border="false">
+							<view class="profile-row" @tap.stop="onProfileTap">
+								<view class="avatar">
+									<image class="avatar-image" :src="userInfo.headPortrait || defaultFace" mode="aspectFill"></image>
+								</view>
+								<view class="profile-text">
+									<text v-if="hasLogin" class="profile-name">{{ userInfo.nickname || '暂无昵称' }}</text>
+									<text v-if="hasLogin" class="profile-sub">{{ profilePhone }}</text>
+									<text v-else class="profile-name profile-name--muted">点击登录 / 完善资料</text>
+								</view>
+								<mms-icon name="arrow-right" size="32rpx" color="#c0c4cc"></mms-icon>
 							</view>
-							<view class="profile-text">
-								<text v-if="hasLogin" class="profile-name">{{ userInfo.nickname || '暂无昵称' }}</text>
-								<text v-if="hasLogin" class="profile-sub">{{ profilePhone }}</text>
-								<text v-else class="profile-name profile-name--muted">点击登录 / 完善资料</text>
-							</view>
-							<mms-icon name="arrow-right" size="32rpx" color="#c0c4cc"></mms-icon>
-						</view>
-					</mms-card>
+						</mms-card>
+					</view>
 				</view>
-				<mms-cell-group title="服务与内容" class="menu-group">
+				<mms-cell-group v-if="menuConfig.style === 'list'" :title="menuConfig.title" class="menu-group">
 					<mms-cell
 						v-for="(item, index) in serviceBar"
 						:key="index"
@@ -29,6 +40,20 @@
 						@click="onServiceTap(item)"
 					></mms-cell>
 				</mms-cell-group>
+				<view v-else class="menu-grid-wrap menu-group">
+					<text class="menu-grid-title">{{ menuConfig.title }}</text>
+					<mms-grid :column="menuConfig.gridColumns" :border="true">
+						<mms-grid-item
+							v-for="(item, index) in serviceBar"
+							:key="index"
+							:icon="item.iconName"
+							:text="item.title"
+							iconColor="#ff0844"
+							iconSize="48rpx"
+							@click="onServiceTap(item)"
+						></mms-grid-item>
+					</mms-grid>
+				</view>
 			</view>
 		</scroll-view>
 	</view>
@@ -36,14 +61,16 @@
 
 <script setup lang="uts">
 	import { ref, computed } from 'vue'
-	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
+	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config.uts'
 	import { jumpTo } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 	import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
 	import { tokenLogin } from '@/common/api/mallApi'
-	import { getUserServiceItems } from './myServiceData'
+	import { getUserServiceItems, getUserServiceMenuConfig } from './myServiceData'
+	import type { UserServiceItem } from './myServiceData'
 
 	const defaultFace = computed((): string => getMmsUiConfig().avatarDefault)
 	const serviceBar = computed(() => getUserServiceItems())
+	const menuConfig = computed(() => getUserServiceMenuConfig())
 	const hasLogin = ref(storage.getToken() != '' || storage.getUserInfo() != null)
 	const userInfo = ref(storage.getUserInfo() ?? {} as UTSJSONObject)
 
@@ -84,8 +111,10 @@
 		checkLoginAndNav('/pages_Me/user_info/index', true)
 	}
 
-	function onServiceTap(item: { iconName: string; title: string; pages: string; requireLogin: boolean }) {
-		checkLoginAndNav(item.pages, item.requireLogin === true)
+	function onServiceTap(item: UserServiceItem) {
+		const cfg = menuConfig.value
+		const needLogin = cfg.loginGuard === true && item.requireLogin === true
+		checkLoginAndNav(item.pages, needLogin)
 	}
 
 	onShow(() => {
@@ -129,15 +158,23 @@
 	padding-bottom: 160rpx;
 }
 
-.header-bg {
-	height: 220rpx;
-	background-color: #ff0844;
+.header-banner {
+	position: relative;
+	width: 100%;
+}
+
+.banner-arc-inner {
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	box-sizing: border-box;
 }
 
 .profile-wrap {
-	margin-top: -88rpx;
+	margin-top: -104rpx;
 	padding: 0 24rpx 24rpx;
 	position: relative;
+	z-index: 3;
 }
 
 .profile-row {
@@ -189,5 +226,19 @@
 
 .menu-group {
 	margin: 0 24rpx;
+}
+
+.menu-grid-wrap {
+	background-color: #ffffff;
+	border-radius: 8rpx;
+	overflow: hidden;
+}
+
+.menu-grid-title {
+	display: block;
+	padding: 24rpx 32rpx 8rpx;
+	font-size: 28rpx;
+	color: #333333;
+	font-weight: 600;
 }
 </style>

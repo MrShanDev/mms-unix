@@ -1,7 +1,34 @@
 <template>
 	<view class="mms-picture-cropper">
 		<view class="mms-picture-cropper__stage">
-			<view v-if="resolvedUrl !== ''" class="mms-picture-cropper__img-wrap">
+			<view v-if="resolvedUrl !== '' && interactive" class="mms-picture-cropper__ma-wrap">
+				<movable-area class="mms-picture-cropper__ma" scale-area>
+					<movable-view
+						:key="'mv-' + layoutKey"
+						class="mms-picture-cropper__mv"
+						direction="all"
+						:x="mvX"
+						:y="mvY"
+						:style="mvStyle"
+						:scale="true"
+						:scale-min="scaleMin"
+						:scale-max="scaleMax"
+						:scale-value="scaleValue"
+						inertia
+						@change="onMvChange"
+						@scale="onMvScale"
+					>
+						<image
+							class="mms-picture-cropper__img"
+							:src="resolvedUrl"
+							mode="aspectFill"
+							@load="onImageLoad"
+							@error="onImageError"
+						></image>
+					</movable-view>
+				</movable-area>
+			</view>
+			<view v-else-if="resolvedUrl !== '' && !interactive" class="mms-picture-cropper__img-wrap">
 				<image
 					class="mms-picture-cropper__img"
 					:src="resolvedUrl"
@@ -19,9 +46,10 @@
 			</view>
 		</view>
 		<text class="mms-picture-cropper__tip">
-			框内为示意裁剪区域；像素级裁剪请用各端原生裁剪或 Canvas / 服务端处理。
+			{{ tipText }}
 		</text>
 		<view class="mms-picture-cropper__bar">
+			<text v-if="interactive && resolvedUrl !== ''" class="mms-picture-cropper__btn mms-picture-cropper__btn--ghost" @tap="resetView">重置</text>
 			<text class="mms-picture-cropper__btn" @tap="emitCrop">确认（回传当前图）</text>
 		</view>
 	</view>
@@ -30,18 +58,16 @@
 <script lang="uts">
 export default {
 	name: 'mmsPictureCropper',
-	emits: ['ready', 'imageLoad', 'cropper', 'imageError'],
+	emits: ['ready', 'imageLoad', 'cropper', 'imageError', 'viewChange'],
 	props: {
 		imageUrl: {
 			type: String,
 			default: ''
 		},
-		/** 裁剪框宽度占舞台宽度的比例 0.35~0.92 */
 		frameWidthRatio: {
 			type: Number,
 			default: 0.72
 		},
-		/** 裁剪框宽高比 width / height */
 		aspectRatio: {
 			type: Number,
 			default: 1
@@ -49,18 +75,51 @@ export default {
 		frameColor: {
 			type: String,
 			default: '#5677fc'
+		},
+		/** 双指缩放 + 单指拖动；false 为旧版静态示意 */
+		interactive: {
+			type: Boolean,
+			default: true
+		},
+		scaleMin: {
+			type: Number,
+			default: 0.5
+		},
+		scaleMax: {
+			type: Number,
+			default: 4
+		},
+		/** 相对铺满舞台的扩展倍数，越大可拖动范围越大 */
+		panRoom: {
+			type: Number,
+			default: 1.28
 		}
 	},
 	data() {
 		return {
 			imgW: 0 as number,
-			imgH: 0 as number
+			imgH: 0 as number,
+			stageW: 0 as number,
+			stageH: 0 as number,
+			mvW: 100 as number,
+			mvH: 100 as number,
+			mvX: 0 as number,
+			mvY: 0 as number,
+			scaleValue: 1 as number,
+			lastScale: 1 as number,
+			layoutKey: 0 as number
 		}
 	},
 	computed: {
 		resolvedUrl(): string {
 			const u = this.imageUrl as string
 			return u == null ? '' : u.trim()
+		},
+		mvStyle(): UTSJSONObject {
+			return {
+				width: this.mvW + 'px',
+				height: this.mvH + 'px'
+			} as UTSJSONObject
 		},
 		frameOuterStyle(): UTSJSONObject {
 			const r = this.frameWidthRatio as number
@@ -79,12 +138,70 @@ export default {
 				borderColor: c,
 				boxShadow: '0 0 0 4000px rgba(0,0,0,0.48)'
 			} as UTSJSONObject
+		},
+		tipText(): string {
+			if (this.interactive as boolean) {
+				return '单指拖动、双指缩放；裁剪框仅示意。像素级导出需 Canvas / 原生 / 服务端。部分端 movable 能力见文档。'
+			}
+			return '框内为示意裁剪区域；像素级裁剪请用各端原生裁剪或 Canvas / 服务端处理。'
+		}
+	},
+	watch: {
+		resolvedUrl() {
+			this.resetLayoutState()
+			this.$nextTick(() => {
+				this.scheduleMeasureStage()
+			})
 		}
 	},
 	mounted() {
 		this.$emit('ready', {} as UTSJSONObject)
+		this.$nextTick(() => {
+			this.scheduleMeasureStage()
+		})
 	},
 	methods: {
+		resetLayoutState() {
+			this.imgW = 0
+			this.imgH = 0
+			this.stageW = 0
+			this.stageH = 0
+			this.mvW = 100
+			this.mvH = 100
+			this.mvX = 0
+			this.mvY = 0
+			this.scaleValue = 1
+			this.lastScale = 1
+			this.layoutKey++
+		},
+		scheduleMeasureStage() {
+			const self = this
+			setTimeout(() => {
+				self.measureStage()
+			}, 50)
+		},
+		measureStage() {
+			const self = this
+			try {
+				const q = uni.createSelectorQuery().in(self as any)
+				q.select('.mms-picture-cropper__stage')
+					.boundingClientRect((rect: any) => {
+						if (rect == null) {
+							return
+						}
+						const w = rect.width as number
+						const h = rect.height as number
+						if (w > 0 && h > 0) {
+							self.stageW = w
+							self.stageH = h
+							self.applyLayout()
+						}
+					})
+					.exec()
+			} catch (_e) {
+				// ignore
+			}
+		},
 		onImageLoad(e: UTSJSONObject) {
 			this.$emit('imageLoad', e)
 			const d = e['detail'] as UTSJSONObject | null
@@ -98,9 +215,87 @@ export default {
 					this.imgH = h as number
 				}
 			}
+			this.$nextTick(() => {
+				this.measureStage()
+				this.applyLayout()
+			})
 		},
 		onImageError(_e: UTSJSONObject) {
 			this.$emit('imageError', {} as UTSJSONObject)
+		},
+		applyLayout() {
+			if (!(this.interactive as boolean)) {
+				return
+			}
+			const sw = this.stageW
+			const sh = this.stageH
+			const iw = this.imgW
+			const ih = this.imgH
+			if (sw <= 0 || sh <= 0) {
+				return
+			}
+			if (iw <= 0 || ih <= 0) {
+				return
+			}
+			const room = this.panRoom as number
+			const safeRoom = room > 1 ? room : 1.28
+			const cover = Math.max(sw / iw, sh / ih)
+			let mw = iw * cover * safeRoom
+			let mh = ih * cover * safeRoom
+			if (mw < sw * 1.05) {
+				mw = sw * 1.05
+			}
+			if (mh < sh * 1.05) {
+				mh = sh * 1.05
+			}
+			this.mvW = mw
+			this.mvH = mh
+			this.mvX = (sw - mw) / 2
+			this.mvY = (sh - mh) / 2
+			this.scaleValue = 1
+			this.lastScale = 1
+		},
+		onMvChange(e: UTSJSONObject) {
+			const d = e['detail'] as UTSJSONObject | null
+			if (d != null) {
+				const x = d['x']
+				const y = d['y']
+				if (x != null) {
+					this.mvX = x as number
+				}
+				if (y != null) {
+					this.mvY = y as number
+				}
+			}
+			this.emitViewState()
+		},
+		onMvScale(e: UTSJSONObject) {
+			const d = e['detail'] as UTSJSONObject | null
+			if (d != null) {
+				const s = d['scale']
+				if (s != null) {
+					const ns = s as number
+					this.scaleValue = ns
+					this.lastScale = ns
+				}
+			}
+			this.emitViewState()
+		},
+		emitViewState() {
+			this.$emit('viewChange', {
+				x: this.mvX,
+				y: this.mvY,
+				scale: this.lastScale,
+				stageW: this.stageW,
+				stageH: this.stageH,
+				mvW: this.mvW,
+				mvH: this.mvH
+			} as UTSJSONObject)
+		},
+		resetView() {
+			this.applyLayout()
+			this.layoutKey++
+			this.emitViewState()
 		},
 		emitCrop() {
 			const u = this.resolvedUrl
@@ -108,7 +303,12 @@ export default {
 				url: u,
 				base64: '',
 				width: this.imgW,
-				height: this.imgH
+				height: this.imgH,
+				x: this.mvX,
+				y: this.mvY,
+				scale: this.lastScale,
+				stageW: this.stageW,
+				stageH: this.stageH
 			} as UTSJSONObject)
 		}
 	}
@@ -129,8 +329,27 @@ export default {
 	height: 520rpx;
 	background-color: #1a1a1a;
 	border-radius: 12rpx;
-	overflow: visible;
+	overflow: hidden;
 	box-sizing: border-box;
+}
+
+.mms-picture-cropper__ma-wrap {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+}
+
+.mms-picture-cropper__ma {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.mms-picture-cropper__mv {
+	overflow: hidden;
 }
 
 .mms-picture-cropper__img-wrap {
@@ -209,7 +428,9 @@ export default {
 	margin-top: 32rpx;
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
 	justify-content: center;
+	align-items: center;
 }
 
 .mms-picture-cropper__btn {
@@ -218,5 +439,11 @@ export default {
 	color: #ffffff;
 	font-size: 28rpx;
 	border-radius: 40rpx;
+	margin: 8rpx 12rpx;
+}
+
+.mms-picture-cropper__btn--ghost {
+	background-color: #3a3a3a;
+	color: #eeeeee;
 }
 </style>

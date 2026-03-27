@@ -2,6 +2,7 @@
 	<view
 		class="mms-radio"
 		:class="{ 'mms-radio--disabled': mergedDisabled }"
+		:style="rootGroupSpacingStyle"
 		@tap.stop="onTap"
 	>
 		<view class="mms-radio__icon-wrap" :style="iconWrapStyle">
@@ -195,6 +196,22 @@ export default {
 				width: wh,
 				height: wh
 			}
+		},
+		/** 横向 group 子项间距（见 mms-checkbox 同名字段说明） */
+		rootGroupSpacingStyle(): UTSJSONObject {
+			const g = this.radioGroup
+			if (g == null) {
+				return {}
+			}
+			const dir = g.direction as string
+			if (dir !== 'row') {
+				return {}
+			}
+			const st: UTSJSONObject = {}
+			st['marginTop'] = '0'
+			st['marginRight'] = '40rpx'
+			st['marginBottom'] = '20rpx'
+			return st
 		}
 	},
 	methods: {

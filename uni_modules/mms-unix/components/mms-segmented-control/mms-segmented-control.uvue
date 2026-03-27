@@ -4,20 +4,27 @@
 		:class="{ 'mms-segmented-control--disabled': disabled }"
 		:style="rootStyle"
 	>
-		<view
-			v-for="(item, idx) in valueList"
-			:key="idx"
-			class="mms-segmented-control__item"
-			:class="{ 'mms-segmented-control__item--active': idx === innerCurrent }"
-			:style="itemStyle(idx)"
-			@tap="onItemTap(idx)"
-		>
-			<text class="mms-segmented-control__text" :style="textStyle(idx)">{{ item }}</text>
+		<view class="mms-segmented-control__inner">
+			<view
+				v-if="valueList.length > 0"
+				class="mms-segmented-control__thumb"
+				:style="thumbStyle"
+			></view>
+			<view
+				v-for="(item, idx) in valueList"
+				:key="idx"
+				class="mms-segmented-control__item"
+				@tap="onItemTap(idx)"
+			>
+				<text class="mms-segmented-control__text" :style="textStyle(idx)">{{ item }}</text>
+			</view>
 		</view>
 	</view>
 </template>
 
 <script lang="uts">
+import { PropType } from 'vue'
+
 export default {
 	name: 'mmsSegmentedControl',
 	emits: ['click', 'change', 'update:current'],
@@ -59,6 +66,10 @@ export default {
 		backgroundColor: {
 			type: String,
 			default: '#f5f5f5'
+		},
+		customStyle: {
+			type: Object as PropType<UTSJSONObject>,
+			default: () => ({})
 		}
 	},
 	computed: {
@@ -90,26 +101,39 @@ export default {
 			return c
 		},
 		rootStyle(): UTSJSONObject {
-			return {
+			const st = {
 				height: this.height,
 				borderRadius: this.radius,
 				backgroundColor: this.backgroundColor
+			} as UTSJSONObject
+			if (this.customStyle != null) {
+				Object.assign(st, this.customStyle)
+			}
+			return st
+		},
+		thumbStyle(): UTSJSONObject {
+			const n = this.valueList.length
+			if (n <= 0) {
+				return { display: 'none' }
+			}
+			const pct = 100.0 / n
+			const i = this.innerCurrent
+			return {
+				width: pct + '%',
+				left: i * pct + '%',
+				transition: 'left 0.32s cubic-bezier(0.25, 0.8, 0.25, 1)',
+				borderColor: this.activeColor as string,
+				borderRadius: this.radius as string
 			}
 		}
 	},
 	methods: {
-		itemStyle(idx: number): UTSJSONObject {
-			const active = idx === this.innerCurrent
-			return {
-				borderColor: active ? this.activeColor : 'transparent',
-				backgroundColor: active ? '#ffffff' : 'transparent'
-			}
-		},
 		textStyle(idx: number): UTSJSONObject {
 			const active = idx === this.innerCurrent
 			return {
 				fontSize: this.size,
-				color: active ? this.activeColor : this.inactiveColor
+				color: active ? this.activeColor : this.inactiveColor,
+				transition: 'color 0.28s ease'
 			}
 		},
 		onItemTap(idx: number) {
@@ -130,12 +154,36 @@ export default {
 	flex-direction: row;
 	align-items: stretch;
 	box-sizing: border-box;
-	padding: 4rpx;
 	overflow: hidden;
 }
 
 .mms-segmented-control--disabled {
 	opacity: 0.5;
+}
+
+.mms-segmented-control__inner {
+	flex: 1;
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	position: relative;
+	box-sizing: border-box;
+	padding: 4rpx;
+	width: 100%;
+	min-height: 0;
+}
+
+.mms-segmented-control__thumb {
+	position: absolute;
+	top: 4rpx;
+	bottom: 4rpx;
+	left: 0;
+	z-index: 0;
+	box-sizing: border-box;
+	background-color: #ffffff;
+	border-width: 1px;
+	border-style: solid;
+	pointer-events: none;
 }
 
 .mms-segmented-control__item {
@@ -144,12 +192,18 @@ export default {
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
+	box-sizing: border-box;
+	position: relative;
+	z-index: 1;
 	border-width: 1px;
 	border-style: solid;
-	box-sizing: border-box;
+	border-color: transparent;
+	background-color: transparent;
 }
 
 .mms-segmented-control__text {
 	line-height: 1.2;
+	position: relative;
+	z-index: 2;
 }
 </style>

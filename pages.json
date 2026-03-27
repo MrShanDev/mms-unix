@@ -38,6 +38,7 @@
 			"root": "pages_demo",
 			"pages": [
 				{ "path": "index", "style": { "navigationBarTitleText": "组件演示" } },
+				{ "path": "animate/animate", "style": { "navigationBarTitleText": "过渡动画" } },
 				{ "path": "button/button", "style": { "navigationBarTitleText": "按钮" } },
 				{ "path": "cell/cell", "style": { "navigationBarTitleText": "单元格" } },
 				{ "path": "dialog/dialog", "style": { "navigationBarTitleText": "对话框" } },
@@ -83,7 +84,7 @@
 				{ "path": "ext/swiper/swiper", "style": { "navigationBarTitleText": "轮播图" } },
 				{ "path": "ext/swipe-action/swipe-action", "style": { "navigationBarTitleText": "滑动操作" } },
 				{ "path": "ext/section/section", "style": { "navigationBarTitleText": "区块标题" } },
-				{ "path": "ext/wing-blank/wing-blank", "style": { "navigationBarTitleText": "左右留白" } },
+				{ "path": "ext/wing-blank/wing-blank", "style": { "navigationBarTitleText": "留白" } },
 				{ "path": "ext/richtext/richtext", "style": { "navigationBarTitleText": "富文本" } },
 				{ "path": "ext/rolling-news/rolling-news", "style": { "navigationBarTitleText": "滚动资讯" } },
 				{ "path": "ext/text/text", "style": { "navigationBarTitleText": "文本" } },
@@ -98,13 +99,22 @@
 				{ "path": "ext/notice-bar/notice-bar", "style": { "navigationBarTitleText": "通告栏" } },
 				{ "path": "ext/notice-vertical/notice-vertical", "style": { "navigationBarTitleText": "纵向通告" } },
 				{ "path": "ext/pagination/pagination", "style": { "navigationBarTitleText": "分页器" } },
-				{ "path": "ext/segmented-control/segmented-control", "style": { "navigationBarTitleText": "分段器" } }
+				{ "path": "ext/segmented-control/segmented-control", "style": { "navigationBarTitleText": "分段器" } },
+				{ "path": "ext/layout-helpers/layout-helpers", "style": { "navigationBarTitleText": "布局辅助" } },
+				{ "path": "ext/datetime-picker/datetime-picker", "style": { "navigationBarTitleText": "日期时间" } },
+				{ "path": "ext/app-update/app-update", "style": { "navigationBarTitleText": "应用更新" } },
+				{ "path": "ext/sticky-bottom/sticky-bottom", "style": { "navigationBarTitleText": "底部固定栏" } },
+				{ "path": "ext/screenshot/screenshot", "style": { "navigationBarTitleText": "区域截图" } },
+				{ "path": "ext/tips/tips", "style": { "navigationBarTitleText": "提示条 mms-tips" } },
+				{ "path": "ext/loadmore/loadmore", "style": { "navigationBarTitleText": "加载更多" } },
+				{ "path": "ext/tree/tree", "style": { "navigationBarTitleText": "树形" } },
+				{ "path": "ext/wx-login/wx-login", "style": { "navigationBarTitleText": "微信登录按钮" } }
 			]
 		},
 		{
 			"root": "pages_Article",
 			"pages": [
-				{ "path": "articleList/articleList", "style": { "navigationBarTitleText": "%page.articleList%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
+				{ "path": "articleList/articleList", "style": { "navigationBarTitleText": "%page.articleList%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white", "disableScroll": true } },
 				{ "path": "articleDetails/articleDetails", "style": { "navigationBarTitleText": "%page.articleDetails%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } }
 			]
 		},
@@ -119,7 +129,8 @@
 				{ "path": "user_address/index", "style": { "navigationBarTitleText": "%page.userAddress%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
 				{ "path": "user_setting_address/user_setting_address", "style": { "navigationBarTitleText": "%page.address%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
 				{ "path": "about_me/about_me", "style": { "navigationBarTitleText": "%page.aboutMe%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
-				{ "path": "contact/contact", "style": { "navigationBarTitleText": "%page.contact%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } }
+				{ "path": "contact/contact", "style": { "navigationBarTitleText": "%page.contact%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
+				{ "path": "cooperation/cooperation", "style": { "navigationBarTitleText": "%page.cooperation%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } }
 			]
 		}
 	],

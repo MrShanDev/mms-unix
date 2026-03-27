@@ -1,14 +1,14 @@
 // 导出工具函数
 import * as utils from './libs/utils.uts'
 import request from './components/mms-tools/Request.uts'
-import mmsTools from './components/mms-tools/mmsUnix.uts'
+import mmsTools from './components/mms-tools/Ut.uts'
 
 // 导出所有工具函数
 export * from './libs/utils.uts'
 export * from './components/mms-tools/Request.uts'
 export { request }
 
-// 挂载到 uni / Vue：合并 mmsUnix.uts 的 tools（含 configInfo、httpGet、login、href 等），此前仅有 utils+request 会导致 mms-login 等报错
+// 挂载到 uni / Vue：合并 Ut.uts 默认导出（含 configInfo、httpGet、login、href 等）
 const $mms = {
   ...utils,
   ...mmsTools,

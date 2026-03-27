@@ -1,6 +1,7 @@
 // 引入公共基础样式
 @import "./libs/css/common.scss";
 @import "./libs/css/mms.scss";
+@import "./libs/css/animate.scss";
 
 // 图标字体样式（H5/App：App.uvue 中 uni.loadFontFace；小程序：libs/css/mp.scss 中 @font-face）
 .iconfont {

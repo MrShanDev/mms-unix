@@ -4,7 +4,7 @@
 			<view class="page-inner">
 				<view class="header">
 					<text class="title">开发工具</text>
-					<text class="sub">常用能力快速试用（与 mms-tools、common/api 对齐）</text>
+					<text class="sub">常用能力快速试用。</text>
 				</view>
 
 				<view class="section">
@@ -19,6 +19,14 @@
 						<view class="btn" @tap="onRawHttpDemo">
 							<text class="btn-text">原始 HTTP（外链 JSON）</text>
 						</view>
+						<view class="btn" @tap="onDemoStartBase">
+							<text class="btn-text">startBase（demo POST）</text>
+						</view>
+					</view>
+					<view class="http-preview">
+						<text class="http-preview__label">响应预览</text>
+						<text v-if="lastHttpPreview === ''" class="http-preview__placeholder">暂无，点击上方按钮发起请求</text>
+						<text v-else class="http-preview__body">{{ lastHttpPreview }}</text>
 					</view>
 				</view>
 
@@ -95,6 +103,7 @@
 </template>
 
 <script setup lang="uts">
+	import { ref } from 'vue'
 	import { copyToClipboard, jumpTo, msg, jslog } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 	import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
 	import { notifyAuthChange } from '@/uni_modules/mms-unix/components/mms-tools/AuthNotifier.uts'
@@ -102,6 +111,24 @@
 	import { checkUpdate } from '@/common/api/mallApi.uts'
 
 	const demoStorageKey = 'mms_tools_demo_kv'
+
+	/** demo.mmsadmin.cn 启动基座；服务端声明 GET 不支持，需 POST */
+	const DEMO_START_BASE_URL = 'https://demo.mmsadmin.cn/prod-api/common/startBase'
+
+	/** 最近一次接口完整响应（页面展示） */
+	const lastHttpPreview = ref('')
+
+	function jsonStringifySafe(v: any): string {
+		try {
+			return JSON.stringify(v)
+		} catch (_e) {
+			return '' + v
+		}
+	}
+
+	function setHttpPreview(label: string, body: any) {
+		lastHttpPreview.value = label + '\n' + jsonStringifySafe(body)
+	}
 
 	function onCopyDemo() {
 		copyToClipboard('MMS-UNIX 剪贴板示例')
@@ -114,9 +141,11 @@
 	async function onBizRequestDemo() {
 		try {
 			const res = await checkUpdate(100)
+			setHttpPreview('checkUpdate', res)
 			msg('code ' + res.code + '，' + res.msg)
 			jslog('checkUpdate', res)
 		} catch (e) {
+			setHttpPreview('checkUpdate（失败）', { error: '' + e })
 			msg('请求未完成（网络或接口不可用属正常）')
 		}
 	}
@@ -127,6 +156,10 @@
 			method: 'GET',
 			success: (res) => {
 				const st = res.statusCode
+				setHttpPreview('rawHttp GET jsonplaceholder', {
+					statusCode: st,
+					data: res.data
+				})
 				if (st != 200) {
 					msg('HTTP ' + st)
 					return
@@ -142,8 +175,43 @@
 				}
 				jslog('rawHttp', res.data)
 			},
-			fail: () => {
+			fail: (err) => {
+				setHttpPreview('rawHttp（失败）', err)
 				msg('请求失败，请检查网络')
+			}
+		})
+	}
+
+	function onDemoStartBase() {
+		uni.request({
+			url: DEMO_START_BASE_URL,
+			method: 'POST',
+			header: {
+				'Content-Type': 'application/json'
+			},
+			data: {} as UTSJSONObject,
+			success: (res) => {
+				const st = res.statusCode
+				setHttpPreview('startBase POST ' + DEMO_START_BASE_URL, {
+					statusCode: st,
+					data: res.data
+				})
+				if (st != 200) {
+					msg('HTTP ' + st)
+					jslog('startBase', res)
+					return
+				}
+				const d = res.data as UTSJSONObject
+				const c = d['code']
+				const m = d['msg']
+				const line = 'code ' + c + (m != null ? ' · ' + m : '')
+				const s = '' + line
+				msg(s.length > 36 ? s.substring(0, 36) + '...' : s)
+				jslog('startBase', res.data)
+			},
+			fail: (err) => {
+				setHttpPreview('startBase（失败）', err)
+				msg('请求失败（网络或 H5 跨域等）')
 			}
 		})
 	}
@@ -207,22 +275,24 @@
 	}
 
 	.page-inner {
-		padding: 24rpx;
+		box-sizing: border-box;
+		padding: 32rpx;
 		padding-bottom: 200rpx;
 	}
 
 	.header {
 		background-color: #ff0844;
 		border-radius: 16rpx;
-		padding: 36rpx 28rpx;
-		margin-bottom: 24rpx;
+		padding: 36rpx 32rpx;
+		box-sizing: border-box;
+		margin-bottom: 28rpx;
 	}
 
 	.title {
 		font-size: 40rpx;
 		font-weight: bold;
 		color: #ffffff;
-		margin-bottom: 8rpx;
+		margin-bottom: 12rpx;
 	}
 
 	.sub {
@@ -232,17 +302,22 @@
 	}
 
 	.section {
+		box-sizing: border-box;
 		background-color: #ffffff;
 		border-radius: 16rpx;
-		padding: 28rpx;
-		margin-bottom: 20rpx;
+		padding: 32rpx;
+		margin-bottom: 28rpx;
+	}
+
+	.section:last-child {
+		margin-bottom: 0;
 	}
 
 	.section-title {
 		font-size: 30rpx;
 		font-weight: 600;
 		color: #333333;
-		margin-bottom: 12rpx;
+		margin-bottom: 24rpx;
 	}
 
 	.desc {
@@ -256,13 +331,18 @@
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
-		gap: 16rpx;
+		margin: -10rpx;
+	}
+
+	.btn-row .btn {
+		margin: 10rpx;
 	}
 
 	.btn {
-		padding: 20rpx 28rpx;
+		padding: 22rpx 28rpx;
 		border-radius: 12rpx;
 		background-color: #f0f0f0;
+		box-sizing: border-box;
 	}
 
 	.btn--primary {
@@ -276,5 +356,39 @@
 
 	.btn-text--light {
 		color: #ffffff;
+	}
+
+	.http-preview {
+		margin-top: 24rpx;
+		padding: 24rpx;
+		background-color: #f8f8f8;
+		border-radius: 12rpx;
+		border-width: 1rpx;
+		border-style: solid;
+		border-color: #eeeeee;
+		box-sizing: border-box;
+	}
+
+	.http-preview__label {
+		display: block;
+		font-size: 24rpx;
+		color: #999999;
+		margin-bottom: 16rpx;
+	}
+
+	.http-preview__placeholder {
+		display: block;
+		font-size: 24rpx;
+		color: #bbbbbb;
+		line-height: 1.5;
+	}
+
+	.http-preview__body {
+		display: block;
+		font-size: 22rpx;
+		color: #333333;
+		line-height: 1.45;
+		word-break: break-all;
+		white-space: pre-wrap;
 	}
 </style>

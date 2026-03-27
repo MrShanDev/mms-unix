@@ -91,6 +91,8 @@ export default {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+	/* 圆点使用 currentColor，与 color 属性一致 */
+	color: v-bind(color);
 
 	&.mms-loading--full {
 		position: fixed;

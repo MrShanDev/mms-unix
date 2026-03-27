@@ -1,50 +1,35 @@
 <template>
-	<view class="mms-clipboard" @click="handleCopy">
+	<view class="mms-clipboard" @tap="handleCopy">
 		<slot></slot>
 	</view>
 </template>
 
 <script lang="uts">
-export default {
-	name: 'mmsClipboard',
-	emits: ['copy'],
-	props: {
-		text: {
-			type: String,
-			default: ''
-		}
-	},
-	methods: {
-		handleCopy() {
-			if (!this.text) {
-				return
+	import { copyToClipboard } from '../mms-tools/Ut.uts'
+	export default {
+		name: 'mmsClipboard',
+		emits: ['copy'],
+		props: {
+			text: {
+				type: String,
+				default: ''
 			}
-			uni.setClipboardData({
-				data: this.text,
-				success: () => {
-					uni.showToast({
-						title: '复制成功',
-						icon: 'success'
-					})
-					this.$emit('copy', {
-						text: this.text,
-						success: true
-					})
-				},
-				fail: () => {
-					uni.showToast({
-						title: '复制失败',
-						icon: 'none'
-					})
-					this.$emit('copy', {
-						text: this.text,
-						success: false
-					})
+		},
+		methods: {
+			handleCopy() {
+				if (!this.text) {
+					return
 				}
-			})
+				const t = this.text as string
+				copyToClipboard(t, (success: boolean) => {
+					this.$emit('copy', {
+						text: this.text,
+						success: success
+					})
+				})
+			}
 		}
-	}
-};
+	};
 </script>
 
 <style scoped lang="scss">

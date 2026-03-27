@@ -15,7 +15,7 @@ description: "Maintains mms-unix uni-app component library project structure and
 
 ```
 mms-unix/
-├── uni_modules/mms-unix/          # 组件库（mms-*、mms-tools、libs/css、config、mms-ui-config 等）
+├── uni_modules/mms-unix/          # 组件库（mms-*、mms-tools、libs/css、config.uts 等）
 ├── locale/                        # 应用级语言包（zh-Hans.json、en.json）
 ├── common/                        # 业务配置与业务 API（config.ts、api/）
 ├── pages/                         # 主包 Tab 根页（components / tools / templates / user 等）
@@ -63,8 +63,8 @@ mms-unix/
 
 ### 主题与 UI 配置（`mmsUi`）
 
-- 项目侧品牌色、占位图等通过 `common/config.ts` 的 **`mmsUi`**（类型 `MmsUiUserConfig`）注入，与 `uni_modules/mms-unix/config/mms-ui-config.uts` 合并。
-- **改主色时**：同时检查 `mmsUi.primaryColor` 与 `uni_modules/mms-unix/libs/css/mms.scss`（及文档中的色值说明）是否一致，避免演示与真机主题漂移。
+- 项目侧品牌色、占位图等通过 `common/config.ts` 的 **`mmsUi`**（类型 `MmsUiUserConfig`）注入，与 `uni_modules/mms-unix/config.uts` 合并。
+- **改主色时**：以 `uni_modules/mms-unix/libs/css/mms.scss`（及文档中的色值说明）为准，避免演示与真机主题漂移。
 
 ### 对外说明文档（`mms-unix-doc/`）
 
