@@ -21,7 +21,7 @@ export type UploadFileOptions = {
 	/** 表单字段名，需与后端一致 */
 	name?: string
 	formData?: AnyRecord
-	/** 覆盖 baseUrl（默认 mallBaseUrl 非空则用 mallBaseUrl，否则 baseUrl） */
+	/** 覆盖 baseUrl（默认使用 config.baseUrl，即按 env 解析后的地址） */
 	baseUrl?: string
 	withToken?: boolean
 	header?: AnyRecord
@@ -34,10 +34,6 @@ export type UploadFileOptions = {
 function resolveUploadBase(override?: string): string {
 	if (override != null && override !== '') {
 		return override
-	}
-	const mall = config.mallBaseUrl
-	if (mall != null && mall !== '') {
-		return mall
 	}
 	return config.baseUrl
 }

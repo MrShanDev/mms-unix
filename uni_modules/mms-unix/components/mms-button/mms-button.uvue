@@ -379,10 +379,8 @@
 		align-items: center;
 		justify-content: center;
 		width: 100%;
-	}
-
-	.mms-btn__inner > * + * {
-		margin-left: 12rpx;
+		/* 子项间距：避免使用 * + *（微信小程序 WXSS 不支持通用选择器 *） */
+		gap: 12rpx;
 	}
 
 	.mms-btn--loading {

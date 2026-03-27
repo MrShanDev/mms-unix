@@ -204,7 +204,7 @@
 			items: [
 				{ name: '登录', path: '/pages_demo/login/login', icon: 'user' },
 				{ name: '应用更新', path: '/pages_demo/ext/app-update/app-update', icon: 'download' },
-				{ name: '微信登录', path: '/pages_demo/ext/wx-login/wx-login', icon: 'wechat' },
+				{ name: '微信登录', path: '/pages_demo/ext/wx-login/wx-login', icon: 'comment-filling' },
 			],
 		},
 	]

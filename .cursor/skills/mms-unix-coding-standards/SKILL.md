@@ -154,8 +154,11 @@ defineProps({
 
 ```ts
 type AppConfig = {
-  baseUrl: string
-  mallBaseUrl: string      // 商城 API 地址，空则使用 baseUrl
+  env: 'local' | 'dev' | 'prod'
+  localBaseUrl: string
+  devBaseUrl: string
+  prodBaseUrl: string
+  baseUrl: string        // 由 env 与三者解析，Request/上传等默认使用
   storage: StorageConfig
   loginRequiredPaths: string[]
   api: ApiConfig
@@ -341,24 +344,13 @@ setLocale('en')
 const { locale, t } = useI18n()
 ```
 
-### pages.json 国际化（Web 平台）
+### pages.json / manifest.json 文案
 
-```json
-{
-  "pages": [
-    {
-      "path": "pages/login/login",
-      "style": {
-        "navigationBarTitleText": "%page.login%"
-      }
-    }
-  ]
-}
-```
+微信小程序等**不支持** `%page.xxx%`、`%app.name%` 等占位写法，仓库内已改为**直接写中文/英文常量**（与 `locale/zh-Hans.json` 对齐）。运行时多语言仍在业务代码里用 `locale` / `t()`。
 
 ### 注意事项
 
-- **App 平台**：`pages.json` 不支持 `%key%` 方式，需通过 API 动态设置
+- **小程序、App**：`pages.json`、`manifest.json` 勿用 `%key%`；标题与 tab 写死文案或各端条件编译
 - **Web 平台**：支持 `vue-i18n`，可在 `main.uts` 中集成
 - 支持的语言：`zh-Hans`（简体中文）、`en`（英文）
 

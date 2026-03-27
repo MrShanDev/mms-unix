@@ -107,7 +107,7 @@ export default {
 			type: Object,
 			default: () => ({})
 		},
-		/** 覆盖上传使用的 base（默认同 Upload.uts：mallBaseUrl 或 baseUrl） */
+		/** 覆盖上传使用的 base（默认同 config.baseUrl / env） */
 		uploadBaseUrl: {
 			type: String,
 			default: ''

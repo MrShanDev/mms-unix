@@ -30,7 +30,7 @@
 			</view>
 
 			<view class="actions">
-				<mms-button type="primary" text="联系我们" @click="goContact"></mms-button>
+				<mms-button type="primary" @click="goContact">联系我们</mms-button>
 			</view>
 			<view class="footer-space"></view>
 		</scroll-view>

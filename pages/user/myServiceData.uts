@@ -44,7 +44,6 @@ export function getUserServiceItems(): UserServiceItem[] {
 	return [
 		{ iconName: 'user-filling', title: '个人信息', pages: '/pages_Me/user_info/index', requireLogin: true },
 		{ iconName: 'share', title: '关于我们', pages: '/pages_Me/about_me/about_me', requireLogin: false },
-		{ iconName: 'layout-filling', title: '组件', pages: '/pages/components/components', requireLogin: false },
 		{ iconName: 'customer-service', title: '商务合作', pages: '/pages_Me/cooperation/cooperation', requireLogin: false },
 		{ iconName: 'telephone', title: '联系我们', pages: '/pages_Me/contact/contact', requireLogin: false }
 	]

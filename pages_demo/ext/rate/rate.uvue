@@ -275,10 +275,7 @@ function onMultiChange(e: UTSJSONObject) {
 	margin-top: 16rpx;
 	display: flex;
 	flex-direction: column;
-}
-
-.rate-compare > * + * {
-	margin-top: 28rpx;
+	gap: 28rpx;
 }
 
 .rate-compare-block {
@@ -286,11 +283,7 @@ function onMultiChange(e: UTSJSONObject) {
 	flex-direction: row;
 	align-items: center;
 	flex-wrap: wrap;
-	margin: -8rpx -8rpx 0 0;
-}
-
-.rate-compare-block > * {
-	margin: 8rpx 8rpx 0 0;
+	gap: 8rpx;
 }
 
 .rate-compare-label {
@@ -303,10 +296,7 @@ function onMultiChange(e: UTSJSONObject) {
 	margin-top: 16rpx;
 	display: flex;
 	flex-direction: column;
-}
-
-.rate-multi > * + * {
-	margin-top: 24rpx;
+	gap: 24rpx;
 }
 
 .rate-multi-row {

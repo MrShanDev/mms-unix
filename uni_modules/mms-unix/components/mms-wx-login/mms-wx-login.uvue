@@ -1,7 +1,8 @@
- <template>
+<template>
 	<view class="mms-wx-login" @click="handleLogin">
 		<view class="mms-wx-login__icon">
-			<text class="iconfont icon-wechat"></text>
+			<!-- wechat 字形在部分构建/字库版本下可能缺失；默认用 user，可通过 icon 覆盖 -->
+			<mms-icon :name="icon" :size="36" color="#ffffff" />
 		</view>
 		<view class="mms-wx-login__text">{{ text }}</view>
 	</view>
@@ -12,6 +13,11 @@ export default {
 	name: 'mmsWxLogin',
 	emits: ['success', 'fail', 'login'],
 	props: {
+		/** 左侧图标，传 mms-icon 的 name（默认 user，避免 wechat 码位在字库中为空） */
+		icon: {
+			type: String,
+			default: 'user'
+		},
 		// 按钮文字
 		text: {
 			type: String,
@@ -83,8 +89,10 @@ export default {
 	box-sizing: border-box;
 
 	.mms-wx-login__icon {
-		font-size: 36rpx;
-		color: #fff;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
 		margin-right: 10rpx;
 		line-height: 1;
 	}

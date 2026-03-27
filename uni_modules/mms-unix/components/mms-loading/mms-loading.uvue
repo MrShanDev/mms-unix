@@ -146,10 +146,8 @@ export default {
 		flex-direction: row;
 		align-items: center;
 		height: 40rpx;
-
-		> * + * {
-			margin-left: 16rpx;
-		}
+		/* 圆点间距：避免 * + *（微信小程序 WXSS 不支持通用选择器 *） */
+		gap: 16rpx;
 
 		.mms-loading__dot {
 			width: 16rpx;

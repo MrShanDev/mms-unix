@@ -88,30 +88,16 @@ function closeTag(index: number) {
 
 
 
-/* 不用 gap：部分端 ucss 对 flex gap 支持不完整，会表现为标签贴在一起；用子项 margin + 父级负边距对齐 */
+/* 使用 gap（微信小程序 WXSS 不支持子选择器 *）；主包基础库 2.21+ 支持 flex gap */
 .tag-row {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-items: center;
-	margin-left: -10rpx;
-	margin-right: -10rpx;
-	margin-top: -10rpx;
-	margin-bottom: -10rpx;
-}
-
-.tag-row > * {
-	margin: 10rpx;
+	gap: 10rpx;
 }
 
 .tag-row--tight {
-	margin-left: 0;
-	margin-right: 0;
-	margin-top: 0;
-	margin-bottom: 0;
-}
-
-.tag-row--tight > * {
-	margin: 0;
+	gap: 0;
 }
 </style>

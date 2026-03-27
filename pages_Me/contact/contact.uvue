@@ -8,7 +8,7 @@
 			</mms-cell>
 			<mms-cell title="组件文档" :border="true">
 				<template #right>
-					<mms-link href="https://mmsadmin.cn/mms-unix/README.html" text="README" underline></mms-link>
+					<mms-link href="https://mmsadmin.cn/mms-unix/README.html" text="mmsUnix" underline></mms-link>
 				</template>
 			</mms-cell>
 			<mms-cell title="商务合作" value="服务范围与承接说明" :isLink="true" :border="true" @click="goCooperation"></mms-cell>

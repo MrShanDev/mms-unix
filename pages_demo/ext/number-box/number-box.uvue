@@ -221,10 +221,7 @@ function onTaggedChange(e: UTSJSONObject) {
 	margin-top: 16rpx;
 	display: flex;
 	flex-direction: column;
-}
-
-.nb-dual > * + * {
-	margin-top: 28rpx;
+	gap: 28rpx;
 }
 
 .nb-dual-item {

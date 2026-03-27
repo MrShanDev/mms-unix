@@ -9,26 +9,26 @@
 		{
 			"path": "pages/components/components",
 			"style": {
-				"navigationBarTitleText": "%page.components%",
+				"navigationBarTitleText": "组件",
 				"disableScroll": true
 			}
 		},
 		{
 			"path": "pages/tools/tools",
 			"style": {
-				"navigationBarTitleText": "%page.tools%"
+				"navigationBarTitleText": "工具"
 			}
 		},
 		{
 			"path": "pages/templates/templates",
 			"style": {
-				"navigationBarTitleText": "%page.templates%"
+				"navigationBarTitleText": "模版"
 			}
 		},
 		{
 			"path": "pages/user/user",
 			"style": {
-				"navigationBarTitleText": "%page.user%",
+				"navigationBarTitleText": "我的",
 				"navigationStyle": "custom"
 			}
 		}
@@ -114,23 +114,23 @@
 		{
 			"root": "pages_Article",
 			"pages": [
-				{ "path": "articleList/articleList", "style": { "navigationBarTitleText": "%page.articleList%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white", "disableScroll": true } },
-				{ "path": "articleDetails/articleDetails", "style": { "navigationBarTitleText": "%page.articleDetails%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } }
+				{ "path": "articleList/articleList", "style": { "navigationBarTitleText": "文章列表", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white", "disableScroll": true } },
+				{ "path": "articleDetails/articleDetails", "style": { "navigationBarTitleText": "文章详情", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } }
 			]
 		},
 		{
 			"root": "pages_Me",
 			"pages": [
-				{ "path": "login/login", "style": { "navigationBarTitleText": "%page.login%", "navigationStyle": "custom" } },
-				{ "path": "login/weixinLoging", "style": { "navigationBarTitleText": "%page.login%", "navigationStyle": "custom" } },
-				{ "path": "register", "style": { "navigationBarTitleText": "%page.register%", "navigationStyle": "custom" } },
-				{ "path": "forgot-password/forgot-password", "style": { "navigationBarTitleText": "%page.forgotPassword%", "navigationStyle": "custom" } },
-				{ "path": "user_info/index", "style": { "navigationBarTitleText": "%page.userInfo%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
-				{ "path": "user_address/index", "style": { "navigationBarTitleText": "%page.userAddress%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
-				{ "path": "user_setting_address/user_setting_address", "style": { "navigationBarTitleText": "%page.address%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
-				{ "path": "about_me/about_me", "style": { "navigationBarTitleText": "%page.aboutMe%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
-				{ "path": "contact/contact", "style": { "navigationBarTitleText": "%page.contact%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
-				{ "path": "cooperation/cooperation", "style": { "navigationBarTitleText": "%page.cooperation%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } }
+				{ "path": "login/login", "style": { "navigationBarTitleText": "登录", "navigationStyle": "custom" } },
+				{ "path": "login/weixinLoging", "style": { "navigationBarTitleText": "登录", "navigationStyle": "custom" } },
+				{ "path": "register", "style": { "navigationBarTitleText": "注册", "navigationStyle": "custom" } },
+				{ "path": "forgot-password/forgot-password", "style": { "navigationBarTitleText": "找回密码", "navigationStyle": "custom" } },
+				{ "path": "user_info/index", "style": { "navigationBarTitleText": "个人信息", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
+				{ "path": "user_address/index", "style": { "navigationBarTitleText": "收货地址", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
+				{ "path": "user_setting_address/user_setting_address", "style": { "navigationBarTitleText": "地址", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
+				{ "path": "about_me/about_me", "style": { "navigationBarTitleText": "关于我们", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
+				{ "path": "contact/contact", "style": { "navigationBarTitleText": "联系我们", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
+				{ "path": "cooperation/cooperation", "style": { "navigationBarTitleText": "商务合作", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } }
 			]
 		}
 	],
@@ -142,25 +142,25 @@
 		"list": [
 			{
 				"pagePath": "pages/components/components",
-				"text": "%tabbar.components%",
+				"text": "组件",
 				"iconPath": "/static/tabbar/tab-components.png",
 				"selectedIconPath": "/static/tabbar/tab-components-active.png"
 			},
 			{
 				"pagePath": "pages/tools/tools",
-				"text": "%tabbar.tools%",
+				"text": "工具",
 				"iconPath": "/static/tabbar/tab-tools.png",
 				"selectedIconPath": "/static/tabbar/tab-tools-active.png"
 			},
 			{
 				"pagePath": "pages/templates/templates",
-				"text": "%tabbar.templates%",
+				"text": "模版",
 				"iconPath": "/static/tabbar/tab-templates.png",
 				"selectedIconPath": "/static/tabbar/tab-templates-active.png"
 			},
 			{
 				"pagePath": "pages/user/user",
-				"text": "%tabbar.user%",
+				"text": "我的",
 				"iconPath": "/static/tabbar/tab-user.png",
 				"selectedIconPath": "/static/tabbar/tab-user-active.png"
 			}
@@ -168,7 +168,7 @@
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "%app.name%",
+		"navigationBarTitleText": "MMS-UNIX",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 	},

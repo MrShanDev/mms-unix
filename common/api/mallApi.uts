@@ -4,8 +4,8 @@
 import { config } from '@/common/config'
 import { request, ApiResponse, http, AnyRecord } from '@/uni_modules/mms-unix/components/mms-tools/Request.uts'
 
-// 商城 API 基础地址
-const mallBaseUrl = config.mallBaseUrl != '' ? config.mallBaseUrl : config.baseUrl
+// 商城 API 基础地址（与 env 解析后的 config.baseUrl 一致）
+const apiBase = config.baseUrl
 
 /**
  * 商城请求封装
@@ -26,7 +26,7 @@ function mallApi<T = any>(
 		url: path,
 		method,
 		data: data as AnyRecord,
-		baseUrl: mallBaseUrl,
+		baseUrl: apiBase,
 		withToken: true,
 		showError,
 		redirectOnUnauthorized: needLogin,
@@ -46,7 +46,7 @@ function publicApi<T = any>(
 		url: path,
 		method,
 		data: data as AnyRecord,
-		baseUrl: mallBaseUrl,
+		baseUrl: apiBase,
 		withToken: true,
 		showError: true,
 		redirectOnUnauthorized: false
@@ -125,7 +125,7 @@ export function tokenLogin(params: UTSJSONObject) {
 		url: '/v1/common/login/tokenLogin',
 		method: 'GET',
 		data: params as AnyRecord,
-		baseUrl: mallBaseUrl,
+		baseUrl: apiBase,
 		withToken: true,
 		showError: false,
 		redirectOnUnauthorized: false
@@ -138,7 +138,7 @@ export function weixinLogin(params: UTSJSONObject) {
 		url: '/v1/common/login/codeGetPhoneRegisterOrLogin',
 		method: 'GET',
 		data: params as AnyRecord,
-		baseUrl: mallBaseUrl,
+		baseUrl: apiBase,
 		withToken: false,
 		showError: true,
 		redirectOnUnauthorized: false
@@ -151,7 +151,7 @@ export function mallAccountLogin(params: UTSJSONObject) {
 		url: '/v1/common/login/accountLogin',
 		method: 'POST',
 		data: params as AnyRecord,
-		baseUrl: mallBaseUrl,
+		baseUrl: apiBase,
 		withToken: false,
 		showError: true,
 		redirectOnUnauthorized: false
@@ -164,7 +164,7 @@ export function phoneSmsLogin(params: UTSJSONObject) {
 		url: '/v1/common/login/login',
 		method: 'POST',
 		data: params as AnyRecord,
-		baseUrl: mallBaseUrl,
+		baseUrl: apiBase,
 		withToken: false,
 		showError: true,
 		redirectOnUnauthorized: false
@@ -247,6 +247,6 @@ export function getContractDetail(id: string) {
 
 /** 下载合同PDF */
 export function downloadContractPdf(id: string): string {
-	const base = config.mallBaseUrl != '' ? config.mallBaseUrl : config.baseUrl
+	const base = config.baseUrl
 	return base + '/api/mall/contract/download?id=' + id
 }

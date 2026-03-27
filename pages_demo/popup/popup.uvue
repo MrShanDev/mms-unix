@@ -230,11 +230,7 @@ function onSplashAdTap(): void {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	margin: -8rpx -8rpx 0 0;
-}
-
-.demo-row > * {
-	margin: 8rpx 8rpx 0 0;
+	gap: 8rpx;
 }
 
 .popup-content {
@@ -298,11 +294,8 @@ function onSplashAdTap(): void {
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-items: center;
-	margin: -6rpx -10rpx 20rpx 0;
-}
-
-.splash-align-row > * {
-	margin: 6rpx 10rpx 0 0;
+	margin-bottom: 20rpx;
+	gap: 6rpx 10rpx;
 }
 
 .splash-align-label {
@@ -366,10 +359,7 @@ function onSplashAdTap(): void {
 	flex-direction: column;
 	align-items: center;
 	flex-shrink: 0;
-}
-
-.popup-splash__stack > * + * {
-	margin-top: 28rpx;
+	gap: 28rpx;
 }
 
 .popup-splash__card {
