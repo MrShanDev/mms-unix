@@ -1,8 +1,12 @@
 /* ========== ucss 不支持 gap / row-gap / column-gap ========== */
 /* 官方样式子集无 gap；flex 间距请用本文件 mixin 或手写 margin。 */
 /* 组件 props 名为 gap（如 mms-upload）是业务属性，不是 CSS gap。 */
+/*
+ * 部分端对通配符 *、相邻兄弟选择器支持差，自定义组件子节点也可能匹配不到。
+ * 关键布局请用 view 包裹 + 专用 class 写 margin，勿仅依赖 *。
+ */
 
-/// 单行 flex 主轴为 row：子元素右间距，最后一项清零
+/// 单行 flex 主轴为 row：子元素右间距，最后一项清零（若 * 不生效请改为 class）
 @mixin mms-flex-gap-row($size) {
 	& > * {
 		margin-right: $size;

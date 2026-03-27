@@ -5,9 +5,9 @@
 				<text class="section-title">加载更多（mms-loadmore）</text>
 				<text class="section-desc">status：loading / nomore / error；error 时可点击触发 retry。</text>
 				<view class="demo-row">
-					<mms-button type="primary" btnSize="small" @tap="setLoading">loading</mms-button>
-					<mms-button type="primary" btnSize="small" @tap="setNomore">nomore</mms-button>
-					<mms-button type="danger" btnSize="small" @tap="setError">error</mms-button>
+					<view class="demo-row__cell"><mms-button type="primary" btnSize="small" @tap="setLoading">loading</mms-button></view>
+					<view class="demo-row__cell"><mms-button type="primary" btnSize="small" @tap="setNomore">nomore</mms-button></view>
+					<view class="demo-row__cell demo-row__cell--tail"><mms-button type="danger" btnSize="small" @tap="setError">error</mms-button></view>
 				</view>
 				<mms-loadmore
 					:status="status"
@@ -86,11 +86,17 @@ function onRetry() {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	margin: -8rpx -8rpx 16rpx 0;
+	margin-bottom: 16rpx;
 }
 
-.demo-row > * {
-	margin: 8rpx 8rpx 0 0;
+/* ucss 不用 * / + 选择器；用包裹层 + class 控制间距 */
+.demo-row__cell {
+	margin-right: 16rpx;
+	margin-bottom: 16rpx;
+}
+
+.demo-row__cell--tail {
+	margin-right: 0;
 }
 
 .demo-result {

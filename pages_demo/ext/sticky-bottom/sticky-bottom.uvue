@@ -14,8 +14,8 @@
 		</scroll-view>
 		<mms-sticky-bottom bg-color="#ffffff">
 			<view class="sticky-actions">
-				<mms-button type="default" btnSize="small" @tap="onSecondary">次要</mms-button>
-				<mms-button type="primary" btnSize="small" @tap="onPrimary">主要操作</mms-button>
+				<view class="sticky-actions__cell"><mms-button type="default" btnSize="small" @tap="onSecondary">次要</mms-button></view>
+				<view class="sticky-actions__cell sticky-actions__cell--after"><mms-button type="primary" btnSize="small" @tap="onPrimary">主要操作</mms-button></view>
 			</view>
 		</mms-sticky-bottom>
 	</view>
@@ -91,9 +91,10 @@ function onSecondary() {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
+	align-items: center;
 }
 
-.sticky-actions > * + * {
+.sticky-actions__cell--after {
 	margin-left: 20rpx;
 }
 </style>

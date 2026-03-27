@@ -15,9 +15,15 @@
 				<text class="section-title">间距块（mms-gap）</text>
 				<text class="section-desc">固定高度占位，可设背景色便于观察。</text>
 				<view class="demo-strip">
-					<text class="demo-label">上方文案</text>
-					<mms-gap :height="16" background="#e8f4ff"></mms-gap>
-					<text class="demo-label">下方文案（中间为 gap）</text>
+					<view class="demo-strip__block">
+						<text class="demo-label">上方文案</text>
+					</view>
+					<view class="demo-strip__block">
+						<mms-gap :height="16" background="#e8f4ff"></mms-gap>
+					</view>
+					<view class="demo-strip__block">
+						<text class="demo-label">下方文案（中间为 gap）</text>
+					</view>
 				</view>
 			</view>
 
@@ -25,35 +31,38 @@
 				<text class="section-title">占位（mms-white-space）</text>
 				<text class="section-desc">size：small / default / large；或 height 精确高度（rpx）。</text>
 				<view class="demo-strip">
-					<text class="demo-label">small</text>
-					<mms-white-space size="small" background="#fff0f6"></mms-white-space>
-					<text class="demo-label">default</text>
-					<mms-white-space size="default" background="#f6ffed"></mms-white-space>
-					<text class="demo-label">large</text>
-					<mms-white-space size="large" background="#e6f7ff"></mms-white-space>
+					<view class="demo-strip__block">
+						<text class="demo-label">small</text>
+						<mms-white-space size="small" background="#fff0f6"></mms-white-space>
+					</view>
+					<view class="demo-strip__block">
+						<text class="demo-label">default</text>
+						<mms-white-space size="default" background="#f6ffed"></mms-white-space>
+					</view>
+					<view class="demo-strip__block">
+						<text class="demo-label">large</text>
+						<mms-white-space size="large" background="#e6f7ff"></mms-white-space>
+					</view>
 				</view>
 			</view>
 
 			<view class="demo-section">
-				<text class="section-title">栅格（mms-row + mms-col）</text>
-				<text class="section-desc">24 栅格；gutter 为子列左右内边距（与 row 配套）；offset 为左侧偏移列数。</text>
-				<mms-row :gutter="16">
-					<mms-col :span="12">
-						<view class="col-demo">span=12</view>
-					</mms-col>
-					<mms-col :span="12">
-						<view class="col-demo col-demo--b">span=12</view>
-					</mms-col>
-				</mms-row>
-				<mms-gap :height="16"></mms-gap>
-				<mms-row :gutter="12">
-					<mms-col :span="8">
-						<view class="col-demo">8</view>
-					</mms-col>
-					<mms-col :span="8" :offset="8">
-						<view class="col-demo col-demo--b">8 offset=8</view>
-					</mms-col>
-				</mms-row>
+				<text class="section-title">栅格示意（flex + 间距）</text>
+				<text class="section-desc">
+					mms-row 为 flex；mms-col 内为 float，与 flex 混用在 ucss 下易无间距。此处用纯 flex 演示两列等分与带偏移的两列；业务中可优先用 flex 或给 mms-col 传 padding。
+				</text>
+				<view class="grid-demo">
+					<view class="grid-demo__row">
+						<view class="grid-demo__cell"><view class="col-demo">span=12</view></view>
+						<view class="grid-demo__gutter"></view>
+						<view class="grid-demo__cell"><view class="col-demo col-demo--b">span=12</view></view>
+					</view>
+					<view class="grid-demo__row grid-demo__row--mt">
+						<view class="grid-demo__cell"><view class="col-demo">8</view></view>
+						<view class="grid-demo__cell grid-demo__cell--spacer"></view>
+						<view class="grid-demo__cell"><view class="col-demo col-demo--b">8 offset=8</view></view>
+					</view>
+				</view>
 			</view>
 		</view>
 	</scroll-view>
@@ -108,6 +117,43 @@
 	font-size: 26rpx;
 	color: #666666;
 	display: block;
+	margin-bottom: 12rpx;
+}
+
+.demo-strip__block {
+	margin-bottom: 20rpx;
+}
+
+.demo-strip__block:last-child {
+	margin-bottom: 0;
+}
+
+.grid-demo {
+	width: 100%;
+}
+
+.grid-demo__row {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+}
+
+.grid-demo__row--mt {
+	margin-top: 16rpx;
+}
+
+.grid-demo__cell {
+	flex: 1;
+	min-width: 0;
+}
+
+.grid-demo__gutter {
+	width: 16rpx;
+	flex-shrink: 0;
+}
+
+.grid-demo__cell--spacer {
+	min-height: 1rpx;
 }
 
 .col-demo {
