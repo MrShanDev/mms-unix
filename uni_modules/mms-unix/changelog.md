@@ -1,6 +1,13 @@
+<p align="center">
+  <img src="https://mmsadmin.cn/image/mmsUnix-logo.png" alt="MMS-UNIX" width="72" height="72" />
+</p>
+<p align="center"><strong>MMS-UNIX</strong> · uni-app x 组件库</p>
+
+---
+
 # MMS-UNIX 更新日志
 
-本文档位于 **`uni_modules/mms-unix` 组件包根目录**（与 `package.json`、`readme.md` 同级），用于：
+本文档位于 **`uni_modules/mms-unix` 组件包根目录**（与 `package.json`、`readme.md`、`logo.png` 同级），用于：
 
 - 在 **DCloud 插件市场** 展示版本变更与使用说明；
 - 作为组件库 **唯一权威的变更记录**（**不依赖**工程内其它目录的 Markdown；历史与条目均以本文为准）。
@@ -17,25 +24,31 @@
 | **定位** | 面向 **uni-app-x** 的基础组件库；脚本为 **UTS**，页面/组件为 **uvue** |
 | **包标识** | `package.json` 的 `id` / `name`：`mms-unix` |
 | **关键词** | uni-app-x、components、uts、uvue、mms（见 `package.json` 的 `keywords`） |
+| **出品** | **陕西品创网络** |
 
 ### 1.1 在线文档（UI 组件库）
 
-发布至 [DCloud 插件市场](https://ext.dcloud.net.cn/) 后，请将 **对外文档入口** 固定为下列之一（便于使用者从插件页跳转）：
-
 | 类型 | 地址 |
 |------|------|
-| **插件市场文档** | `https://ext.dcloud.net.cn/plugin?id=（发布后填写插件 ID）` |
-| **备用文档站**（可选） | `（可填：语雀 / Git 仓库 Wiki / 自建文档站点 URL）` |
+| **组件说明（站点）** | <https://mmsadmin.cn/mms-unix/README.html> |
+| **站点首页** | <https://mmsadmin.cn> |
+| **开源仓库** | <https://gitee.com/mmsAdmin/mms-unix> |
+| **DCloud 插件市场** | 发布后插件详情页：<https://ext.dcloud.net.cn/plugin?id=（填写插件 ID）> |
 
-> 若暂未申请插件 ID：可暂留插件市场首页 `https://ext.dcloud.net.cn/` 作为入口，或仅保留本包内 `readme.md` 的安装与组件索引说明。
+> 插件市场上架后，将上表「插件市场」一行中的插件 ID 补全，便于从市场跳转文档与仓库。
 
-### 1.2 联系方式
+### 1.2 机构与联系方式
+
+以下为 **陕西品创网络** 对外信息（与整合本组件的 **App 内「关于我们」「联系我们」** 页面一致；以 App 内展示为准）。
 
 | 类型 | 内容 |
 |------|------|
-| **维护者 / 组织** | `（请填写）` |
-| **邮箱** | `（请填写）` |
-| **问题与建议** | `（请填写：插件市场评论、QQ 群、Issue 链接等）` |
+| **机构** | 陕西品创网络 |
+| **邮箱** | sxpcwlkj@163.com |
+| **微信** | qq942879858（咨询与合作，可在 App「联系我们」内复制） |
+| **反馈渠道** | 插件市场评论、Gitee Issue、邮件 / 微信 |
+
+**说明**：使用本仓库示例工程时，路径 **`pages_Me/about_me/about_me`** 为「关于我们」，**`pages_Me/contact/contact`** 为「联系我们」，内含产品介绍、文档链接与联系方式。
 
 ---
 

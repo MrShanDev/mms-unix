@@ -108,6 +108,10 @@ function onCancel() {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	gap: 16rpx;
+	margin: -8rpx -8rpx 0 0;
+}
+
+.demo-row > * {
+	margin: 8rpx 8rpx 0 0;
 }
 </style>

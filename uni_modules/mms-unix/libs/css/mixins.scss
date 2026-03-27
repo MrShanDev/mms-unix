@@ -1,0 +1,32 @@
+/* ========== ucss 不支持 gap / row-gap / column-gap ========== */
+/* 官方样式子集无 gap；flex 间距请用本文件 mixin 或手写 margin。 */
+/* 组件 props 名为 gap（如 mms-upload）是业务属性，不是 CSS gap。 */
+
+/// 单行 flex 主轴为 row：子元素右间距，最后一项清零
+@mixin mms-flex-gap-row($size) {
+	& > * {
+		margin-right: $size;
+	}
+	& > *:last-child {
+		margin-right: 0;
+	}
+}
+
+/// 单列 flex 主轴为 column：子元素下间距，最后一项清零
+@mixin mms-flex-gap-column($size) {
+	& > * {
+		margin-bottom: $size;
+	}
+	& > *:last-child {
+		margin-bottom: 0;
+	}
+}
+
+/// flex-wrap 多行/多列：等价于 gap（$gap 为总间距，内部用一半做负边距抵消）
+/// 例：gap 16rpx → @include mms-flex-gap-wrap(8rpx);
+@mixin mms-flex-gap-wrap($half) {
+	margin: -#{$half} -#{$half} 0 0;
+	& > * {
+		margin: $half $half 0 0;
+	}
+}

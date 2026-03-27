@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="uts">
-	import { copyToClipboard, msg } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+	import { copyToClipboard, msg, jumpTo } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
 
 	const contactEmail = 'sxpcwlkj@163.com'
 	const contactWechat = 'qq942879858'

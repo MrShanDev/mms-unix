@@ -194,8 +194,11 @@
 	align-items: center;
 	justify-content: flex-start;
 	flex-wrap: wrap;
-	gap: 16rpx;
-	margin-bottom: 8rpx;
+	margin: -8rpx -8rpx 8rpx 0;
+}
+
+.demo-row-btns > * {
+	margin: 8rpx 8rpx 0 0;
 }
 
 .demo-box {

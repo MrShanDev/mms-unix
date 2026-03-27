@@ -1,7 +1,7 @@
 <template>
 	<view class="mms-loading" :class="{'mms-loading--full': full}">
 		<view class="mms-loading__spinner" :class="animClass" :style="spinnerSizeStyle">
-			<text v-for="dot in 3" :key="dot" class="mms-loading__dot" :style="dotSizeStyle"></text>
+			<text v-for="dot in dotKeys" :key="dot" class="mms-loading__dot" :style="dotItemStyle(dot)"></text>
 		</view>
 		<text v-if="text" class="mms-loading__text">{{ text }}</text>
 	</view>
@@ -39,6 +39,11 @@ export default {
 			default: ''
 		}
 	},
+	data() {
+		return {
+			dotKeys: [1, 2, 3] as number[]
+		}
+	},
 	computed: {
 		animClass() {
 			return this.anim ? 'mms-loading__spinner--anim' : ''
@@ -65,10 +70,8 @@ export default {
 				unit = 'px'
 			}
 			const h = Math.round(n * 2.5)
-			const g = Math.round(n * 0.5)
 			return {
-				height: h + unit,
-				gap: g + unit
+				height: h + unit
 			} as UTSJSONObject
 		},
 		dotSizeStyle(): UTSJSONObject {
@@ -80,6 +83,40 @@ export default {
 				width: w,
 				height: w
 			} as UTSJSONObject
+		},
+		dotGapStyle(): UTSJSONObject {
+			if (!this.hasCustomDotSize) {
+				return {} as UTSJSONObject
+			}
+			const normalized = toCssLength(this.size as string)
+			const n = parseCssNumber(normalized)
+			const nl = normalized.length
+			let unit = 'rpx'
+			if (nl >= 3 && normalized.substring(nl - 3) === 'rpx') {
+				unit = 'rpx'
+			} else if (nl >= 2 && normalized.substring(nl - 2) === 'px') {
+				unit = 'px'
+			}
+			const g = Math.round(n * 0.5)
+			return {
+				marginLeft: g + unit
+			} as UTSJSONObject
+		}
+	},
+	methods: {
+		dotItemStyle(dot: number): UTSJSONObject {
+			const base = this.dotSizeStyle as UTSJSONObject
+			if (dot <= 1) {
+				return base
+			}
+			const gapObj = this.dotGapStyle as UTSJSONObject
+			const ml = gapObj['marginLeft']
+			const merged: UTSJSONObject = {
+				width: base['width'],
+				height: base['height'],
+				marginLeft: ml
+			}
+			return merged
 		}
 	}
 };
@@ -109,14 +146,16 @@ export default {
 		flex-direction: row;
 		align-items: center;
 		height: 40rpx;
-		gap: 16rpx;
+
+		> * + * {
+			margin-left: 16rpx;
+		}
 
 		.mms-loading__dot {
 			width: 16rpx;
 			height: 16rpx;
 			border-radius: 50%;
 			background-color: currentColor;
-			margin: 0;
 
 			&:nth-child(1) {
 				animation: mms-loading 1s infinite ease-in-out 0s;

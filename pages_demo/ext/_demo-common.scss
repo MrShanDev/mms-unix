@@ -211,7 +211,10 @@
 .ext-btns {
 	display: flex;
 	flex-direction: column;
-	gap: 16rpx;
+}
+
+.ext-btns > * + * {
+	margin-top: 16rpx;
 }
 
 .ext-clip {
@@ -234,7 +237,10 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
-	gap: 16rpx;
+}
+
+.ext-kb-dots > * + * {
+	margin-left: 16rpx;
 }
 
 .ext-kb-dot {
@@ -327,8 +333,11 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 20rpx;
 	margin-top: 20rpx;
+}
+
+.ext-vcode-row > * + * {
+	margin-left: 20rpx;
 }
 
 .ext-banner-inner {

@@ -1,6 +1,8 @@
 /* ========== 公共基础样式 - ucss 兼容版本 ========== */
+@import "./mixins.scss";
 
 /* ========== Flex 布局 ========== */
+/* 勿使用 CSS gap；间距用 margin 或 mixins.scss 中 mms-flex-gap-* ========== */
 
 /* 基础容器 */
 .flex {
