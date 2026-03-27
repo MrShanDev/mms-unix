@@ -1,5 +1,8 @@
+## 1.2.2（2026-03-27）
+Logo 完善回复显示
 <p align="center">
-  <img src="https://mmsadmin.cn/image/mUnix-logo.png" alt="mUnix" width="72" height="72" />
+  <!-- 插件市场 README/changelog 顶部 Logo：须 HTTPS；建议与包内 logo.png 视觉一致 -->
+  <img src="https://sxpcwlkj-test.oss-accelerate.aliyuncs.com/mmsMall/upload/69c63fc0f176d6c9a798a194.png" alt="mUnix" width="72" height="72" />
 </p>
 <p align="center"><strong>mUnix</strong> · uni-app x 组件库</p>
 
@@ -15,7 +18,6 @@
 **当前版本号**以本目录 `package.json` 的字段 **`version`** 为准。
 
 ---
-
 ## 1. 组件库信息
 
 | 项目 | 说明 |
@@ -33,9 +35,9 @@
 | **组件说明（站点）** | <https://mmsadmin.cn/m-unix/README.html> |
 | **站点首页** | <https://mmsadmin.cn> |
 | **开源仓库** | <https://gitee.com/mmsAdmin/m-unix> |
-| **DCloud 插件市场** | 发布后插件详情页：<https://ext.dcloud.net.cn/plugin?id=（填写插件 ID）> |
+| **DCloud 插件市场** | <https://ext.dcloud.net.cn/plugin?id=m-unix>（亦支持 <https://ext.dcloud.net.cn/plugin?name=m-unix>） |
 
-> 插件市场上架后，将上表「插件市场」一行中的插件 ID 补全，便于从市场跳转文档与仓库。
+> 插件 **ID** 为 **`m-unix`**；市场展示 README/changelog 顶部 Logo 请使用 **可公网访问的 HTTPS 图片**（当前为 OSS 静态地址，与包内 **`logo.png`** 建议保持同一视觉）。发布包内请保留同目录 **`logo.png`**，供插件市场列表图标使用。
 
 ### 1.2 机构与联系方式
 
@@ -158,7 +160,22 @@
 
 ## 3. 历史版本
 
-### 1.2.0（2026-03-25）
+### 1.2.2（2026-03-28）
+
+#### 变更（文档与插件市场）
+
+本版本**仅文档与元数据**（含原计划在 **1.2.1** 分条说明的内容，现统一记入 **1.2.2**，不再单独拆版本）。
+
+- **`package.json`**：**`version`** **1.2.2**；**`repository`** 为合法 **`{ type, url }`**（**`https://gitee.com/mmsAdmin/m-unix.git`**），修正无效 **`[object Object]`** 等占位；**`keywords`** 格式整理；**`dcloudext.npmurl`** 为插件市场详情页链接。
+- **`readme.md`**：插件市场常用结构（说明、特点、链接、预览、安装、快速上手、使用方法、版权）；**使用方法**与示例工程一致（**`createSSRApp`**、**`pages.json` · easycom**、**`Request.uts`** / **`common/config`**、**`app.use`** / **`mount$m`**、可选 **`initI18n`**）；**组件列表**与 **`components`** 下全部 **`m-*`** 对齐并分类汇总；**预览**四张示意图（HTTPS）；文首 Logo **HTTPS OSS**（`69c63fc0f176d6c9a798a194.png`）。
+- **`readme.md` / `changelog.md` 文首**：与 §1.1 **DCloud 插件市场**、**`logo.png`** 及 OSS 展示说明一致。
+- **`changelog.md`**：恢复「文首 Logo → # 更新日志」顺序；§1.1、§3 与发版信息对齐。
+- **示例工程**：`pages_Me/contact/contact.uvue` 增加 **插件市场** 入口链接。
+- 无组件、工具或 API 行为变更。
+
+---
+
+### 1.2.0（2026-03-27）
 
 #### 新增
 

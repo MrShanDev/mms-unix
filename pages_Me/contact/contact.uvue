@@ -11,6 +11,11 @@
 					<m-link href="https://mmsadmin.cn/m-unix/README.html" text="mUnix" underline></m-link>
 				</template>
 			</m-cell>
+			<m-cell title="插件市场" :border="true">
+				<template #right>
+					<m-link href="https://ext.dcloud.net.cn/plugin?id=m-unix" text="DCloud m-unix" underline></m-link>
+				</template>
+			</m-cell>
 			<m-cell title="商务合作" value="服务范围与承接说明" :isLink="true" :border="true" @click="goCooperation"></m-cell>
 			<m-cell title="商务咨询" value="欢迎邮件、微信沟通合作" :border="false"></m-cell>
 		</m-cell-group>
