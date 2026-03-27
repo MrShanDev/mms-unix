@@ -2,11 +2,11 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">数字键盘</text>
-			<mms-button type="primary" @click="showKeyboard = true">打开键盘</mms-button>
+			<m-button type="primary" @click="showKeyboard = true">打开键盘</m-button>
 			<text class="demo-desc">用于支付密码等场景，配合顶部插槽展示掩码；本页演示为输满 6 位自动确认并关闭。</text>
 		</view>
 
-		<mms-keyboard :show="showKeyboard" @close="closeKb" @click="onKeyClick">
+		<m-keyboard :show="showKeyboard" @close="closeKb" @click="onKeyClick">
 			<view class="kb-top">
 				<text class="kb-tip">请输入密码（演示）</text>
 				<text class="kb-tip-sub">输满 6 位将自动确认；未满时可点面板「取消」关闭。</text>
@@ -19,7 +19,7 @@
 					></view>
 				</view>
 			</view>
-		</mms-keyboard>
+		</m-keyboard>
 	</view>
 </template>
 

@@ -4,7 +4,7 @@
 			<text class="section-title">基础倒计时</text>
 			<view class="countdown-row">
 				<text class="countdown-label">60 秒，HH:mm:ss</text>
-				<mms-countdown :seconds="60" @finish="onFinish"></mms-countdown>
+				<m-countdown :seconds="60" @finish="onFinish"></m-countdown>
 			</view>
 		</view>
 
@@ -12,11 +12,11 @@
 			<text class="section-title">倒计时样式</text>
 			<view class="countdown-row">
 				<text class="countdown-label">30 秒，纯文字</text>
-				<mms-countdown :seconds="30"></mms-countdown>
+				<m-countdown :seconds="30"></m-countdown>
 			</view>
 			<view class="countdown-row">
 				<text class="countdown-label">30 秒，按钮底</text>
-				<mms-countdown :seconds="30" type="button"></mms-countdown>
+				<m-countdown :seconds="30" type="button"></m-countdown>
 			</view>
 		</view>
 
@@ -24,12 +24,12 @@
 			<text class="section-title">自定义文字（验证码样式）</text>
 			<view class="countdown-row">
 				<text class="countdown-label">文案 + 结束可点重开</text>
-				<mms-countdown
+				<m-countdown
 					:seconds="60"
 					startText="获取验证码"
 					endText="重新获取"
 					suffix="秒后重试"
-				></mms-countdown>
+				></m-countdown>
 			</view>
 		</view>
 
@@ -41,25 +41,25 @@
 			</text>
 			<view class="countdown-row">
 				<text class="countdown-label">HH:mm:ss</text>
-				<mms-countdown type="cells" format="HH:mm:ss" :seconds="3665"></mms-countdown>
+				<m-countdown type="cells" format="HH:mm:ss" :seconds="3665"></m-countdown>
 			</view>
 			<view class="countdown-row">
 				<text class="countdown-label">DD天 HH:mm:ss</text>
-				<mms-countdown type="cells" format="DD天 HH:mm:ss" :seconds="90061"></mms-countdown>
+				<m-countdown type="cells" format="DD天 HH:mm:ss" :seconds="90061"></m-countdown>
 			</view>
 			<view class="countdown-row">
 				<text class="countdown-label">主色分格</text>
-				<mms-countdown type="cells" format="HH:mm:ss" :seconds="3599" :primary="true"></mms-countdown>
+				<m-countdown type="cells" format="HH:mm:ss" :seconds="3599" :primary="true"></m-countdown>
 			</view>
 			<view class="countdown-row countdown-row--stack countdown-row--last">
 				<text class="countdown-label">YYYY-MM-DD HH:mm:ss</text>
 				<view class="countdown-cells-wrap">
-					<mms-countdown
+					<m-countdown
 						type="cells"
 						:calendar="true"
 						format="YYYY-MM-DD HH:mm:ss"
 						:seconds="demoLongSeconds"
-					></mms-countdown>
+					></m-countdown>
 				</view>
 			</view>
 		</view>
@@ -69,21 +69,21 @@
 			<text class="section-desc">与 MMS 主色 #ff0844 一致；传 primary 即可，适用于活动倒计时、主色按钮式展示。</text>
 			<view class="countdown-row">
 				<text class="countdown-label">HH:mm:ss</text>
-				<mms-countdown :seconds="120" :primary="true" @finish="onFinish"></mms-countdown>
+				<m-countdown :seconds="120" :primary="true" @finish="onFinish"></m-countdown>
 			</view>
 			<view class="countdown-row">
 				<text class="countdown-label">按钮底</text>
-				<mms-countdown :seconds="45" type="button" :primary="true"></mms-countdown>
+				<m-countdown :seconds="45" type="button" :primary="true"></m-countdown>
 			</view>
 			<view class="countdown-row countdown-row--last">
 				<text class="countdown-label">验证码文案</text>
-				<mms-countdown
+				<m-countdown
 					:seconds="60"
 					:primary="true"
 					type="button"
 					endText="重新获取"
 					suffix="秒后重试"
-				></mms-countdown>
+				></m-countdown>
 			</view>
 		</view>
 	</view>

@@ -3,24 +3,24 @@
 		<view class="demo-section">
 			<text class="section-title">字符串列表</text>
 			<text class="demo-desc">图片来自 Lorem Picsum（picsum.photos），需联网加载。</text>
-			<mms-swiper :list="urlsSimple" :indicator="true" :height="300" :slide-padding="8"></mms-swiper>
+			<m-swiper :list="urlsSimple" :indicator="true" :height="300" :slide-padding="8"></m-swiper>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">指示条（line）</text>
-			<mms-swiper
+			<m-swiper
 				:list="urlsSimple"
 				indicator
 				indicator-mode="line"
 				:autoplay="false"
 				:height="280"
 				:slide-padding="8"
-			></mms-swiper>
+			></m-swiper>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">标题 + 对象列表</text>
-			<mms-swiper
+			<m-swiper
 				:list="slidesWithTitle"
 				image-key="src"
 				show-title
@@ -29,13 +29,13 @@
 				circular
 				:height="300"
 				:slide-padding="8"
-			></mms-swiper>
+			></m-swiper>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">卡片露边 + 衔接</text>
 			<text class="demo-desc">首张左侧为上一张（衔接时即最后一张）。slide-padding 控制单页内图片左右留白；需至少 3 张图且开启 circular。</text>
-			<mms-swiper
+			<m-swiper
 				:list="urlsCard"
 				:previous-margin="36"
 				:next-margin="36"
@@ -46,12 +46,12 @@
 				indicator
 				indicator-style="bottom:28rpx;"
 				:height="260"
-			></mms-swiper>
+			></m-swiper>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">加载态</text>
-			<mms-swiper :list="urlsSimple" :loading="loadingDemo" :indicator="true" :height="240" :slide-padding="8"></mms-swiper>
+			<m-swiper :list="urlsSimple" :loading="loadingDemo" :indicator="true" :height="240" :slide-padding="8"></m-swiper>
 			<text class="demo-desc">loading 为 true 时暂停自动轮播并显示遮罩（可将脚本中 loadingDemo 改为 true 预览）。</text>
 		</view>
 	</view>

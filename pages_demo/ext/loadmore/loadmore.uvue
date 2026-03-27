@@ -2,20 +2,20 @@
 	<scroll-view class="page-scroll" scroll-y style="flex:1">
 		<view class="demo-page">
 			<view class="demo-section">
-				<text class="section-title">加载更多（mms-loadmore）</text>
+				<text class="section-title">加载更多（m-loadmore）</text>
 				<text class="section-desc">status：loading / nomore / error；error 时可点击触发 retry。</text>
 				<view class="demo-row">
-					<view class="demo-row__cell"><mms-button type="primary" btnSize="small" @tap="setLoading">loading</mms-button></view>
-					<view class="demo-row__cell"><mms-button type="primary" btnSize="small" @tap="setNomore">nomore</mms-button></view>
-					<view class="demo-row__cell demo-row__cell--tail"><mms-button type="danger" btnSize="small" @tap="setError">error</mms-button></view>
+					<view class="demo-row__cell"><m-button type="primary" btnSize="small" @tap="setLoading">loading</m-button></view>
+					<view class="demo-row__cell"><m-button type="primary" btnSize="small" @tap="setNomore">nomore</m-button></view>
+					<view class="demo-row__cell demo-row__cell--tail"><m-button type="danger" btnSize="small" @tap="setError">error</m-button></view>
 				</view>
-				<mms-loadmore
+				<m-loadmore
 					:status="status"
 					loading-text="加载中…"
 					nomore-text="没有更多了"
 					error-text="加载失败，点我重试"
 					@retry="onRetry"
-				></mms-loadmore>
+				></m-loadmore>
 				<text v-if="retryCount > 0" class="demo-result">retry 次数：{{ retryCount }}</text>
 			</view>
 		</view>

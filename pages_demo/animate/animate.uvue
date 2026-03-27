@@ -3,17 +3,17 @@
 		<view class="demo-page">
 			<view class="demo-section">
 				<text class="section-title">说明</text>
-				<text class="section-desc">全局样式 `libs/css/animate.scss`（由 `mms-unix/index.scss` 引入）。基于 transition 切换 class，符合 ucss 不使用 @keyframes；无限循环旋转请用 mms-loading 或脚本动画。</text>
+				<text class="section-desc">全局样式 `libs/css/animate.scss`（由 `m-unix/index.scss` 引入）。基于 transition 切换 class，符合 ucss 不使用 @keyframes；无限循环旋转请用 m-loading 或脚本动画。</text>
 			</view>
 
 			<view class="demo-section">
 				<text class="section-title">淡入淡出</text>
-				<text class="section-desc">mms-animate + mms-fade-from / mms-fade-to</text>
-				<mms-button type="primary" btnSize="small" @tap="toggleFade">{{ fadeVisible ? '隐藏' : '显示' }}</mms-button>
+				<text class="section-desc">m-animate + m-fade-from / m-fade-to</text>
+				<m-button type="primary" btnSize="small" @tap="toggleFade">{{ fadeVisible ? '隐藏' : '显示' }}</m-button>
 				<view class="demo-stage">
 					<view
 						class="demo-box"
-						:class="['mms-animate', fadeVisible ? 'mms-fade-to' : 'mms-fade-from']"
+						:class="['m-animate', fadeVisible ? 'm-fade-to' : 'm-fade-from']"
 					>
 						<text class="demo-box-text">内容区</text>
 					</view>
@@ -22,12 +22,12 @@
 
 			<view class="demo-section">
 				<text class="section-title">自下而上滑入</text>
-				<text class="section-desc">mms-slide-up-from / mms-slide-up-to</text>
-				<mms-button type="primary" btnSize="small" @tap="toggleSlideUp">{{ slideUpVisible ? '收起' : '展开' }}</mms-button>
+				<text class="section-desc">m-slide-up-from / m-slide-up-to</text>
+				<m-button type="primary" btnSize="small" @tap="toggleSlideUp">{{ slideUpVisible ? '收起' : '展开' }}</m-button>
 				<view class="demo-stage">
 					<view
 						class="demo-box"
-						:class="['mms-animate', slideUpVisible ? 'mms-slide-up-to' : 'mms-slide-up-from']"
+						:class="['m-animate', slideUpVisible ? 'm-slide-up-to' : 'm-slide-up-from']"
 					>
 						<text class="demo-box-text">自下而上</text>
 					</view>
@@ -36,12 +36,12 @@
 
 			<view class="demo-section">
 				<text class="section-title">缩放出现</text>
-				<text class="section-desc">mms-scale-from / mms-scale-to</text>
-				<mms-button type="primary" btnSize="small" @tap="toggleScale">{{ scaleVisible ? '缩小隐藏' : '放大显示' }}</mms-button>
+				<text class="section-desc">m-scale-from / m-scale-to</text>
+				<m-button type="primary" btnSize="small" @tap="toggleScale">{{ scaleVisible ? '缩小隐藏' : '放大显示' }}</m-button>
 				<view class="demo-stage demo-stage--center">
 					<view
 						class="demo-box demo-box--narrow"
-						:class="['mms-animate', scaleVisible ? 'mms-scale-to' : 'mms-scale-from']"
+						:class="['m-animate', scaleVisible ? 'm-scale-to' : 'm-scale-from']"
 					>
 						<text class="demo-box-text">缩放</text>
 					</view>
@@ -50,21 +50,21 @@
 
 			<view class="demo-section">
 				<text class="section-title">横向滑入</text>
-				<text class="section-desc">mms-slide-left-from / to；mms-slide-right-from / to</text>
+				<text class="section-desc">m-slide-left-from / to；m-slide-right-from / to</text>
 				<view class="demo-row-btns">
-					<mms-button type="primary" btnSize="small" @tap="toggleSlideLeft">自左滑入</mms-button>
-					<mms-button type="green" btnSize="small" @tap="toggleSlideRight">自右滑入</mms-button>
+					<m-button type="primary" btnSize="small" @tap="toggleSlideLeft">自左滑入</m-button>
+					<m-button type="green" btnSize="small" @tap="toggleSlideRight">自右滑入</m-button>
 				</view>
 				<view class="demo-stage demo-stage--row">
 					<view
 						class="demo-box demo-box--half"
-						:class="['mms-animate', slideHVisible ? 'mms-slide-left-to' : 'mms-slide-left-from']"
+						:class="['m-animate', slideHVisible ? 'm-slide-left-to' : 'm-slide-left-from']"
 					>
 						<text class="demo-box-text">左</text>
 					</view>
 					<view
 						class="demo-box demo-box--half demo-box--green"
-						:class="['mms-animate', slideRightVisible ? 'mms-slide-right-to' : 'mms-slide-right-from']"
+						:class="['m-animate', slideRightVisible ? 'm-slide-right-to' : 'm-slide-right-from']"
 					>
 						<text class="demo-box-text">右</text>
 					</view>
@@ -73,23 +73,23 @@
 
 			<view class="demo-section">
 				<text class="section-title">图标旋转（单次）</text>
-				<text class="section-desc">mms-animate + mms-rotate-0 / mms-rotate-180，用于展开箭头等</text>
-				<mms-button type="primary" btnSize="small" @tap="toggleIcon">{{ iconOpen ? '收回' : '展开' }}</mms-button>
+				<text class="section-desc">m-animate + m-rotate-0 / m-rotate-180，用于展开箭头等</text>
+				<m-button type="primary" btnSize="small" @tap="toggleIcon">{{ iconOpen ? '收回' : '展开' }}</m-button>
 				<view class="demo-stage demo-stage--center">
 					<view
-						class="demo-icon-wrap mms-animate"
-						:class="iconOpen ? 'mms-rotate-180' : 'mms-rotate-0'"
+						class="demo-icon-wrap m-animate"
+						:class="iconOpen ? 'm-rotate-180' : 'm-rotate-0'"
 					>
-						<mms-icon name="arrow-down" size="56rpx" color="#ff0844"></mms-icon>
+						<m-icon name="arrow-down" size="56rpx" color="#ff0844"></m-icon>
 					</view>
 				</view>
 			</view>
 
 			<view class="demo-section">
 				<text class="section-title">显隐与透明度</text>
-				<text class="section-desc">mms-opacity-0 / mms-opacity-1；mms-hidden-touch 可配合过渡使用</text>
+				<text class="section-desc">m-opacity-0 / m-opacity-1；m-hidden-touch 可配合过渡使用</text>
 				<view class="demo-stage">
-					<view class="demo-box mms-opacity-1">
+					<view class="demo-box m-opacity-1">
 						<text class="demo-box-text">opacity 1</text>
 					</view>
 				</view>

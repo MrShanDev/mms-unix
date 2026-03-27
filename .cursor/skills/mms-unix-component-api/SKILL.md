@@ -1,19 +1,19 @@
 ---
-name: mms-unix-component-api
+name: m-unix-component-api
 description: >-
-  Defines MMS-UNIX uni-app x component API conventions for props, emits, v-model,
+  Defines mUnix (m-unix) uni-app x component API conventions for props, emits, v-model,
   demo registration in pages.json subPackages, and Tab 组件首页入口. Use when adding
-  or refactoring mms-* components, writing pages_demo examples, fixing broken
+  or refactoring m-* components, writing pages_demo examples, fixing broken
   @listeners, or auditing two-way binding.
 ---
 
-# MMS-UNIX 组件 API、事件与 v-model 规范
+# mUnix 组件 API、事件与 v-model 规范
 
-本 Skill 固化「新增/改版组件」时易错点：**演示与实现 API 不一致**、**有 `$emit` 无 `emits`**、**显隐类 props 未配套 `update:*`**、**命名别名未统一**等。与 `.cursor/skills/mms-unix-coding-standards/SKILL.md`（结构/目录/样式归属）配合使用。
+本 Skill 固化「新增/改版组件」时易错点：**演示与实现 API 不一致**、**有 `$emit` 无 `emits`**、**显隐类 props 未配套 `update:*`**、**命名别名未统一**等。与 `.cursor/skills/m-unix-coding-standards/SKILL.md`（结构/目录/样式归属）配合使用。
 
 ## 适用场景
 
-- 新建 `uni_modules/mms-unix/components/mms-*/mms-*.uvue`
+- 新建 `uni_modules/m-unix/components/m-*/m-*.uvue`
 - 为组件补充能力或修 bug
 - 编写/修改 `pages_demo/*` 演示
 - 用户反馈「写了 `@xxx` 没反应」「`v-model` 不同步」
@@ -24,7 +24,7 @@ description: >-
 
 - 业务侧用 **`:customStyle`** 传入 **`UTSJSONObject`**（与内置 `rootStyle` / `boxStyle` 等合并，**后写覆盖先写**）。
 - **不要**依赖在自定义组件标签上写原生 `style`（各端透传不一致）；以各组件文档与实现为准。
-- 本库已支持或已合并 `customStyle` 的示例：`mms-card`、`mms-tag`、`mms-cell`，以及带 `rootStyle` 的 `mms-banner-arc`、`mms-section`、`mms-form`、`mms-code-input`、`mms-tabs`、`mms-notice-bar`、`mms-rolling-news`、`mms-segmented-control`、`mms-bubble-popup`、`mms-watermark`、`mms-countdown-verify` 等。
+- 本库已支持或已合并 `customStyle` 的示例：`m-card`、`m-tag`、`m-cell`，以及带 `rootStyle` 的 `m-banner-arc`、`m-section`、`m-form`、`m-code-input`、`m-tabs`、`m-notice-bar`、`m-rolling-news`、`m-segmented-control`、`m-bubble-popup`、`m-watermark`、`m-countdown-verify` 等。
 
 ### 1. `emits` 与 `$emit` 必须一致
 
@@ -65,12 +65,12 @@ description: >-
 ### 6. 演示页 `pages_demo` 与组件必须同源
 
 - 演示里出现的 **props 名、事件名、`v-model` 修饰符**须与组件实现一致；发现不一致时 **优先改组件对外 API（若已公开则做兼容）或改演示**，禁止长期「演示假接口」。
-- 样式归属仍遵循 `mms-unix-coding-standards`：**外观在组件内，演示只做分区与文案**。
+- 样式归属仍遵循 `m-unix-coding-standards`：**外观在组件内，演示只做分区与文案**。
 
 ### 7. 演示路由登记与「组件」Tab 入口
 
 - **分包注册**：每新增一个 `pages_demo/.../*.uvue` 演示页，必须在 `pages.json` → `subPackages` → `root: "pages_demo"` 的 `pages` 数组中增加对应 `path`；否则无法 `navigateTo`。
-- **跳转路径**：使用 **`/pages_demo/...`** 形式（见 `mms-unix-coding-standards` 主包/分包约定），与主包 `pages/*` 路径区分。
+- **跳转路径**：使用 **`/pages_demo/...`** 形式（见 `m-unix-coding-standards` 主包/分包约定），与主包 `pages/*` 路径区分。
 - **组件首页列表**：当前工程在 `pages/components/components.uvue` 用 `componentCategories`（标题、主题色、`items`）驱动分类网格；**新组件若要从该页进入**，需在该数据中增加一项或归入已有分类，避免「有演示页但首页进不去」。
 
 ## 新增组件自检清单（建议逐项打勾）
@@ -87,12 +87,12 @@ description: >-
 
 | 能力 | 参考组件 |
 |------|----------|
-| 文本 v-model + 多事件 | `mms-search` |
-| 显隐 + `visible`/`show` 兼容 + `v-model` | `mms-popup`、`mms-dialog` |
-| 列表 v-model + 事件别名 | `mms-upload`（`files` / `fileList`，`choose` / `afterRead`） |
-| 弹层内再包弹层 | `mms-datetime-picker`（内层关闭需同步外层 `show`） |
-| 业务用 `update:popupShow` | `mms-login` |
+| 文本 v-model + 多事件 | `m-search` |
+| 显隐 + `visible`/`show` 兼容 + `v-model` | `m-popup`、`m-dialog` |
+| 列表 v-model + 事件别名 | `m-upload`（`files` / `fileList`，`choose` / `afterRead`） |
+| 弹层内再包弹层 | `m-datetime-picker`（内层关闭需同步外层 `show`） |
+| 业务用 `update:popupShow` | `m-login` |
 
 ## 与「仅展示」组件的边界
 
-`mms-card`、`mms-price`、`mms-empty` 等无状态展示组件**不强制** v-model；若要在文档中支持点击，应显式增加 `click` 的 `emit` 与 `emits` 声明，或在文档中说明由外层 `@tap` 处理。
+`m-card`、`m-price`、`m-empty` 等无状态展示组件**不强制** v-model；若要在文档中支持点击，应显式增加 `click` 的 `emit` 与 `emits` 声明，或在文档中说明由外层 `@tap` 处理。

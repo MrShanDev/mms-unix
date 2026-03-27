@@ -2,13 +2,13 @@
 	<scroll-view class="page-scroll" scroll-y style="flex:1">
 		<view class="demo-page">
 			<view class="demo-section">
-				<text class="section-title">mms-banner-arc 说明</text>
+				<text class="section-title">m-banner-arc 说明</text>
 				<text class="section-hint">
 					仅<strong>内凹</strong>弧（衔接色切入），无插槽。根渐变 + 沿口
-					<text class="code-inline">mms-banner-arc__edge--top</text> /
+					<text class="code-inline">m-banner-arc__edge--top</text> /
 					<text class="code-inline">--bottom</text>，弧层
-					<text class="code-inline">mms-banner-arc__arc--in</text>。根形态类：
-					<text class="code-inline">mms-banner-arc--variant-top-concave</text>、
+					<text class="code-inline">m-banner-arc__arc--in</text>。根形态类：
+					<text class="code-inline">m-banner-arc--variant-top-concave</text>、
 					<text class="code-inline">…-bottom-concave</text>、双弧
 					<text class="code-inline">…-variant-dual</text>。
 				</text>
@@ -23,9 +23,9 @@
 
 			<view class="demo-section">
 				<text class="section-title">下凹 bottom-concave（默认等价）</text>
-				<text class="section-tag">mms-banner-arc--variant-bottom-concave</text>
+				<text class="section-tag">m-banner-arc--variant-bottom-concave</text>
 				<view class="demo-banner-stack">
-					<mms-banner-arc arc-variant="bottom-concave" height="200" :percent="130" background="linear-gradient(90deg,#5473ff,#6da8ff)"></mms-banner-arc>
+					<m-banner-arc arc-variant="bottom-concave" height="200" :percent="130" background="linear-gradient(90deg,#5473ff,#6da8ff)"></m-banner-arc>
 					<view class="banner-inner">
 						<text class="banner-title">下沿凹入</text>
 						<text class="banner-sub">与下方白底衔接</text>
@@ -35,9 +35,9 @@
 
 			<view class="demo-section">
 				<text class="section-title">上凹 top-concave</text>
-				<text class="section-tag">mms-banner-arc--variant-top-concave</text>
+				<text class="section-tag">m-banner-arc--variant-top-concave</text>
 				<view class="demo-banner-stack">
-					<mms-banner-arc arc-variant="top-concave" height="180" :percent="150" :arc-height="72" arc-color="#f5f5f5" background="linear-gradient(135deg,#ff0844,#ff6b88)"></mms-banner-arc>
+					<m-banner-arc arc-variant="top-concave" height="180" :percent="150" :arc-height="72" arc-color="#f5f5f5" background="linear-gradient(135deg,#ff0844,#ff6b88)"></m-banner-arc>
 					<view class="banner-inner banner-inner--light">
 						<text class="banner-title banner-title--on-red">上沿凹入</text>
 						<text class="banner-sub">衔接色自上切入</text>
@@ -48,9 +48,9 @@
 			<view class="demo-section">
 				<text class="section-title">兼容：仅 arc-edge</text>
 				<text class="section-hint">未设 arc-variant 时用 arc-edge；仅支持凹。</text>
-				<text class="section-tag">mms-banner-arc--variant-top-concave</text>
+				<text class="section-tag">m-banner-arc--variant-top-concave</text>
 				<view class="demo-banner-stack">
-					<mms-banner-arc arc-edge="top" height="160" :percent="140" arc-color="#f5f5f5" background="linear-gradient(135deg,#fa8c16,#ffc069)"></mms-banner-arc>
+					<m-banner-arc arc-edge="top" height="160" :percent="140" arc-color="#f5f5f5" background="linear-gradient(135deg,#fa8c16,#ffc069)"></m-banner-arc>
 					<view class="banner-inner">
 						<text class="banner-title">arc-edge=top</text>
 					</view>
@@ -60,9 +60,9 @@
 			<view class="demo-section">
 				<text class="section-title">高度 height=&quot;auto&quot;</text>
 				<text class="section-hint">min-height 随弧参数估算。</text>
-				<text class="section-tag">mms-banner-arc--variant-bottom-concave</text>
+				<text class="section-tag">m-banner-arc--variant-bottom-concave</text>
 				<view class="demo-banner-stack demo-banner-stack--auto">
-					<mms-banner-arc arc-variant="bottom-concave" height="auto" :percent="140" :arc-height="80" background="linear-gradient(180deg,#2f54eb,#597ef7)"></mms-banner-arc>
+					<m-banner-arc arc-variant="bottom-concave" height="auto" :percent="140" :arc-height="80" background="linear-gradient(180deg,#2f54eb,#597ef7)"></m-banner-arc>
 					<view class="banner-inner banner-inner--compact">
 						<text class="banner-title">height=&quot;auto&quot;</text>
 						<text class="banner-sub">min-height 随弧参数</text>
@@ -75,9 +75,9 @@
 				<text class="section-hint">
 					上下沿各一组凹弧；可分别设 top-percent / bottom-percent、top-arc-height / bottom-arc-height、top-arc-color / bottom-arc-color。
 				</text>
-				<text class="section-tag">mms-banner-arc--variant-dual</text>
+				<text class="section-tag">m-banner-arc--variant-dual</text>
 				<view class="demo-banner-stack">
-					<mms-banner-arc
+					<m-banner-arc
 						dual-arc
 						height="260"
 						background="linear-gradient(180deg,#722ed1,#b37feb)"
@@ -87,7 +87,7 @@
 						:bottom-arc-height="96"
 						top-arc-color="#f5f5f5"
 						bottom-arc-color="#ffffff"
-					></mms-banner-arc>
+					></m-banner-arc>
 					<view class="banner-inner banner-inner--dual">
 						<text class="banner-title">中间内容区</text>
 						<text class="banner-sub">上弧更平(200%)更浅(56rpx) / 下弧更弯(140%)更深(96rpx)</text>

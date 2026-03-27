@@ -3,35 +3,35 @@
 		<view class="demo-section demo-section--list">
 			<text class="section-title">基础单元格</text>
 			<view class="demo-cell-column">
-				<mms-cell title="单元格标题" value="内容"></mms-cell>
-				<mms-cell title="单元格标题" value="内容" label="描述信息" :border="false"></mms-cell>
+				<m-cell title="单元格标题" value="内容"></m-cell>
+				<m-cell title="单元格标题" value="内容" label="描述信息" :border="false"></m-cell>
 			</view>
 		</view>
 
 		<view class="demo-section demo-section--list">
 			<text class="section-title">显示箭头</text>
 			<view class="demo-cell-column">
-				<mms-cell title="单元格标题" :isLink="true"></mms-cell>
-				<mms-cell title="单元格标题" value="内容" :isLink="true"></mms-cell>
-				<mms-cell title="单元格标题" value="内容" :isLink="true" linkType="navigateTo" :border="false"></mms-cell>
+				<m-cell title="单元格标题" :isLink="true"></m-cell>
+				<m-cell title="单元格标题" value="内容" :isLink="true"></m-cell>
+				<m-cell title="单元格标题" value="内容" :isLink="true" linkType="navigateTo" :border="false"></m-cell>
 			</view>
 		</view>
 
 		<view class="demo-section demo-section--list">
 			<text class="section-title">自定义图标</text>
 			<view class="demo-cell-column">
-				<mms-cell title="单元格标题" icon="setting"></mms-cell>
-				<mms-cell title="单元格标题" icon="wallet" value="内容" :border="false"></mms-cell>
+				<m-cell title="单元格标题" icon="setting"></m-cell>
+				<m-cell title="单元格标题" icon="wallet" value="内容" :border="false"></m-cell>
 			</view>
 		</view>
 
 		<view class="demo-section demo-section--list">
 			<text class="section-title">分组标题</text>
-			<mms-cell-group title="分组标题">
-				<mms-cell title="单元格标题" value="内容"></mms-cell>
-				<mms-cell title="单元格标题" value="内容"></mms-cell>
-				<mms-cell title="单元格标题" value="内容" :border="false"></mms-cell>
-			</mms-cell-group>
+			<m-cell-group title="分组标题">
+				<m-cell title="单元格标题" value="内容"></m-cell>
+				<m-cell title="单元格标题" value="内容"></m-cell>
+				<m-cell title="单元格标题" value="内容" :border="false"></m-cell>
+			</m-cell-group>
 		</view>
 	</view>
 </template>

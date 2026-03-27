@@ -9,30 +9,30 @@
 				<view class="change" @click="changeAvatar">更换头像</view>
 			</view>
 
-			<mms-cell-group>
-				<mms-cell title="昵称" :value="nicknameDisplay" :isLink="true" @click="editNickname"></mms-cell>
-				<mms-cell title="性别">
+			<m-cell-group>
+				<m-cell title="昵称" :value="nicknameDisplay" :isLink="true" @click="editNickname"></m-cell>
+				<m-cell title="性别">
 					<template #right>
 						<picker @change="bindPickerChange" :value="getGenderIndex(userInfo.sex)" :range="genderArray">
 							<view class="cell-picker-row">
 								<text class="cell-picker-text">{{ getGenderText(userInfo.sex) }}</text>
-								<mms-icon name="arrow-right" size="24" color="#c0c4cc" />
+								<m-icon name="arrow-right" size="24" color="#c0c4cc" />
 							</view>
 						</picker>
 					</template>
-				</mms-cell>
-				<mms-cell title="生日">
+				</m-cell>
+				<m-cell title="生日">
 					<template #right>
 						<picker mode="date" :value="birthdayValue" :start="startDate" :end="endDate" @change="bindDateChange">
 							<view class="cell-picker-row">
 								<text class="cell-picker-text">{{ userInfo.birthday && userInfo.birthday != 'null' ? userInfo.birthday : '请选择生日' }}</text>
-								<mms-icon name="arrow-right" size="24" color="#c0c4cc" />
+								<m-icon name="arrow-right" size="24" color="#c0c4cc" />
 							</view>
 						</picker>
 					</template>
-				</mms-cell>
-				<mms-cell title="收货地址" :isLink="true" :border="false" @click="openUserAddress"></mms-cell>
-			</mms-cell-group>
+				</m-cell>
+				<m-cell title="收货地址" :isLink="true" :border="false" @click="openUserAddress"></m-cell>
+			</m-cell-group>
 		</view>
 
 
@@ -60,12 +60,12 @@
 
 <script setup lang="uts">
 	import { ref, computed } from 'vue'
-	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config.uts'
-	import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
+	import { getMUiConfig } from '@/uni_modules/m-unix/config.uts'
+	import { storage } from '@/uni_modules/m-unix/components/m-tools/Storage.uts'
 	import { updateMemberInfo } from '@/common/api/mallApi'
-	import { jumpTo } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+	import { jumpTo } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
 
-	const defaultFace = computed((): string => getMmsUiConfig().avatarDefault)
+	const defaultFace = computed((): string => getMUiConfig().avatarDefault)
 	const genderArray = ['保密', '男', '女']
 	const showNicknameModal = ref(false)
 	const newNickname = ref('')

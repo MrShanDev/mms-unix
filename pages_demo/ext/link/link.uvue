@@ -2,12 +2,12 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">下划线链接</text>
-			<mms-link href="https://www.example.com" text="外链示例（H5 新开页 / 小程序复制）" underline></mms-link>
+			<m-link href="https://www.example.com" text="外链示例（H5 新开页 / 小程序复制）" underline></m-link>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">无下划线</text>
-			<mms-link href="https://www.example.com/page" text="示例内页链接（无下划线）" :underline="false"></mms-link>
+			<m-link href="https://www.example.com/page" text="示例内页链接（无下划线）" :underline="false"></m-link>
 		</view>
 	</view>
 </template>

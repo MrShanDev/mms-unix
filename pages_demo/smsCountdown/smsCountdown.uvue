@@ -3,58 +3,58 @@
 		<view class="demo-section">
 			<text class="section-title">基础</text>
 			<text class="section-desc">点击后发请求，成功后父级递增 successTick</text>
-			<mms-countdown-verify
+			<m-countdown-verify
 				:successTick="tick1"
 				color="#1890ff"
 				borderColor="#1890ff"
 				@send="onSend1"
-			></mms-countdown-verify>
+			></m-countdown-verify>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">自定义秒数与后缀</text>
-			<mms-countdown-verify
+			<m-countdown-verify
 				:successTick="tick2"
 				:seconds="120"
 				countdownSuffix="秒后可重发"
 				text="发送短信"
 				@send="onSend2"
-			></mms-countdown-verify>
+			></m-countdown-verify>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">挂载即倒计时（start）</text>
-			<mms-countdown-verify :start="true" :seconds="15" text="冷却中"></mms-countdown-verify>
+			<m-countdown-verify :start="true" :seconds="15" text="冷却中"></m-countdown-verify>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">重置 resetTick</text>
 			<view class="demo-row">
-				<mms-countdown-verify
+				<m-countdown-verify
 					:successTick="tick3"
 					:resetTick="reset3"
 					@send="onSend3"
-				></mms-countdown-verify>
+				></m-countdown-verify>
 				<view class="demo-row__btn">
-					<mms-button type="primary" width="200rpx" height="64rpx" @tap="onReset3">重置</mms-button>
+					<m-button type="primary" width="200rpx" height="64rpx" @tap="onReset3">重置</m-button>
 				</view>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">与输入框同排（与表单演示页布局一致）</text>
-			<text class="section-desc">使用 mms-input 的 #right 插槽</text>
-			<mms-input v-model="phone" label="手机" type="number" placeholder="11 位" :clearable="true">
+			<text class="section-desc">使用 m-input 的 #right 插槽</text>
+			<m-input v-model="phone" label="手机" type="number" placeholder="11 位" :clearable="true">
 				<template #right>
-					<mms-countdown-verify
+					<m-countdown-verify
 						:successTick="tick4"
 						:resetTick="reset4"
 						color="#ff0844"
 						borderColor="#ff0844"
 						@send="onSend4"
-					></mms-countdown-verify>
+					></m-countdown-verify>
 				</template>
-			</mms-input>
+			</m-input>
 		</view>
 
 		<view class="page-footer-spacer"></view>

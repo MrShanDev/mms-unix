@@ -2,25 +2,25 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">带图标插槽（字符串列表）</text>
-			<mms-rolling-news :list="rollList" :show-icon-slot="true">
+			<m-rolling-news :list="rollList" :show-icon-slot="true">
 				<template #icon>
-					<mms-icon name="news-filling" size="32rpx" color="#5677fc"></mms-icon>
+					<m-icon name="news-filling" size="32rpx" color="#5677fc"></m-icon>
 				</template>
-			</mms-rolling-news>
+			</m-rolling-news>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">对象列表 + prop 字段</text>
-			<mms-rolling-news :list="rollObjects" prop="name" :radius="16" :show-icon-slot="true">
+			<m-rolling-news :list="rollObjects" prop="name" :radius="16" :show-icon-slot="true">
 				<template #icon>
-					<mms-icon name="news-filling" size="32rpx" color="#5677fc"></mms-icon>
+					<m-icon name="news-filling" size="32rpx" color="#5677fc"></m-icon>
 				</template>
-			</mms-rolling-news>
+			</m-rolling-news>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">横向轮播</text>
-			<mms-rolling-news :list="rollLines" :vertical="false"></mms-rolling-news>
+			<m-rolling-news :list="rollLines" :vertical="false"></m-rolling-news>
 		</view>
 
 		<view class="demo-section">

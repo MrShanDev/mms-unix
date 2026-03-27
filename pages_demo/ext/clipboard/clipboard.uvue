@@ -1,23 +1,23 @@
 <template>
 	<view class="demo-page">
 		<view class="demo-section">
-			<text class="section-title">组件包裹（mms-clipboard）</text>
+			<text class="section-title">组件包裹（m-clipboard）</text>
 			<text class="demo-desc">点击子节点（按钮）将 text 复制到剪贴板，适合在任意 UI 外包一层触发复制。</text>
-			<mms-clipboard text="mms-clipboard 示例文本">
-				<mms-button type="default">复制示例文案</mms-button>
-			</mms-clipboard>
+			<m-clipboard text="m-clipboard 示例文本">
+				<m-button type="default">复制示例文案</m-button>
+			</m-clipboard>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">工具方法（Ut.copyToClipboard）</text>
 			<text class="demo-desc">不依赖组件，在脚本里直接调用工具方法复制字符串。</text>
-			<mms-button type="primary" @click="onCopyApi">复制数字 605135318</mms-button>
+			<m-button type="primary" @click="onCopyApi">复制数字 605135318</m-button>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
-import { copyToClipboard } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+import { copyToClipboard } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
 
 function onCopyApi() {
 	copyToClipboard('605135318')

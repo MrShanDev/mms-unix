@@ -2,19 +2,19 @@
 	<scroll-view class="page-scroll" scroll-y style="flex:1">
 		<view class="demo-page">
 			<view class="demo-section">
-				<text class="section-title">提示条（mms-tips）</text>
-				<text class="section-desc">与 mms-toast 不同：通过 ref 调用 showTips({ msg, duration })，position 控制顶部/中部/底部样式。</text>
+				<text class="section-title">提示条（m-tips）</text>
+				<text class="section-desc">与 m-toast 不同：通过 ref 调用 showTips({ msg, duration })，position 控制顶部/中部/底部样式。</text>
 				<view class="demo-row">
-					<mms-button type="primary" btnSize="small" @tap="callTop">顶部</mms-button>
-					<mms-button type="primary" btnSize="small" @tap="callCenter">居中</mms-button>
-					<mms-button type="primary" btnSize="small" @tap="callBottom">底部</mms-button>
+					<m-button type="primary" btnSize="small" @tap="callTop">顶部</m-button>
+					<m-button type="primary" btnSize="small" @tap="callCenter">居中</m-button>
+					<m-button type="primary" btnSize="small" @tap="callBottom">底部</m-button>
 				</view>
 			</view>
 		</view>
 
-		<mms-tips ref="tipsTopRef" position="top" :size="28"></mms-tips>
-		<mms-tips ref="tipsCenterRef" position="center" background-color="rgba(0,0,0,0.75)"></mms-tips>
-		<mms-tips ref="tipsBottomRef" position="bottom"></mms-tips>
+		<m-tips ref="tipsTopRef" position="top" :size="28"></m-tips>
+		<m-tips ref="tipsCenterRef" position="center" background-color="rgba(0,0,0,0.75)"></m-tips>
+		<m-tips ref="tipsBottomRef" position="bottom"></m-tips>
 	</scroll-view>
 </template>
 
@@ -37,7 +37,7 @@ function showOn(refVal: any, msg: string) {
 }
 
 function callTop() {
-	showOn(tipsTopRef.value, '顶部提示（mms-tips）')
+	showOn(tipsTopRef.value, '顶部提示（m-tips）')
 }
 
 function callCenter() {

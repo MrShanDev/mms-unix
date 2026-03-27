@@ -11,7 +11,7 @@
 					<text class="item-title">{{ item.title }}</text>
 					<text class="item-desc">{{ item.desc }}</text>
 				</view>
-				<mms-icon name="arrow-right" size="32rpx" color="#cccccc"></mms-icon>
+				<m-icon name="arrow-right" size="32rpx" color="#cccccc"></m-icon>
 			</view>
 		</view>
 	</view>

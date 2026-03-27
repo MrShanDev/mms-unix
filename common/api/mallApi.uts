@@ -2,7 +2,7 @@
  * 商城/托管 API - 使用统一请求工具
  */
 import { config } from '@/common/config'
-import { request, ApiResponse, http, AnyRecord } from '@/uni_modules/mms-unix/components/mms-tools/Request.uts'
+import { request, ApiResponse, http, AnyRecord } from '@/uni_modules/m-unix/components/m-tools/Request.uts'
 
 // 商城 API 基础地址（与 env 解析后的 config.baseUrl 一致）
 const apiBase = config.baseUrl

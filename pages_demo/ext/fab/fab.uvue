@@ -2,20 +2,20 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">悬浮扩展按钮</text>
-			<text class="demo-desc">主按钮使用 mms-icon（more）；下方开关可控制是否可拖动、松手是否吸边；点击展开子项，可点遮罩关闭。</text>
+			<text class="demo-desc">主按钮使用 m-icon（more）；下方开关可控制是否可拖动、松手是否吸边；点击展开子项，可点遮罩关闭。</text>
 			<view class="fab-opts">
 				<view class="fab-opts__row">
 					<text class="fab-opts__label">可拖动</text>
-					<mms-switch v-model="fabDrag" color="#5677fc"></mms-switch>
+					<m-switch v-model="fabDrag" color="#5677fc"></m-switch>
 				</view>
 				<view class="fab-opts__row">
 					<text class="fab-opts__label">松手吸边</text>
-					<mms-switch v-model="fabSnap" color="#5677fc" :disabled="!fabDrag"></mms-switch>
+					<m-switch v-model="fabSnap" color="#5677fc" :disabled="!fabDrag"></m-switch>
 				</view>
 			</view>
 		</view>
 
-		<mms-fab
+		<m-fab
 			icon="more"
 			:icon-size="56"
 			:draggable="fabDrag"
@@ -23,7 +23,7 @@
 			:btn-list="fabBtns"
 			:mask-closable="true"
 			@click="onFabClick"
-		></mms-fab>
+		></m-fab>
 	</view>
 </template>
 

@@ -5,33 +5,33 @@
 				<view class="logo-wrap">
 					<image class="logo-img" src="/static/logo.png" mode="aspectFit"></image>
 				</view>
-				<text class="product-name">MMS-UNIX</text>
+				<text class="product-name">mUnix</text>
 				<text class="brand-line">陕西品创网络旗下产品</text>
 				<view class="desc">
 					<text class="para">
-						MMS-UNIX 面向 uni-app x，提供可复用的 UI 组件、工具方法与示例工程，帮助团队在 App、小程序等端快速搭建一致、可维护的界面。
+						mUnix 面向 uni-app x，提供可复用的 UI 组件、工具方法与示例工程，帮助团队在 App、小程序等端快速搭建一致、可维护的界面。
 					</text>
 					<text class="para">
-						组件与页面遵循 UTS 强类型与项目内 ucss 约定，支持通过全局配置（如 common/config.ts 中的 mmsUi）统一替换 Logo、占位图、主题色等资源，便于品牌化落地。
+						组件与页面遵循 UTS 强类型与项目内 ucss 约定，支持通过全局配置（如 common/config.ts 中的 mUi）统一替换 Logo、占位图、主题色等资源，便于品牌化落地。
 					</text>
 				</view>
 				<view class="doc-block">
 					<text class="doc-label">组件文档</text>
 					<view class="doc-link-row">
-						<mms-link
-							href="https://mmsadmin.cn/mms-unix/README.html"
-							text="mmsUnix · README"
+						<m-link
+							href="https://mmsadmin.cn/m-unix/README.html"
+							text="mUnix · README"
 							underline
-						></mms-link>
+						></m-link>
 					</view>
 					<view class="doc-link-row doc-link-row--sub">
-						<mms-link href="https://mmsadmin.cn" text="mmsadmin.cn 站点首页" underline></mms-link>
+						<m-link href="https://mmsadmin.cn" text="mmsadmin.cn 站点首页" underline></m-link>
 					</view>
 				</view>
 				<view class="doc-block">
 					<text class="doc-label">开源仓库</text>
 					<view class="doc-link-row">
-						<mms-link href="https://gitee.com/mmsAdmin/mms-unix.git" text="Gitee · mms-unix" underline></mms-link>
+						<m-link href="https://gitee.com/mmsAdmin/m-unix.git" text="Gitee · m-unix" underline></m-link>
 					</view>
 				</view>
 				<view class="features">

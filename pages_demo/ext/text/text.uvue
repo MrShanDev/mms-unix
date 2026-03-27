@@ -3,22 +3,22 @@
 		<view class="demo-section">
 			<text class="section-title">类型 type</text>
 			<view class="demo-row">
-				<mms-text text="primary 主色" type="primary" padding="8rpx 0" block></mms-text>
+				<m-text text="primary 主色" type="primary" padding="8rpx 0" block></m-text>
 			</view>
 			<view class="demo-row">
-				<mms-text text="success 成功" type="success" padding="8rpx 0" block></mms-text>
+				<m-text text="success 成功" type="success" padding="8rpx 0" block></m-text>
 			</view>
 			<view class="demo-row">
-				<mms-text text="warning 警告" type="warning" padding="8rpx 0" block></mms-text>
+				<m-text text="warning 警告" type="warning" padding="8rpx 0" block></m-text>
 			</view>
 			<view class="demo-row">
-				<mms-text text="danger 危险" type="danger" padding="8rpx 0" block></mms-text>
+				<m-text text="danger 危险" type="danger" padding="8rpx 0" block></m-text>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">默认（black）与块级</text>
-			<mms-text text="默认黑色文案，block 独占一行" padding="12rpx 0" block></mms-text>
+			<m-text text="默认黑色文案，block 独占一行" padding="12rpx 0" block></m-text>
 		</view>
 	</view>
 </template>

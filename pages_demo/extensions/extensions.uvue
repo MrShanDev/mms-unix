@@ -9,7 +9,7 @@
 				<view class="idx-list">
 					<view class="idx-item" v-for="(it, ii) in cat.items" :key="ii" @tap="go(it.path)">
 						<text class="idx-item-name">{{ it.name }}</text>
-						<mms-icon class="idx-item-arrow" name="arrow-right" size="32rpx" color="#cccccc"></mms-icon>
+						<m-icon class="idx-item-arrow" name="arrow-right" size="32rpx" color="#cccccc"></m-icon>
 					</view>
 				</view>
 			</view>
@@ -81,7 +81,7 @@
 				{ name: '剪贴板', path: '/pages_demo/ext/clipboard/clipboard' },
 				{ name: '悬浮按钮', path: '/pages_demo/ext/fab/fab' },
 				{ name: '区域截图', path: '/pages_demo/ext/screenshot/screenshot' },
-				{ name: '提示条 mms-tips', path: '/pages_demo/ext/tips/tips' }
+				{ name: '提示条 m-tips', path: '/pages_demo/ext/tips/tips' }
 			]
 		},
 		{

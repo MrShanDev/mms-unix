@@ -3,7 +3,7 @@
 		<scroll-view class="page-scroll" scroll-y style="flex:1">
 			<view class="demo-page">
 				<view class="demo-section">
-					<text class="section-title">底部固定栏（mms-sticky-bottom）</text>
+					<text class="section-title">底部固定栏（m-sticky-bottom）</text>
 					<text class="section-desc">position: fixed 贴底；safeAreaInsetBottom 适配安全区；下方滚动区已预留底部空间避免被遮挡。</text>
 				</view>
 				<view v-for="n in 12" :key="'line-' + n" class="demo-line">
@@ -12,12 +12,12 @@
 				<view class="scroll-pad"></view>
 			</view>
 		</scroll-view>
-		<mms-sticky-bottom bg-color="#ffffff">
+		<m-sticky-bottom bg-color="#ffffff">
 			<view class="sticky-actions">
-				<view class="sticky-actions__cell"><mms-button type="default" btnSize="small" @tap="onSecondary">次要</mms-button></view>
-				<view class="sticky-actions__cell sticky-actions__cell--after"><mms-button type="primary" btnSize="small" @tap="onPrimary">主要操作</mms-button></view>
+				<view class="sticky-actions__cell"><m-button type="default" btnSize="small" @tap="onSecondary">次要</m-button></view>
+				<view class="sticky-actions__cell sticky-actions__cell--after"><m-button type="primary" btnSize="small" @tap="onPrimary">主要操作</m-button></view>
 			</view>
-		</mms-sticky-bottom>
+		</m-sticky-bottom>
 	</view>
 </template>
 

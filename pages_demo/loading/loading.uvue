@@ -4,7 +4,7 @@
 			<text class="section-title">加载状态</text>
 			<view class="demo-row-center">
 				<view class="demo-loading-cell">
-					<mms-loading></mms-loading>
+					<m-loading></m-loading>
 				</view>
 			</view>
 		</view>
@@ -13,7 +13,7 @@
 			<text class="section-title">加载文字</text>
 			<view class="demo-row-center">
 				<view class="demo-loading-cell">
-					<mms-loading text="加载中..."></mms-loading>
+					<m-loading text="加载中..."></m-loading>
 				</view>
 			</view>
 		</view>
@@ -22,13 +22,13 @@
 			<text class="section-title">自定义颜色</text>
 			<view class="demo-row-center">
 				<view class="demo-loading-cell">
-					<mms-loading color="#ff0844"></mms-loading>
+					<m-loading color="#ff0844"></m-loading>
 				</view>
 				<view class="demo-loading-cell">
-					<mms-loading color="#1890ff"></mms-loading>
+					<m-loading color="#1890ff"></m-loading>
 				</view>
 				<view class="demo-loading-cell">
-					<mms-loading color="#52c41a"></mms-loading>
+					<m-loading color="#52c41a"></m-loading>
 				</view>
 			</view>
 		</view>
@@ -37,13 +37,13 @@
 			<text class="section-title">自定义大小</text>
 			<view class="demo-row-center">
 				<view class="demo-loading-cell">
-					<mms-loading size="40rpx"></mms-loading>
+					<m-loading size="40rpx"></m-loading>
 				</view>
 				<view class="demo-loading-cell">
-					<mms-loading size="60rpx"></mms-loading>
+					<m-loading size="60rpx"></m-loading>
 				</view>
 				<view class="demo-loading-cell">
-					<mms-loading size="80rpx"></mms-loading>
+					<m-loading size="80rpx"></m-loading>
 				</view>
 			</view>
 		</view>

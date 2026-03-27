@@ -3,40 +3,40 @@
 		<view class="demo-section">
 			<text class="section-title">基础对话框</text>
 			<text class="section-desc">底部「知道了」或点击遮罩关闭；关闭后遮罩不再拦截页面触摸。</text>
-			<mms-button type="primary" @click="showDialog1 = true">显示对话框</mms-button>
-			<mms-dialog
+			<m-button type="primary" @click="showDialog1 = true">显示对话框</m-button>
+			<m-dialog
 				v-model:visible="showDialog1"
 				title="提示"
 				content="这是一个基础对话框"
 				:buttons="dialog1Buttons"
 				@click="onDialog1Click"
-			></mms-dialog>
+			></m-dialog>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">确认对话框</text>
 			<text class="section-desc">showCancel 且未传 buttons 时使用「取消 / 确定」，并触发 cancel / confirm。</text>
-			<mms-button type="primary" @click="showDialog2 = true">显示确认框</mms-button>
-			<mms-dialog
+			<m-button type="primary" @click="showDialog2 = true">显示确认框</m-button>
+			<m-dialog
 				v-model:visible="showDialog2"
 				title="确认操作"
 				content="确定要删除这条记录吗？"
 				:showCancel="true"
 				@confirm="onConfirm"
 				@cancel="onCancel2"
-			></mms-dialog>
+			></m-dialog>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">无标题对话框</text>
 			<text class="section-desc">无标题时隐藏标题区；底部「知道了」或点遮罩关闭。</text>
-			<mms-button type="primary" @click="showDialog3 = true">无标题对话框</mms-button>
-			<mms-dialog
+			<m-button type="primary" @click="showDialog3 = true">无标题对话框</m-button>
+			<m-dialog
 				v-model:visible="showDialog3"
 				content="这是一个没有标题的对话框"
 				:buttons="dialog3Buttons"
 				@click="onDialog3Click"
-			></mms-dialog>
+			></m-dialog>
 		</view>
 	</view>
 </template>

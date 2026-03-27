@@ -2,19 +2,19 @@
 	<scroll-view class="page-scroll" scroll-y style="flex:1">
 		<view class="demo-page">
 			<view class="demo-section">
-				<text class="section-title">应用更新（mms-update）</text>
+				<text class="section-title">应用更新（m-update）</text>
 				<text class="section-desc">
 					依赖项目内 checkUpdate 接口与 common/config。autoCheck=false 时不自动请求；点击下方按钮主动检查。无新版本时会触发
 					noUpdate。
 				</text>
 				<view class="demo-row">
-					<mms-button type="primary" btnSize="small" @tap="onCheckClick">检查更新</mms-button>
+					<m-button type="primary" btnSize="small" @tap="onCheckClick">检查更新</m-button>
 				</view>
 				<text v-if="lastEvt !== ''" class="demo-result">{{ lastEvt }}</text>
 			</view>
 		</view>
 
-		<mms-update ref="updRef" :auto-check="false" @no-update="onNoUpdate" @update="onUpdate"></mms-update>
+		<m-update ref="updRef" :auto-check="false" @no-update="onNoUpdate" @update="onUpdate"></m-update>
 	</scroll-view>
 </template>
 

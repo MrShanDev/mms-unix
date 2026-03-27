@@ -4,7 +4,7 @@
 		<view class="demo-container">
 		<view class="demo-header">
 			<image class="demo-logo" src="/static/logo.png" mode="aspectFit"></image>
-			<text class="demo-title">MMS-UNIX 组件演示</text>
+			<text class="demo-title">mUnix 组件演示</text>
 			<text class="demo-desc">按分类浏览，点击进入示例页</text>
 		</view>
 
@@ -12,7 +12,7 @@
 			<text class="section-title" :style="'border-left-color:' + cat.color">{{ cat.title }}</text>
 			<view class="demo-grid">
 				<view class="demo-item" v-for="(item, index) in cat.items" :key="index" @tap="navigateTo(item.path)">
-					<mms-icon :name="item.icon" size="48rpx" :color="cat.color"></mms-icon>
+					<m-icon :name="item.icon" size="48rpx" :color="cat.color"></m-icon>
 					<text class="item-name">{{ item.name }}</text>
 				</view>
 			</view>
@@ -78,7 +78,7 @@
 	})
 
 	/**
-	 * 分类与 uni_modules/mms-unix 组件能力对齐（列表仅展示中文名；增删演示页时同步改此表与 pages.json）：
+	 * 分类与 uni_modules/m-unix 组件能力对齐（列表仅展示中文名；增删演示页时同步改此表与 pages.json）：
 	 * 1 基础组件（含过渡动画样式演示） 2 表单与输入 3 反馈与提示 4 数据展示
 	 * 5 导航与布局 6 分页与通告 7 列表与内容 8 浮层与交互 9 业务示例
 	 */

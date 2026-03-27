@@ -2,7 +2,7 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">横向步骤条</text>
-			<mms-steps :items="stepItems" :active-steps="1" spacing="120rpx" direction="row"></mms-steps>
+			<m-steps :items="stepItems" :active-steps="1" spacing="120rpx" direction="row"></m-steps>
 		</view>
 	</view>
 </template>

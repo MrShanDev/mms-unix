@@ -2,16 +2,16 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">操作菜单</text>
-			<mms-button type="primary" @click="showSheet = true">打开 ActionSheet</mms-button>
+			<m-button type="primary" @click="showSheet = true">打开 ActionSheet</m-button>
 		</view>
 
-		<mms-action-sheet
+		<m-action-sheet
 			:show="showSheet"
 			:item-list="sheetItems"
 			tips="请选择操作"
 			@click="onSheetItem"
 			@cancel="showSheet = false"
-		></mms-action-sheet>
+		></m-action-sheet>
 	</view>
 </template>
 

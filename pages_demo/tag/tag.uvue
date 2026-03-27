@@ -4,37 +4,37 @@
 			<text class="section-title">基础标签</text>
 			<text class="section-desc">本页用子项外边距控制间距（兼容不支持 flex gap 的环境）；需要紧凑时用下方「紧凑排列」示例。</text>
 			<view class="tag-row">
-				<mms-tag text="标签"></mms-tag>
-				<mms-tag text="标签" type="success"></mms-tag>
-				<mms-tag text="标签" type="warning"></mms-tag>
-				<mms-tag text="标签" type="danger"></mms-tag>
-				<mms-tag text="标签" type="info"></mms-tag>
+				<m-tag text="标签"></m-tag>
+				<m-tag text="标签" type="success"></m-tag>
+				<m-tag text="标签" type="warning"></m-tag>
+				<m-tag text="标签" type="danger"></m-tag>
+				<m-tag text="标签" type="info"></m-tag>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">镂空标签</text>
 			<view class="tag-row">
-				<mms-tag text="标签" :plain="true"></mms-tag>
-				<mms-tag text="标签" type="success" :plain="true"></mms-tag>
-				<mms-tag text="标签" type="warning" :plain="true"></mms-tag>
-				<mms-tag text="标签" type="danger" :plain="true"></mms-tag>
+				<m-tag text="标签" :plain="true"></m-tag>
+				<m-tag text="标签" type="success" :plain="true"></m-tag>
+				<m-tag text="标签" type="warning" :plain="true"></m-tag>
+				<m-tag text="标签" type="danger" :plain="true"></m-tag>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">标签尺寸</text>
 			<view class="tag-row">
-				<mms-tag text="小标签" size="small"></mms-tag>
-				<mms-tag text="默认标签"></mms-tag>
-				<mms-tag text="大标签" size="large"></mms-tag>
+				<m-tag text="小标签" size="small"></m-tag>
+				<m-tag text="默认标签"></m-tag>
+				<m-tag text="大标签" size="large"></m-tag>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">可关闭标签</text>
 			<view class="tag-row">
-				<mms-tag v-for="(tag, index) in tags" :key="index" :text="tag" :closable="true" @close="closeTag(index)"></mms-tag>
+				<m-tag v-for="(tag, index) in tags" :key="index" :text="tag" :closable="true" @close="closeTag(index)"></m-tag>
 			</view>
 		</view>
 
@@ -42,9 +42,9 @@
 			<text class="section-title">紧凑排列（无间距）</text>
 			<text class="section-desc">子项 margin 为 0，标签紧贴；与上方有间距的排布对比。</text>
 			<view class="tag-row tag-row--tight">
-				<mms-tag text="热销"></mms-tag>
-				<mms-tag text="新品" type="success"></mms-tag>
-				<mms-tag text="满减" type="warning"></mms-tag>
+				<m-tag text="热销"></m-tag>
+				<m-tag text="新品" type="success"></m-tag>
+				<m-tag text="满减" type="warning"></m-tag>
 			</view>
 		</view>
 	</view>

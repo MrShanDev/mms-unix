@@ -1,27 +1,27 @@
 <template>
 	<view class="page">
-		<mms-cell-group title="陕西品创网络">
-			<mms-cell title="官网" :border="true">
+		<m-cell-group title="陕西品创网络">
+			<m-cell title="官网" :border="true">
 				<template #right>
-					<mms-link href="https://mmsadmin.cn" text="mmsadmin.cn" underline></mms-link>
+					<m-link href="https://mmsadmin.cn" text="mmsadmin.cn" underline></m-link>
 				</template>
-			</mms-cell>
-			<mms-cell title="组件文档" :border="true">
+			</m-cell>
+			<m-cell title="组件文档" :border="true">
 				<template #right>
-					<mms-link href="https://mmsadmin.cn/mms-unix/README.html" text="mmsUnix" underline></mms-link>
+					<m-link href="https://mmsadmin.cn/m-unix/README.html" text="mUnix" underline></m-link>
 				</template>
-			</mms-cell>
-			<mms-cell title="商务合作" value="服务范围与承接说明" :isLink="true" :border="true" @click="goCooperation"></mms-cell>
-			<mms-cell title="商务咨询" value="欢迎邮件、微信沟通合作" :border="false"></mms-cell>
-		</mms-cell-group>
-		<mms-cell-group title="联系方式">
-			<mms-cell title="邮箱" :border="true">
+			</m-cell>
+			<m-cell title="商务合作" value="服务范围与承接说明" :isLink="true" :border="true" @click="goCooperation"></m-cell>
+			<m-cell title="商务咨询" value="欢迎邮件、微信沟通合作" :border="false"></m-cell>
+		</m-cell-group>
+		<m-cell-group title="联系方式">
+			<m-cell title="邮箱" :border="true">
 				<template #right>
-					<mms-link :href="'mailto:' + contactEmail" :text="contactEmail" underline></mms-link>
+					<m-link :href="'mailto:' + contactEmail" :text="contactEmail" underline></m-link>
 				</template>
-			</mms-cell>
-			<mms-cell title="微信" :value="contactWechat" :isLink="true" :border="false" @click="onCopyWechat"></mms-cell>
-		</mms-cell-group>
+			</m-cell>
+			<m-cell title="微信" :value="contactWechat" :isLink="true" :border="false" @click="onCopyWechat"></m-cell>
+		</m-cell-group>
 		<view class="tip">
 			<text class="tip-text">点击微信可复制微信号。</text>
 		</view>
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="uts">
-	import { copyToClipboard, msg, jumpTo } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+	import { copyToClipboard, msg, jumpTo } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
 
 	const contactEmail = 'sxpcwlkj@163.com'
 	const contactWechat = 'qq942879858'

@@ -2,16 +2,16 @@
 	<view class="ext-page">
 		<scroll-view class="ext-scroll" scroll-y>
 			<view class="ext-section">
-				<text class="ext-title">mms-bubble-popup</text>
+				<text class="ext-title">m-bubble-popup</text>
 				<text class="ext-hint ext-bubble-doc-lead">
 					气泡须放在 scroll-view 外或使用 fixed，否则易被滚动容器裁剪；本页为右上角 fixed 示例。
 				</text>
-				<mms-button type="default" @tap="menuShow = true">展开气泡</mms-button>
+				<m-button type="default" @tap="menuShow = true">展开气泡</m-button>
 			</view>
 			<view class="ext-footer-space"></view>
 		</scroll-view>
 		<!-- 与 scroll-view 同级，避免气泡被 overflow 裁掉；fixed 贴页面右上角 -->
-		<mms-bubble-popup
+		<m-bubble-popup
 			v-model:show="menuShow"
 			:mask="true"
 			position="fixed"
@@ -32,7 +32,7 @@
 				<text class="ext-bubble-menu-item" @tap="onPick(2)">选项二</text>
 				<text class="ext-bubble-menu-item ext-bubble-menu-item--last" @tap="onPick(3)">选项三</text>
 			</view>
-		</mms-bubble-popup>
+		</m-bubble-popup>
 	</view>
 </template>
 

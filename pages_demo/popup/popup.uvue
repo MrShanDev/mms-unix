@@ -1,15 +1,15 @@
 <template>
 	<view class="demo-page">
-		<text class="page-lead">mms-popup 默认带显示/隐藏过渡，可通过 animation、duration 调整。</text>
+		<text class="page-lead">m-popup 默认带显示/隐藏过渡，可通过 animation、duration 调整。</text>
 
 		<view class="demo-section">
 			<text class="section-title">底部弹出</text>
-			<mms-button type="primary" @click="showBottom = true">底部弹出</mms-button>
+			<m-button type="primary" @click="showBottom = true">底部弹出</m-button>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">顶部弹出</text>
-			<mms-button type="primary" @click="showTop = true">顶部弹出</mms-button>
+			<m-button type="primary" @click="showTop = true">顶部弹出</m-button>
 		</view>
 
 		<view class="demo-section">
@@ -18,14 +18,14 @@
 				左右抽屉使用 --uni-safe-area-inset-top / bottom 避让原生导航栏与底部安全区；宽度 70%，max-width 600rpx。演示页 .popup-side 的 height:100vh 只作用在插槽内层，可按业务调整。
 			</text>
 			<view class="demo-row">
-				<mms-button type="primary" @click="showLeft = true">左侧</mms-button>
-				<mms-button type="primary" @click="showRight = true">右侧</mms-button>
+				<m-button type="primary" @click="showLeft = true">左侧</m-button>
+				<m-button type="primary" @click="showRight = true">右侧</m-button>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">居中弹出</text>
-			<mms-button type="primary" @click="showCenter = true">居中弹出</mms-button>
+			<m-button type="primary" @click="showCenter = true">居中弹出</m-button>
 		</view>
 
 		<view class="demo-section">
@@ -64,53 +64,53 @@
 					@tap="setSplashClosePos('bottom-center')"
 					>下中</text>
 			</view>
-			<mms-button type="primary" @click="openFullscreenSplash">全屏图片弹层</mms-button>
+			<m-button type="primary" @click="openFullscreenSplash">全屏图片弹层</m-button>
 		</view>
 
 		<!-- 弹出层 -->
-		<mms-popup v-model:visible="showBottom" position="bottom">
+		<m-popup v-model:visible="showBottom" position="bottom">
 			<view class="popup-content">
 				<text class="popup-title">底部弹出内容</text>
 				<text class="popup-text">这是从底部弹出的内容区域</text>
-				<mms-button type="primary" @click="showBottom = false">关闭</mms-button>
+				<m-button type="primary" @click="showBottom = false">关闭</m-button>
 			</view>
-		</mms-popup>
+		</m-popup>
 
-		<mms-popup v-model:visible="showTop" position="top">
+		<m-popup v-model:visible="showTop" position="top">
 			<view class="popup-content">
 				<text class="popup-title">顶部弹出内容</text>
 				<text class="popup-text">这是从顶部弹出的内容区域</text>
-				<mms-button type="primary" @click="showTop = false">关闭</mms-button>
+				<m-button type="primary" @click="showTop = false">关闭</m-button>
 			</view>
-		</mms-popup>
+		</m-popup>
 
-		<mms-popup v-model:visible="showLeft" position="left">
+		<m-popup v-model:visible="showLeft" position="left">
 			<view class="popup-content popup-side">
 				<text class="popup-title">左侧弹出</text>
-				<mms-button type="primary" @click="showLeft = false">关闭</mms-button>
+				<m-button type="primary" @click="showLeft = false">关闭</m-button>
 			</view>
-		</mms-popup>
+		</m-popup>
 
-		<mms-popup v-model:visible="showRight" position="right">
+		<m-popup v-model:visible="showRight" position="right">
 			<view class="popup-content popup-side">
 				<text class="popup-title">右侧弹出</text>
-				<mms-button type="primary" @click="showRight = false">关闭</mms-button>
+				<m-button type="primary" @click="showRight = false">关闭</m-button>
 			</view>
-		</mms-popup>
+		</m-popup>
 
-		<mms-popup v-model:visible="showCenter" position="center" closeable>
+		<m-popup v-model:visible="showCenter" position="center" closeable>
 			<view class="popup-center-panel">
 				<text class="popup-center-title">居中弹出</text>
 				<text class="popup-center-desc">
 					说明文案与操作区上下分区，标题居中强调，正文易读，按钮占满宽度更符合对话框习惯。
 				</text>
 				<view class="popup-center-actions">
-					<mms-button type="primary" @click="showCenter = false">我知道了</mms-button>
+					<m-button type="primary" @click="showCenter = false">我知道了</m-button>
 				</view>
 			</view>
-		</mms-popup>
+		</m-popup>
 
-		<mms-popup
+		<m-popup
 			v-model:visible="showFullscreen"
 			position="fullscreen"
 			:round="false"
@@ -125,7 +125,7 @@
 							class="popup-splash__close"
 							@tap.stop="closeFullscreenSplash"
 						>
-							<mms-icon name="close" size="36rpx" color="#ffffff"></mms-icon>
+							<m-icon name="close" size="36rpx" color="#ffffff"></m-icon>
 						</view>
 						<view class="popup-splash__card">
 							<view class="popup-splash__img-wrap">
@@ -142,12 +142,12 @@
 							class="popup-splash__close"
 							@tap.stop="closeFullscreenSplash"
 						>
-							<mms-icon name="close" size="36rpx" color="#ffffff"></mms-icon>
+							<m-icon name="close" size="36rpx" color="#ffffff"></m-icon>
 						</view>
 					</view>
 				</view>
 			</view>
-		</mms-popup>
+		</m-popup>
 	</view>
 </template>
 
@@ -245,7 +245,7 @@ function onSplashAdTap(): void {
 	border-radius: 0;
 }
 
-/* 居中弹层：不叠白色底与双倍 padding，由 mms-popup 面板承载圆角与阴影 */
+/* 居中弹层：不叠白色底与双倍 padding，由 m-popup 面板承载圆角与阴影 */
 .popup-center-panel {
 	display: flex;
 	flex-direction: column;

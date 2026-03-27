@@ -2,7 +2,7 @@
 	"easycom": {
 		"autoscan": true,
 		"custom": {
-			"^mms-(.*)": "@/uni_modules/mms-unix/components/mms-$1/mms-$1.uvue"
+			"^m-(.*)": "@/uni_modules/m-unix/components/m-$1/m-$1.uvue"
 		}
 	},
 	"pages": [
@@ -55,8 +55,8 @@
 				{ "path": "grid/grid", "style": { "navigationBarTitleText": "宫格" } },
 				{ "path": "card/card", "style": { "navigationBarTitleText": "卡片" } },
 				{ "path": "upload/upload", "style": { "navigationBarTitleText": "上传" } },
-				{ "path": "form/input", "style": { "navigationBarTitleText": "输入框 mms-input" } },
-				{ "path": "form/form", "style": { "navigationBarTitleText": "表单 mms-form" } },
+				{ "path": "form/input", "style": { "navigationBarTitleText": "输入框 m-input" } },
+				{ "path": "form/form", "style": { "navigationBarTitleText": "表单 m-form" } },
 				{ "path": "textarea/textarea", "style": { "navigationBarTitleText": "多行输入" } },
 				{ "path": "radio/radio", "style": { "navigationBarTitleText": "单选框" } },
 				{ "path": "checkbox/checkbox", "style": { "navigationBarTitleText": "多选框" } },
@@ -105,7 +105,7 @@
 				{ "path": "ext/app-update/app-update", "style": { "navigationBarTitleText": "应用更新" } },
 				{ "path": "ext/sticky-bottom/sticky-bottom", "style": { "navigationBarTitleText": "底部固定栏" } },
 				{ "path": "ext/screenshot/screenshot", "style": { "navigationBarTitleText": "区域截图" } },
-				{ "path": "ext/tips/tips", "style": { "navigationBarTitleText": "提示条 mms-tips" } },
+				{ "path": "ext/tips/tips", "style": { "navigationBarTitleText": "提示条 m-tips" } },
 				{ "path": "ext/loadmore/loadmore", "style": { "navigationBarTitleText": "加载更多" } },
 				{ "path": "ext/tree/tree", "style": { "navigationBarTitleText": "树形" } },
 				{ "path": "ext/wx-login/wx-login", "style": { "navigationBarTitleText": "微信登录按钮" } }
@@ -168,7 +168,7 @@
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "MMS-UNIX",
+		"navigationBarTitleText": "mUnix",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 	},

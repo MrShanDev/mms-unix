@@ -2,19 +2,19 @@
 	<scroll-view class="page-scroll" scroll-y style="flex:1">
 		<view class="demo-page">
 			<view class="demo-section">
-				<text class="section-title">微信一键登录（mms-wx-login）</text>
+				<text class="section-title">微信一键登录（m-wx-login）</text>
 				<text class="section-desc">type=code 时走 uni.login 取 code；type=userInfo 时走 getUserProfile。仅微信小程序端有效。</text>
 				<!-- #ifdef MP-WEIXIN -->
 				<view class="wx-slot">
-					<mms-wx-login text="微信一键登录（code）" type="code" @success="onCodeSuccess" @fail="onFail"></mms-wx-login>
+					<m-wx-login text="微信一键登录（code）" type="code" @success="onCodeSuccess" @fail="onFail"></m-wx-login>
 				</view>
-				<mms-gap :height="24"></mms-gap>
+				<m-gap :height="24"></m-gap>
 				<view class="wx-slot">
-					<mms-wx-login text="获取用户信息（userInfo）" type="userInfo" @success="onUserSuccess" @fail="onFail"></mms-wx-login>
+					<m-wx-login text="获取用户信息（userInfo）" type="userInfo" @success="onUserSuccess" @fail="onFail"></m-wx-login>
 				</view>
 				<!-- #endif -->
 				<!-- #ifndef MP-WEIXIN -->
-				<text class="demo-result">当前运行环境非微信小程序，请在微信开发者工具中打开本页查看 mms-wx-login。</text>
+				<text class="demo-result">当前运行环境非微信小程序，请在微信开发者工具中打开本页查看 m-wx-login。</text>
 				<!-- #endif -->
 				<text v-if="resultText !== ''" class="demo-result">{{ resultText }}</text>
 			</view>

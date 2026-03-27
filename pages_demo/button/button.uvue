@@ -3,22 +3,22 @@
 		<view class="demo-section">
 			<text class="section-title">按钮类型</text>
 			<view class="demo-row">
-				<mms-button type="primary">主要按钮</mms-button>
+				<m-button type="primary">主要按钮</m-button>
 			</view>
 			<view class="demo-row">
-				<mms-button type="danger">危险按钮</mms-button>
+				<m-button type="danger">危险按钮</m-button>
 			</view>
 			<view class="demo-row">
-				<mms-button type="warning">警告按钮</mms-button>
+				<m-button type="warning">警告按钮</m-button>
 			</view>
 			<view class="demo-row">
-				<mms-button type="green">成功按钮</mms-button>
+				<m-button type="green">成功按钮</m-button>
 			</view>
 			<view class="demo-row">
-				<mms-button type="blue">信息按钮</mms-button>
+				<m-button type="blue">信息按钮</m-button>
 			</view>
 			<view class="demo-row">
-				<mms-button type="gray">灰色按钮</mms-button>
+				<m-button type="gray">灰色按钮</m-button>
 			</view>
 		</view>
 
@@ -26,52 +26,52 @@
 			<text class="section-title">镂空按钮</text>
 			<text class="section-desc">默认宽度为 100% 易占满一行；中等尺寸约 368rpx，居中更易看清完整边框。</text>
 			<view class="demo-row demo-row--plain">
-				<mms-button type="primary" :plain="true" btnSize="medium">主要镂空</mms-button>
+				<m-button type="primary" :plain="true" btnSize="medium">主要镂空</m-button>
 			</view>
 			<view class="demo-row demo-row--plain">
-				<mms-button type="danger" :plain="true" btnSize="medium">危险镂空</mms-button>
+				<m-button type="danger" :plain="true" btnSize="medium">危险镂空</m-button>
 			</view>
 			<view class="demo-row demo-row--plain">
-				<mms-button type="warning" :plain="true" btnSize="medium">警告镂空</mms-button>
+				<m-button type="warning" :plain="true" btnSize="medium">警告镂空</m-button>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">按钮尺寸</text>
 			<view class="demo-row">
-				<mms-button type="primary" btnSize="large">大号按钮</mms-button>
+				<m-button type="primary" btnSize="large">大号按钮</m-button>
 			</view>
 			<view class="demo-row">
-				<mms-button type="primary" btnSize="medium">中等按钮</mms-button>
+				<m-button type="primary" btnSize="medium">中等按钮</m-button>
 			</view>
 			<view class="demo-row">
-				<mms-button type="primary" btnSize="small">小型按钮</mms-button>
+				<m-button type="primary" btnSize="small">小型按钮</m-button>
 			</view>
 			<view class="demo-row">
-				<mms-button type="primary" btnSize="mini">迷你按钮</mms-button>
+				<m-button type="primary" btnSize="mini">迷你按钮</m-button>
 			</view>
 			<view class="demo-row">
-				<mms-button type="primary" btnSize="tiny">超级迷你</mms-button>
+				<m-button type="primary" btnSize="tiny">超级迷你</m-button>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">按钮形状</text>
 			<view class="demo-row">
-				<mms-button type="primary" shape="circle">圆形按钮</mms-button>
+				<m-button type="primary" shape="circle">圆形按钮</m-button>
 			</view>
 			<view class="demo-row">
-				<mms-button type="primary" shape="square">方形按钮</mms-button>
+				<m-button type="primary" shape="square">方形按钮</m-button>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">禁用状态</text>
 			<view class="demo-row">
-				<mms-button type="primary" :disabled="true">禁用按钮</mms-button>
+				<m-button type="primary" :disabled="true">禁用按钮</m-button>
 			</view>
 			<view class="demo-row demo-row--plain">
-				<mms-button type="primary" :plain="true" :disabled="true" btnSize="medium">禁用镂空</mms-button>
+				<m-button type="primary" :plain="true" :disabled="true" btnSize="medium">禁用镂空</m-button>
 			</view>
 		</view>
 
@@ -79,10 +79,10 @@
 			<text class="section-title">加载状态</text>
 			<text class="section-desc">非微信小程序端会显示圆点动画；小程序使用原生 loading。</text>
 			<view class="demo-row">
-				<mms-button type="primary" :loading="true">加载中...</mms-button>
+				<m-button type="primary" :loading="true">加载中...</m-button>
 			</view>
 			<view class="demo-row">
-				<mms-button type="primary" :plain="true" btnSize="medium" :loading="true">镂空加载</mms-button>
+				<m-button type="primary" :plain="true" btnSize="medium" :loading="true">镂空加载</m-button>
 			</view>
 		</view>
 
@@ -90,14 +90,14 @@
 			<text class="section-title">加载中（交互）</text>
 			<text class="section-desc">点击后进入加载约 2 秒，可观察动画与防重复点击。</text>
 			<view class="demo-row">
-				<mms-button type="primary" :loading="submitLoading" @click="onSubmitDemo">提交</mms-button>
+				<m-button type="primary" :loading="submitLoading" @click="onSubmitDemo">提交</m-button>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">自定义宽高</text>
 			<view class="demo-row">
-				<mms-button type="primary" width="400rpx" height="88rpx">自定义宽高</mms-button>
+				<m-button type="primary" width="400rpx" height="88rpx">自定义宽高</m-button>
 			</view>
 		</view>
 	</view>

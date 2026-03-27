@@ -3,16 +3,16 @@
 		<scroll-view class="page-scroll" scroll-y :show-scrollbar="false">
 			<view class="page-inner">
 				<view class="header-banner">
-					<mms-banner-arc
+					<m-banner-arc
 						arc-variant="bottom-concave"
 						height="260"
 						:percent="130"
 						background="linear-gradient(180deg, #ff6b88 0%, #ff0844 100%)"
 						arc-color="#f5f5f5"
 						:arc-height="96"
-					></mms-banner-arc>
+					></m-banner-arc>
 					<view class="profile-wrap">
-						<mms-card :shadow="true" :border="false">
+						<m-card :shadow="true" :border="false">
 							<view class="profile-row" @tap.stop="onProfileTap">
 								<view class="avatar">
 									<image class="avatar-image" :src="userInfo.headPortrait || defaultFace" mode="aspectFill"></image>
@@ -22,13 +22,13 @@
 									<text v-if="hasLogin" class="profile-sub">{{ profilePhone }}</text>
 									<text v-else class="profile-name profile-name--muted">点击登录 / 完善资料</text>
 								</view>
-								<mms-icon name="arrow-right" size="32rpx" color="#c0c4cc"></mms-icon>
+								<m-icon name="arrow-right" size="32rpx" color="#c0c4cc"></m-icon>
 							</view>
-						</mms-card>
+						</m-card>
 					</view>
 				</view>
-				<mms-cell-group v-if="menuConfig.style === 'list'" :title="menuConfig.title" class="menu-group">
-					<mms-cell
+				<m-cell-group v-if="menuConfig.style === 'list'" :title="menuConfig.title" class="menu-group">
+					<m-cell
 						v-for="(item, index) in serviceBar"
 						:key="index"
 						:title="item.title"
@@ -36,12 +36,12 @@
 						:isLink="true"
 						:border="index < serviceBar.length - 1"
 						@click="onServiceTap(item)"
-					></mms-cell>
-				</mms-cell-group>
+					></m-cell>
+				</m-cell-group>
 				<view v-else class="menu-grid-wrap menu-group">
 					<text class="menu-grid-title">{{ menuConfig.title }}</text>
-					<mms-grid :column="menuConfig.gridColumns" :border="true">
-						<mms-grid-item
+					<m-grid :column="menuConfig.gridColumns" :border="true">
+						<m-grid-item
 							v-for="(item, index) in serviceBar"
 							:key="index"
 							:icon="item.iconName"
@@ -49,8 +49,8 @@
 							iconColor="#ff0844"
 							iconSize="48rpx"
 							@click="onServiceTap(item)"
-						></mms-grid-item>
-					</mms-grid>
+						></m-grid-item>
+					</m-grid>
 				</view>
 			</view>
 		</scroll-view>
@@ -59,14 +59,14 @@
 
 <script setup lang="uts">
 	import { ref, computed } from 'vue'
-	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config.uts'
-	import { jumpTo } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
-	import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
+	import { getMUiConfig } from '@/uni_modules/m-unix/config.uts'
+	import { jumpTo } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
+	import { storage } from '@/uni_modules/m-unix/components/m-tools/Storage.uts'
 	import { tokenLogin } from '@/common/api/mallApi'
 	import { getUserServiceItems, getUserServiceMenuConfig } from './myServiceData'
 	import type { UserServiceItem } from './myServiceData'
 
-	const defaultFace = computed((): string => getMmsUiConfig().avatarDefault)
+	const defaultFace = computed((): string => getMUiConfig().avatarDefault)
 	const serviceBar = computed(() => getUserServiceItems())
 	const menuConfig = computed(() => getUserServiceMenuConfig())
 	const hasLogin = ref(storage.getToken() != '' || storage.getUserInfo() != null)

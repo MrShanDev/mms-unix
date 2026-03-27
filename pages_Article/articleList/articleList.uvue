@@ -38,7 +38,7 @@
 				<view class="loading-tip" v-if="articleNoMoreData && articleList.length > 0">已加载全部</view>
 
 				<view class="pagination-wrap">
-					<mms-pagination
+					<m-pagination
 						:total="articleTotal"
 						:page-size="articlePageSize"
 						:current="paginationCurrent"
@@ -46,7 +46,7 @@
 						color="#333333"
 						border-color="#e5e5e5"
 						@change="onPaginationChange"
-					></mms-pagination>
+					></m-pagination>
 				</view>
 			</view>
 		</scroll-view>
@@ -55,7 +55,7 @@
 
 <script setup lang="uts">
 	import { ref, computed } from 'vue'
-	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config.uts'
+	import { getMUiConfig } from '@/uni_modules/m-unix/config.uts'
 	import { articleList as fetchArticleListApi } from '@/common/api/mallApi.uts'
 
 	/** 为 true 时使用本地模拟分页；改为 false 可接回 mallApi.articleList */
@@ -64,7 +64,7 @@
 	const articleList = ref<any[]>([])
 	const cateId = ref('')
 	const title = ref('文章列表')
-	const imageUrl = computed((): string => getMmsUiConfig().articlePlaceholder)
+	const imageUrl = computed((): string => getMUiConfig().articlePlaceholder)
 
 	const articlePageSize = 10
 	/** 模拟总条数 */
@@ -84,7 +84,7 @@
 		return articleList.value.length >= t
 	})
 
-	/** 与 mms-pagination 展示同步：已加载数据折合到第几页 */
+	/** 与 m-pagination 展示同步：已加载数据折合到第几页 */
 	const paginationCurrent = computed((): number => {
 		const len = articleList.value.length
 		if (len === 0) {
@@ -104,7 +104,7 @@
 
 	/** 随机占位图：按序号 seed，每条不同且刷新列表后不变（Lorem Picsum） */
 	function mockArticlePic(n: number): string {
-		return 'https://picsum.photos/seed/mms-article-' + n + '/200/200'
+		return 'https://picsum.photos/seed/m-article-' + n + '/200/200'
 	}
 
 	/** 模拟分页：延迟返回，结构对齐接口 rows + total */

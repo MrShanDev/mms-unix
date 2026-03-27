@@ -3,7 +3,7 @@
 		<view class="demo-section">
 			<text class="section-title">基础（默认尺寸）</text>
 			<text class="section-desc">默认每格 108rpx、字号 48；也可分别传 width / height / size。</text>
-			<mms-code-input :length="4" type="number" @complete="onCodeComplete"></mms-code-input>
+			<m-code-input :length="4" type="number" @complete="onCodeComplete"></m-code-input>
 			<text class="code-hint">输入完成：{{ codeCompleteMsg }}</text>
 		</view>
 
@@ -13,25 +13,25 @@
 				boxSize 为格子边长（rpx），会按比例设置数字字号、光标高度、密码圆点；与单独传 width/height 二选一。
 			</text>
 			<text class="code-sub">小 · boxSize=72</text>
-			<mms-code-input :length="4" type="number" :boxSize="72" @complete="onCodeComplete"></mms-code-input>
+			<m-code-input :length="4" type="number" :boxSize="72" @complete="onCodeComplete"></m-code-input>
 			<text class="code-sub">中 · boxSize=90（接近默认）</text>
-			<mms-code-input :length="4" type="number" :boxSize="90" @complete="onCodeComplete"></mms-code-input>
+			<m-code-input :length="4" type="number" :boxSize="90" @complete="onCodeComplete"></m-code-input>
 			<text class="code-sub">大 · boxSize=100</text>
-			<mms-code-input :length="4" type="number" :boxSize="100" @complete="onCodeComplete"></mms-code-input>
+			<m-code-input :length="4" type="number" :boxSize="100" @complete="onCodeComplete"></m-code-input>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">格子间距 cellGap</text>
 			<text class="section-desc">cellGap 控制格子之间水平间距（rpx），默认 16。</text>
 			<text class="code-sub">cellGap=8</text>
-			<mms-code-input :length="4" type="number" :boxSize="96" :cellGap="8"></mms-code-input>
+			<m-code-input :length="4" type="number" :boxSize="96" :cellGap="8"></m-code-input>
 			<text class="code-sub">cellGap=24</text>
-			<mms-code-input :length="4" type="number" :boxSize="96" :cellGap="24"></mms-code-input>
+			<m-code-input :length="4" type="number" :boxSize="96" :cellGap="24"></m-code-input>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">密码模式</text>
-			<mms-code-input :length="4" password :boxSize="100"></mms-code-input>
+			<m-code-input :length="4" password :boxSize="100"></m-code-input>
 		</view>
 	</view>
 </template>

@@ -2,7 +2,7 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">手风琴（单开）</text>
-			<mms-collapse :index="0" :current="collapseCur" @click="onCollapseClick">
+			<m-collapse :index="0" :current="collapseCur" @click="onCollapseClick">
 				<template #title>
 					<view class="collapse-head">
 						<text class="collapse-head-t">折叠项 A</text>
@@ -11,8 +11,8 @@
 				<template #content>
 					<text class="collapse-body">A 的内容区域。</text>
 				</template>
-			</mms-collapse>
-			<mms-collapse :index="1" :current="collapseCur" @click="onCollapseClick">
+			</m-collapse>
+			<m-collapse :index="1" :current="collapseCur" @click="onCollapseClick">
 				<template #title>
 					<view class="collapse-head">
 						<text class="collapse-head-t">折叠项 B</text>
@@ -21,7 +21,7 @@
 				<template #content>
 					<text class="collapse-body">B 的内容区域。</text>
 				</template>
-			</mms-collapse>
+			</m-collapse>
 		</view>
 	</view>
 </template>

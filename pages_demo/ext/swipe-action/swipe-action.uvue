@@ -2,13 +2,13 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">左滑操作</text>
-			<mms-swipe-action :actions="swipeActs" @click="onSwipeBtn">
+			<m-swipe-action :actions="swipeActs" @click="onSwipeBtn">
 				<template #content>
 					<view class="swipe-cell">
 						<text class="cell-t">左滑露出删除 / 标为已读</text>
 					</view>
 				</template>
-			</mms-swipe-action>
+			</m-swipe-action>
 		</view>
 	</view>
 </template>

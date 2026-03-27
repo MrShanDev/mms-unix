@@ -2,10 +2,10 @@
 	<scroll-view class="page-scroll" scroll-y style="flex:1">
 		<view class="demo-page">
 			<view class="demo-section">
-				<text class="section-title">树形（mms-tree）</text>
+				<text class="section-title">树形（m-tree）</text>
 				<text class="section-desc">数据：id、label、children；可选 defaultExpandKeys 默认展开节点 id。</text>
 				<view class="tree-wrap">
-					<mms-tree :data="treeData" :default-expand-keys="defaultExpandKeys" @item-click="onItemClick"></mms-tree>
+					<m-tree :data="treeData" :default-expand-keys="defaultExpandKeys" @item-click="onItemClick"></m-tree>
 				</view>
 				<text v-if="lastLabel !== ''" class="demo-result">最近点击：{{ lastLabel }}</text>
 			</view>

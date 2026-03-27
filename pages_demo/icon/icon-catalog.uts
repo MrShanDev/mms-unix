@@ -1,5 +1,5 @@
 /**
- * mms-icon 支持的 name 列表（与 uni_modules/mms-unix/components/mms-icon/mms-icon.uvue 中 getIconChar 一致）
+ * m-icon 支持的 name 列表（与 uni_modules/m-unix/components/m-icon/m-icon.uvue 中 getIconChar 一致）
  * 含别名（同一字形多名称），便于检索与复制。
  */
 export type IconCategory = {

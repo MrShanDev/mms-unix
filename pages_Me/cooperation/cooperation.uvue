@@ -13,7 +13,7 @@
 				</text>
 				<view v-for="(item, index) in serviceItems" :key="index" class="svc-row">
 					<view class="svc-icon-wrap">
-						<mms-icon :name="item.icon" size="40rpx" color="#ff0844"></mms-icon>
+						<m-icon :name="item.icon" size="40rpx" color="#ff0844"></m-icon>
 					</view>
 					<view class="svc-body">
 						<text class="svc-name">{{ item.name }}</text>
@@ -30,7 +30,7 @@
 			</view>
 
 			<view class="actions">
-				<mms-button type="primary" @click="goContact">联系我们</mms-button>
+				<m-button type="primary" @click="goContact">联系我们</m-button>
 			</view>
 			<view class="footer-space"></view>
 		</scroll-view>
@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="uts">
-	import { jumpTo } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+	import { jumpTo } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
 
 	type SvcItem = {
 		icon: string

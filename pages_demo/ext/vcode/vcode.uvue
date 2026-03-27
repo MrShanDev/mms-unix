@@ -4,9 +4,9 @@
 			<text class="section-title">图形验证码（字符）</text>
 			<view class="vcode-row">
 				<view class="vcode-canvas-wrap">
-					<mms-vcode ref="vcodeRef" :width="120" :height="44" @change="onVcodeChange"></mms-vcode>
+					<m-vcode ref="vcodeRef" :width="120" :height="44" @change="onVcodeChange"></m-vcode>
 				</view>
-				<mms-button type="default" @click="onVcodeRefresh">换一张</mms-button>
+				<m-button type="default" @click="onVcodeRefresh">换一张</m-button>
 			</view>
 			<text class="demo-desc">当前值：{{ vcodeStr }}</text>
 		</view>
@@ -16,25 +16,25 @@
 			<text class="section-desc">画布显示「几加几」或「几减几」，请输入运算结果后点验证。</text>
 			<view class="vcode-row">
 				<view class="vcode-canvas-wrap vcode-canvas-wrap--wide">
-					<mms-vcode
+					<m-vcode
 						ref="mathVcodeRef"
 						mode="math"
 						:width="200"
 						:height="44"
 						@change="onMathChange"
-					></mms-vcode>
+					></m-vcode>
 				</view>
-				<mms-button type="default" @click="onMathRefresh">换一张</mms-button>
+				<m-button type="default" @click="onMathRefresh">换一张</m-button>
 			</view>
-			<mms-input
+			<m-input
 				v-model="mathUserInput"
 				label="运算结果"
 				type="number"
 				placeholder="请输入答案"
 				:clearable="true"
-			></mms-input>
+			></m-input>
 			<view class="vcode-verify-row">
-				<mms-button type="primary" @click="onMathVerify">验证</mms-button>
+				<m-button type="primary" @click="onMathVerify">验证</m-button>
 			</view>
 			<text v-if="mathVerifyHint !== ''" class="demo-desc">{{ mathVerifyHint }}</text>
 		</view>

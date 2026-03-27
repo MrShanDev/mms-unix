@@ -2,25 +2,25 @@
 	<scroll-view class="page-scroll" scroll-y style="flex:1">
 		<view class="demo-page">
 			<view class="demo-section">
-				<text class="section-title">日期时间选择（mms-datetime-picker）</text>
+				<text class="section-title">日期时间选择（m-datetime-picker）</text>
 				<text class="section-desc">底部弹层 + picker-view；v-model:show 控制显隐，v-model:modelValue 为时间戳（毫秒）。</text>
 				<text class="demo-result">当前值：{{ displayText }}</text>
 				<view class="demo-row">
-					<mms-button type="primary" btnSize="small" @tap="openMode('datetime')">日期+时间</mms-button>
-					<mms-button type="primary" btnSize="small" @tap="openMode('date')">仅日期</mms-button>
-					<mms-button type="primary" btnSize="small" @tap="openMode('time')">仅时间</mms-button>
+					<m-button type="primary" btnSize="small" @tap="openMode('datetime')">日期+时间</m-button>
+					<m-button type="primary" btnSize="small" @tap="openMode('date')">仅日期</m-button>
+					<m-button type="primary" btnSize="small" @tap="openMode('time')">仅时间</m-button>
 				</view>
 			</view>
 		</view>
 
-		<mms-datetime-picker
+		<m-datetime-picker
 			v-model:show="pickerShow"
 			v-model:model-value="tsValue"
 			:mode="pickerMode"
 			title="请选择"
 			@confirm="onConfirm"
 			@cancel="onCancel"
-		></mms-datetime-picker>
+		></m-datetime-picker>
 	</scroll-view>
 </template>
 

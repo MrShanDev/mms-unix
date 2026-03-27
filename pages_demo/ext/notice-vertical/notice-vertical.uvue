@@ -4,7 +4,7 @@
 			<text class="section-title">自动纵向滚动（默认）</text>
 			<text class="section-desc">内容高于可视区时自动循环滚动；手指按住会暂停，松开后约 0.6s 恢复。</text>
 			<view class="demo-vertical-box">
-				<mms-notice-vertical
+				<m-notice-vertical
 					:height="320"
 					background="#fff8f0"
 					:radius="12"
@@ -20,7 +20,7 @@
 					<text class="demo-v-p">四、办公室请关闭门窗与电源，贵重物品妥善保管。</text>
 					<text class="demo-v-p">五、节后首个工作日 9:00 全员例会，请准时参加。</text>
 					<text class="demo-v-p">（本段用于拉高内容高度，便于观察纵向滚动。）</text>
-				</mms-notice-vertical>
+				</m-notice-vertical>
 			</view>
 		</view>
 
@@ -28,7 +28,7 @@
 			<text class="section-title">仅手动滑动</text>
 			<text class="section-desc">autoplay=false，无自动滚；scroll-view 高度已按 px 换算，可正常拖拽滚动。</text>
 			<view class="demo-vertical-box">
-				<mms-notice-vertical
+				<m-notice-vertical
 					:height="280"
 					:autoplay="false"
 					background="#f0f9ff"
@@ -37,7 +37,7 @@
 				>
 					<text class="demo-v-title">仅手动</text>
 					<text v-for="n in manualLines" :key="'m-' + n" class="demo-v-p">{{ manualLineText(n) }}</text>
-				</mms-notice-vertical>
+				</m-notice-vertical>
 			</view>
 		</view>
 	</view>

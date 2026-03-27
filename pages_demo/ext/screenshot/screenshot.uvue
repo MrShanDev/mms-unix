@@ -2,18 +2,18 @@
 	<scroll-view class="page-scroll" scroll-y style="flex:1">
 		<view class="demo-page">
 			<view class="demo-section">
-				<text class="section-title">区域截图（mms-screenshot）</text>
+				<text class="section-title">区域截图（m-screenshot）</text>
 				<text class="section-desc">
 					将插槽内容绘制为图片；capture() 返回 Promise。当前实现以微信小程序节点为主，其它端可能提示 not supported。
 				</text>
-				<mms-screenshot ref="shotRef" :delay="200" :quality="0.85">
+				<m-screenshot ref="shotRef" :delay="200" :quality="0.85">
 					<view class="shot-box">
 						<text class="shot-title">截图区域</text>
 						<text class="shot-sub">点击下方按钮尝试生成临时路径</text>
 					</view>
-				</mms-screenshot>
+				</m-screenshot>
 				<view class="demo-row">
-					<mms-button type="primary" btnSize="small" @tap="onCapture">生成截图</mms-button>
+					<m-button type="primary" btnSize="small" @tap="onCapture">生成截图</m-button>
 				</view>
 				<text v-if="lastPath !== ''" class="demo-result">{{ lastPath }}</text>
 			</view>

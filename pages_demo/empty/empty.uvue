@@ -2,39 +2,39 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">基础空状态</text>
-			<mms-empty text="暂无数据"></mms-empty>
+			<m-empty text="暂无数据"></m-empty>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">自定义图标</text>
-			<mms-empty text="暂无消息" icon="notification"></mms-empty>
+			<m-empty text="暂无消息" icon="notification"></m-empty>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">带操作按钮</text>
-			<mms-empty text="暂无订单" icon="folder">
+			<m-empty text="暂无订单" icon="folder">
 				<template #footer>
-					<mms-button type="primary" btnSize="small">去下单</mms-button>
+					<m-button type="primary" btnSize="small">去下单</m-button>
 				</template>
-			</mms-empty>
+			</m-empty>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">自定义图片</text>
-			<mms-empty text="网络异常" :image="emptyDemoImg">
+			<m-empty text="网络异常" :image="emptyDemoImg">
 				<template #footer>
-					<mms-button type="primary" btnSize="small" @tap="refresh">刷新</mms-button>
+					<m-button type="primary" btnSize="small" @tap="refresh">刷新</m-button>
 				</template>
-			</mms-empty>
+			</m-empty>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
 	import { computed } from 'vue'
-	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config.uts'
+	import { getMUiConfig } from '@/uni_modules/m-unix/config.uts'
 
-	const emptyDemoImg = computed((): string => getMmsUiConfig().avatarDefault)
+	const emptyDemoImg = computed((): string => getMUiConfig().avatarDefault)
 
 	function refresh() {
 		uni.showToast({ title: '刷新成功', icon: 'success' })

@@ -2,7 +2,7 @@
 	<scroll-view class="page-scroll" scroll-y style="flex:1">
 		<view class="demo-page">
 			<view class="demo-section demo-section--hint">
-				<text class="hint-text">以下为 iconfont 字库中 mms-icon 已映射的全部名称（含别名）。每个格子使用 mms-clipboard 组件，点击复制一行 mms-icon 标签代码，可直接粘贴到页面使用。</text>
+				<text class="hint-text">以下为 iconfont 字库中 m-icon 已映射的全部名称（含别名）。每个格子使用 m-clipboard 组件，点击复制一行 m-icon 标签代码，可直接粘贴到页面使用。</text>
 			</view>
 
 			<view class="demo-section">
@@ -21,10 +21,10 @@
 			<view class="demo-section">
 				<text class="section-title">示例：颜色与尺寸</text>
 				<view class="icon-row">
-					<mms-icon name="setting" size="48rpx" color="#ff0844"></mms-icon>
-					<mms-icon name="setting" size="48rpx" color="#1890ff"></mms-icon>
-					<mms-icon name="setting" size="32rpx" color="#333333"></mms-icon>
-					<mms-icon name="setting" size="64rpx" color="#52c41a"></mms-icon>
+					<m-icon name="setting" size="12rpx" color="#ff0844"></m-icon>
+					<m-icon name="setting" size="24rpx" color="#1890ff"></m-icon>
+					<m-icon name="setting" size="48rpx" color="#333333"></m-icon>
+					<m-icon name="setting" size="96rpx" color="#52c41a"></m-icon>
 				</view>
 			</view>
 
@@ -32,17 +32,17 @@
 				<text class="section-title">{{ cat.title }}</text>
 				<text class="section-count">共 {{ cat.icons.length }} 个</text>
 				<view class="icon-grid">
-					<mms-clipboard
+					<m-clipboard
 						class="icon-cell-wrap"
 						:text="snippetFor(name)"
 						v-for="(name, iidx) in cat.icons"
 						:key="name + '-' + iidx"
 					>
 						<view class="icon-cell" hover-class="icon-cell-hover">
-							<mms-icon :name="name" size="48rpx" color="#333333"></mms-icon>
+							<m-icon :name="name" size="48rpx" color="#333333"></m-icon>
 							<text class="icon-label">{{ name }}</text>
 						</view>
-					</mms-clipboard>
+					</m-clipboard>
 				</view>
 			</view>
 
@@ -92,9 +92,9 @@
 		return out
 	})
 
-	/** 供 mms-clipboard 的 text，点击后复制整行组件代码 */
+	/** 供 m-clipboard 的 text，点击后复制整行组件代码 */
 	function snippetFor(name: string): string {
-		return '<mms-icon name="' + name + '" size="40rpx"></mms-icon>'
+		return '<m-icon name="' + name + '" size="40rpx"></m-icon>'
 	}
 </script>
 

@@ -2,24 +2,24 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">基础 HTML</text>
-			<mms-richtext :content="richBasic"></mms-richtext>
+			<m-richtext :content="richBasic"></m-richtext>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">样式混排</text>
-			<mms-richtext :content="richStyled"></mms-richtext>
+			<m-richtext :content="richStyled"></m-richtext>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">固定高度 + 内部滚动（height）</text>
 			<text class="section-desc">长文、大段 HTML 可限制可视高度，内部纵向滚动；能力仍受各端 rich-text 限制。</text>
-			<mms-richtext :content="richLong" :height="320" :selectable="true"></mms-richtext>
+			<m-richtext :content="richLong" :height="320" :selectable="true"></m-richtext>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">最大高度（maxHeight）</text>
 			<text class="section-desc">与 height 二选一优先 height；此处为 overflow 裁剪滚动，与 scroll-view 行为可能略有差异。</text>
-			<mms-richtext :content="richLong" max-height="200rpx"></mms-richtext>
+			<m-richtext :content="richLong" max-height="200rpx"></m-richtext>
 		</view>
 
 		<view class="demo-section">
@@ -27,18 +27,18 @@
 			<text class="section-desc">
 				表格等标签在部分小程序端可能不支持或排版异常；图片需可访问 URL（如 https），小程序需配置下载域名。
 			</text>
-			<mms-richtext :content="richMedia"></mms-richtext>
+			<m-richtext :content="richMedia"></m-richtext>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">空内容占位（placeholder）</text>
-			<mms-richtext content="" placeholder="暂无正文，可传入 placeholder"></mms-richtext>
+			<m-richtext content="" placeholder="暂无正文，可传入 placeholder"></m-richtext>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
-const richBasic = '<p style="color:#333;font-size:14px;">mms-richtext 在 rich-text 基础上可选 width / height / maxHeight、selectable、placeholder。</p>'
+const richBasic = '<p style="color:#333;font-size:14px;">m-richtext 在 rich-text 基础上可选 width / height / maxHeight、selectable、placeholder。</p>'
 
 const richStyled =
 	'<p style="color:#333;font-size:14px;"><b>粗体</b> 与 <span style="color:#5677fc">主题色</span> 混排；长英文单词：<span style="word-break:break-all">Supercalifragilisticexpialidocious</span></p>'

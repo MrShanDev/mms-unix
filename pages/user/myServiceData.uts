@@ -8,7 +8,7 @@
 export type UserServiceMenuStyle = 'list' | 'grid'
 
 export type UserServiceItem = {
-	/** mms-icon 图标名 */
+	/** m-icon 图标名 */
 	iconName: string
 	title: string
 	pages: string
@@ -17,7 +17,7 @@ export type UserServiceItem = {
 }
 
 export type UserServiceMenuConfig = {
-	/** 列表（mms-cell）或宫格（mms-grid + mms-grid-item） */
+	/** 列表（m-cell）或宫格（m-grid + m-grid-item） */
 	style: UserServiceMenuStyle
 	/** 分组标题 */
 	title: string

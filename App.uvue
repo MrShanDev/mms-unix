@@ -103,6 +103,6 @@
 </script>
 
 <style lang="scss">
-// 引入 mms-unix 全局样式
-@import '@/uni_modules/mms-unix/index.scss';
+// 引入 m-unix 全局样式
+@import '@/uni_modules/m-unix/index.scss';
 </style>

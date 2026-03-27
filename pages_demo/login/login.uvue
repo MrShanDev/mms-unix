@@ -4,19 +4,19 @@
 			<text class="section-title">登录组件</text>
 			<text class="section-desc">点击下方按钮打开底部登录弹窗；点遮罩或登录成功后会关闭，可再次打开。</text>
 			<view class="demo-row">
-				<mms-button type="primary" size="small" @tap="openLoginPopup">打开登录弹窗</mms-button>
+				<m-button type="primary" size="small" @tap="openLoginPopup">打开登录弹窗</m-button>
 			</view>
 			<view class="login-demo">
-				<mms-login
+				<m-login
 					:popupShow="showLoginPopup"
 					@update:popupShow="onLoginPopupShowUpdate"
-				></mms-login>
+				></m-login>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">使用说明</text>
-			<text class="desc-text">mms-login 是一个完整的登录弹窗组件，支持：</text>
+			<text class="desc-text">m-login 是一个完整的登录弹窗组件，支持：</text>
 			<text class="desc-text">1. 微信小程序一键登录</text>
 			<text class="desc-text">2. 手机号验证码登录</text>
 			<text class="desc-text">3. 账号密码登录</text>

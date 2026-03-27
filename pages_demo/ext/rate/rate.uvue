@@ -22,7 +22,7 @@
 					<text class="ext-title">基础与变更回显</text>
 					<text class="ext-hint rate-line">v-model:current 同步当前分；下方「最近一次 change」仅作事件监听演示。</text>
 					<view class="rate-row">
-						<mms-rate v-model:current="valBasic" :quantity="5" @change="onBasicChange"></mms-rate>
+						<m-rate v-model:current="valBasic" :quantity="5" @change="onBasicChange"></m-rate>
 					</view>
 					<text class="rate-desc">当前档位：{{ valBasic }} / 5</text>
 					<text class="rate-desc rate-desc--mono">最近一次 change：{{ lastBasic }}</text>
@@ -32,7 +32,7 @@
 					<text class="ext-title">初始未选（current = 0）</text>
 					<text class="ext-hint rate-line">可从 0 开始，表示尚未打分，用户点选后变为 1～quantity。</text>
 					<view class="rate-row">
-						<mms-rate v-model:current="valZero" :quantity="5"></mms-rate>
+						<m-rate v-model:current="valZero" :quantity="5"></m-rate>
 					</view>
 					<text class="rate-desc">当前档位：{{ valZero === 0 ? '未选' : '' + valZero }} / 5</text>
 				</view>
@@ -41,7 +41,7 @@
 					<text class="ext-title">星数（quantity）</text>
 					<text class="ext-hint rate-line">总档位数可自定义，例如 4 档、8 档（多星时注意小屏换行，可配合缩小 size）。</text>
 					<view class="rate-row">
-						<mms-rate v-model:current="valFour" :quantity="4"></mms-rate>
+						<m-rate v-model:current="valFour" :quantity="4"></m-rate>
 					</view>
 					<text class="rate-desc">当前档位：{{ valFour }} / 4</text>
 				</view>
@@ -50,7 +50,7 @@
 					<text class="ext-title">八档（quantity = 8）</text>
 					<text class="ext-hint rate-line">细粒度评价时可增加星数；建议同步略减 size 以免占满屏宽。</text>
 					<view class="rate-row">
-						<mms-rate v-model:current="valEight" :quantity="8" :size="18"></mms-rate>
+						<m-rate v-model:current="valEight" :quantity="8" :size="18"></m-rate>
 					</view>
 					<text class="rate-desc">当前档位：{{ valEight }} / 8</text>
 				</view>
@@ -59,12 +59,12 @@
 					<text class="ext-title">选中 / 未选中颜色</text>
 					<text class="ext-hint rate-line">active 与 normal 分别对应已选与未选颜色。</text>
 					<view class="rate-row">
-						<mms-rate
+						<m-rate
 							v-model:current="valColor"
 							:quantity="5"
 							active="#FA3534"
 							normal="#b2b2b2"
-						></mms-rate>
+						></m-rate>
 					</view>
 					<text class="rate-desc">当前档位：{{ valColor }}</text>
 				</view>
@@ -73,13 +73,13 @@
 					<text class="ext-title">暖色主题（小尺寸）</text>
 					<text class="ext-hint rate-line">小星标 + 灰/橙对比，适合卡片内嵌或次要评价位。</text>
 					<view class="rate-row">
-						<mms-rate
+						<m-rate
 							v-model:current="valWarm"
 							:quantity="5"
 							:size="16"
 							normal="#cccccc"
 							active="#ff7900"
-						></mms-rate>
+						></m-rate>
 					</view>
 					<text class="rate-desc">当前档位：{{ valWarm }}（size=16px）</text>
 				</view>
@@ -88,7 +88,7 @@
 					<text class="ext-title">尺寸</text>
 					<text class="ext-hint rate-line">size 为单个符号的像素大小，可按页面密度调整。</text>
 					<view class="rate-row">
-						<mms-rate v-model:current="valSize" :quantity="5" :size="28"></mms-rate>
+						<m-rate v-model:current="valSize" :quantity="5" :size="28"></m-rate>
 					</view>
 					<text class="rate-desc">当前档位：{{ valSize }}（size=28px）</text>
 				</view>
@@ -99,19 +99,19 @@
 					<view class="rate-compare">
 						<view class="rate-compare-block">
 							<text class="rate-compare-label">hollow=true</text>
-							<mms-rate
+							<m-rate
 								v-model:current="valHollow"
 								:quantity="5"
 								:hollow="true"
-							></mms-rate>
+							></m-rate>
 						</view>
 						<view class="rate-compare-block">
 							<text class="rate-compare-label">hollow=false</text>
-							<mms-rate
+							<m-rate
 								v-model:current="valSolid"
 								:quantity="5"
 								:hollow="false"
-							></mms-rate>
+							></m-rate>
 						</view>
 					</view>
 					<text class="rate-desc">左：{{ valHollow }} · 右：{{ valSolid }}</text>
@@ -121,7 +121,7 @@
 					<text class="ext-title">禁用（展示分数）</text>
 					<text class="ext-hint rate-line">disabled 时不可点击，适合订单详情等仅展示评分的场景。</text>
 					<view class="rate-row">
-						<mms-rate :current="3" :quantity="5" :disabled="true" active="#EB0909" normal="#b2b2b2"></mms-rate>
+						<m-rate :current="3" :quantity="5" :disabled="true" active="#EB0909" normal="#b2b2b2"></m-rate>
 					</view>
 					<text class="rate-desc">固定为 3 / 5，不可交互</text>
 				</view>
@@ -139,30 +139,30 @@
 					<view class="rate-multi">
 						<view class="rate-multi-row">
 							<text class="rate-multi-label">描述相符</text>
-							<mms-rate
+							<m-rate
 								v-model:current="valM1"
 								:quantity="5"
 								:params="1"
 								@change="onMultiChange"
-							></mms-rate>
+							></m-rate>
 						</view>
 						<view class="rate-multi-row">
 							<text class="rate-multi-label">物流服务</text>
-							<mms-rate
+							<m-rate
 								v-model:current="valM2"
 								:quantity="5"
 								:params="2"
 								@change="onMultiChange"
-							></mms-rate>
+							></m-rate>
 						</view>
 						<view class="rate-multi-row">
 							<text class="rate-multi-label">服务态度</text>
-							<mms-rate
+							<m-rate
 								v-model:current="valM3"
 								:quantity="5"
 								:params="3"
 								@change="onMultiChange"
-							></mms-rate>
+							></m-rate>
 						</view>
 					</view>
 					<text class="rate-desc">三项均分（整数）：{{ avgThree }} / 5</text>

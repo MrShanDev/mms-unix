@@ -1,4 +1,4 @@
-# MMS-UNIX 项目进度明细
+# mUnix 项目进度明细
 
 > 本文档汇总近期已落地改动与待办项，便于验收与排期。随迭代更新时请同步修订。  
 > **未完成 / 未验证 / 测试清单（汇总）：**见 [`version/doc/qa-open-items.md`](./version/doc/qa-open-items.md)。  
@@ -32,8 +32,8 @@
 
 | 项 | 状态 | 说明 |
 |----|------|------|
-| 位图改走本地路径 | ✅ 已完成 | 关于页、文章占位、Card/裁剪演示、`mms-empty` 默认图、`mmsUnix` 默认 logo 等指向 `/static/img/...` |
-| H5/App 二维码 | ✅ 已完成 | 不写死第三方图床；使用合并后的 `qrCodeImageApiBase`（见 `common/config.ts` 的 `api` / `mmsUi`）；未配置则不请求 |
+| 位图改走本地路径 | ✅ 已完成 | 关于页、文章占位、Card/裁剪演示、`m-empty` 默认图、`mUnix` 默认 logo 等指向 `/static/img/...` |
+| H5/App 二维码 | ✅ 已完成 | 不写死第三方图床；使用合并后的 `qrCodeImageApiBase`（见 `common/config.ts` 的 `api` / `mUi`）；未配置则不请求 |
 | 占位目录 | ✅ 已完成 | `static/img/.gitkeep`、`static/tabbar/.gitkeep` |
 | 实际 PNG 资源 | 部分完成 | `static/tabbar` 已含四套 Tab 独立图标；`static/img/*` 业务图仍按需补齐 |
 
@@ -51,16 +51,16 @@
 
 ---
 
-## 五、mms-unix UI 配置体系
+## 五、m-unix UI 配置体系
 
 | 项 | 状态 | 说明 |
 |----|------|------|
-| 库内模块 | ✅ 已完成 | `uni_modules/mms-unix/config.uts` |
-| API | ✅ 已完成 | `getMmsUiConfig()`、`setMmsUiConfig()`、`clearMmsUiRuntimeOverrides()` |
-| 工程入口 | ✅ 已完成 | `common/config.ts`：`MmsUiUserConfig`、`config.mmsUi` |
-| 合并优先级 | ✅ 已实现 | 运行时 > `config.mmsUi` > `configInfo.logo`（仅 logo）> `api.qrCodeImageApiBase`（仅二维码）> 库默认 |
+| 库内模块 | ✅ 已完成 | `uni_modules/m-unix/config.uts` |
+| API | ✅ 已完成 | `getMUiConfig()`、`setMUiConfig()`、`clearMUiRuntimeOverrides()` |
+| 工程入口 | ✅ 已完成 | `common/config.ts`：`MUiUserConfig`、`config.mUi` |
+| 合并优先级 | ✅ 已实现 | 运行时 > `config.mUi` > `configInfo.logo`（仅 logo）> `api.qrCodeImageApiBase`（仅二维码）> 库默认 |
 | 便捷导出 | ✅ 已完成 | `Ut.uts` 再导出上述三个方法 |
-| 已接线 | ✅ 已完成 | `mms-empty`、`mms-qrcode`；`about_me`、`user`、`user_info`、`articleList`、`myServiceData`、部分 `pages_demo`、`mmsUnix` 等 |
+| 已接线 | ✅ 已完成 | `m-empty`、`m-qrcode`；`about_me`、`user`、`user_info`、`articleList`、`myServiceData`、部分 `pages_demo`、`mUnix` 等 |
 
 ---
 
@@ -68,7 +68,7 @@
 
 | 项 | 状态 | 说明 |
 |----|------|------|
-| `mms-unix-doc/qrcode.md` | ✅ 已更新 | 与自建 `qrCodeImageApiBase` 行为一致 |
+| `m-unix-doc/qrcode.md` | ✅ 已更新 | 与自建 `qrCodeImageApiBase` 行为一致 |
 | `.cursor/skills/...` 示例 | ✅ 已微调 | Tab 文案与当前结构对齐（以仓库为准） |
 
 ---
@@ -79,8 +79,8 @@
 |----|------|------|
 | 静态图片文件 | 资产 | 补齐 `static/img` 下业务图；Tab 已各有独立 PNG（见 `static/tabbar/`） |
 | Tab 图标精修 | 可选 | 当前为脚本生成的区分占位图，可替换同名文件或改 `_gen_tab_icons.py` 后重跑 |
-| 二维码 PNG 服务 | 后端 | H5/App 需自建兼容 query 的接口并配置 `mmsUi` 或 `api` |
-| `common/common.uts` | 风险 | `mmsUnix.uts` 依赖该文件；若工程缺失需补桩或改数据源 |
+| 二维码 PNG 服务 | 后端 | H5/App 需自建兼容 query 的接口并配置 `mUi` 或 `api` |
+| `common/common.uts` | 风险 | `mUnix.uts` 依赖该文件；若工程缺失需补桩或改数据源 |
 | 全端回归 | 测试 | Tab、登录回跳、分包演示、上传/空态/二维码真机 |
 
 ---
@@ -89,17 +89,17 @@
 
 | 项 | 状态 | 说明 |
 |----|------|------|
-| 全局主色 | ✅ 已完成 | `#ff0844`；`pages.json` 导航/Tab、`config.uts`、`mms.scss`、`common/config.mmsUi` 及主要演示/业务页硬编码色已对齐 |
-| 「我的」改版 | ✅ 已完成 | `mms-card` + `mms-cell-group`；`myServiceData.uts` 七项菜单与分包路径一致 |
+| 全局主色 | ✅ 已完成 | `#ff0844`；`pages.json` 导航/Tab、`config.uts`、`m.scss`、`common/config.mUi` 及主要演示/业务页硬编码色已对齐 |
+| 「我的」改版 | ✅ 已完成 | `m-card` + `m-cell-group`；`myServiceData.uts` 七项菜单与分包路径一致 |
 | 联系页 | ✅ 已完成 | `pages_Me/contact/contact`；`page.contact` 文案 |
-| 个人资料页 | ✅ 已完成 | `mms-cell` 化、`mms-icon` 箭头、收货地址跳转、字号/对齐 |
+| 个人资料页 | ✅ 已完成 | `m-cell` 化、`m-icon` 箭头、收货地址跳转、字号/对齐 |
 | 版本日志 | ✅ 已完成 | `version/doc/` 分文件（`app-1.0.1.md`、`lib-1.1.1.md` 等） |
 
 ---
 
 ## 九、一句话结论
 
-**信息架构与 Tab、历史外部示例字样清理、本地资源路径、ucss 相关修复，以及可合并的 `config.uts` + `config.mmsUi` 已在代码侧落地；2026-03-24 起主色与个人中心/资料/联系页改版及版本说明已写入 `version/doc/`（`app-*.md` / `lib-*.md`）。当前主要缺口仍是静态资源落盘、可选 Tab 图标精修、非宿主内置能力端的二维码服务配置与全端回归。**
+**信息架构与 Tab、历史外部示例字样清理、本地资源路径、ucss 相关修复，以及可合并的 `config.uts` + `config.mUi` 已在代码侧落地；2026-03-24 起主色与个人中心/资料/联系页改版及版本说明已写入 `version/doc/`（`app-*.md` / `lib-*.md`）。当前主要缺口仍是静态资源落盘、可选 Tab 图标精修、非宿主内置能力端的二维码服务配置与全端回归。**
 
 ---
 

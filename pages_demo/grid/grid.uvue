@@ -2,34 +2,34 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">基础宫格</text>
-			<mms-grid :column="4">
-				<mms-grid-item icon="setting" text="设置"></mms-grid-item>
-				<mms-grid-item icon="location" text="定位"></mms-grid-item>
-				<mms-grid-item icon="message" text="消息"></mms-grid-item>
-				<mms-grid-item icon="phone" text="电话"></mms-grid-item>
-			</mms-grid>
+			<m-grid :column="4">
+				<m-grid-item icon="setting" text="设置"></m-grid-item>
+				<m-grid-item icon="location" text="定位"></m-grid-item>
+				<m-grid-item icon="message" text="消息"></m-grid-item>
+				<m-grid-item icon="phone" text="电话"></m-grid-item>
+			</m-grid>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">自定义列数</text>
-			<mms-grid :column="3">
-				<mms-grid-item icon="shop" text="商城"></mms-grid-item>
-				<mms-grid-item icon="cart" text="购物车"></mms-grid-item>
-				<mms-grid-item icon="heart" text="收藏"></mms-grid-item>
-				<mms-grid-item icon="star" text="评分"></mms-grid-item>
-				<mms-grid-item icon="wallet" text="钱包"></mms-grid-item>
-				<mms-grid-item icon="photo" text="相册"></mms-grid-item>
-			</mms-grid>
+			<m-grid :column="3">
+				<m-grid-item icon="shop" text="商城"></m-grid-item>
+				<m-grid-item icon="cart" text="购物车"></m-grid-item>
+				<m-grid-item icon="heart" text="收藏"></m-grid-item>
+				<m-grid-item icon="star" text="评分"></m-grid-item>
+				<m-grid-item icon="wallet" text="钱包"></m-grid-item>
+				<m-grid-item icon="photo" text="相册"></m-grid-item>
+			</m-grid>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">无边框</text>
-			<mms-grid :column="4" :border="false">
-				<mms-grid-item icon="setting" text="设置"></mms-grid-item>
-				<mms-grid-item icon="location" text="定位"></mms-grid-item>
-				<mms-grid-item icon="message" text="消息"></mms-grid-item>
-				<mms-grid-item icon="phone" text="电话"></mms-grid-item>
-			</mms-grid>
+			<m-grid :column="4" :border="false">
+				<m-grid-item icon="setting" text="设置"></m-grid-item>
+				<m-grid-item icon="location" text="定位"></m-grid-item>
+				<m-grid-item icon="message" text="消息"></m-grid-item>
+				<m-grid-item icon="phone" text="电话"></m-grid-item>
+			</m-grid>
 		</view>
 	</view>
 </template>

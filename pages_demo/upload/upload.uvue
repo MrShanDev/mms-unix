@@ -8,15 +8,15 @@
 			<view class="upload-mode">
 				<view class="upload-mode__row">
 					<text class="upload-mode__label">自动上传</text>
-					<mms-switch v-model="modeAuto" color="#ff0844" @change="onAutoModeChange"></mms-switch>
+					<m-switch v-model="modeAuto" color="#ff0844" @change="onAutoModeChange"></m-switch>
 				</view>
 				<view class="upload-mode__row">
 					<text class="upload-mode__label">选图后压缩</text>
-					<mms-switch v-model="modeCompress" color="#ff0844"></mms-switch>
+					<m-switch v-model="modeCompress" color="#ff0844"></m-switch>
 				</view>
 				<text class="upload-mode__hint">{{ modeHint }}</text>
 			</view>
-			<mms-upload
+			<m-upload
 				v-model:fileList="comboList"
 				:autoUpload="modeAuto"
 				:compress="modeCompress"
@@ -24,31 +24,31 @@
 				:maxCount="9"
 				:columns="4"
 				@afterRead="onComboAfterRead"
-			></mms-upload>
+			></m-upload>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">基础上传（无 v-model，仅选图）</text>
 			<text class="section-desc">不绑定列表，选图后仅触发 choose / afterRead，需自行接业务。</text>
-			<mms-upload></mms-upload>
+			<m-upload></m-upload>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">限制数量</text>
-			<mms-upload :maxCount="3" :columns="4"></mms-upload>
+			<m-upload :maxCount="3" :columns="4"></m-upload>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">仅回显（网络图）</text>
 			<text class="section-desc">绑定服务端 URL，可预览、删除（删的是前端列表）。</text>
-			<mms-upload v-model:fileList="remoteList" :columns="4"></mms-upload>
+			<m-upload v-model:fileList="remoteList" :columns="4"></m-upload>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
 import { computed, ref } from 'vue'
-import { getMmsUiConfig } from '@/uni_modules/mms-unix/config.uts'
+import { getMUiConfig } from '@/uni_modules/m-unix/config.uts'
 
 type FileItem = {
 	url: string
@@ -57,7 +57,7 @@ type FileItem = {
 	serverData?: any
 }
 
-const _mmsUi = getMmsUiConfig()
+const _mUi = getMUiConfig()
 
 /** 开关演示区：手动 / 自动 共用列表 */
 const modeAuto = ref(false)
@@ -88,7 +88,7 @@ function onComboAfterRead(evt: { tempFiles: { path: string }[] }) {
 	comboList.value = next
 }
 
-const remoteList = ref<FileItem[]>([{ url: _mmsUi.appLogo }])
+const remoteList = ref<FileItem[]>([{ url: _mUi.appLogo }])
 </script>
 
 <style lang="scss">

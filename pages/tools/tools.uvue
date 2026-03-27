@@ -104,13 +104,13 @@
 
 <script setup lang="uts">
 	import { ref } from 'vue'
-	import { copyToClipboard, jumpTo, msg, jslog } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
-	import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
-	import { notifyAuthChange } from '@/uni_modules/mms-unix/components/mms-tools/AuthNotifier.uts'
-	import { isLoggedIn, checkLogin } from '@/uni_modules/mms-unix/components/mms-tools/Auth.uts'
+	import { copyToClipboard, jumpTo, msg, jslog } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
+	import { storage } from '@/uni_modules/m-unix/components/m-tools/Storage.uts'
+	import { notifyAuthChange } from '@/uni_modules/m-unix/components/m-tools/AuthNotifier.uts'
+	import { isLoggedIn, checkLogin } from '@/uni_modules/m-unix/components/m-tools/Auth.uts'
 	import { checkUpdate } from '@/common/api/mallApi.uts'
 
-	const demoStorageKey = 'mms_tools_demo_kv'
+	const demoStorageKey = 'm_tools_demo_kv'
 
 	/** demo.mmsadmin.cn 启动基座；服务端声明 GET 不支持，需 POST */
 	const DEMO_START_BASE_URL = 'https://demo.mmsadmin.cn/prod-api/common/startBase'
@@ -131,7 +131,7 @@
 	}
 
 	function onCopyDemo() {
-		copyToClipboard('MMS-UNIX 剪贴板示例')
+		copyToClipboard('mUnix 剪贴板示例')
 	}
 
 	function openDemoPage() {

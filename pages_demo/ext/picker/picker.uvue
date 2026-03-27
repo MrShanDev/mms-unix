@@ -2,21 +2,21 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">三级联动</text>
-			<mms-button type="primary" @click="pickerShow = true">打开（layer=3）</mms-button>
+			<m-button type="primary" @click="pickerShow = true">打开（layer=3）</m-button>
 			<text class="demo-desc">pickerData / tree + 多列，确认后 toast labels 与 values。</text>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">单列</text>
-			<mms-button @click="singleShow = true">选择国家（layer=1）</mms-button>
+			<m-button @click="singleShow = true">选择国家（layer=1）</m-button>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">双列</text>
-			<mms-button @click="doubleShow = true">省 / 市（layer=2）</mms-button>
+			<m-button @click="doubleShow = true">省 / 市（layer=2）</m-button>
 		</view>
 
-		<mms-picker
+		<m-picker
 			:show="pickerShow"
 			:pickerData="pickerTree"
 			:layer="3"
@@ -24,25 +24,25 @@
 			confirmColor="#ff0844"
 			@update:show="setPickerShow"
 			@confirm="onPickerOk"
-		></mms-picker>
+		></m-picker>
 
-		<mms-picker
+		<m-picker
 			:show="singleShow"
 			:pickerData="countries"
 			:layer="1"
 			title="国家"
 			@update:show="setSingleShow"
 			@confirm="onSingleOk"
-		></mms-picker>
+		></m-picker>
 
-		<mms-picker
+		<m-picker
 			:show="doubleShow"
 			:pickerData="provinceCity"
 			:layer="2"
 			title="省市"
 			@update:show="setDoubleShow"
 			@confirm="onDoubleOk"
-		></mms-picker>
+		></m-picker>
 	</view>
 </template>
 

@@ -1,5 +1,5 @@
 /**
- * mms-unix 全局配置
+ * m-unix 全局配置
  * 组件库核心配置，所有项目通用配置在此定义
  */
 
@@ -23,7 +23,7 @@ export const config: AppConfig = {
 	},
 	// 需要登录的页面路径（不含 pages/ 前缀）
 	loginRequiredPaths: ['user_address', 'user_info'],
-	// 组件库演示登录页（mms-login 非微信端跳转用）
+	// 组件库演示登录页（m-login 非微信端跳转用）
 	loginPagePath: '/pages_demo/login/login',
 	// API 接口路径配置
 	api: {
@@ -38,13 +38,13 @@ export const config: AppConfig = {
 		upload: {
 			image: '/api/v1/common/upload/image',
 		},
-		/** 留空则使用 mms-unix 库内默认（演示用公网 qrserver）；正式请改为自建接口根地址 */
+		/** 留空则使用 m-unix 库内默认（演示用公网 qrserver）；正式请改为自建接口根地址 */
 		qrCodeImageApiBase: '',
 	},
 	// 应用基础信息
 	configInfo: {
-		name: 'mms-unix',
-		logo: '/uni_modules/mms-unix/static/mms-app-logo.png',
+		name: 'mUnix',
+		logo: '/uni_modules/m-unix/static/m-app-logo.png',
 		desc: 'uni-app 组件库',
 		versionCode: 2,
 		versionName: '1.0.1',
@@ -54,9 +54,9 @@ export const config: AppConfig = {
 /** 接口环境：本机 / 开发服 / 生产 */
 export type AppEnv = 'local' | 'dev' | 'prod'
 
-/** 与 uni_modules/mms-unix/config.uts 的 MmsUiPartial 字段对齐，供 TypeScript 项目配置 */
-export type MmsUiUserConfig = {
-	/** 应用展示名（与 configInfo.name 合并，见 getMmsUiConfig().appName） */
+/** 与 uni_modules/m-unix/config.uts 的 MUiPartial 字段对齐，供 TypeScript 项目配置 */
+export type MUiUserConfig = {
+	/** 应用展示名（与 configInfo.name 合并，见 getMUiConfig().appName） */
 	appName?: string
 	/** 开发环境 API 根（未填时兜底为 config.baseUrl） */
 	apiDevelopmentBase?: string
@@ -100,10 +100,10 @@ type AppConfig = {
 	/** 应用基础信息 */
 	configInfo: ConfigInfo
 	/**
-	 * mms-unix 组件库 UI 资源与主题（可选）
-	 * 与 uni_modules/mms-unix/config.uts 中默认值合并，未填则使用库内默认路径
+	 * m-unix 组件库 UI 资源与主题（可选）
+	 * 与 uni_modules/m-unix/config.uts 中默认值合并，未填则使用库内默认路径
 	 */
-	mmsUi?: MmsUiUserConfig
+	mUi?: MUiUserConfig
 }
 
 type StorageConfig = {
@@ -135,7 +135,7 @@ type ApiConfig = {
 		image: string
 	}
 	/**
-	 * H5/App 端 mms-qrcode 拉取二维码 PNG 的接口根地址（须自建，query 与 qrserver 兼容：size、color、bgcolor、data）
+	 * H5/App 端 m-qrcode 拉取二维码 PNG 的接口根地址（须自建，query 与 qrserver 兼容：size、color、bgcolor、data）
 	 * 留空则不请求任何外链，非微信端不显示联网二维码（微信端仍用 canvas 本地绘制）
 	 */
 	qrCodeImageApiBase: string

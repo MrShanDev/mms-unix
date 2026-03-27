@@ -1,9 +1,9 @@
 {
-  "name": "mms-unix-vscode",
-  "displayName": "MMS-UNIX 组件提示",
-  "description": "为 uni-app x 项目提供 mms-* 组件标签补全；可将 .uvue 关联为 Vue 语言。",
+  "name": "m-unix-vscode",
+  "displayName": "mUnix 组件提示",
+  "description": "为 uni-app x 项目提供 m-* 组件标签补全；可将 .uvue 关联为 Vue 语言。",
   "version": "0.0.1",
-  "publisher": "mms-unix",
+  "publisher": "m-unix",
   "private": true,
   "engines": {
     "vscode": "^1.85.0"
