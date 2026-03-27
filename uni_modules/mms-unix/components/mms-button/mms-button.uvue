@@ -177,17 +177,28 @@
 				return height
 			},
 			getSize() {
-				// 显式传入 size 时优先；否则按 btnSize 缩放字号（原先仅改宽高，小按钮字仍 32rpx）
+				// 显式传入 size 时优先；否则按 btnSize 缩放。默认 28rpx（原 32）小屏相对 96rpx 高更协调；rpx 已随屏宽缩放，档位略收紧。
 				if (this.size) {
-					return typeof this.size === 'number' ? this.size : parseInt(this.size as string, 10)
+					const n = typeof this.size === 'number' ? (this.size as number) : parseInt(this.size as string, 10)
+					return isNaN(n) ? 28 : n
 				}
-				return {
-					'large': 36,
-					'medium': 32,
-					'small': 28,
-					'mini': 24,
-					'tiny': 18
-				}[this.btnSize] || 32
+				const bs = this.btnSize as string
+				if (bs === 'large') {
+					return 34
+				}
+				if (bs === 'medium') {
+					return 30
+				}
+				if (bs === 'small') {
+					return 26
+				}
+				if (bs === 'mini') {
+					return 22
+				}
+				if (bs === 'tiny') {
+					return 16
+				}
+				return 28
 			},
 			fontSizeCss(): string {
 				return toCssLength(this.getSize as number | string)

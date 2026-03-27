@@ -99,6 +99,27 @@
 
 - 若使用本仓库中的 **示例工程**：`pages_demo` 分包内已补充布局辅助、日期时间、应用更新、底部固定栏、截图、mms-tips、加载更多、树形、微信登录等演示页；**仅用于集成演示**，是否随业务工程发布由项目自行决定。
 
+### 变更（工程与小程序）
+
+- **`pages.json` / `manifest.json`**：标题、tabBar、`name`、`description` 等改为**字面量中文**（与 `locale/zh-Hans.json` 对齐），**不再使用** `%page.xxx%`、`%app.name%` 等占位；**微信小程序**等端可正常展示。
+- **`manifest.json` · `mp-weixin`**：增加 **`lazyCodeLoading`: `requiredComponents`**（按需注入自定义组件）。
+- **全局样式 `uni.scss`**：宽屏（`min-width: 600px`）下对 **`.demo-page`、`.ext-page`** 限制 **`max-width: 430px`** 并居中，**H5 桌面预览**时避免 `rpx` 随视口拉满导致按钮等演示显得过大（真机窄屏不受影响）。
+
+### 变更（mms-banner-arc）
+
+- **仅保留内凹弧**：移除外凸（`out`）相关绘制与 **`arcMode` / `arcOutTransform`** 等 API；**`top-convex` / `bottom-convex`** 仍解析为同边，按**凹**绘制以兼容旧写法。
+- 结构：**沿口容器** `mms-banner-arc__edge--top/bottom` + **`mms-banner-arc__arc--in`**；根节点形态类 **`mms-banner-arc--variant-*-concave`**（及双弧 **`--variant-dual`**）。
+- 支持 **`height: auto`**（`min-height` 按弧高估算）；**无插槽**，演示页需在组件外包一层叠放文案。
+
+### 变更（mms-button）
+
+- 默认与各 **`btnSize`** 档位**略收紧字号**（默认由 32rpx 调整为 **28rpx** 等），小屏与默认高度比例更协调。
+
+### 修复（样式与规范）
+
+- 多处 **WXSS** 避免使用 **`*`** 等通用选择器（微信小程序不支持），改为 **`gap`** 或显式标签选择器。
+- 组件与 demo 中 **`mms-button`** 文案使用**默认插槽**，勿使用不存在的 **`text`** prop。
+
 ---
 
 ## 3. 历史版本

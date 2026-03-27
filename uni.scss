@@ -67,3 +67,19 @@ $uni-color-paragraph: #3F536E; // 文章段落颜色
 $uni-font-size-paragraph:15px;
 
 /* mms-unix 主题变量 */
+
+/* pages_demo：宽屏（含 H5 桌面预览）限制演示区宽度，避免 rpx 随视口拉满导致按钮等组件显得过大 */
+@media screen and (min-width: 600px) {
+	.demo-page {
+		max-width: 430px;
+		margin-left: auto;
+		margin-right: auto;
+		box-sizing: border-box;
+	}
+	.ext-page {
+		max-width: 430px;
+		margin-left: auto;
+		margin-right: auto;
+		box-sizing: border-box;
+	}
+}
