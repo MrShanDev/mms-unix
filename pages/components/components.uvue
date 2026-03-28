@@ -87,6 +87,8 @@
 				{ name: '图标', path: '/pages_demo/icon/icon', icon: 'setting' },
 				{ name: '标签', path: '/pages_demo/tag/tag', icon: 'tag' },
 				{ name: '卡片', path: '/pages_demo/card/card', icon: 'picture' },
+				{ name: '宫格', path: '/pages_demo/grid/grid', icon: 'layers' },
+				{ name: '栅格', path: '/pages_demo/row/row', icon: 'layout-filling' },
 			],
 		},
 		{
@@ -130,7 +132,6 @@
 				{ name: '价格', path: '/pages_demo/price/price', icon: 'wallet' },
 				{ name: '倒计时', path: '/pages_demo/countdown/countdown', icon: 'time' },
 				{ name: '验证码倒计时', path: '/pages_demo/smsCountdown/smsCountdown', icon: 'time' },
-				{ name: '宫格', path: '/pages_demo/grid/grid', icon: 'layers' },
 				{ name: '轮播图', path: '/pages_demo/ext/swiper/swiper', icon: 'picture' },
 				{ name: '二维码', path: '/pages_demo/qrcode/qrcode', icon: 'scanning' },
 				{ name: '水印', path: '/pages_demo/watermark/watermark', icon: 'lock' },

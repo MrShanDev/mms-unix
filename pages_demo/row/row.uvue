@@ -1,0 +1,198 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">使用说明</text>
+			<text class="section-desc">
+				将一行宽度分为 24 个栅格单位；每列用 span 表示占据的格数，同一行内各列 span 之和宜为 24。列宽按百分比计算（span÷24），随屏幕宽度变化。
+			</text>
+			<text class="section-desc">
+				mms-row 仅提供横向 flex 换行与 gutter：父级使用负边距拉开间距，子级 mms-col 在需要时设置 padding（一般为 gutter 的一半，单位 rpx），避免列内容贴边。
+			</text>
+			<text class="section-desc">
+				本实现未提供按断点（如 xs/sm）切换 span 的能力；若需响应式，可在页面内按窗口宽度自行切换 span。
+			</text>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">基础（单列占满）</text>
+			<mms-row>
+				<mms-col :span="24">
+					<view class="demo-block demo-block--a">
+						<text class="demo-block-t">span=24</text>
+					</view>
+				</mms-col>
+			</mms-row>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">两列等分</text>
+			<mms-row>
+				<mms-col :span="12">
+					<view class="demo-block demo-block--b">
+						<text class="demo-block-t">12</text>
+					</view>
+				</mms-col>
+				<mms-col :span="12">
+					<view class="demo-block demo-block--c">
+						<text class="demo-block-t">12</text>
+					</view>
+				</mms-col>
+			</mms-row>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">混合宽度（8 + 8 + 4 + 4）</text>
+			<mms-row>
+				<mms-col :span="8">
+					<view class="demo-block demo-block--b">
+						<text class="demo-block-t">8</text>
+					</view>
+				</mms-col>
+				<mms-col :span="8">
+					<view class="demo-block demo-block--c">
+						<text class="demo-block-t">8</text>
+					</view>
+				</mms-col>
+				<mms-col :span="4">
+					<view class="demo-block demo-block--d">
+						<text class="demo-block-t">4</text>
+					</view>
+				</mms-col>
+				<mms-col :span="4">
+					<view class="demo-block demo-block--e">
+						<text class="demo-block-t">4</text>
+					</view>
+				</mms-col>
+			</mms-row>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">左侧偏移（offset）</text>
+			<text class="section-desc">offset 为左侧空出的栅格数，再绘制当前列。</text>
+			<mms-row>
+				<mms-col :span="8" :offset="8">
+					<view class="demo-block demo-block--a">
+						<text class="demo-block-t">span=8 · offset=8</text>
+					</view>
+				</mms-col>
+			</mms-row>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">栅格间距（gutter）</text>
+			<text class="section-desc">以下 gutter=16rpx，每列 padding=8rpx，与行负边距配合形成列间隙。</text>
+			<mms-row :gutter="16">
+				<mms-col :span="8" padding="8">
+					<view class="demo-block demo-block--b">
+						<text class="demo-block-t">8</text>
+					</view>
+				</mms-col>
+				<mms-col :span="8" padding="8">
+					<view class="demo-block demo-block--c">
+						<text class="demo-block-t">8</text>
+					</view>
+				</mms-col>
+				<mms-col :span="8" padding="8">
+					<view class="demo-block demo-block--d">
+						<text class="demo-block-t">8</text>
+					</view>
+				</mms-col>
+			</mms-row>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">不等分（6 + 18）</text>
+			<mms-row :gutter="12">
+				<mms-col :span="6" padding="6">
+					<view class="demo-block demo-block--e">
+						<text class="demo-block-t">侧栏 6</text>
+					</view>
+				</mms-col>
+				<mms-col :span="18" padding="6">
+					<view class="demo-block demo-block--a">
+						<text class="demo-block-t">主区 18</text>
+					</view>
+				</mms-col>
+			</mms-row>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+</script>
+
+<style lang="scss">
+@import '../_demo-common.scss';
+
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-desc {
+	display: block;
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.55;
+	margin-top: 12rpx;
+}
+
+.demo-block {
+	min-height: 88rpx;
+	border-radius: 8rpx;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+}
+
+.demo-block-t {
+	font-size: 26rpx;
+	color: #333333;
+	font-weight: bold;
+}
+
+.demo-block--a {
+	background-color: #e6f4ff;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #91caff;
+}
+
+.demo-block--b {
+	background-color: #fff7e6;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #ffd591;
+}
+
+.demo-block--c {
+	background-color: #f6ffed;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #b7eb8f;
+}
+
+.demo-block--d {
+	background-color: #fff0f6;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #ffadd2;
+}
+
+.demo-block--e {
+	background-color: #f9f0ff;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #d3adf7;
+}
+</style>

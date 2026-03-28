@@ -52,6 +52,7 @@
 				{ "path": "smsCountdown/smsCountdown", "style": { "navigationBarTitleText": "验证码倒计时" } },
 				{ "path": "search/search", "style": { "navigationBarTitleText": "搜索" } },
 				{ "path": "grid/grid", "style": { "navigationBarTitleText": "宫格" } },
+				{ "path": "row/row", "style": { "navigationBarTitleText": "栅格布局" } },
 				{ "path": "card/card", "style": { "navigationBarTitleText": "卡片" } },
 				{ "path": "upload/upload", "style": { "navigationBarTitleText": "上传" } },
 				{ "path": "form/input", "style": { "navigationBarTitleText": "输入框 mms-input" } },

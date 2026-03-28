@@ -2,6 +2,10 @@
 
 栅格布局系统，和 `mms-row` 配合使用，总共 24 栅格。
 
+## 演示
+
+- 路径：`pages_demo/row/row`（与 `mms-row` 同页）
+
 ## 使用
 
 ```uvue
@@ -28,7 +32,11 @@
 | `span` | 栅格占据的列数，总共 24 | `number` | `24` |
 | `offset` | 左侧偏移列数 | `number` | `0` |
 | `width` | 自定义宽度 | `number` \| `string` | - |
-| `padding` | 自定义左右padding，单位 rpx | `number` \| `string` | - |
+| `padding` | 左右内边距（rpx 数值或带 `rpx`/`px` 的字符串）；与父行 `gutter` 同时使用时，常设为 gutter 的一半 | `number` \| `string` | - |
+
+## Events
+
+无。
 
 ## 插槽
 

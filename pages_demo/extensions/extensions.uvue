@@ -26,6 +26,7 @@
 		{
 			title: '布局与导航',
 			items: [
+				{ name: '栅格布局', path: '/pages_demo/row/row' },
 				{ name: '吸顶', path: '/pages_demo/ext/sticky/sticky' },
 				{ name: '底部导航', path: '/pages_demo/ext/bottom-nav/bottom-nav' }
 			]
