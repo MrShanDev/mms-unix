@@ -112,6 +112,7 @@
 				{ "path": "ext/tips/tips", "style": { "navigationBarTitleText": "提示条 m-tips" } },
 				{ "path": "loadmore/loadmore", "style": { "navigationBarTitleText": "加载更多" } },
 				{ "path": "tree/tree", "style": { "navigationBarTitleText": "树形" } },
+				{ "path": "waterfall/waterfall", "style": { "navigationBarTitleText": "瀑布流", "disableScroll": true } },
 				{ "path": "ext/wx-login/wx-login", "style": { "navigationBarTitleText": "微信登录按钮" } }
 			]
 		},

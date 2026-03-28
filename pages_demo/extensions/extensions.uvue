@@ -70,6 +70,7 @@
 				{ name: '弧形横幅', path: '/pages_demo/ext/banner-arc/banner-arc' },
 				{ name: '图片裁剪', path: '/pages_demo/ext/cropper/cropper' },
 				{ name: '树形', path: '/pages_demo/tree/tree' },
+				{ name: '瀑布流', path: '/pages_demo/waterfall/waterfall' },
 				{ name: '加载更多', path: '/pages_demo/loadmore/loadmore' }
 			]
 		},
