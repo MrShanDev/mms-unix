@@ -1,11 +1,11 @@
 <template>
-	<view class="m-col" :class="getGutterClass" :style="getStyle">
+	<view class="m-col" :style="getStyle()">
 		<slot></slot>
 	</view>
 </template>
 
 <script lang="uts">
-import { unref } from 'vue'
+import { PropType, unref } from 'vue'
 import { parseCssNumber } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
 
 export default {
@@ -13,7 +13,8 @@ export default {
 	inject: {
 		mRowGutter: {
 			from: 'mRowGutter',
-			default: 0
+			default: null,
+			type: Object as unknown as PropType<any | null>
 		}
 	},
 	props: {
@@ -38,12 +39,9 @@ export default {
 			default: ''
 		}
 	},
-	computed: {
-		getGutterClass() {
-			return 'm-col'
-		},
-		/** 父级 m-row 的 gutter（rpx），与负边距配套为列内左右各一半 */
-		rowGutterRpx(): number {
+	methods: {
+		/** 父级 m-row 的 gutter（rpx），与负边距配套为列内各一半 */
+		getRowGutterRpx(): number {
 			const raw = this.mRowGutter
 			if (raw == null) {
 				return 0
@@ -55,13 +53,12 @@ export default {
 			}
 			return n
 		},
-		getStyle() {
+		getStyle(): UTSJSONObject {
 			const style: UTSJSONObject = {}
 			let span = Number(this.span)
 			if (span > 24) span = 24
 			if (span < 1) span = 1
 			const percent = (span / 24 * 100) + '%'
-			// 父级 m-row 为 flex：仅用 width + float 会导致子项被当成 flex-basis:auto 撑满一行，需用 flex 固定占比
 			const wRaw = this.width
 			let customW = ''
 			if (typeof wRaw === 'number') {
@@ -76,16 +73,16 @@ export default {
 			}
 			style['minWidth'] = '0'
 			style['maxWidth'] = '100%'
-			// 左侧偏移
 			const offsetNum = Number(this.offset)
 			if (offsetNum > 0) {
 				const offsetPercent = (offsetNum / 24 * 100) + '%'
 				style.marginLeft = offsetPercent
 			}
-			const halfGutter = this.rowGutterRpx / 2
-			// 自定义 padding（与 gutter 左右各一半叠加）
-			if (this.padding !== '' && this.padding != null) {
-				const p = parseCssNumber(this.padding as number | string)
+			const gutterRpx = this.getRowGutterRpx()
+			const halfGutter = gutterRpx / 2
+			const padRaw = this.padding
+			if (padRaw !== '' && padRaw != null) {
+				const p = parseCssNumber(padRaw as number | string)
 				if (p > 0) {
 					style.paddingLeft = (halfGutter + p) + 'rpx'
 					style.paddingRight = (halfGutter + p) + 'rpx'
