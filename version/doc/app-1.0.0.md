@@ -5,7 +5,7 @@
 ## 范围（摘要）
 
 - 四 Tab：**组件** / **工具** / **模版** / **我的**。
-- 组件演示分包、`mms-ui-config` 与 `config.mmsUi` 合并策略。
+- 组件演示分包、`config.uts` 与 `config.mUi` 合并策略。
 - 详见仓库根目录 `PROGRESS.md` 历史章节。
 
 ---

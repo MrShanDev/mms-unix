@@ -2,74 +2,75 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">基础卡片（仅标题 + 内容）</text>
-			<mms-card title="卡片标题">
+			<m-card title="卡片标题">
 				<text class="card-content">标题与内容分区展示，与下方「无标题」对比可见差异。</text>
-			</mms-card>
+			</m-card>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">带图横排（缩略图 + 标题 + 正文）</text>
-			<mms-card title="商品卡片" subtitle="副标题 / 卖点一行" :thumb="demoThumb">
+			<m-card title="商品卡片" subtitle="副标题 / 卖点一行" :thumb="demoThumb">
 				<view class="card-body">
 					<text class="card-desc">左侧为缩略图，右侧为标题区；以下为自定义插槽内容。</text>
 					<view class="card-footer">
-						<mms-price price="199.00"></mms-price>
-						<mms-button type="primary" btnSize="small">购买</mms-button>
+						<m-price price="199.00"></m-price>
+						<m-button type="danger" btnSize="mini">购买</m-button>
 					</view>
 				</view>
-			</mms-card>
+			</m-card>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">无标题（仅内容区）</text>
-			<mms-card>
+			<m-card>
 				<text class="card-content">未传 title / thumb，无头部条，版式更紧凑。</text>
-			</mms-card>
+			</m-card>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">无边框（放在灰底上便于看出区别）</text>
 			<view class="demo-card-on-gray">
-				<mms-card title="无边框卡片" :border="false">
+				<m-card title="无边框卡片" :border="false">
 					<text class="card-content">border / bordered 均为 false，仅白底块，无外描边。</text>
-				</mms-card>
+				</m-card>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">阴影卡片</text>
-			<mms-card title="带投影" :shadow="true" :border="false">
+			<m-card title="带投影" :shadow="true" :border="false">
 				<text class="card-content">shadow=true，适合与平面列表区分层次。</text>
-			</mms-card>
+			</m-card>
 		</view>
 
 		<view class="demo-section demo-section--flush">
 			<text class="section-title section-title--inset">通栏卡片 full</text>
-			<mms-card title="左右顶到容器" :full="true" :border="false" :shadow="true">
+			<m-card title="左右顶到容器" :full="true" :border="false" :shadow="true">
 				<text class="card-content">full=true 时取消左右 margin，适合嵌在通栏列表里。</text>
-			</mms-card>
+			</m-card>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">底部操作区（footer 插槽）</text>
-			<mms-card title="需要底部按钮时">
+			<m-card title="需要底部按钮时">
 				<text class="card-content">正文区域。</text>
 				<template #footer>
 					<view class="card-footer-actions">
-						<mms-button type="gray" btnSize="small" width="200rpx">取消</mms-button>
-						<mms-button type="primary" btnSize="small" width="200rpx">确定</mms-button>
+						<!-- btnSize 存在时 width 会被组件内部覆盖；间距不用 gap（ucss 可能无效），用 margin -->
+						<m-button type="gray" btnSize="mini" margin="0">取消</m-button>
+						<m-button type="primary" btnSize="mini" margin="0 0 0 24rpx">确定</m-button>
 					</view>
 				</template>
-			</mms-card>
+			</m-card>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
 	import { computed } from 'vue'
-	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
+	import { getMUiConfig } from '@/uni_modules/m-unix/config.uts'
 
-	const demoThumb = computed((): string => getMmsUiConfig().demoCardThumb)
+	const demoThumb = computed((): string => getMUiConfig().demoImage)
 </script>
 
 <style lang="scss">
@@ -136,6 +137,7 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
-	gap: 24rpx;
+	align-items: center;
+	flex-wrap: nowrap;
 }
 </style>

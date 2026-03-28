@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/mms-unix.iml" filepath="$PROJECT_DIR$/.idea/mms-unix.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/m-unix.iml" filepath="$PROJECT_DIR$/.idea/m-unix.iml" />
     </modules>
   </component>
 </project>

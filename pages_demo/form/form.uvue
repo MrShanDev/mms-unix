@@ -1,17 +1,17 @@
 <template>
 	<view class="demo-page">
 		<view class="demo-section">
-			<text class="section-title">mms-form 组合</text>
+			<text class="section-title">m-form 组合</text>
 			<text class="section-desc">卡片式分组；内含输入、单选、多选、开关、地区选择与备注；末行可去掉底部分割线。</text>
-			<mms-form title="资料登记" padding="0" :marginX="0">
-				<mms-input
+			<m-form title="资料登记" padding="0" :marginX="0">
+				<m-input
 					v-model="fName"
 					label="姓名"
 					placeholder="请输入"
 					:required="true"
 					:clearable="true"
-				></mms-input>
-				<mms-input
+				></m-input>
+				<m-input
 					v-model="fPhone"
 					label="手机"
 					type="number"
@@ -19,44 +19,54 @@
 					:clearable="true"
 				>
 					<template #right>
-						<mms-countdown-verify
+						<m-countdown-verify
 							:successTick="smsSuccessTick"
 							:resetTick="smsResetTick"
 							color="#ff0844"
 							borderColor="#ff0844"
 							:seconds="60"
 							@send="onSmsSend"
-						></mms-countdown-verify>
+						></m-countdown-verify>
 					</template>
-				</mms-input>
+				</m-input>
 				<view class="form-gender">
 					<text class="form-gender__label">性别</text>
-					<mms-radio-group v-model="fGender" direction="row" color="#ff0844" borderColor="#cccccc">
-						<mms-radio value="m">
-							<text class="form-gender__opt">男</text>
-						</mms-radio>
-						<mms-radio value="f">
-							<text class="form-gender__opt">女</text>
-						</mms-radio>
-					</mms-radio-group>
+					<view class="form-gender__options">
+						<m-radio-group v-model="fGender" direction="row" color="#ff0844" borderColor="#cccccc">
+							<m-radio value="m">
+								<text class="form-gender__opt">男</text>
+							</m-radio>
+							<m-radio value="f">
+								<text class="form-gender__opt">女</text>
+							</m-radio>
+						</m-radio-group>
+					</view>
 				</view>
 				<view class="form-hobbies">
 					<text class="form-hobbies__label">爱好</text>
-					<mms-checkbox-group v-model="fHobbies" direction="row" color="#ff0844" borderColor="#cccccc">
-						<mms-checkbox value="read">
-							<text class="form-hobbies__opt">阅读</text>
-						</mms-checkbox>
-						<mms-checkbox value="sport">
-							<text class="form-hobbies__opt">运动</text>
-						</mms-checkbox>
-						<mms-checkbox value="music">
-							<text class="form-hobbies__opt">音乐</text>
-						</mms-checkbox>
-					</mms-checkbox-group>
+					<view class="form-hobbies__options">
+						<m-checkbox-group v-model="fHobbies" direction="row" color="#ff0844" borderColor="#cccccc">
+							<m-checkbox value="read">
+								<text class="form-hobbies__opt">阅读</text>
+							</m-checkbox>
+							<m-checkbox value="sport">
+								<text class="form-hobbies__opt">运动</text>
+							</m-checkbox>
+							<m-checkbox value="music">
+								<text class="form-hobbies__opt">音乐</text>
+							</m-checkbox>
+							<m-checkbox value="travel">
+								<text class="form-hobbies__opt">旅行</text>
+							</m-checkbox>
+							<m-checkbox value="game">
+								<text class="form-hobbies__opt">游戏</text>
+							</m-checkbox>
+						</m-checkbox-group>
+					</view>
 				</view>
 				<view class="form-notify">
 					<text class="form-notify__label">短信通知</text>
-					<mms-switch v-model="fNotify" color="#ff0844"></mms-switch>
+					<m-switch v-model="fNotify" color="#ff0844"></m-switch>
 				</view>
 				<view class="form-picker" @tap="regionPickerShow = true">
 					<text class="form-picker__label">地区</text>
@@ -64,9 +74,9 @@
 						class="form-picker__value"
 						:class="{ 'form-picker__value--ph': fRegionText === '' }"
 					>{{ fRegionText !== '' ? fRegionText : '请选择' }}</text>
-					<mms-icon name="arrow-right" :size="28" color="#cccccc"></mms-icon>
+					<m-icon name="arrow-right" :size="28" color="#cccccc"></m-icon>
 				</view>
-				<mms-picker
+				<m-picker
 					:show="regionPickerShow"
 					:pickerData="formRegionTree"
 					:layer="2"
@@ -74,8 +84,8 @@
 					confirmColor="#ff0844"
 					@update:show="onRegionPickerShow"
 					@confirm="onRegionConfirm"
-				></mms-picker>
-				<mms-textarea
+				></m-picker>
+				<m-textarea
 					v-model="fRemark"
 					label="备注"
 					placeholder="选填，可输入多行"
@@ -85,10 +95,10 @@
 					height="180rpx"
 					minHeight="180rpx"
 					:borderBottom="false"
-				></mms-textarea>
-			</mms-form>
+				></m-textarea>
+			</m-form>
 			<view class="demo-submit">
-				<mms-button type="primary" shape="circle" @click="onSubmitForm">提交</mms-button>
+				<m-button type="primary" shape="circle" @click="onSubmitForm">提交</m-button>
 			</view>
 		</view>
 	</view>
@@ -225,6 +235,11 @@ export default {
 	color: #333333;
 }
 
+.form-gender__options {
+	flex: 1;
+	min-width: 0;
+}
+
 .form-hobbies {
 	display: flex;
 	flex-direction: row;
@@ -248,6 +263,12 @@ export default {
 .form-hobbies__opt {
 	font-size: 32rpx;
 	color: #333333;
+}
+
+/* 横向 flex 右侧子项默认 min-width:auto 会撑满一行导致不换行；占满剩余宽度并允许收缩 */
+.form-hobbies__options {
+	flex: 1;
+	min-width: 0;
 }
 
 .form-notify {

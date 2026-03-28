@@ -7,13 +7,13 @@
 					通过 itemList 配置文案，current 与选中项对应；点击某项时在 @click 中更新 current 即可完成切换。
 				</text>
 				<view class="ext-nav-box">
-					<mms-bottom-navigation
+					<m-bottom-navigation
 						:current="curBasic"
 						:item-list="listBasic"
 						:is-fixed="false"
 						:safe-bottom="false"
 						@click="onNavBasic"
-					></mms-bottom-navigation>
+					></m-bottom-navigation>
 				</view>
 				<text class="bottom-nav-log">当前选中索引：{{ curBasic }}（{{ labelBasic }}）</text>
 			</view>
@@ -24,14 +24,14 @@
 					每项可配置 iconPath、selectedIconPath，选中时显示高亮图；路径需为可访问的本地或网络地址。
 				</text>
 				<view class="ext-nav-box">
-					<mms-bottom-navigation
+					<m-bottom-navigation
 						:current="curIcon"
 						:item-list="listIcon"
 						:is-fixed="false"
 						:safe-bottom="false"
 						:selected-color="'#ff0844'"
 						@click="onNavIcon"
-					></mms-bottom-navigation>
+					></m-bottom-navigation>
 				</view>
 				<text class="bottom-nav-log">当前：{{ labelIcon }}</text>
 			</view>
@@ -42,7 +42,7 @@
 					使用 color、selectedColor、backgroundColor 调整未选中/选中文字色与栏背景；fontSize、bold 可微调字号与选中加粗。
 				</text>
 				<view class="ext-nav-box ext-nav-box--theme">
-					<mms-bottom-navigation
+					<m-bottom-navigation
 						:current="curTheme"
 						:item-list="listTheme"
 						:is-fixed="false"
@@ -53,7 +53,7 @@
 						font-size="26rpx"
 						:bold="true"
 						@click="onNavTheme"
-					></mms-bottom-navigation>
+					></m-bottom-navigation>
 				</view>
 			</view>
 
@@ -64,25 +64,25 @@
 				</text>
 				<text class="bottom-nav-subttl">默认（有顶线区域）</text>
 				<view class="ext-nav-box">
-					<mms-bottom-navigation
+					<m-bottom-navigation
 						:current="0"
 						:item-list="listLine"
 						:is-fixed="false"
 						:safe-bottom="false"
 						:unlined="false"
 						@click="onNavNoop"
-					></mms-bottom-navigation>
+					></m-bottom-navigation>
 				</view>
 				<text class="bottom-nav-subttl">unlined</text>
 				<view class="ext-nav-box">
-					<mms-bottom-navigation
+					<m-bottom-navigation
 						:current="0"
 						:item-list="listLine"
 						:is-fixed="false"
 						:safe-bottom="false"
 						:unlined="true"
 						@click="onNavNoop"
-					></mms-bottom-navigation>
+					></m-bottom-navigation>
 				</view>
 			</view>
 
@@ -92,14 +92,14 @@
 					将某项 type 设为 3，并配置 itemList，点击后会在该项上方弹出子项；点遮罩关闭。子项点击在 @click 中带 menu=sub。
 				</text>
 				<view class="ext-nav-box">
-					<mms-bottom-navigation
+					<m-bottom-navigation
 						:current="curSub"
 						:item-list="listSub"
 						:is-fixed="false"
 						:safe-bottom="false"
 						:selected-color="'#ff0844'"
 						@click="onNavSub"
-					></mms-bottom-navigation>
+					></m-bottom-navigation>
 				</view>
 				<text class="bottom-nav-log">{{ subLog }}</text>
 			</view>
@@ -110,17 +110,17 @@
 					可在 @click 内先判断业务条件：不满足时用提示说明原因，且不更新 current，避免选中态切换。
 				</text>
 				<view class="ext-nav-box">
-					<mms-bottom-navigation
+					<m-bottom-navigation
 						:current="curGuard"
 						:item-list="listGuard"
 						:is-fixed="false"
 						:safe-bottom="false"
 						:selected-color="'#ff0844'"
 						@click="onNavGuard"
-					></mms-bottom-navigation>
+					></m-bottom-navigation>
 				</view>
 				<text class="bottom-nav-log">{{ guardTip }}</text>
-				<mms-button type="primary" btnSize="small" @tap="onGuardUnlock">演示：通过校验</mms-button>
+				<m-button type="primary" btnSize="small" @tap="onGuardUnlock">演示：通过校验</m-button>
 			</view>
 
 			<view class="ext-section">

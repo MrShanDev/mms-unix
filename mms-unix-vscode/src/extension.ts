@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as vscode from 'vscode'
 
-const MMS_COMPONENTS_REL = path.join('uni_modules', 'mms-unix', 'components')
+const MMS_COMPONENTS_REL = path.join('uni_modules', 'm-unix', 'components')
 
 function findMmsComponentsRoot(): string | null {
   const folders = vscode.workspace.workspaceFolders
@@ -30,7 +30,7 @@ function listMmsTagNames(componentsRoot: string): string[] {
     if (!e.isDirectory()) {
       continue
     }
-    if (!e.name.startsWith('mms-')) {
+    if (!e.name.startsWith('m-')) {
       continue
     }
     const uvue = path.join(componentsRoot, e.name, `${e.name}.uvue`)
@@ -42,7 +42,7 @@ function listMmsTagNames(componentsRoot: string): string[] {
   return names
 }
 
-/** 光标所在行、光标前文本：是否正在输入开始标签名（如 `<`、`</`、`mms-b`） */
+/** 光标所在行、光标前文本：是否正在输入开始标签名（如 `<`、`</`、`m-b`） */
 function getTagNamePrefix(lineText: string, charIndex: number): string | null {
   const before = lineText.slice(0, charIndex)
   const open = before.lastIndexOf('<')
@@ -85,7 +85,7 @@ export function activate(context: vscode.ExtensionContext): void {
         if (names.length === 0) {
           return [
             new vscode.CompletionItem(
-              '（未找到 uni_modules/mms-unix/components）',
+              '（未找到 uni_modules/m-unix/components）',
               vscode.CompletionItemKind.Text,
             ),
           ]
@@ -96,7 +96,7 @@ export function activate(context: vscode.ExtensionContext): void {
             continue
           }
           const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Class)
-          item.detail = 'MMS-UNIX'
+          item.detail = 'mUnix'
           item.documentation = new vscode.MarkdownString(`组件库标签 \`${name}\`（easycom）`)
           items.push(item)
         }
@@ -109,21 +109,21 @@ export function activate(context: vscode.ExtensionContext): void {
 
   const hover = vscode.languages.registerHoverProvider('vue', {
     provideHover(document, position) {
-      const range = document.getWordRangeAtPosition(position, /mms-[a-z0-9-]+/i)
+      const range = document.getWordRangeAtPosition(position, /m-[a-z0-9-]+/i)
       if (range == null) {
         return undefined
       }
       const word = document.getText(range)
-      if (!word.startsWith('mms-')) {
+      if (!word.startsWith('m-')) {
         return undefined
       }
       const names = tagNames()
       const md = new vscode.MarkdownString()
       if (names.includes(word)) {
-        md.appendMarkdown(`**${word}** · MMS-UNIX 组件（easycom，无需 import）\n\n`)
+        md.appendMarkdown(`**${word}** · mUnix 组件（easycom，无需 import）\n\n`)
         md.appendMarkdown(`路径: \`${MMS_COMPONENTS_REL}/${word}/\``)
       } else {
-        md.appendMarkdown(`**${word}** · 当前工作区未在组件目录中找到对应 \`.uvue\`（请确认已安装 \`uni_modules/mms-unix\`）`)
+        md.appendMarkdown(`**${word}** · 当前工作区未在组件目录中找到对应 \`.uvue\`（请确认已安装 \`uni_modules/m-unix\`）`)
       }
       md.isTrusted = true
       return new vscode.Hover(md, range)

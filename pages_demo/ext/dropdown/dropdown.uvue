@@ -2,11 +2,11 @@
 	<view class="ext-page">
 		<scroll-view class="ext-scroll" scroll-y>
 			<view class="ext-section">
-				<text class="ext-title">mms-dropdown-list</text>
+				<text class="ext-title">m-dropdown-list</text>
 				<text class="ext-hint ext-dd-doc-lead">
 					通过 show、top、isMask、maskBackground、@close 控制；列表区域高度由内部 scroll-view 样式决定。
 				</text>
-				<mms-dropdown-list
+				<m-dropdown-list
 					:show="dropdownShow"
 					:top="94"
 					:is-mask="true"
@@ -48,7 +48,7 @@
 							</view>
 						</scroll-view>
 					</template>
-				</mms-dropdown-list>
+				</m-dropdown-list>
 			</view>
 			<view class="ext-footer-space"></view>
 		</scroll-view>

@@ -1,0 +1,171 @@
+<template>
+	<scroll-view class="page-scroll" scroll-y style="flex:1">
+		<view class="demo-page">
+			<view class="demo-section">
+				<text class="section-title">分割线（m-div）</text>
+				<text class="section-desc">有文案时中间断线样式；contentPosition 控制文案左/中/右。</text>
+				<m-div text="默认居中"></m-div>
+				<m-gap :height="24"></m-gap>
+				<m-div content-position="left" text="左侧"></m-div>
+				<m-gap :height="24"></m-gap>
+				<m-div content-position="right" text="右侧"></m-div>
+			</view>
+
+			<view class="demo-section">
+				<text class="section-title">间距块（m-gap）</text>
+				<text class="section-desc">固定高度占位，可设背景色便于观察。</text>
+				<view class="demo-strip">
+					<view class="demo-strip__block">
+						<text class="demo-label">上方文案</text>
+					</view>
+					<view class="demo-strip__block">
+						<m-gap :height="16" background="#e8f4ff"></m-gap>
+					</view>
+					<view class="demo-strip__block">
+						<text class="demo-label">下方文案（中间为 gap）</text>
+					</view>
+				</view>
+			</view>
+
+			<view class="demo-section">
+				<text class="section-title">占位（m-white-space）</text>
+				<text class="section-desc">size：small / default / large；或 height 精确高度（rpx）。</text>
+				<view class="demo-strip">
+					<view class="demo-strip__block">
+						<text class="demo-label">small</text>
+						<m-white-space size="small" background="#fff0f6"></m-white-space>
+					</view>
+					<view class="demo-strip__block">
+						<text class="demo-label">default</text>
+						<m-white-space size="default" background="#f6ffed"></m-white-space>
+					</view>
+					<view class="demo-strip__block">
+						<text class="demo-label">large</text>
+						<m-white-space size="large" background="#e6f7ff"></m-white-space>
+					</view>
+				</view>
+			</view>
+
+			<view class="demo-section">
+				<text class="section-title">栅格示意（flex + 间距）</text>
+				<text class="section-desc">
+					m-row 为 flex；m-col 内为 float，与 flex 混用在 ucss 下易无间距。此处用纯 flex 演示两列等分与带偏移的两列；业务中可优先用 flex 或给 m-col 传 padding。
+				</text>
+				<view class="grid-demo">
+					<view class="grid-demo__row">
+						<view class="grid-demo__cell"><view class="col-demo">span=12</view></view>
+						<view class="grid-demo__gutter"></view>
+						<view class="grid-demo__cell"><view class="col-demo col-demo--b">span=12</view></view>
+					</view>
+					<view class="grid-demo__row grid-demo__row--mt">
+						<view class="grid-demo__cell"><view class="col-demo">8</view></view>
+						<view class="grid-demo__cell grid-demo__cell--spacer"></view>
+						<view class="grid-demo__cell"><view class="col-demo col-demo--b">8 offset=8</view></view>
+					</view>
+				</view>
+			</view>
+		</view>
+	</scroll-view>
+</template>
+
+<script setup lang="uts">
+</script>
+
+<style lang="scss">
+@import '../../_demo-common.scss';
+
+.page-scroll {
+	height: 100%;
+}
+
+.demo-page {
+	min-height: 100%;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+	padding-bottom: 48rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	margin-bottom: 16rpx;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.55;
+	margin-bottom: 20rpx;
+	display: block;
+}
+
+.demo-strip {
+	border-radius: 12rpx;
+	overflow: hidden;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #eeeeee;
+	padding: 16rpx;
+}
+
+.demo-label {
+	font-size: 26rpx;
+	color: #666666;
+	display: block;
+	margin-bottom: 12rpx;
+}
+
+.demo-strip__block {
+	margin-bottom: 20rpx;
+}
+
+.demo-strip__block:last-child {
+	margin-bottom: 0;
+}
+
+.grid-demo {
+	width: 100%;
+}
+
+.grid-demo__row {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+}
+
+.grid-demo__row--mt {
+	margin-top: 16rpx;
+}
+
+.grid-demo__cell {
+	flex: 1;
+	min-width: 0;
+}
+
+.grid-demo__gutter {
+	width: 16rpx;
+	flex-shrink: 0;
+}
+
+.grid-demo__cell--spacer {
+	min-height: 1rpx;
+}
+
+.col-demo {
+	background-color: #fff0f6;
+	border-radius: 8rpx;
+	padding: 20rpx;
+	font-size: 24rpx;
+	color: #333333;
+	text-align: center;
+}
+
+.col-demo--b {
+	background-color: #e6f7ff;
+}
+</style>

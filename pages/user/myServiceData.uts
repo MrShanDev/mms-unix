@@ -1,23 +1,50 @@
 /**
- * 「我的」页菜单：个人介绍、开源与演示、联系与业务等（路径须与 pages.json 一致）
- * requireLogin: true 时需登录后进入
+ * 「我的」页菜单：路径须与 pages.json 一致；标题与二级页导航栏 / 页内主标题对齐。
+ *
+ * - **menu 配置**：列表 / 宫格、分组标题、宫格列数、是否启用登录校验（总开关）。
+ * - **单项 requireLogin**：在 **loginGuard 为 true** 时生效；为 true 则未登录时弹窗引导登录。
+ * - **loginGuard 为 false** 时：所有入口均不校验登录，直接跳转（忽略单项 requireLogin）。
  */
+export type UserServiceMenuStyle = 'list' | 'grid'
+
 export type UserServiceItem = {
-	/** mms-icon 图标名，与 mms-cell 的 icon 一致 */
+	/** m-icon 图标名 */
 	iconName: string
 	title: string
 	pages: string
+	/** 在 loginGuard 为 true 时：为 true 则需登录后才可进入 */
 	requireLogin: boolean
+}
+
+export type UserServiceMenuConfig = {
+	/** 列表（m-cell）或宫格（m-grid + m-grid-item） */
+	style: UserServiceMenuStyle
+	/** 分组标题 */
+	title: string
+	/** 宫格列数，仅 style === 'grid' 时生效 */
+	gridColumns: number
+	/**
+	 * 是否启用「按项 requireLogin」的登录判断。
+	 * false：全部直接跳转，不弹登录（忽略单项 requireLogin）。
+	 */
+	loginGuard: boolean
+}
+
+/** 菜单外观与行为（改此处即可切换列表/宫格与登录策略） */
+export function getUserServiceMenuConfig(): UserServiceMenuConfig {
+	return {
+		style: 'list',
+		title: '服务与内容',
+		gridColumns: 4,
+		loginGuard: true
+	}
 }
 
 export function getUserServiceItems(): UserServiceItem[] {
 	return [
-		{ iconName: 'user-filling', title: '介绍自己', pages: '/pages_Me/user_info/index', requireLogin: true },
-		{ iconName: 'share', title: '开源项目', pages: '/pages_Me/about_me/about_me', requireLogin: false },
-		{ iconName: 'layout-filling', title: '组件演示', pages: '/pages_demo/index', requireLogin: false },
-		{ iconName: 'telephone', title: '联系我们', pages: '/pages_Me/contact/contact', requireLogin: false },
-		{ iconName: 'browse', title: '案例展示', pages: '/pages_Article/articleList/articleList', requireLogin: false },
-		{ iconName: 'work-filling', title: '公司业务', pages: '/pages/templates/templates', requireLogin: false },
-		{ iconName: 'task-filling', title: '系统开发承接', pages: '/pages/tools/tools', requireLogin: false },
+		{ iconName: 'user-filling', title: '个人信息', pages: '/pages_Me/user_info/index', requireLogin: true },
+		{ iconName: 'share', title: '关于我们', pages: '/pages_Me/about_me/about_me', requireLogin: false },
+		{ iconName: 'customer-service', title: '商务合作', pages: '/pages_Me/cooperation/cooperation', requireLogin: false },
+		{ iconName: 'telephone', title: '联系我们', pages: '/pages_Me/contact/contact', requireLogin: false }
 	]
 }

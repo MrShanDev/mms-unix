@@ -1,43 +1,51 @@
 <template>
 	<view class="page">
-		<mms-cell-group title="陕西品创网络">
-			<mms-cell title="官网" :border="true">
+		<m-cell-group title="陕西品创网络">
+			<m-cell title="官网" :border="true">
 				<template #right>
-					<mms-link href="https://mmsadmin.cn" text="mmsadmin.cn" underline></mms-link>
+					<m-link href="https://mmsadmin.cn" text="mmsadmin.cn" underline></m-link>
 				</template>
-			</mms-cell>
-			<mms-cell title="商务咨询" value="欢迎邮件/电话沟通合作" :border="false"></mms-cell>
-		</mms-cell-group>
-		<mms-cell-group title="沟通方式（请按实际修改）">
-			<mms-cell title="电话" :value="contactPhone" :isLink="true" @click="onDial"></mms-cell>
-			<mms-cell title="邮箱" :border="false">
+			</m-cell>
+			<m-cell title="组件文档" :border="true">
 				<template #right>
-					<mms-link :href="'mailto:' + contactEmail" :text="contactEmail" underline></mms-link>
+					<m-link href="https://mmsadmin.cn/m-unix/README.html" text="mUnix" underline></m-link>
 				</template>
-			</mms-cell>
-		</mms-cell-group>
+			</m-cell>
+			<m-cell title="插件市场" :border="true">
+				<template #right>
+					<m-link href="https://ext.dcloud.net.cn/plugin?id=m-unix" text="DCloud m-unix" underline></m-link>
+				</template>
+			</m-cell>
+			<m-cell title="商务合作" value="服务范围与承接说明" :isLink="true" :border="true" @click="goCooperation"></m-cell>
+			<m-cell title="商务咨询" value="欢迎邮件、微信沟通合作" :border="false"></m-cell>
+		</m-cell-group>
+		<m-cell-group title="联系方式">
+			<m-cell title="邮箱" :border="true">
+				<template #right>
+					<m-link :href="'mailto:' + contactEmail" :text="contactEmail" underline></m-link>
+				</template>
+			</m-cell>
+			<m-cell title="微信" :value="contactWechat" :isLink="true" :border="false" @click="onCopyWechat"></m-cell>
+		</m-cell-group>
 		<view class="tip">
-			<text class="tip-text">以上联系方式可在本页 script 中修改常量；也可后续接入 config。</text>
+			<text class="tip-text">点击微信可复制微信号。</text>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
-	/** 替换为贵司真实号码与邮箱 */
-	const contactPhone = '029-88888888'
-	const contactEmail = 'contact@example.com'
+	import { copyToClipboard, msg, jumpTo } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
 
-	function onDial() {
-		uni.makePhoneCall({
-			phoneNumber: contactPhone,
-			fail: () => {
-				uni.showModal({
-					title: '联系电话',
-					content: contactPhone,
-					showCancel: false,
-				})
-			},
-		})
+	const contactEmail = 'sxpcwlkj@163.com'
+	const contactWechat = 'qq942879858'
+
+	function onCopyWechat() {
+		copyToClipboard(contactWechat)
+		msg('已复制微信号')
+	}
+
+	function goCooperation() {
+		jumpTo('/pages_Me/cooperation/cooperation')
 	}
 </script>
 

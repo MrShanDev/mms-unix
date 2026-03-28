@@ -5,7 +5,7 @@
 			<text class="section-desc">v-model 绑定 boolean，type 默认 switch</text>
 			<view class="demo-row">
 				<text class="demo-label">通知</text>
-				<mms-switch v-model="s1"></mms-switch>
+				<m-switch v-model="s1"></m-switch>
 			</view>
 			<text class="demo-tip">当前：{{ s1 ? '开' : '关' }}</text>
 		</view>
@@ -14,12 +14,12 @@
 			<text class="section-title">默认打开 / 自定义色</text>
 			<view class="demo-row">
 				<text class="demo-label">深色主题</text>
-				<mms-switch v-model="s2" color="#07c160"></mms-switch>
+				<m-switch v-model="s2" color="#07c160"></m-switch>
 			</view>
 			<view class="demo-gap"></view>
 			<view class="demo-row">
 				<text class="demo-label">品牌色</text>
-				<mms-switch v-model="s3" color="#ff0844"></mms-switch>
+				<m-switch v-model="s3" color="#ff0844"></m-switch>
 			</view>
 		</view>
 
@@ -27,12 +27,12 @@
 			<text class="section-title">缩放 scale</text>
 			<view class="demo-row">
 				<text class="demo-label">0.85</text>
-				<mms-switch v-model="s4" :scale="0.85"></mms-switch>
+				<m-switch v-model="s4" :scale="0.85"></m-switch>
 			</view>
 			<view class="demo-gap"></view>
 			<view class="demo-row">
 				<text class="demo-label">1.05</text>
-				<mms-switch v-model="s5" :scale="1.05" color="#1890ff"></mms-switch>
+				<m-switch v-model="s5" :scale="1.05" color="#1890ff"></m-switch>
 			</view>
 		</view>
 
@@ -40,12 +40,12 @@
 			<text class="section-title">禁用</text>
 			<view class="demo-row">
 				<text class="demo-label">关闭态</text>
-				<mms-switch v-model="s6" :disabled="true"></mms-switch>
+				<m-switch v-model="s6" :disabled="true"></m-switch>
 			</view>
 			<view class="demo-gap"></view>
 			<view class="demo-row">
 				<text class="demo-label">打开态</text>
-				<mms-switch v-model="s7" :disabled="true"></mms-switch>
+				<m-switch v-model="s7" :disabled="true"></m-switch>
 			</view>
 		</view>
 
@@ -54,7 +54,7 @@
 			<text class="section-desc">type="checkbox"，自绘方框，适合与多选视觉统一</text>
 			<view class="demo-row">
 				<text class="demo-label">协议</text>
-				<mms-switch v-model="s8" type="checkbox" color="#5677fc"></mms-switch>
+				<m-switch v-model="s8" type="checkbox" color="#5677fc"></m-switch>
 			</view>
 		</view>
 

@@ -1,29 +1,64 @@
 <template>
 	<view class="demo-page">
 		<view class="demo-section">
-			<text class="section-title">小尺寸左右留白</text>
+			<text class="section-title">留白（m-wing-blank）</text>
+			<text class="section-desc">
+				左右由 size 或 gap 控制；上下内留白用 paddingTop / paddingBottom；与外部的间距用 marginTop / marginBottom。
+			</text>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">小尺寸 · 左右留白</text>
 			<view class="demo-strip">
-				<mms-wing-blank size="small" background="#f0f0f0">
-					<text class="demo-desc">size=&quot;small&quot;，内容区左右内缩，背景可区分边界。</text>
-				</mms-wing-blank>
+				<m-wing-blank size="small" background="#f0f0f0">
+					<text class="demo-desc demo-desc--in">size=&quot;small&quot;，内容区左右内缩，背景可区分边界。</text>
+				</m-wing-blank>
 			</view>
 		</view>
 
 		<view class="demo-section">
-			<text class="section-title">默认尺寸</text>
+			<text class="section-title">默认尺寸 · 左右留白</text>
 			<view class="demo-strip">
-				<mms-wing-blank size="default" background="#e8f4ff">
-					<text class="demo-desc">size=&quot;default&quot;，与 small 对比留白宽度。</text>
-				</mms-wing-blank>
+				<m-wing-blank size="default" background="#e8f4ff">
+					<text class="demo-desc demo-desc--in">size=&quot;default&quot;，与 small 对比留白宽度。</text>
+				</m-wing-blank>
 			</view>
 		</view>
 
 		<view class="demo-section">
-			<text class="section-title">自定义 gap（数字）</text>
+			<text class="section-title">自定义 gap（数字 · 仅左右）</text>
 			<view class="demo-strip">
-				<mms-wing-blank :gap="40" background="#fff5f5">
-					<text class="demo-desc">gap 控制左右 padding，单位与组件约定一致。</text>
-				</mms-wing-blank>
+				<m-wing-blank :gap="40" background="#fff5f5">
+					<text class="demo-desc demo-desc--in">gap 控制左右 padding，单位与组件约定一致（数字为 rpx）。</text>
+				</m-wing-blank>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">上下内留白（paddingTop / paddingBottom）</text>
+			<view class="demo-strip">
+				<m-wing-blank
+					:gap="32"
+					:padding-top="28"
+					:padding-bottom="28"
+					background="#f6ffed"
+				>
+					<text class="demo-desc demo-desc--in">与左右 gap 同时设置；上下为内边距，扩大内容区与背景边缘距离。</text>
+				</m-wing-blank>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">外间距（marginTop / marginBottom）</text>
+			<view class="demo-strip demo-strip--spaced">
+				<m-wing-blank
+					size="default"
+					background="#fff0f6"
+					:margin-top="16"
+					:margin-bottom="16"
+				>
+					<text class="demo-desc demo-desc--in">margin 作用在组件根节点，与兄弟元素拉开距离（非内容区内留白）。</text>
+				</m-wing-blank>
 			</view>
 		</view>
 	</view>
@@ -36,6 +71,14 @@
 @import '../../_demo-common.scss';
 .section-title {
 	margin-bottom: 24rpx;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.55;
+	margin-bottom: 8rpx;
+	display: block;
 }
 
 .demo-page {
@@ -51,8 +94,6 @@
 	margin-bottom: 24rpx;
 }
 
-
-
 .demo-strip {
 	border-radius: 12rpx;
 	overflow: hidden;
@@ -61,11 +102,20 @@
 	border-color: #eeeeee;
 }
 
+.demo-strip--spaced {
+	background-color: #fafafa;
+	padding: 8rpx 0;
+}
+
 .demo-desc {
 	font-size: 28rpx;
 	color: #666666;
 	line-height: 1.5;
-	padding: 24rpx 0;
 	display: block;
+}
+
+/* 留白由组件 padding 承担，正文不再额外撑高 */
+.demo-desc--in {
+	padding: 0;
 }
 </style>

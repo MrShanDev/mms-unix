@@ -3,7 +3,7 @@
 		<view class="demo-section">
 			<text class="section-title">基础二维码</text>
 			<view class="qrcode-center">
-				<mms-qrcode :value="qrValue"></mms-qrcode>
+				<m-qrcode :value="qrValue"></m-qrcode>
 			</view>
 		</view>
 
@@ -11,15 +11,15 @@
 			<text class="section-title">自定义尺寸</text>
 			<view class="qrcode-row">
 				<view class="qrcode-item">
-					<mms-qrcode :value="qrValue" size="100"></mms-qrcode>
+					<m-qrcode :value="qrValue" size="100"></m-qrcode>
 					<text class="qrcode-label">100px</text>
 				</view>
 				<view class="qrcode-item">
-					<mms-qrcode :value="qrValue" size="150"></mms-qrcode>
+					<m-qrcode :value="qrValue" size="150"></m-qrcode>
 					<text class="qrcode-label">150px</text>
 				</view>
 				<view class="qrcode-item">
-					<mms-qrcode :value="qrValue" size="200"></mms-qrcode>
+					<m-qrcode :value="qrValue" size="200"></m-qrcode>
 					<text class="qrcode-label">200px</text>
 				</view>
 			</view>
@@ -28,7 +28,7 @@
 		<view class="demo-section">
 			<text class="section-title">带Logo</text>
 			<view class="qrcode-center">
-				<mms-qrcode :value="qrValue" :logo="logoUrl"></mms-qrcode>
+				<m-qrcode :value="qrValue" :logo="logoUrl"></m-qrcode>
 			</view>
 		</view>
 
@@ -36,11 +36,11 @@
 			<text class="section-title">自定义颜色</text>
 			<view class="qrcode-row">
 				<view class="qrcode-item">
-					<mms-qrcode :value="qrValue" color="#ff0844"></mms-qrcode>
+					<m-qrcode :value="qrValue" color="#ff0844"></m-qrcode>
 					<text class="qrcode-label">红色</text>
 				</view>
 				<view class="qrcode-item">
-					<mms-qrcode :value="qrValue" color="#1890ff"></mms-qrcode>
+					<m-qrcode :value="qrValue" color="#1890ff"></m-qrcode>
 					<text class="qrcode-label">蓝色</text>
 				</view>
 			</view>
@@ -50,10 +50,10 @@
 
 <script setup lang="uts">
 	import { computed } from 'vue'
-	import { getMmsUiConfig } from '@/uni_modules/mms-unix/config/mms-ui-config.uts'
+	import { getMUiConfig } from '@/uni_modules/m-unix/config.uts'
 
 	const qrValue = 'https://www.example.com'
-	const logoUrl = computed((): string => getMmsUiConfig().avatarDefault)
+	const logoUrl = computed((): string => getMUiConfig().avatarDefault)
 </script>
 
 <style lang="scss">

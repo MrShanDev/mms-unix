@@ -2,12 +2,12 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">单按钮提示</text>
-			<mms-button type="primary" @click="showAlert = true">打开 Alert</mms-button>
+			<m-button type="primary" @click="showAlert = true">打开 Alert</m-button>
 		</view>
 
-		<mms-alert v-model:show="showAlert" btn-text="知道了" mask-closable @cancel="showAlert = false">
-			<text class="alert-msg">这是 mms-alert 单按钮弹框。</text>
-		</mms-alert>
+		<m-alert v-model:show="showAlert" btn-text="知道了" mask-closable @cancel="showAlert = false">
+			<text class="alert-msg">这是 m-alert 单按钮弹框。</text>
+		</m-alert>
 	</view>
 </template>
 

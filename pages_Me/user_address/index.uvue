@@ -31,7 +31,7 @@
 
 <script setup lang="uts">
 	import { ref } from 'vue'
-	import { jumpTo, msg } from '@/uni_modules/mms-unix/components/mms-tools/Ut.uts'
+	import { jumpTo, msg } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
 	import { addressList as fetchAddressList, deleteAddress as deleteAddressApi } from '@/common/api/mallApi'
 
 	type AddressItem = {
@@ -128,10 +128,9 @@ function addAddress() {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-		gap: 20rpx;
 		margin-bottom: 16rpx;
 		.contact-name { font-size: 32rpx; color: #333; font-weight: 600; }
-		.contact-phone { font-size: 28rpx; color: #666; }
+		.contact-phone { font-size: 28rpx; color: #666; margin-left: 20rpx; }
 	}
 	.address-detail { font-size: 28rpx; color: #666; line-height: 1.5; }
 }
@@ -140,8 +139,8 @@ function addAddress() {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
-	gap: 24rpx;
 	.action-btn { font-size: 26rpx; color: #666; }
+	.action-btn + .action-btn { margin-left: 24rpx; }
 	.delete-text { color: #ff0844; }
 }
 .bottom-placeholder { height: 140rpx; }

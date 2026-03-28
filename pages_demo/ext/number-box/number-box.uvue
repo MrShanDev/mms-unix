@@ -18,7 +18,7 @@
 				<view class="ext-section">
 					<text class="ext-title">基础</text>
 					<view class="nb-row">
-						<mms-number-box v-model:value="valBasic" :min="1" :max="10"></mms-number-box>
+						<m-number-box v-model:value="valBasic" :min="1" :max="10"></m-number-box>
 					</view>
 					<text class="nb-desc">当前值：{{ valBasic }}（范围 1～10，步长默认 1）</text>
 				</view>
@@ -27,7 +27,7 @@
 					<text class="ext-title">步长</text>
 					<text class="ext-hint nb-line">每次加减变化 2。</text>
 					<view class="nb-row">
-						<mms-number-box v-model:value="valStep" :min="0" :max="20" :step="2"></mms-number-box>
+						<m-number-box v-model:value="valStep" :min="0" :max="20" :step="2"></m-number-box>
 					</view>
 					<text class="nb-desc">当前值：{{ valStep }}</text>
 				</view>
@@ -36,11 +36,11 @@
 					<text class="ext-title">范围限制</text>
 					<text class="ext-hint nb-line">min / max 约束可输入区间；适合数量上下限场景。</text>
 					<view class="nb-row">
-						<mms-number-box
+						<m-number-box
 							v-model:value="valRange"
 							:min="5"
 							:max="15"
-						></mms-number-box>
+						></m-number-box>
 					</view>
 					<text class="nb-desc">当前值：{{ valRange }}（5～15）</text>
 				</view>
@@ -49,12 +49,12 @@
 					<text class="ext-title">小数步进</text>
 					<text class="ext-hint nb-line">step 为小数时，中间展示会保留小数（内部按浮点运算，显示已做简单格式化）。</text>
 					<view class="nb-row">
-						<mms-number-box
+						<m-number-box
 							v-model:value="valDecimal"
 							:min="0"
 							:max="5"
 							:step="0.25"
-						></mms-number-box>
+						></m-number-box>
 					</view>
 					<text class="nb-desc">当前值：{{ valDecimal }}（步长 0.25，最大 5）</text>
 				</view>
@@ -62,12 +62,12 @@
 				<view class="ext-section">
 					<text class="ext-title">禁用</text>
 					<view class="nb-row">
-						<mms-number-box v-model:value="valDisabled" :disabled="disabledOn"></mms-number-box>
+						<m-number-box v-model:value="valDisabled" :disabled="disabledOn"></m-number-box>
 					</view>
 					<view class="nb-tools">
-						<mms-button type="primary" btnSize="small" @tap="disabledOn = !disabledOn">
+						<m-button type="primary" btnSize="small" @tap="disabledOn = !disabledOn">
 							{{ disabledOn ? '启用' : '禁用' }}步进器
-						</mms-button>
+						</m-button>
 					</view>
 					<text class="nb-desc">当前值：{{ valDisabled }}；状态：{{ disabledOn ? '已禁用' : '可操作' }}</text>
 				</view>
@@ -78,25 +78,25 @@
 					<view class="nb-dual">
 						<view class="nb-dual-item">
 							<text class="nb-dual-label">行 A · index=0</text>
-							<mms-number-box
+							<m-number-box
 								v-model:value="valA"
 								:min="0"
 								:max="99"
 								:index="0"
 								:custom="1"
 								@change="onTaggedChange"
-							></mms-number-box>
+							></m-number-box>
 						</view>
 						<view class="nb-dual-item">
 							<text class="nb-dual-label">行 B · index=1</text>
-							<mms-number-box
+							<m-number-box
 								v-model:value="valB"
 								:min="0"
 								:max="99"
 								:index="1"
 								:custom="2"
 								@change="onTaggedChange"
-							></mms-number-box>
+							></m-number-box>
 						</view>
 					</view>
 					<text class="nb-desc nb-desc--mono">最近回调：{{ lastTagged }}</text>
@@ -106,7 +106,7 @@
 					<text class="ext-title">外观与尺寸</text>
 					<text class="ext-hint nb-line">可调整中间区宽高、文字与图标颜色、按钮背景等。</text>
 					<view class="nb-row nb-row--theme">
-						<mms-number-box
+						<m-number-box
 							v-model:value="valTheme"
 							:min="1"
 							:max="9"
@@ -118,7 +118,7 @@
 							background-color="#2979ff"
 							iconColor="#ffffff"
 							iconBgColor="#1e5fbb"
-						></mms-number-box>
+						></m-number-box>
 					</view>
 					<text class="nb-desc">当前值：{{ valTheme }}（示例为主题色高对比样式）</text>
 				</view>

@@ -2,13 +2,14 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">数字键盘</text>
-			<mms-button type="primary" @click="showKeyboard = true">打开键盘</mms-button>
-			<text class="demo-desc">用于支付密码等场景，配合顶部自定义插槽展示掩码。</text>
+			<m-button type="primary" @click="showKeyboard = true">打开键盘</m-button>
+			<text class="demo-desc">用于支付密码等场景，配合顶部插槽展示掩码；本页演示为输满 6 位自动确认并关闭。</text>
 		</view>
 
-		<mms-keyboard :show="showKeyboard" @close="closeKb" @click="onKeyClick">
+		<m-keyboard :show="showKeyboard" @close="closeKb" @click="onKeyClick">
 			<view class="kb-top">
 				<text class="kb-tip">请输入密码（演示）</text>
+				<text class="kb-tip-sub">输满 6 位将自动确认；未满时可点面板「取消」关闭。</text>
 				<view class="kb-dots">
 					<view
 						v-for="n in 6"
@@ -18,7 +19,7 @@
 					></view>
 				</view>
 			</view>
-		</mms-keyboard>
+		</m-keyboard>
 	</view>
 </template>
 
@@ -38,12 +39,12 @@ function onKeyClick(e: UTSJSONObject) {
 	if (idxRaw == null) {
 		return
 	}
-	const idx = idxRaw as number
-	const len = 6
-	let nums = numberArr.value
-	if (nums.length >= len) {
+	const idx = parseInt('' + idxRaw, 10)
+	if (isNaN(idx) || idx < 0 || idx > 11) {
 		return
 	}
+	const len = 6
+	let nums = numberArr.value
 	if (idx === 9) {
 		closeKb()
 		return
@@ -58,6 +59,9 @@ function onKeyClick(e: UTSJSONObject) {
 		}
 		return
 	}
+	if (nums.length >= len) {
+		return
+	}
 	const digit = idx === 10 ? 0 : idx + 1
 	const nextNums = [] as string[]
 	for (let i = 0; i < nums.length; i++) {
@@ -65,6 +69,13 @@ function onKeyClick(e: UTSJSONObject) {
 	}
 	nextNums.push('' + digit)
 	numberArr.value = nextNums
+	if (nextNums.length >= len) {
+		uni.showToast({ title: '已确认（演示不提交真实密码）', icon: 'success' })
+		showKeyboard.value = false
+		setTimeout(() => {
+			numberArr.value = []
+		}, 400)
+	}
 }
 </script>
 
@@ -105,6 +116,15 @@ function onKeyClick(e: UTSJSONObject) {
 	font-size: 28rpx;
 	color: #333333;
 	text-align: center;
+	margin-bottom: 12rpx;
+	display: block;
+}
+
+.kb-tip-sub {
+	font-size: 24rpx;
+	color: #888888;
+	text-align: center;
+	line-height: 1.45;
 	margin-bottom: 20rpx;
 	display: block;
 }
@@ -113,7 +133,11 @@ function onKeyClick(e: UTSJSONObject) {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
-	gap: 16rpx;
+	align-items: center;
+}
+
+.kb-dot + .kb-dot {
+	margin-left: 20rpx;
 }
 
 .kb-dot {

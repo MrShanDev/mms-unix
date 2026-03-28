@@ -1,0 +1,72 @@
+<template>
+	<view class="m-col" :class="getGutterClass" :style="getStyle">
+		<slot></slot>
+	</view>
+</template>
+
+<script lang="uts">
+import { parseCssNumber } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
+
+export default {
+	name: 'mCol',
+	props: {
+		// 栅格占据的列数，总共24栅格
+		span: {
+			type: [Number, String],
+			default: 24
+		},
+		// 左侧间距
+		offset: {
+			type: [Number, String],
+			default: 0
+		},
+		// 自定义元素宽度
+		width: {
+			type: [Number, String],
+			default: ''
+		},
+		// 自定义padding
+		padding: {
+			type: [Number, String],
+			default: ''
+		}
+	},
+	computed: {
+		getGutterClass() {
+			// 如果父row设置了gutter，需要添加padding-left
+			return 'm-col'
+		},
+		getStyle() {
+			const style: UTSJSONObject = {}
+			let span = Number(this.span)
+			if (span > 24) span = 24
+			if (span < 1) span = 1
+			// 计算百分比宽度
+			const percent = (span / 24 * 100) + '%'
+			style.width = this.width || percent
+			// 左侧偏移
+			const offsetNum = Number(this.offset)
+			if (offsetNum > 0) {
+				const offsetPercent = (offsetNum / 24 * 100) + '%'
+				style.marginLeft = offsetPercent
+			}
+			// 自定义padding
+			if (this.padding !== '' && this.padding != null) {
+				const p = parseCssNumber(this.padding as number | string)
+				if (p > 0) {
+					style.paddingLeft = p + 'rpx'
+					style.paddingRight = p + 'rpx'
+				}
+			}
+			return style
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.m-col {
+	float: left;
+	box-sizing: border-box;
+}
+</style>

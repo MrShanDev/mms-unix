@@ -3,48 +3,48 @@
 		<view class="demo-section">
 			<text class="section-title">基础价格</text>
 			<view class="price-row">
-				<mms-price :value="99.99"></mms-price>
+				<m-price :value="99.99"></m-price>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">价格符号</text>
 			<view class="price-row">
-				<mms-price :value="199.00" symbol="¥"></mms-price>
+				<m-price :value="199.00" symbol="¥"></m-price>
 			</view>
 			<view class="price-row">
-				<mms-price :value="29.99" symbol="$"></mms-price>
+				<m-price :value="29.99" symbol="$"></m-price>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">价格尺寸</text>
 			<view class="price-row">
-				<mms-price :value="99.99" size="small"></mms-price>
+				<m-price :value="99.99" size="small"></m-price>
 			</view>
 			<view class="price-row">
-				<mms-price :value="199.99" size="normal"></mms-price>
+				<m-price :value="199.99" size="normal"></m-price>
 			</view>
 			<view class="price-row">
-				<mms-price :value="299.99" size="large"></mms-price>
+				<m-price :value="299.99" size="large"></m-price>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">价格颜色</text>
 			<view class="price-row">
-				<mms-price :value="99.99" color="#ff0844"></mms-price>
+				<m-price :value="99.99" color="#ff0844"></m-price>
 			</view>
 			<view class="price-row">
-				<mms-price :value="199.99" color="#1890ff"></mms-price>
+				<m-price :value="199.99" color="#1890ff"></m-price>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">划线价</text>
 			<view class="price-row">
-				<mms-price :value="99.99"></mms-price>
-				<mms-price :value="199.99" :lineThrough="true" color="#999999"></mms-price>
+				<m-price :value="99.99"></m-price>
+				<m-price :value="199.99" :lineThrough="true" color="#999999"></m-price>
 			</view>
 		</view>
 	</view>

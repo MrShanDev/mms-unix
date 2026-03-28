@@ -2,19 +2,19 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">基础（纵向）</text>
-			<text class="section-desc">mms-radio-group + 多个 mms-radio，默认 direction=column</text>
+			<text class="section-desc">m-radio-group + 多个 m-radio，默认 direction=column</text>
 			<view class="demo-body">
-			<mms-radio-group v-model="city">
-				<mms-radio value="gz">
+			<m-radio-group v-model="city">
+				<m-radio value="gz">
 					<text class="opt-text">广州</text>
-				</mms-radio>
-				<mms-radio value="sz">
+				</m-radio>
+				<m-radio value="sz">
 					<text class="opt-text">深圳</text>
-				</mms-radio>
-				<mms-radio value="sh">
+				</m-radio>
+				<m-radio value="sh">
 					<text class="opt-text">上海</text>
-				</mms-radio>
-			</mms-radio-group>
+				</m-radio>
+			</m-radio-group>
 			</view>
 			<text class="demo-tip">当前：{{ city }}</text>
 		</view>
@@ -23,17 +23,17 @@
 			<text class="section-title">横向排列</text>
 			<text class="section-desc">direction="row"</text>
 			<view class="demo-body">
-			<mms-radio-group v-model="level" direction="row" color="#1890ff">
-				<mms-radio value="a">
+			<m-radio-group v-model="level" direction="row" color="#1890ff">
+				<m-radio value="a">
 					<text class="opt-text">A</text>
-				</mms-radio>
-				<mms-radio value="b">
+				</m-radio>
+				<m-radio value="b">
 					<text class="opt-text">B</text>
-				</mms-radio>
-				<mms-radio value="c">
+				</m-radio>
+				<m-radio value="c">
 					<text class="opt-text">C</text>
-				</mms-radio>
-			</mms-radio-group>
+				</m-radio>
+			</m-radio-group>
 			</view>
 		</view>
 
@@ -41,14 +41,14 @@
 			<text class="section-title">组级默认色</text>
 			<text class="section-desc">在 group 上设置 color / borderColor</text>
 			<view class="demo-body">
-			<mms-radio-group v-model="pay" color="#07c160" borderColor="#999999">
-				<mms-radio value="wx">
+			<m-radio-group v-model="pay" color="#07c160" borderColor="#999999">
+				<m-radio value="wx">
 					<text class="opt-text">微信</text>
-				</mms-radio>
-				<mms-radio value="ali">
+				</m-radio>
+				<m-radio value="ali">
 					<text class="opt-text">支付宝</text>
-				</mms-radio>
-			</mms-radio-group>
+				</m-radio>
+			</m-radio-group>
 			</view>
 		</view>
 
@@ -56,25 +56,25 @@
 			<text class="section-title">单项禁用 / 整组禁用</text>
 			<text class="section-desc">第一组可点选；第二组整组 disabled</text>
 			<view class="demo-body">
-			<mms-radio-group v-model="agree" direction="row">
-				<mms-radio value="y">
+			<m-radio-group v-model="agree" direction="row">
+				<m-radio value="y">
 					<text class="opt-text">同意</text>
-				</mms-radio>
-				<mms-radio value="n" :disabled="true">
+				</m-radio>
+				<m-radio value="n" :disabled="true">
 					<text class="opt-text">禁用项</text>
-				</mms-radio>
-			</mms-radio-group>
+				</m-radio>
+			</m-radio-group>
 			</view>
 			<view class="demo-gap"></view>
 			<view class="demo-body">
-			<mms-radio-group v-model="locked" :disabled="true" direction="row">
-				<mms-radio value="1">
+			<m-radio-group v-model="locked" :disabled="true" direction="row">
+				<m-radio value="1">
 					<text class="opt-text">整组禁</text>
-				</mms-radio>
-				<mms-radio value="2">
+				</m-radio>
+				<m-radio value="2">
 					<text class="opt-text">选不中</text>
-				</mms-radio>
-			</mms-radio-group>
+				</m-radio>
+			</m-radio-group>
 			</view>
 		</view>
 
@@ -82,14 +82,14 @@
 			<text class="section-title">仅对号模式（checkOnly）</text>
 			<text class="section-desc">checkOnly：选中时仅显示对号</text>
 			<view class="demo-body">
-			<mms-radio-group v-model="mode" direction="row">
-				<mms-radio value="x" :checkOnly="true">
+			<m-radio-group v-model="mode" direction="row">
+				<m-radio value="x" :checkOnly="true">
 					<text class="opt-text">选项甲</text>
-				</mms-radio>
-				<mms-radio value="y" :checkOnly="true" color="#fa541c">
+				</m-radio>
+				<m-radio value="y" :checkOnly="true" color="#fa541c">
 					<text class="opt-text">选项乙</text>
-				</mms-radio>
-			</mms-radio-group>
+				</m-radio>
+			</m-radio-group>
 			</view>
 		</view>
 
@@ -97,17 +97,17 @@
 			<text class="section-title">缩放 scale</text>
 			<text class="section-desc">scale 调整单选项图标区域缩放</text>
 			<view class="demo-body">
-			<mms-radio-group v-model="sizeDemo" direction="row">
-				<mms-radio value="s" :scale="0.85">
+			<m-radio-group v-model="sizeDemo" direction="row">
+				<m-radio value="s" :scale="0.85">
 					<text class="opt-text">小</text>
-				</mms-radio>
-				<mms-radio value="m" :scale="1">
+				</m-radio>
+				<m-radio value="m" :scale="1">
 					<text class="opt-text">中</text>
-				</mms-radio>
-				<mms-radio value="l" :scale="1.05">
+				</m-radio>
+				<m-radio value="l" :scale="1.05">
 					<text class="opt-text">大</text>
-				</mms-radio>
-			</mms-radio-group>
+				</m-radio>
+			</m-radio-group>
 			</view>
 		</view>
 		<view class="page-footer-spacer"></view>

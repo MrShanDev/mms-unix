@@ -1,5 +1,5 @@
 {
-	"app.name": "MMS-UNIX",
+	"app.name": "mUnix",
 	"app.desc": "uni-app 组件库",
 
 	"tabbar.components": "组件",
@@ -21,6 +21,7 @@
 	"page.address": "地址",
 	"page.aboutMe": "关于我们",
 	"page.contact": "联系我们",
+	"page.cooperation": "商务合作",
 
 	"common.confirm": "确定",
 	"common.cancel": "取消",

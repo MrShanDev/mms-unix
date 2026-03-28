@@ -1,4 +1,4 @@
-# MMS-UNIX 未完成、未验证与测试清单
+# mUnix 未完成、未验证与测试清单
 
 > 本文档汇总**当前仓库状态下**尚未完成、尚未在真机/全端验证或未建立自动化测试的工作，便于排期与验收。  
 > 与进度总览对照：根目录 `PROGRESS.md`；版本与已交付项：`version/doc/README.md` 及其中 `app-*.md` / `lib-*.md`。  
@@ -10,7 +10,7 @@
 
 | 项 | 状态 | 说明 |
 |----|------|------|
-| **`@/common/common.uts` 缺失** | ⚠️ 未完成 / 高风险 | `uni_modules/mms-unix/components/mms-tools/mmsUnix.uts` 第 12 行 `import common from '@/common/common.uts'`，仓库内**无**该文件。若运行路径会加载 `mmsUnix`，可能导致编译失败或运行时错误；需**补实现**、改 import 指向现有模块，或确认条件编译下从未引用。 |
+| **`@/common/common.uts` 缺失** | ⚠️ 未完成 / 高风险 | `uni_modules/m-unix/components/m-tools/mUnix.uts` 第 12 行 `import common from '@/common/common.uts'`，仓库内**无**该文件。若运行路径会加载 `mUnix`，可能导致编译失败或运行时错误；需**补实现**、改 import 指向现有模块，或确认条件编译下从未引用。 |
 | **后端 API 与本地配置** | ⚠️ 未联调验证 | `common/config.ts` 中 `baseUrl` 等为开发向地址；`tokenLogin`、文章列表、上传、会员信息更新等**依赖真实接口形态**（`{ code, msg, data }`）。未在文档中锁定「可跑通」的环境与账号。 |
 
 ---
@@ -21,7 +21,7 @@
 |----|------|------|
 | **`static/img` 业务图** | ⚠️ 部分未完成 | 多处引用 `/static/img/*.png`（Logo、空态、头像默认等），需确认文件已落盘且体积与版权合规；见 `PROGRESS.md` 第三节。 |
 | **TabBar 图标** | ⚠️ 可选优化 | `static/tabbar/` 现有 PNG；`static/tabbar/_gen_tab_icons.py` 为占位生成逻辑，**设计稿级图标**与主色 `#ff0844` 的视觉统一未强制验收。 |
-| **二维码 PNG 服务（浏览器 / 原生 App）** | ⚠️ 未配置 / 未验证 | `qrCodeImageApiBase` 为空时按设计不请求外链；若需在非宿主内置绘码能力的环境下展示联网二维码，需**自建接口**并配置 `mmsUi` 或 `api`，端到端未测。 |
+| **二维码 PNG 服务（浏览器 / 原生 App）** | ⚠️ 未配置 / 未验证 | `qrCodeImageApiBase` 为空时按设计不请求外链；若需在非宿主内置绘码能力的环境下展示联网二维码，需**自建接口**并配置 `mUi` 或 `api`，端到端未测。 |
 | **联系页真实信息** | ⚠️ 占位未完成 | `pages_Me/contact/contact.uvue` 内电话、邮箱为示例常量；**未接入** `config` / 后台；系统拨号 API 在浏览器等端行为依赖失败回退，**多端未完整验证**。 |
 
 ---
@@ -60,8 +60,8 @@
 
 ### 4.4 近期改版页
 
-- [ ] **个人中心** `pages/user/user`：`mms-card` 头图、**七项菜单**跳转、滚动与 Tab 遮挡。
-- [ ] **个人资料** `user_info`：昵称弹窗、性别/生日 picker、**收货地址**跳转列表、**mms-cell** 样式各端一致。
+- [ ] **个人中心** `pages/user/user`：`m-card` 头图、**七项菜单**跳转、滚动与 Tab 遮挡。
+- [ ] **个人资料** `user_info`：昵称弹窗、性别/生日 picker、**收货地址**跳转列表、**m-cell** 样式各端一致。
 - [ ] **联系页**：链接跳转、拨号、邮箱；弱网或禁止拨号场景。
 - [ ] **主色 `#ff0844`**：导航栏、Tab 选中、登录渐变、工具页按钮等与设计稿对比无色偏（不同屏幕可抽样）。
 
@@ -86,7 +86,7 @@
 
 | 项 | 路径 | 状态 |
 |----|------|------|
-| **编辑器扩展** | `mms-unix-vscode/` | 开发需求与待办见 [mms-unix-vscode-dev.md](./mms-unix-vscode-dev.md)：props/emits 补全、元数据生成、打包分发等**未全部完成**；主 App 功能不依赖该子工程。 |
+| **编辑器扩展** | `m-unix-vscode/` | 开发需求与待办见 [m-unix-vscode-dev.md](./m-unix-vscode-dev.md)：props/emits 补全、元数据生成、打包分发等**未全部完成**；主 App 功能不依赖该子工程。 |
 
 ---
 
@@ -109,7 +109,7 @@
 | `version/doc/README.md` | 版本与需求文档索引 |
 | `version/doc/app-*.md` | 演示工程按版本说明 |
 | `version/doc/lib-*.md` | 组件库按版本说明 |
-| `version/doc/mms-unix-vscode-dev.md` | 编辑器扩展（`mms-unix-vscode/`）开发需求与待办 |
+| `version/doc/m-unix-vscode-dev.md` | 编辑器扩展（`m-unix-vscode/`）开发需求与待办 |
 | `.cursor/rules/core-protocol.mdc` | 项目内 DoD 与流程约定（若启用） |
 
 ---

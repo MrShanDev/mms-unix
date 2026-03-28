@@ -1,5 +1,5 @@
 {
-	"app.name": "MMS-UNIX",
+	"app.name": "mUnix",
 	"app.desc": "uni-app Component Library",
 
 	"tabbar.components": "Components",
@@ -21,6 +21,7 @@
 	"page.address": "Address",
 	"page.aboutMe": "About Us",
 	"page.contact": "Contact",
+	"page.cooperation": "Business Cooperation",
 
 	"common.confirm": "Confirm",
 	"common.cancel": "Cancel",

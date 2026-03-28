@@ -3,7 +3,7 @@
 		<view class="demo-section">
 			<text class="section-title">金额大写</text>
 			<text class="demo-desc">数值：{{ amountDemo }}</text>
-			<mms-amount-inwords :value="amountDemo" color="#5677fc" :fontWeight="600"></mms-amount-inwords>
+			<m-amount-inwords :value="amountDemo" color="#5677fc" :fontWeight="600"></m-amount-inwords>
 		</view>
 	</view>
 </template>

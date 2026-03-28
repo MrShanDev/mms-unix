@@ -2,25 +2,25 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">字符串列表</text>
-			<text class="demo-desc">演示图使用内嵌 SVG data URI，无需外网图片。</text>
-			<mms-swiper :list="urlsSimple" :indicator="true" :height="300" :slide-padding="8"></mms-swiper>
+			<text class="demo-desc">图片来自 Lorem Picsum（picsum.photos），需联网加载。</text>
+			<m-swiper :list="urlsSimple" :indicator="true" :height="300" :slide-padding="8"></m-swiper>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">指示条（line）</text>
-			<mms-swiper
+			<m-swiper
 				:list="urlsSimple"
 				indicator
 				indicator-mode="line"
 				:autoplay="false"
 				:height="280"
 				:slide-padding="8"
-			></mms-swiper>
+			></m-swiper>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">标题 + 对象列表</text>
-			<mms-swiper
+			<m-swiper
 				:list="slidesWithTitle"
 				image-key="src"
 				show-title
@@ -29,13 +29,13 @@
 				circular
 				:height="300"
 				:slide-padding="8"
-			></mms-swiper>
+			></m-swiper>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">卡片露边 + 衔接</text>
 			<text class="demo-desc">首张左侧为上一张（衔接时即最后一张）。slide-padding 控制单页内图片左右留白；需至少 3 张图且开启 circular。</text>
-			<mms-swiper
+			<m-swiper
 				:list="urlsCard"
 				:previous-margin="36"
 				:next-margin="36"
@@ -46,12 +46,12 @@
 				indicator
 				indicator-style="bottom:28rpx;"
 				:height="260"
-			></mms-swiper>
+			></m-swiper>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">加载态</text>
-			<mms-swiper :list="urlsSimple" :loading="loadingDemo" :indicator="true" :height="240" :slide-padding="8"></mms-swiper>
+			<m-swiper :list="urlsSimple" :loading="loadingDemo" :indicator="true" :height="240" :slide-padding="8"></m-swiper>
 			<text class="demo-desc">loading 为 true 时暂停自动轮播并显示遮罩（可将脚本中 loadingDemo 改为 true 预览）。</text>
 		</view>
 	</view>
@@ -62,33 +62,22 @@ import { ref } from 'vue'
 
 const loadingDemo = ref(false)
 
-/** 内嵌 SVG，避免依赖外部图床 */
-function svgDataUrl(label: string, fill: string): string {
-	const svg =
-		'<svg xmlns="http://www.w3.org/2000/svg" width="750" height="360"><rect width="100%" height="100%" fill="' +
-		fill +
-		'"/><text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" fill="#333333" font-size="36">' +
-		label +
-		'</text></svg>'
-	return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg)
+/** 宽×高路径与官方一致：https://picsum.photos/id/{id}/宽/高 */
+const PICSUM_W = 750
+const PICSUM_H = 400
+
+function picsumById(id: number): string {
+	return 'https://picsum.photos/id/' + id + '/' + PICSUM_W + '/' + PICSUM_H
 }
 
-const urlsSimple = [
-	svgDataUrl('1', '#e3f2fd'),
-	svgDataUrl('2', '#e8f5e9'),
-	svgDataUrl('3', '#fff3e0')
-]
+const urlsSimple = [picsumById(1011), picsumById(1015), picsumById(1018)]
 
-const urlsCard = [
-	svgDataUrl('A', '#fce4ec'),
-	svgDataUrl('B', '#f3e5f5'),
-	svgDataUrl('C', '#e0f7fa')
-]
+const urlsCard = [picsumById(1024), picsumById(1025), picsumById(1029)]
 
 const slidesWithTitle = [
-	{ src: svgDataUrl('甲', '#e8eaf6'), title: '示例标题一' },
-	{ src: svgDataUrl('乙', '#f1f8e9'), title: '示例标题二' },
-	{ src: svgDataUrl('丙', '#fff8e1'), title: '示例标题三' }
+	{ src: picsumById(1033), title: '示例标题一' },
+	{ src: picsumById(1035), title: '示例标题二' },
+	{ src: picsumById(1036), title: '示例标题三' }
 ]
 </script>
 

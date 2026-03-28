@@ -3,10 +3,10 @@
 		<view class="demo-section">
 			<text class="section-title">骨架屏 + 正文</text>
 			<view class="sk-wrap">
-				<mms-skeleton :show="skShow" :active="true"></mms-skeleton>
+				<m-skeleton :show="skShow" :active="true"></m-skeleton>
 				<view class="sk-body">
 					<text class="demo-desc">关闭骨架后显示下方按钮与说明。</text>
-					<mms-button type="primary" @click="skShow = false">关闭骨架</mms-button>
+					<m-button type="primary" @click="skShow = false">关闭骨架</m-button>
 				</view>
 			</view>
 		</view>

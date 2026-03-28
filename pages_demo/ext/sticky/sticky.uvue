@@ -36,16 +36,16 @@
 					<text class="ext-hint sticky-doc-line">
 						异步增高内容后递增 recalc，可促使占位高度与吸顶判定刷新。
 					</text>
-					<mms-button type="primary" btnSize="small" @tap="togglePreExtra">
+					<m-button type="primary" btnSize="small" @tap="togglePreExtra">
 						{{ preExtraOn ? '收起' : '展开' }}前置额外区块
-					</mms-button>
+					</m-button>
 				</view>
 
 				<view v-if="preExtraOn" class="sticky-demo-pre ext-section sticky-demo-pre--extra">
 					<text class="sticky-demo-line" v-for="k in 4" :key="'ex-' + k">动态插入的第 {{ k }} 行</text>
 				</view>
 
-				<mms-sticky
+				<m-sticky
 					scroll-viewport-id="sticky-demo-scroll"
 					:scroll-tick="scrollTick"
 					:scroll-top="scrollTopFromView"
@@ -64,7 +64,7 @@
 							<text class="ext-sticky-text">吸顶区 A · 距顶留白（stickyTop）</text>
 						</view>
 					</template>
-				</mms-sticky>
+				</m-sticky>
 
 				<view class="sticky-state ext-section">
 					<text class="sticky-state-t">状态 A：{{ stickyAFixed ? '已吸顶' : '未吸顶' }}</text>
@@ -84,7 +84,7 @@
 					</text>
 				</view>
 
-				<mms-sticky
+				<m-sticky
 					scroll-viewport-id="sticky-demo-scroll"
 					:scroll-tick="scrollTick"
 					:scroll-top="scrollTopFromView"
@@ -103,7 +103,7 @@
 							<text class="ext-sticky-text">吸顶区 B · 贴顶（stickyTop = 0）</text>
 						</view>
 					</template>
-				</mms-sticky>
+				</m-sticky>
 
 				<view class="sticky-state ext-section">
 					<text class="sticky-state-t">状态 B：{{ stickyBFixed ? '已吸顶' : '未吸顶' }}</text>
@@ -123,7 +123,7 @@
 					</text>
 				</view>
 
-				<mms-sticky
+				<m-sticky
 					scroll-viewport-id="sticky-demo-scroll"
 					:scroll-tick="scrollTick"
 					:scroll-top="scrollTopFromView"
@@ -152,7 +152,7 @@
 							</view>
 						</view>
 					</template>
-				</mms-sticky>
+				</m-sticky>
 
 				<view class="sticky-state ext-section">
 					<text class="sticky-state-t">状态 C：{{ stickyCFixed ? '已吸顶' : '未吸顶' }}</text>

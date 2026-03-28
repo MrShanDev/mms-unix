@@ -194,9 +194,8 @@
 		display: flex;
 		flex-direction: row;
 		padding: 20rpx 30rpx;
-		gap: 20rpx;
-		.label { font-size: 28rpx; color: #979797; font-weight: 500; min-width: 160rpx; }
-		.input { font-size: 28rpx; color: #333; line-height: 1.5; flex: 1; &.placeholder { color: #CBCBCB; } }
+		.label { font-size: 28rpx; color: #979797; font-weight: 500; min-width: 160rpx; flex-shrink: 0; }
+		.input { font-size: 28rpx; color: #333; line-height: 1.5; flex: 1; margin-left: 20rpx; &.placeholder { color: #CBCBCB; } }
 	}
 	.switch-row { justify-content: space-between; align-items: center; }
 }

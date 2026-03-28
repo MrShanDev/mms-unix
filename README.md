@@ -1,4 +1,4 @@
-# mms-unix
+# mUnix（m-unix）
 
 基于 uni-app-x 的移动端项目，内置登录、注册、找回密码、会员中心等基础功能。
 
@@ -15,7 +15,7 @@
 ## 目录结构
 
 ```
-mms-unix/
+m-unix/
 ├── common/
 │   ├── config.uts          # 全局配置（baseUrl、storage key 等）
 │   ├── api/               # API 接口定义
@@ -31,7 +31,7 @@ mms-unix/
 │   └── user/              # 我的
 ├── static/
 └── uni_modules/
-    └── mms-unix/          # mms-unix 组件模块
+    └── m-unix/          # m-unix 组件模块
 ```
 
 ## 配置说明

@@ -3,32 +3,48 @@
 		<view class="demo-section">
 			<text class="section-title">加载状态</text>
 			<view class="demo-row-center">
-				<mms-loading></mms-loading>
+				<view class="demo-loading-cell">
+					<m-loading></m-loading>
+				</view>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">加载文字</text>
 			<view class="demo-row-center">
-				<mms-loading text="加载中..."></mms-loading>
+				<view class="demo-loading-cell">
+					<m-loading text="加载中..."></m-loading>
+				</view>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">自定义颜色</text>
 			<view class="demo-row-center">
-				<mms-loading color="#ff0844"></mms-loading>
-				<mms-loading color="#1890ff"></mms-loading>
-				<mms-loading color="#52c41a"></mms-loading>
+				<view class="demo-loading-cell">
+					<m-loading color="#ff0844"></m-loading>
+				</view>
+				<view class="demo-loading-cell">
+					<m-loading color="#1890ff"></m-loading>
+				</view>
+				<view class="demo-loading-cell">
+					<m-loading color="#52c41a"></m-loading>
+				</view>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">自定义大小</text>
 			<view class="demo-row-center">
-				<mms-loading size="40rpx"></mms-loading>
-				<mms-loading size="60rpx"></mms-loading>
-				<mms-loading size="80rpx"></mms-loading>
+				<view class="demo-loading-cell">
+					<m-loading size="40rpx"></m-loading>
+				</view>
+				<view class="demo-loading-cell">
+					<m-loading size="60rpx"></m-loading>
+				</view>
+				<view class="demo-loading-cell">
+					<m-loading size="80rpx"></m-loading>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -56,15 +72,18 @@
 	margin-bottom: 24rpx;
 }
 
-
-
+/* ucss 对 gap 支持不稳定，用 margin + 行内左右 padding 保证横向间距 */
 .demo-row-center {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: center;
 	align-items: center;
-	gap: 48rpx;
-	padding: 40rpx 0;
+	padding: 40rpx 16rpx;
+	box-sizing: border-box;
+}
+
+.demo-loading-cell {
+	margin: 12rpx 24rpx;
 }
 </style>

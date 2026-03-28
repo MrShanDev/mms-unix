@@ -1,15 +1,15 @@
 <template>
 	<view class="demo-page">
-		<text class="page-lead">mms-popup 默认带显示/隐藏过渡，可通过 animation、duration 调整。</text>
+		<text class="page-lead">m-popup 默认带显示/隐藏过渡，可通过 animation、duration 调整。</text>
 
 		<view class="demo-section">
 			<text class="section-title">底部弹出</text>
-			<mms-button type="primary" @click="showBottom = true">底部弹出</mms-button>
+			<m-button type="primary" @click="showBottom = true">底部弹出</m-button>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">顶部弹出</text>
-			<mms-button type="primary" @click="showTop = true">顶部弹出</mms-button>
+			<m-button type="primary" @click="showTop = true">顶部弹出</m-button>
 		</view>
 
 		<view class="demo-section">
@@ -18,58 +18,136 @@
 				左右抽屉使用 --uni-safe-area-inset-top / bottom 避让原生导航栏与底部安全区；宽度 70%，max-width 600rpx。演示页 .popup-side 的 height:100vh 只作用在插槽内层，可按业务调整。
 			</text>
 			<view class="demo-row">
-				<mms-button type="primary" @click="showLeft = true">左侧</mms-button>
-				<mms-button type="primary" @click="showRight = true">右侧</mms-button>
+				<m-button type="primary" @click="showLeft = true">左侧</m-button>
+				<m-button type="primary" @click="showRight = true">右侧</m-button>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">居中弹出</text>
-			<mms-button type="primary" @click="showCenter = true">居中弹出</mms-button>
+			<m-button type="primary" @click="showCenter = true">居中弹出</m-button>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">全屏弹层（弹屏广告）</text>
+			<text class="section-desc">
+				position=&quot;fullscreen&quot;：四周留白（含安全区），长方形随机图；关闭按钮独立于图片外，位于图片上侧或下侧居中。
+			</text>
+			<view class="splash-align-row">
+				<text class="splash-align-label">大图位置</text>
+				<text
+					class="splash-align-opt"
+					:class="{ 'splash-align-opt--on': splashAlign === 'top' }"
+					@tap="setSplashAlign('top')"
+					>贴顶</text>
+				<text
+					class="splash-align-opt"
+					:class="{ 'splash-align-opt--on': splashAlign === 'center' }"
+					@tap="setSplashAlign('center')"
+					>居中</text>
+				<text
+					class="splash-align-opt"
+					:class="{ 'splash-align-opt--on': splashAlign === 'bottom' }"
+					@tap="setSplashAlign('bottom')"
+					>贴底</text>
+			</view>
+			<view class="splash-align-row">
+				<text class="splash-align-label">关闭位置</text>
+				<text
+					class="splash-align-opt"
+					:class="{ 'splash-align-opt--on': splashClosePos === 'top-center' }"
+					@tap="setSplashClosePos('top-center')"
+					>上中</text>
+				<text
+					class="splash-align-opt"
+					:class="{ 'splash-align-opt--on': splashClosePos === 'bottom-center' }"
+					@tap="setSplashClosePos('bottom-center')"
+					>下中</text>
+			</view>
+			<m-button type="primary" @click="openFullscreenSplash">全屏图片弹层</m-button>
 		</view>
 
 		<!-- 弹出层 -->
-		<mms-popup v-model:visible="showBottom" position="bottom">
+		<m-popup v-model:visible="showBottom" position="bottom">
 			<view class="popup-content">
 				<text class="popup-title">底部弹出内容</text>
 				<text class="popup-text">这是从底部弹出的内容区域</text>
-				<mms-button type="primary" @click="showBottom = false">关闭</mms-button>
+				<m-button type="primary" @click="showBottom = false">关闭</m-button>
 			</view>
-		</mms-popup>
+		</m-popup>
 
-		<mms-popup v-model:visible="showTop" position="top">
+		<m-popup v-model:visible="showTop" position="top">
 			<view class="popup-content">
 				<text class="popup-title">顶部弹出内容</text>
 				<text class="popup-text">这是从顶部弹出的内容区域</text>
-				<mms-button type="primary" @click="showTop = false">关闭</mms-button>
+				<m-button type="primary" @click="showTop = false">关闭</m-button>
 			</view>
-		</mms-popup>
+		</m-popup>
 
-		<mms-popup v-model:visible="showLeft" position="left">
+		<m-popup v-model:visible="showLeft" position="left">
 			<view class="popup-content popup-side">
 				<text class="popup-title">左侧弹出</text>
-				<mms-button type="primary" @click="showLeft = false">关闭</mms-button>
+				<m-button type="primary" @click="showLeft = false">关闭</m-button>
 			</view>
-		</mms-popup>
+		</m-popup>
 
-		<mms-popup v-model:visible="showRight" position="right">
+		<m-popup v-model:visible="showRight" position="right">
 			<view class="popup-content popup-side">
 				<text class="popup-title">右侧弹出</text>
-				<mms-button type="primary" @click="showRight = false">关闭</mms-button>
+				<m-button type="primary" @click="showRight = false">关闭</m-button>
 			</view>
-		</mms-popup>
+		</m-popup>
 
-		<mms-popup v-model:visible="showCenter" position="center" closeable>
+		<m-popup v-model:visible="showCenter" position="center" closeable>
 			<view class="popup-center-panel">
 				<text class="popup-center-title">居中弹出</text>
 				<text class="popup-center-desc">
 					说明文案与操作区上下分区，标题居中强调，正文易读，按钮占满宽度更符合对话框习惯。
 				</text>
 				<view class="popup-center-actions">
-					<mms-button type="primary" @click="showCenter = false">我知道了</mms-button>
+					<m-button type="primary" @click="showCenter = false">我知道了</m-button>
 				</view>
 			</view>
-		</mms-popup>
+		</m-popup>
+
+		<m-popup
+			v-model:visible="showFullscreen"
+			position="fullscreen"
+			:round="false"
+			:overlay-opacity="0.65"
+			:z-index="10050"
+		>
+			<view class="popup-splash">
+				<view class="popup-splash__safe" :class="'popup-splash__safe--' + splashAlign">
+					<view class="popup-splash__stack">
+						<view
+							v-if="splashClosePos === 'top-center'"
+							class="popup-splash__close"
+							@tap.stop="closeFullscreenSplash"
+						>
+							<m-icon name="close" size="36rpx" color="#ffffff"></m-icon>
+						</view>
+						<view class="popup-splash__card">
+							<view class="popup-splash__img-wrap">
+								<image
+									class="popup-splash__img"
+									:src="splashImageUrl"
+									mode="aspectFill"
+									@tap="onSplashAdTap"
+								></image>
+							</view>
+						</view>
+						<view
+							v-if="splashClosePos === 'bottom-center'"
+							class="popup-splash__close"
+							@tap.stop="closeFullscreenSplash"
+						>
+							<m-icon name="close" size="36rpx" color="#ffffff"></m-icon>
+						</view>
+					</view>
+				</view>
+			</view>
+		</m-popup>
 	</view>
 </template>
 
@@ -81,6 +159,37 @@ const showTop = ref(false)
 const showLeft = ref(false)
 const showRight = ref(false)
 const showCenter = ref(false)
+const showFullscreen = ref(false)
+/** 弹屏大图垂直位置：贴顶 / 居中 / 贴底 */
+const splashAlign = ref('center' as 'top' | 'center' | 'bottom')
+
+function setSplashAlign(s: 'top' | 'center' | 'bottom'): void {
+	splashAlign.value = s
+}
+
+/** 关闭：图片外侧上方居中 / 下方居中（与图分离） */
+const splashClosePos = ref('top-center' as 'top-center' | 'bottom-center')
+
+function setSplashClosePos(p: 'top-center' | 'bottom-center'): void {
+	splashClosePos.value = p
+}
+
+/** 随机图（Lorem Picsum），每次打开刷新 */
+const splashImageUrl = ref('')
+
+function openFullscreenSplash(): void {
+	const seed = Date.now() + Math.floor(Math.random() * 100000)
+	splashImageUrl.value = 'https://picsum.photos/seed/' + seed.toString() + '/720/960'
+	showFullscreen.value = true
+}
+
+function closeFullscreenSplash(): void {
+	showFullscreen.value = false
+}
+
+function onSplashAdTap(): void {
+	showFullscreen.value = false
+}
 </script>
 
 <style lang="scss">
@@ -121,7 +230,7 @@ const showCenter = ref(false)
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	gap: 16rpx;
+	gap: 8rpx;
 }
 
 .popup-content {
@@ -136,7 +245,7 @@ const showCenter = ref(false)
 	border-radius: 0;
 }
 
-/* 居中弹层：不叠白色底与双倍 padding，由 mms-popup 面板承载圆角与阴影 */
+/* 居中弹层：不叠白色底与双倍 padding，由 m-popup 面板承载圆角与阴影 */
 .popup-center-panel {
 	display: flex;
 	flex-direction: column;
@@ -178,5 +287,112 @@ const showCenter = ref(false)
 	font-size: 28rpx;
 	color: #666666;
 	margin-bottom: 30rpx;
+}
+
+.splash-align-row {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	margin-bottom: 20rpx;
+	gap: 6rpx 10rpx;
+}
+
+.splash-align-label {
+	font-size: 26rpx;
+	color: #606266;
+	margin-right: 8rpx;
+}
+
+.splash-align-opt {
+	font-size: 26rpx;
+	color: #5473ff;
+	padding: 8rpx 16rpx;
+	border-radius: 8rpx;
+	background-color: #ecf0ff;
+}
+
+.splash-align-opt--on {
+	font-weight: 600;
+	background-color: #5473ff;
+	color: #ffffff;
+}
+
+/* 全屏弹屏：四周安全边距；关闭与图片分离，叠在蒙层上 */
+.popup-splash {
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	background-color: transparent;
+}
+
+.popup-splash__safe {
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	min-height: 0;
+	padding-top: calc(40rpx + env(safe-area-inset-top, 0px));
+	padding-right: calc(36rpx + env(safe-area-inset-right, 0px));
+	padding-bottom: calc(40rpx + env(safe-area-inset-bottom, 0px));
+	padding-left: calc(36rpx + env(safe-area-inset-left, 0px));
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+}
+
+.popup-splash__safe--top {
+	justify-content: flex-start;
+}
+
+.popup-splash__safe--center {
+	justify-content: center;
+}
+
+.popup-splash__safe--bottom {
+	justify-content: flex-end;
+}
+
+/* 关闭 + 图卡整体纵向排列，关闭不在卡片内 */
+.popup-splash__stack {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	flex-shrink: 0;
+	gap: 28rpx;
+}
+
+.popup-splash__card {
+	position: relative;
+	width: 100%;
+	flex-shrink: 0;
+	border-radius: 20rpx;
+	overflow: hidden;
+	background-color: #1a1a1a;
+	box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.45);
+}
+
+.popup-splash__close {
+	width: 64rpx;
+	height: 64rpx;
+	border-radius: 32rpx;
+	background-color: rgba(0, 0, 0, 0.45);
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.popup-splash__img-wrap {
+	width: 100%;
+	height: 720rpx;
+	max-height: 58vh;
+	position: relative;
+}
+
+.popup-splash__img {
+	width: 100%;
+	height: 100%;
 }
 </style>

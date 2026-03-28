@@ -1,0 +1,102 @@
+<template>
+	<scroll-view class="page-scroll" scroll-y style="flex:1">
+		<view class="demo-page">
+			<view class="demo-section">
+				<text class="section-title">树形（m-tree）</text>
+				<text class="section-desc">数据：id、label、children；可选 defaultExpandKeys 默认展开节点 id。</text>
+				<view class="tree-wrap">
+					<m-tree :data="treeData" :default-expand-keys="defaultExpandKeys" @item-click="onItemClick"></m-tree>
+				</view>
+				<text v-if="lastLabel !== ''" class="demo-result">最近点击：{{ lastLabel }}</text>
+			</view>
+		</view>
+	</scroll-view>
+</template>
+
+<script setup lang="uts">
+import { ref } from 'vue'
+
+type TreeNode = {
+	id: string
+	label: string
+	children?: TreeNode[]
+}
+
+const defaultExpandKeys = ['a1']
+
+const treeData = ref<TreeNode[]>([
+	{
+		id: 'a1',
+		label: '一级 · 华东',
+		children: [
+			{ id: 'a1-1', label: '二级 · 上海' },
+			{ id: 'a1-2', label: '二级 · 杭州' },
+		],
+	},
+	{
+		id: 'a2',
+		label: '一级 · 华北',
+		children: [{ id: 'a2-1', label: '二级 · 北京' }],
+	},
+])
+
+const lastLabel = ref('')
+
+function onItemClick(e: UTSJSONObject) {
+	const item = e['item'] as UTSJSONObject | null
+	if (item == null) {
+		return
+	}
+	const lab = item['label']
+	lastLabel.value = lab != null ? '' + lab : ''
+}
+</script>
+
+<style lang="scss">
+@import '../../_demo-common.scss';
+
+.page-scroll {
+	height: 100%;
+}
+
+.demo-page {
+	min-height: 100%;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+	padding-bottom: 48rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	margin-bottom: 16rpx;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.55;
+	margin-bottom: 20rpx;
+	display: block;
+}
+
+.tree-wrap {
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #eeeeee;
+	border-radius: 12rpx;
+	padding: 8rpx 0;
+}
+
+.demo-result {
+	font-size: 26rpx;
+	color: #333333;
+	margin-top: 20rpx;
+	display: block;
+}
+</style>

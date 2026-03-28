@@ -1,7 +1,7 @@
 /* pages_demo 演示页通用样式：区块标题左侧竖条与主题色统一 */
 
-$mms-demo-section-accent: #ff0844;
-$mms-demo-section-border-w: 6rpx;
+$m-demo-section-accent: #ff0844;
+$m-demo-section-border-w: 6rpx;
 
 .section-title {
 	display: block;
@@ -10,5 +10,5 @@ $mms-demo-section-border-w: 6rpx;
 	color: #333333;
 	margin-bottom: 16rpx;
 	padding-left: 16rpx;
-	border-left: $mms-demo-section-border-w solid $mms-demo-section-accent;
+	border-left: $m-demo-section-border-w solid $m-demo-section-accent;
 }

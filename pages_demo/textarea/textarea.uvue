@@ -3,19 +3,19 @@
 		<view class="demo-section">
 			<text class="section-title">基础</text>
 			<text class="section-desc">无标题，默认高度与底部分割线</text>
-			<mms-textarea
+			<m-textarea
 				v-model="t1"
 				placeholder="请输入多行内容"
 				:borderBottom="true"
 				height="160rpx"
 				minHeight="160rpx"
-			></mms-textarea>
+			></m-textarea>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">带标题与字数统计</text>
 			<text class="section-desc">flexStart + isCounter，标题与首行对齐</text>
-			<mms-textarea
+			<m-textarea
 				v-model="t2"
 				label="简介"
 				:flexStart="true"
@@ -24,26 +24,26 @@
 				placeholder="最多 140 字"
 				height="200rpx"
 				minHeight="200rpx"
-			></mms-textarea>
+			></m-textarea>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">自动增高</text>
 			<text class="section-desc">autoHeight：随内容增高，仍受 minHeight 约束</text>
-			<mms-textarea
+			<m-textarea
 				v-model="t3"
 				label="留言"
 				:flexStart="true"
 				:autoHeight="true"
 				minHeight="120rpx"
 				placeholder="输入多行试试"
-			></mms-textarea>
+			></m-textarea>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">边框模式</text>
 			<text class="section-desc">textareaBorder，上下分割线可关</text>
-			<mms-textarea
+			<m-textarea
 				v-model="t4"
 				label="备注"
 				:textareaBorder="true"
@@ -52,12 +52,12 @@
 				placeholder="带描边的输入区域"
 				height="180rpx"
 				minHeight="180rpx"
-			></mms-textarea>
+			></m-textarea>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">必填与错误</text>
-			<mms-textarea
+			<m-textarea
 				v-model="t5"
 				label="说明"
 				:flexStart="true"
@@ -66,7 +66,7 @@
 				:borderBottom="false"
 				height="200rpx"
 				minHeight="200rpx"
-			></mms-textarea>
+			></m-textarea>
 		</view>
 
 		<view class="page-footer-spacer"></view>

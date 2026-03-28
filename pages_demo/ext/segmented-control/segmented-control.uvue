@@ -6,7 +6,7 @@
 				<text class="demo-lead">
 					通过 values 传入各段文案；使用 v-model:current 与选中索引双向绑定（从 0 开始）。
 				</text>
-				<mms-segmented-control :values="segBasic" v-model:current="idxBasic"></mms-segmented-control>
+				<m-segmented-control :values="segBasic" v-model:current="idxBasic"></m-segmented-control>
 				<text class="demo-hint">当前：{{ segBasic[idxBasic] }}（index = {{ idxBasic }}）</text>
 			</view>
 
@@ -15,7 +15,7 @@
 				<text class="demo-lead">
 					将 current 的初始值设为 1、2 等即可默认高亮对应段，常用于订单、任务状态等场景。
 				</text>
-				<mms-segmented-control :values="segOrder" v-model:current="idxOrder"></mms-segmented-control>
+				<m-segmented-control :values="segOrder" v-model:current="idxOrder"></m-segmented-control>
 				<text class="demo-hint">初始为「待评价」（index = 1），可切换观察选中态。</text>
 			</view>
 
@@ -24,13 +24,13 @@
 				<text class="demo-lead">
 					activeColor 为选中段的主色（描边与文字）；inactiveColor 为未选中文字；backgroundColor 为整条轨道背景。
 				</text>
-				<mms-segmented-control
+				<m-segmented-control
 					:values="segColor"
 					v-model:current="idxColor"
 					active-color="#ff0844"
 					inactive-color="#888888"
 					background-color="#fff0f3"
-				></mms-segmented-control>
+				></m-segmented-control>
 			</view>
 
 			<view class="demo-section">
@@ -38,25 +38,25 @@
 				<text class="demo-lead">
 					height 控制整体高度，size 为文字字号，radius 控制外轮廓圆角（支持带单位的字符串，如 8px、16rpx）。
 				</text>
-				<mms-segmented-control
+				<m-segmented-control
 					:values="segSize"
 					v-model:current="idxSize"
 					height="64rpx"
 					size="26rpx"
 					radius="12px"
 					active-color="#1890ff"
-				></mms-segmented-control>
+				></m-segmented-control>
 			</view>
 
 			<view class="demo-section">
 				<text class="section-title">禁用</text>
 				<text class="demo-lead">disabled 为 true 时不响应点击，用于只读展示或流程未就绪时。</text>
-				<mms-segmented-control
+				<m-segmented-control
 					:values="segDis"
 					:current="1"
 					:disabled="true"
 					active-color="#5677fc"
-				></mms-segmented-control>
+				></m-segmented-control>
 			</view>
 
 			<view class="demo-section">
@@ -64,12 +64,12 @@
 				<text class="demo-lead">
 					除 v-model 外可监听 @change（或 @click），在回调里做统计、拉取列表等；payload 含 index。
 				</text>
-				<mms-segmented-control
+				<m-segmented-control
 					:values="segEvt"
 					v-model:current="idxEvt"
 					active-color="#07c160"
 					@change="onSegChange"
-				></mms-segmented-control>
+				></m-segmented-control>
 				<text class="demo-hint">上次 change：index = {{ lastChangeIdx }}</text>
 			</view>
 
@@ -78,12 +78,12 @@
 				<text class="demo-lead">
 					若只用 :current 传入、未用 v-model，须在 @change 或 @click 里自行把父级 current 设为新的 index，否则再次点击同一段时可能无法触发更新。
 				</text>
-				<mms-segmented-control
+				<m-segmented-control
 					:values="segManual"
 					:current="idxManual"
 					active-color="#fa8c16"
 					@change="onManualChange"
-				></mms-segmented-control>
+				></m-segmented-control>
 				<text class="demo-hint">父级 index：{{ idxManual }}</text>
 			</view>
 

@@ -1,24 +1,24 @@
 <template>
 	<view class="demo-page">
 		<text class="page-lead">
-			mms-toast 组件支持显示/隐藏过渡（遮罩与内容淡入、缩放）。下方「组件示例」使用 mms-toast；「系统 API」为 uni.showToast，便于对比原生表现。
+			m-toast 组件支持显示/隐藏过渡（遮罩与内容淡入、缩放）。下方「组件示例」使用 m-toast；「系统 API」为 uni.showToast，便于对比原生表现。
 		</text>
 
 		<view class="demo-section">
-			<text class="section-title">组件示例（mms-toast）</text>
+			<text class="section-title">组件示例（m-toast）</text>
 			<view class="demo-row">
-				<mms-button type="primary" size="small" @click="openCmpToast({ text: '普通提示', type: '' })">纯文字</mms-button>
-				<mms-button type="green" size="small" @click="openCmpToast({ text: '成功提示', type: 'success' })">成功</mms-button>
-				<mms-button type="danger" size="small" @click="openCmpToast({ text: '失败提示', type: 'error' })">失败</mms-button>
+				<m-button type="primary" size="small" @click="openCmpToast({ text: '普通提示', type: '' })">纯文字</m-button>
+				<m-button type="green" size="small" @click="openCmpToast({ text: '成功提示', type: 'success' })">成功</m-button>
+				<m-button type="danger" size="small" @click="openCmpToast({ text: '失败提示', type: 'error' })">失败</m-button>
 			</view>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">位置与时长</text>
 			<view class="demo-row">
-				<mms-button type="primary" size="small" @click="openCmpToast({ text: '顶部提示', position: 'top' })">顶部</mms-button>
-				<mms-button type="primary" size="small" @click="openCmpToast({ text: '底部提示', position: 'bottom' })">底部</mms-button>
-				<mms-button type="primary" size="small" @click="openCmpToast({ text: '持续约 3 秒的提示', duration: 3000 })">长时 3s</mms-button>
+				<m-button type="primary" size="small" @click="openCmpToast({ text: '顶部提示', position: 'top' })">顶部</m-button>
+				<m-button type="primary" size="small" @click="openCmpToast({ text: '底部提示', position: 'bottom' })">底部</m-button>
+				<m-button type="primary" size="small" @click="openCmpToast({ text: '持续约 3 秒的提示', duration: 3000 })">长时 3s</m-button>
 			</view>
 		</view>
 
@@ -26,7 +26,7 @@
 			<text class="section-title">加载 + 遮罩</text>
 			<text class="section-desc">type=loading 使用内置图标；mask 为 true 时带半透明遮罩。</text>
 			<view class="demo-row">
-				<mms-button type="primary" size="small" @click="openLoadingCmp">加载约 2 秒</mms-button>
+				<m-button type="primary" size="small" @click="openLoadingCmp">加载约 2 秒</m-button>
 			</view>
 		</view>
 
@@ -34,20 +34,20 @@
 			<text class="section-title">系统 API（uni.showToast）</text>
 			<text class="section-desc">无自定义过渡，与原生表现一致。</text>
 			<view class="demo-row">
-				<mms-button type="gray" size="small" @click="showUniToast('普通提示')">普通</mms-button>
-				<mms-button type="gray" size="small" @click="showUniToast('成功', 'success')">成功</mms-button>
-				<mms-button type="gray" size="small" @click="showUniToast('失败', 'error')">失败</mms-button>
+				<m-button type="gray" size="small" @click="showUniToast('普通提示')">普通</m-button>
+				<m-button type="gray" size="small" @click="showUniToast('成功', 'success')">成功</m-button>
+				<m-button type="gray" size="small" @click="showUniToast('失败', 'error')">失败</m-button>
 			</view>
 		</view>
 
-		<mms-toast
+		<m-toast
 			v-model:show="cmpShow"
 			:text="cmpText"
 			:type="cmpType"
 			:mask="cmpMask"
 			:position="cmpPosition"
 			:transition-ms="cmpTransitionMs"
-		></mms-toast>
+		></m-toast>
 	</view>
 </template>
 
@@ -156,6 +156,6 @@ onBeforeUnmount(() => {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	gap: 16rpx;
+	gap: 8rpx;
 }
 </style>

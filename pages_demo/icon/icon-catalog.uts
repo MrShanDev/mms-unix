@@ -1,0 +1,59 @@
+/**
+ * m-icon 支持的 name 列表（与 uni_modules/m-unix/components/m-icon/m-icon.uvue 中 getIconChar 一致）
+ * 含别名（同一字形多名称），便于检索与复制。
+ */
+export type IconCategory = {
+	title: string
+	icons: string[]
+}
+
+export const iconCategories: IconCategory[] = [
+	{
+		title: '基础与通用',
+		icons: [
+			'print', 'mobile-phone', 'minus', 'navigation', 'location', 'pdf', 'prompt', 'move', 'refresh',
+			'run-up', 'picture', 'photo', 'run-in', 'pin', 'save', 'search', 'share', 'scanning', 'security',
+			'sign-out', 'select', 'stop', 'success', 'smile', 'switch', 'setting', 'survey', 'task', 'skip',
+			'text', 'time', 'telephone-out', 'toggle-left', 'toggle-right', 'telephone', 'phone', 'top',
+			'unlock', 'user', 'person', 'upload', 'work', 'training', 'warning', 'zoom-in', 'zoom-out'
+		]
+	},
+	{
+		title: '粗体',
+		icons: [
+			'add-bold', 'arrow-left-bold', 'arrow-up-bold', 'close-bold', 'arrow-down-bold', 'minus-bold',
+			'arrow-right-bold', 'select-bold'
+		]
+	},
+	{
+		title: '填充',
+		icons: [
+			'arrow-up-filling', 'arrow-down-filling', 'arrow-left-filling', 'arrow-right-filling',
+			'caps-unlock-filling', 'comment-filling', 'check-item-filling', 'clock-filling', 'delete-filling',
+			'decline-filling', 'dynamic-filling', 'intermediate-filling', 'favorite-filling', 'layout-filling',
+			'help-filling', 'history-filling', 'filter-filling', 'file-common-filling', 'news-filling',
+			'edit-filling', 'fullscreen-expand-filling', 'smile-filling', 'rise-filling', 'picture-filling',
+			'notification-filling', 'user-filling', 'setting-filling', 'switch-filling', 'work-filling',
+			'task-filling', 'success-filling', 'warning-filling', 'folder-filling', 'map-filling',
+			'prompt-filling', 'meh-filling', 'cry-filling', 'top-filling', 'home-filling', 'sorting'
+		]
+	},
+	{
+		title: '分栏与列表',
+		icons: ['column-3', 'category', 'column-4', 'column-vertical', 'listview', 'column-horizontal']
+	},
+	{
+		title: '常用符号',
+		icons: [
+			'add', 'add-circle', 'adjust', 'arrow-up-circle', 'arrow-up', 'arrow-right-circle', 'arrow-down',
+			'ashbin', 'arrow-right', 'browse', 'bottom', 'back', 'arrow-left', 'arrow-left-circle',
+			'arrow-double-right', 'camera', 'chart-bar', 'attachment', 'code', 'close', 'check', 'check-item',
+			'calendar', 'comment', 'complete', 'cry', 'customer-service', 'delete', 'download', 'edit',
+			'email', 'error', 'favorite', 'heart', 'tag', 'label', 'file', 'folder-close', 'folder',
+			'filter', 'good', 'star', 'hide', 'home', 'history', 'link', 'lock', 'map', 'meh', 'menu',
+			'loading', 'help', 'minus-circle', 'more', 'notification', 'message', 'play', 'film',
+			'fabulous', 'good-filling', 'elipsis', 'wallet', 'shop', 'apps', 'modular', 'layers', 'cart',
+			'shopping-cart', 'trolley'
+		]
+	}
+]

@@ -3,43 +3,43 @@
 		<view class="demo-section">
 			<text class="section-title">基础搜索框</text>
 			<text class="section-desc">默认方形圆角、外层灰底、内层白底</text>
-			<mms-search v-model="q1" placeholder="请输入搜索关键词"></mms-search>
+			<m-search v-model="q1" placeholder="请输入搜索关键词"></m-search>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">圆形（胶囊）搜索框</text>
 			<text class="section-desc">shape="round"，高圆角胶囊</text>
-			<mms-search v-model="q2" placeholder="请输入搜索关键词" shape="round"></mms-search>
+			<m-search v-model="q2" placeholder="请输入搜索关键词" shape="round"></m-search>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">带边框</text>
 			<text class="section-desc">border=true，内框描边</text>
-			<mms-search v-model="q3" placeholder="带边框的搜索" :border="true"></mms-search>
+			<m-search v-model="q3" placeholder="带边框的搜索" :border="true"></m-search>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">显示搜索按钮</text>
 			<text class="section-desc">showAction=true，右侧「搜索」，点击触发 @search</text>
-			<mms-search v-model="q4" placeholder="输入后点搜索" :showAction="true" @search="onSearch"></mms-search>
+			<m-search v-model="q4" placeholder="输入后点搜索" :showAction="true" @search="onSearch"></m-search>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">禁用状态</text>
 			<text class="section-desc">disabled=true，不可输入、不显示清除</text>
-			<mms-search placeholder="搜索框已禁用" :disabled="true"></mms-search>
+			<m-search placeholder="搜索框已禁用" :disabled="true"></m-search>
 		</view>
 
 		<view class="demo-section">
 			<text class="section-title">自定义内外背景</text>
 			<text class="section-desc">backgroundColor 外层条，innerBgColor 输入区域（与默认形成对比）</text>
-			<mms-search
+			<m-search
 				v-model="q5"
 				placeholder="浅蓝底输入区"
 				backgroundColor="#e8eef5"
 				innerBgColor="#e3f2fd"
 				:border="true"
-			></mms-search>
+			></m-search>
 		</view>
 	</view>
 </template>

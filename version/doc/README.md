@@ -7,7 +7,7 @@
 | 类型 | 文件命名 | 说明 |
 |------|----------|------|
 | 演示工程（主包） | `app-{x.y.z}.md` | 与 `common/config.ts` → `configInfo.versionName` 一致，例如 `app-1.0.1.md` |
-| 组件库（uni_modules） | `lib-{x.y.z}.md` | 与 `uni_modules/mms-unix/package.json` → `version` 一致，例如 `lib-1.1.1.md` |
+| 组件库（uni_modules） | `lib-{x.y.z}.md` | 与 `uni_modules/m-unix/package.json` → `version` 一致，例如 `lib-1.1.1.md` |
 | 需求 / 用户故事 | `req-YYYYMMDD-简述.md` | 单次需求可单独成文，便于评审与归档（可选） |
 | 未完成与测试清单 | `qa-open-items.md` | **持续更新**；关闭项可删改或迁出到对应版本说明 |
 
@@ -22,12 +22,14 @@
 | 1.0.1 | 2026-03-24 | 主色 #ff0844、个人中心/资料/联系页改版、菜单与配置 | [app-1.0.1.md](./app-1.0.1.md) |
 | 1.0.0 | — | 四 Tab、演示分包、配置合并等基线 | [app-1.0.0.md](./app-1.0.0.md) |
 
-### 组件库 `package.json`（mms-unix）
+### 组件库 `package.json`（m-unix）
 
 | 版本 | 日期 | 简述 | 文档 |
 |------|------|------|------|
+| 1.2.3 | 2026-03-29 | 发版号 1.2.3 与插件市场对齐（文档同 1.2.2） | [lib-1.2.3.md](./lib-1.2.3.md) |
+| 1.2.2 | 2026-03-28 | 文档与插件市场（含原 1.2.1 档条目）、readme 全量组件列表、repository 与 OSS Logo | [lib-1.2.2.md](./lib-1.2.2.md) |
 | 1.2.0 | 2026-03-25 | 轮播/分页/通告系列、工具导入修复、changelog 规范 | [lib-1.2.0.md](./lib-1.2.0.md) |
-| 1.1.1 | 2026-03-24 | 默认主色与 mms.scss 同步 | [lib-1.1.1.md](./lib-1.1.1.md) |
+| 1.1.1 | 2026-03-24 | 默认主色与 m.scss 同步 | [lib-1.1.1.md](./lib-1.1.1.md) |
 | 1.1.0 | 2026-03-23 | ucss 适配、图标与 cell/grid 等 | [lib-1.1.0.md](./lib-1.1.0.md) |
 | 1.0.0 | 2026-03-23 | 初始组件与工具集 | [lib-1.0.0.md](./lib-1.0.0.md) |
 
@@ -36,11 +38,11 @@
 | 文档 | 说明 |
 |------|------|
 | [qa-open-items.md](./qa-open-items.md) | 未完成、未验证、测试与风险清单（随迭代更新） |
-| [mms-unix-vscode-dev.md](./mms-unix-vscode-dev.md) | VS Code 扩展（`mms-unix-vscode/`）待办与体验清单 |
+| [m-unix-vscode-dev.md](./m-unix-vscode-dev.md) | VS Code 扩展（`m-unix-vscode/`）待办与体验清单 |
 
 ## 与仓库其他位置的关系
 
-- 版本与验收类文档**以本目录为主**；组件库**面向使用者的版本日志**另见 `uni_modules/mms-unix/changelog.md`（与 `package.json` 的 `version` 对齐）。
+- 版本与验收类文档**以本目录为主**；组件库**面向使用者的版本日志**另见 `uni_modules/m-unix/changelog.md`（与 `package.json` 的 `version` 对齐）。
 - 未完成清单等见本目录 `qa-open-items.md`，不在根目录重复放置。
 
 ---

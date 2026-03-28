@@ -1,4 +1,4 @@
-# 组件库 mms-unix 1.1.0（2026-03-23）
+# 组件库 m-unix 1.1.0（2026-03-23）
 
 **简述：** ucss 兼容性优化；图标与单元格/宫格等能力补强。
 
@@ -8,7 +8,7 @@
 
 ### CSS 样式重构
 
-- 合并 CSS 文件：将 `flex.scss`、`utils.scss`、`color.scss` 合并到 `common.scss` 和 `mms.scss`
+- 合并 CSS 文件：将 `flex.scss`、`utils.scss`、`color.scss` 合并到 `common.scss` 和 `m.scss`
 - 移除不支持的特性：
   - 移除 `linear-gradient` 渐变背景
   - 移除 CSS 变量和 `:root` 选择器
@@ -22,22 +22,22 @@
 ### 图标组件重构
 
 - 使用宿主环境提供的字体加载能力动态加载自定义字体
-- 重构 `mms-icon` 组件，使用 Unicode 字符映射替代 `:before` 伪元素
+- 重构 `m-icon` 组件，使用 Unicode 字符映射替代 `:before` 伪元素
 - 添加图标别名支持（如 `person` → `user`、`phone` → `telephone`）
-- 整合 `mms-unix-doc/mms-icon-font` 字体文件到 `/static/iconfont/`
+- 整合 `m-unix-doc/m-icon-font` 字体文件到 `/static/iconfont/`
 
 ### 新增组件
 
-- `mms-cell-group` - 单元格分组组件
-- `mms-grid-item` - 宫格子项组件
+- `m-cell-group` - 单元格分组组件
+- `m-grid-item` - 宫格子项组件
 
 ### Bug 修复
 
-- 修复 `index.js` 导入路径错误（`libs/request.uts` → `components/mms-tools/Request.uts`）
+- 修复 `index.js` 导入路径错误（`libs/request.uts` → `components/m-tools/Request.uts`）
 - 修复 `Request.uts` 中 `null` 类型检查问题
 - 导出 `AnyRecord` 类型供外部使用
-- 修复 `mms-grid` 组件支持 `column` 属性和 slot 内容
-- 修复 `mms-cell` 组件支持 `title` 属性
+- 修复 `m-grid` 组件支持 `column` 属性和 slot 内容
+- 修复 `m-cell` 组件支持 `title` 属性
 
 ### 项目结构调整
 
@@ -47,11 +47,11 @@
 ### 文件变更
 
 - 新增 `pages/index/myServiceData.uts` - 首页服务栏数据
-- 新增 `uni_modules/mms-unix/libs/css/mms.scss` - MMS 简化工具类
-- 删除 `uni_modules/mms-unix/libs/request.uts`（已迁移）
-- 删除 `uni_modules/mms-unix/libs/css/flex.scss`（已合并）
-- 删除 `uni_modules/mms-unix/libs/css/utils.scss`（已合并）
-- 删除 `uni_modules/mms-unix/libs/css/color.scss`（已合并）
+- 新增 `uni_modules/m-unix/libs/css/m.scss` - mUnix 简化工具类
+- 删除 `uni_modules/m-unix/libs/request.uts`（已迁移）
+- 删除 `uni_modules/m-unix/libs/css/flex.scss`（已合并）
+- 删除 `uni_modules/m-unix/libs/css/utils.scss`（已合并）
+- 删除 `uni_modules/m-unix/libs/css/color.scss`（已合并）
 
 ---
 

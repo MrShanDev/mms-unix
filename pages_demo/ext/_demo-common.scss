@@ -99,7 +99,7 @@
 	display: block;
 }
 
-/* 扩展演示：mms-dropdown-list 下拉选择条与列表 */
+/* 扩展演示：m-dropdown-list 下拉选择条与列表 */
 .ext-dd-trigger-outer {
 	width: 100%;
 	max-width: 560rpx;
@@ -211,6 +211,7 @@
 .ext-btns {
 	display: flex;
 	flex-direction: column;
+	/* 替代 * + *：微信小程序 WXSS 不支持通用选择器 * */
 	gap: 16rpx;
 }
 
@@ -327,8 +328,8 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 20rpx;
 	margin-top: 20rpx;
+	gap: 20rpx;
 }
 
 .ext-banner-inner {

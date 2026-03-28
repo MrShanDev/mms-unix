@@ -2,7 +2,7 @@
 	<view class="demo-page">
 		<view class="demo-section">
 			<text class="section-title">基础切换</text>
-			<mms-tabs :tabs="tabItems" :current-tab="tabCur" @change="onTabChange"></mms-tabs>
+			<m-tabs :tabs="tabItems" :current-tab="tabCur" @change="onTabChange"></m-tabs>
 			<text class="demo-desc">当前索引：{{ tabCur }}</text>
 		</view>
 	</view>

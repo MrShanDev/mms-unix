@@ -19,12 +19,12 @@
 					<text class="ext-title">默认（总数 + 每页条数）</text>
 					<text class="ext-hint pg-line">total=95，page-size=10，共 10 页。</text>
 					<view class="pg-row">
-						<mms-pagination
+						<m-pagination
 							:total="totalA"
 							:page-size="10"
 							v-model:current="pageA"
 							@change="onChangeA"
-						></mms-pagination>
+						></m-pagination>
 					</view>
 					<text class="pg-desc">当前页：{{ pageA }} · 最近事件：{{ lastEvtA }}</text>
 				</view>
@@ -33,11 +33,11 @@
 					<text class="ext-title">每页条数（page-size）</text>
 					<text class="ext-hint pg-line">同一总量下，page-size 越大总页数越少。</text>
 					<view class="pg-row">
-						<mms-pagination
+						<m-pagination
 							:total="100"
 							:page-size="20"
 							v-model:current="pageB"
-						></mms-pagination>
+						></m-pagination>
 					</view>
 					<text class="pg-desc">当前页：{{ pageB }}（每页 20 条 → 共 5 页）</text>
 				</view>
@@ -46,12 +46,12 @@
 					<text class="ext-title">仅按钮（is-page = false）</text>
 					<text class="ext-hint pg-line">不展示「当前/总页」中间区域，仅保留上一页、下一页。</text>
 					<view class="pg-row">
-						<mms-pagination
+						<m-pagination
 							:total="50"
 							:page-size="10"
 							:is-page="false"
 							v-model:current="pageC"
-						></mms-pagination>
+						></m-pagination>
 					</view>
 					<text class="pg-desc">当前页：{{ pageC }}</text>
 				</view>
@@ -60,7 +60,7 @@
 					<text class="ext-title">文案与尺寸</text>
 					<text class="ext-hint pg-line">prev-text / next-text 可改按钮文案；width、height 控制按钮区域（单位与组件默认一致，多为 rpx 数值）。</text>
 					<view class="pg-row">
-						<mms-pagination
+						<m-pagination
 							:total="30"
 							:page-size="10"
 							prev-text="上一屏"
@@ -68,7 +68,7 @@
 							:width="120"
 							:height="64"
 							v-model:current="pageD"
-						></mms-pagination>
+						></m-pagination>
 					</view>
 					<text class="pg-desc">当前页：{{ pageD }}</text>
 				</view>
@@ -77,7 +77,7 @@
 					<text class="ext-title">颜色与圆角</text>
 					<text class="ext-hint pg-line">current-color、page-color、page-font-size 控制中间页码区；按钮区用 color、background-color、border-color、radius。</text>
 					<view class="pg-row">
-						<mms-pagination
+						<m-pagination
 							:total="80"
 							:page-size="8"
 							current-color="#5677fc"
@@ -88,7 +88,7 @@
 							border-color="#e5e5e5"
 							radius="12rpx"
 							v-model:current="pageE"
-						></mms-pagination>
+						></m-pagination>
 					</view>
 					<text class="pg-desc">当前页：{{ pageE }}</text>
 				</view>
@@ -97,7 +97,7 @@
 					<text class="ext-title">自定义按钮内容（custom + 插槽）</text>
 					<text class="ext-hint pg-line">custom 为 true 时，可用 prev / next 插槽替换默认文字（需自行控制可读性与禁用态表现）。</text>
 					<view class="pg-row">
-						<mms-pagination
+						<m-pagination
 							:total="40"
 							:page-size="10"
 							:custom="true"
@@ -109,7 +109,7 @@
 							<template #next>
 								<text class="pg-slot-btn">▶</text>
 							</template>
-						</mms-pagination>
+						</m-pagination>
 					</view>
 					<text class="pg-desc">当前页：{{ pageF }}</text>
 				</view>

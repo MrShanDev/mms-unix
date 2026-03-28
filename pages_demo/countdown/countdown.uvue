@@ -4,7 +4,7 @@
 			<text class="section-title">基础倒计时</text>
 			<view class="countdown-row">
 				<text class="countdown-label">60 秒，HH:mm:ss</text>
-				<mms-countdown :seconds="60" @finish="onFinish"></mms-countdown>
+				<m-countdown :seconds="60" @finish="onFinish"></m-countdown>
 			</view>
 		</view>
 
@@ -12,11 +12,11 @@
 			<text class="section-title">倒计时样式</text>
 			<view class="countdown-row">
 				<text class="countdown-label">30 秒，纯文字</text>
-				<mms-countdown :seconds="30"></mms-countdown>
+				<m-countdown :seconds="30"></m-countdown>
 			</view>
 			<view class="countdown-row">
 				<text class="countdown-label">30 秒，按钮底</text>
-				<mms-countdown :seconds="30" type="button"></mms-countdown>
+				<m-countdown :seconds="30" type="button"></m-countdown>
 			</view>
 		</view>
 
@@ -24,18 +24,75 @@
 			<text class="section-title">自定义文字（验证码样式）</text>
 			<view class="countdown-row">
 				<text class="countdown-label">文案 + 结束可点重开</text>
-				<mms-countdown
+				<m-countdown
 					:seconds="60"
 					startText="获取验证码"
 					endText="重新获取"
 					suffix="秒后重试"
-				></mms-countdown>
+				></m-countdown>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">分格 + 年月日时分秒</text>
+			<text class="section-desc">
+				type="cells" 时每个数字段为小方格；format 占位符：YYYY、MM（月）、DD、HH、mm（分）、ss。默认 duration 模式下 DD 为总天数；calendar
+				为 true 时按 年(365天)/月(30天)/日 近似拆分。
+			</text>
+			<view class="countdown-row">
+				<text class="countdown-label">HH:mm:ss</text>
+				<m-countdown type="cells" format="HH:mm:ss" :seconds="3665"></m-countdown>
+			</view>
+			<view class="countdown-row">
+				<text class="countdown-label">DD天 HH:mm:ss</text>
+				<m-countdown type="cells" format="DD天 HH:mm:ss" :seconds="90061"></m-countdown>
+			</view>
+			<view class="countdown-row">
+				<text class="countdown-label">主色分格</text>
+				<m-countdown type="cells" format="HH:mm:ss" :seconds="3599" :primary="true"></m-countdown>
+			</view>
+			<view class="countdown-row countdown-row--stack countdown-row--last">
+				<text class="countdown-label">YYYY-MM-DD HH:mm:ss</text>
+				<view class="countdown-cells-wrap">
+					<m-countdown
+						type="cells"
+						:calendar="true"
+						format="YYYY-MM-DD HH:mm:ss"
+						:seconds="demoLongSeconds"
+					></m-countdown>
+				</view>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">主题色倒计时（主色）</text>
+			<text class="section-desc">与 MMS 主色 #ff0844 一致；传 primary 即可，适用于活动倒计时、主色按钮式展示。</text>
+			<view class="countdown-row">
+				<text class="countdown-label">HH:mm:ss</text>
+				<m-countdown :seconds="120" :primary="true" @finish="onFinish"></m-countdown>
+			</view>
+			<view class="countdown-row">
+				<text class="countdown-label">按钮底</text>
+				<m-countdown :seconds="45" type="button" :primary="true"></m-countdown>
+			</view>
+			<view class="countdown-row countdown-row--last">
+				<text class="countdown-label">验证码文案</text>
+				<m-countdown
+					:seconds="60"
+					:primary="true"
+					type="button"
+					endText="重新获取"
+					suffix="秒后重试"
+				></m-countdown>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
+/** 约 400 天 + 若干小时，用于演示 calendar 模式分格 */
+const demoLongSeconds = 400 * 24 * 3600 + 3 * 3600 + 45 * 60 + 20
+
 function onFinish() {
 	uni.showToast({ title: '倒计时结束', icon: 'none' })
 }
@@ -60,13 +117,39 @@ function onFinish() {
 	margin-bottom: 24rpx;
 }
 
-
+.section-desc {
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.5;
+	margin-bottom: 24rpx;
+	display: block;
+}
 
 .countdown-row {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	margin-bottom: 20rpx;
+}
+
+.countdown-row--last {
+	margin-bottom: 0;
+}
+
+/* 长分格与标签分行，占满宽度便于换行，避免横向被裁切 */
+.countdown-row--stack {
+	flex-direction: column;
+	align-items: stretch;
+}
+
+.countdown-row--stack .countdown-label {
+	margin-right: 0;
+	margin-bottom: 12rpx;
+}
+
+.countdown-cells-wrap {
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .countdown-label {

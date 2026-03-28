@@ -3,7 +3,7 @@
 		<!-- 顶部渐变区域（与登录页一致） -->
 		<view class="reg-header">
 			<view class="nav-back" @tap="goBack">
-				<mms-icon name="arrow-left" size="48rpx" color="#ffffff"></mms-icon>
+				<m-icon name="arrow-left" size="48rpx" color="#ffffff"></m-icon>
 			</view>
 			<text class="reg-title">注册账号</text>
 			<text class="reg-desc">欢迎注册{{ config.configInfo.name }}，请填写以下信息</text>
@@ -27,7 +27,7 @@
 			</view>
 			<view class="agree-wrap" @tap="agree = !agree">
 				<view :class="['checkbox', { checked: agree }]">
-					<mms-icon v-if="agree" class="checkbox-icon" name="check-item" size="22rpx" color="#ffffff"></mms-icon>
+					<m-icon v-if="agree" class="checkbox-icon" name="check-item" size="22rpx" color="#ffffff"></m-icon>
 				</view>
 				<text class="agree-text">
 					我已阅读并同意
@@ -46,7 +46,7 @@
 
 <script setup lang="uts">
 	import { ref } from 'vue'
-	import { storage } from '@/uni_modules/mms-unix/components/mms-tools/Storage.uts'
+	import { storage } from '@/uni_modules/m-unix/components/m-tools/Storage.uts'
 	import { config } from '@/common/config'
 	import { accountRegister, mallSendSmsCode } from '@/common/api/mallApi'
 

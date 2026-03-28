@@ -1,0 +1,91 @@
+<template>
+	<scroll-view class="page-scroll" scroll-y style="flex:1">
+		<view class="demo-page">
+			<view class="demo-section">
+				<text class="section-title">提示条（m-tips）</text>
+				<text class="section-desc">与 m-toast 不同：通过 ref 调用 showTips({ msg, duration })，position 控制顶部/中部/底部样式。</text>
+				<view class="demo-row">
+					<m-button type="primary" btnSize="small" @tap="callTop">顶部</m-button>
+					<m-button type="primary" btnSize="small" @tap="callCenter">居中</m-button>
+					<m-button type="primary" btnSize="small" @tap="callBottom">底部</m-button>
+				</view>
+			</view>
+		</view>
+
+		<m-tips ref="tipsTopRef" position="top" :size="28"></m-tips>
+		<m-tips ref="tipsCenterRef" position="center" background-color="rgba(0,0,0,0.75)"></m-tips>
+		<m-tips ref="tipsBottomRef" position="bottom"></m-tips>
+	</scroll-view>
+</template>
+
+<script setup lang="uts">
+import { ref } from 'vue'
+
+const tipsTopRef = ref(null as any)
+const tipsCenterRef = ref(null as any)
+const tipsBottomRef = ref(null as any)
+
+function showOn(refVal: any, msg: string) {
+	const c = refVal as UTSJSONObject | null
+	if (c == null) {
+		return
+	}
+	const fn = c['showTips']
+	if (fn != null && typeof fn === 'function') {
+		;(fn as (o: { msg: string; duration?: number }) => void)({ msg: msg, duration: 2200 })
+	}
+}
+
+function callTop() {
+	showOn(tipsTopRef.value, '顶部提示（m-tips）')
+}
+
+function callCenter() {
+	showOn(tipsCenterRef.value, '居中气泡提示')
+}
+
+function callBottom() {
+	showOn(tipsBottomRef.value, '底部提示')
+}
+</script>
+
+<style lang="scss">
+@import '../../_demo-common.scss';
+
+.page-scroll {
+	height: 100%;
+}
+
+.demo-page {
+	min-height: 100%;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+	padding-bottom: 48rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.section-title {
+	margin-bottom: 16rpx;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.55;
+	margin-bottom: 20rpx;
+	display: block;
+}
+
+.demo-row {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 8rpx;
+}
+</style>

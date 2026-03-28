@@ -1,30 +1,94 @@
 /**
- * mms-unix 全局配置
+ * m-unix 全局配置
  * 组件库核心配置，所有项目通用配置在此定义
  */
 
-/** 与 mms-ui-config.uts 的 MmsUiPartial 字段对齐，供 TypeScript 项目配置 */
-export type MmsUiUserConfig = {
+
+/** 修改 env 或各环境地址后，需与此处保持一致 */
+const env: AppEnv = 'local'
+const localBaseUrl = 'http://localhost:8070'
+const devBaseUrl = ''
+const prodBaseUrl = ''
+
+export const config: AppConfig = {
+	env,
+	localBaseUrl,
+	devBaseUrl,
+	prodBaseUrl,
+	baseUrl: resolveBaseUrl(env, localBaseUrl, devBaseUrl, prodBaseUrl),
+	// 存储 Key
+	storage: {
+		token: 'token',
+		userInfo: 'userInfo',
+	},
+	// 需要登录的页面路径（不含 pages/ 前缀）
+	loginRequiredPaths: ['user_address', 'user_info'],
+	// 组件库演示登录页（m-login 非微信端跳转用）
+	loginPagePath: '/pages_demo/login/login',
+	// API 接口路径配置
+	api: {
+		login: {
+			tokenLogin: '/api/v1/login/tokenLogin',
+			codeGetOpenIdLogin: '/api/v1/login/codeGetOpenIdLogin',
+			codeGetPhoneRegisterOrLogin: '/api/v1/login/codeGetPhoneRegisterOrLogin',
+		},
+		update: {
+			checkUpdate: '/api/v1/common/checkUpdate',
+		},
+		upload: {
+			image: '/api/v1/common/upload/image',
+		},
+		/** 留空则使用 m-unix 库内默认（演示用公网 qrserver）；正式请改为自建接口根地址 */
+		qrCodeImageApiBase: '',
+	},
+	// 应用基础信息
+	configInfo: {
+		name: 'mUnix',
+		logo: '/uni_modules/m-unix/static/m-app-logo.png',
+		desc: 'uni-app 组件库',
+		versionCode: 2,
+		versionName: '1.0.1',
+	},
+}
+
+/** 接口环境：本机 / 开发服 / 生产 */
+export type AppEnv = 'local' | 'dev' | 'prod'
+
+/** 与 uni_modules/m-unix/config.uts 的 MUiPartial 字段对齐，供 TypeScript 项目配置 */
+export type MUiUserConfig = {
+	/** 应用展示名（与 configInfo.name 合并，见 getMUiConfig().appName） */
+	appName?: string
+	/** 开发环境 API 根（未填时兜底为 config.baseUrl） */
+	apiDevelopmentBase?: string
+	/** 生产环境 API 根 */
+	apiProductionBase?: string
+	/** 用户协议路由 */
+	agreementRoute?: string
+	/** 隐私政策路由 */
+	privacyRoute?: string
 	appLogo?: string
-	emptyDefaultImage?: string
+	emptyDefaultIcon?: string
 	avatarDefault?: string
 	articlePlaceholder?: string
-	demoCardThumb?: string
-	cropperDemo?: string
+	/** 演示页示例图（card、cropper 等） */
+	demoImage?: string
 	qrCodeImageApiBase?: string
-	primaryColor?: string
-	serviceIconRead?: string
-	serviceIconCertificate?: string
-	serviceIconGroup?: string
-	serviceIconAddress?: string
-	serviceIconAbout?: string
 }
 
 type AppConfig = {
-	/** 基础 API 地址 */
+	/** 当前运行环境，决定 baseUrl 取自哪一项 */
+	env: AppEnv
+	/** 本机/本地后端 API 根（env 为 local 时使用） */
+	localBaseUrl: string
+	/** 开发/测试环境 API 根（env 为 dev 时使用；可为空则回退 localBaseUrl） */
+	devBaseUrl: string
+	/** 生产环境 API 根（env 为 prod 时使用；可为空则依次回退 dev、local） */
+	prodBaseUrl: string
+	/**
+	 * 当前生效的 API 根（由 env 与上述三者解析得到）
+	 * Request / mallApi / 上传等默认使用此字段
+	 */
 	baseUrl: string
-	/** 商城 API 地址（可选，若为空则使用 baseUrl） */
-	mallBaseUrl: string
 	/** 存储 Key 配置 */
 	storage: StorageConfig
 	/** 需要登录才能访问的页面路径（不含 pages/ 前缀） */
@@ -36,10 +100,10 @@ type AppConfig = {
 	/** 应用基础信息 */
 	configInfo: ConfigInfo
 	/**
-	 * mms-unix 组件库 UI 资源与主题（可选）
-	 * 与 uni_modules/mms-unix/config/mms-ui-config.uts 中默认值合并，未填则使用库内默认路径
+	 * m-unix 组件库 UI 资源与主题（可选）
+	 * 与 uni_modules/m-unix/config.uts 中默认值合并，未填则使用库内默认路径
 	 */
-	mmsUi?: MmsUiUserConfig
+	mUi?: MUiUserConfig
 }
 
 type StorageConfig = {
@@ -71,7 +135,7 @@ type ApiConfig = {
 		image: string
 	}
 	/**
-	 * H5/App 端 mms-qrcode 拉取二维码 PNG 的接口根地址（须自建，query 与 qrserver 兼容：size、color、bgcolor、data）
+	 * H5/App 端 m-qrcode 拉取二维码 PNG 的接口根地址（须自建，query 与 qrserver 兼容：size、color、bgcolor、data）
 	 * 留空则不请求任何外链，非微信端不显示联网二维码（微信端仍用 canvas 本地绘制）
 	 */
 	qrCodeImageApiBase: string
@@ -111,46 +175,20 @@ export type ConfigInfo = {
 	privacyPolicyArticleId?: string
 }
 
-export const config: AppConfig = {
-	// 基础 API 地址
-	baseUrl: 'http://localhost:8070',
-	// 商城 API 地址（若为空则使用 baseUrl）
-	mallBaseUrl: '',
-	// 存储 Key
-	storage: {
-		token: 'token',
-		userInfo: 'userInfo',
-	},
-	// 需要登录的页面路径（不含 pages/ 前缀）
-	loginRequiredPaths: ['user_address', 'user_info'],
-	// 组件库演示登录页（mms-login 非微信端跳转用）
-	loginPagePath: '/pages_demo/login/login',
-	// API 接口路径配置
-	api: {
-		login: {
-			tokenLogin: '/api/v1/login/tokenLogin',
-			codeGetOpenIdLogin: '/api/v1/login/codeGetOpenIdLogin',
-			codeGetPhoneRegisterOrLogin: '/api/v1/login/codeGetPhoneRegisterOrLogin',
-		},
-		update: {
-			checkUpdate: '/api/v1/common/checkUpdate',
-		},
-		upload: {
-			image: '/api/v1/common/upload/image',
-		},
-		/** 留空则使用 mms-unix 库内默认（演示用公网 qrserver）；正式请改为自建接口根地址 */
-		qrCodeImageApiBase: '',
-	},
-	// 应用基础信息
-	configInfo: {
-		name: 'mms-unix',
-		logo: '/static/img/app-logo.png',
-		desc: 'uni-app 组件库',
-		versionCode: 2,
-		versionName: '1.0.1',
-	},
-	// mms-unix 演示/业务页资源覆盖示例（按需取消注释并修改路径）
-	mmsUi: {
-		primaryColor: '#ff0844',
-	},
+function resolveBaseUrl(env: AppEnv, local: string, dev: string, prod: string): string {
+	if (env === 'local') {
+		return local
+	}
+	if (env === 'dev') {
+		return dev !== '' ? dev : local
+	}
+	// prod
+	if (prod !== '') {
+		return prod
+	}
+	if (dev !== '') {
+		return dev
+	}
+	return local
 }
+

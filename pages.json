@@ -2,33 +2,33 @@
 	"easycom": {
 		"autoscan": true,
 		"custom": {
-			"^mms-(.*)": "@/uni_modules/mms-unix/components/mms-$1/mms-$1.uvue"
+			"^m-(.*)": "@/uni_modules/m-unix/components/m-$1/m-$1.uvue"
 		}
 	},
 	"pages": [
 		{
 			"path": "pages/components/components",
 			"style": {
-				"navigationBarTitleText": "%page.components%",
+				"navigationBarTitleText": "组件",
 				"disableScroll": true
 			}
 		},
 		{
 			"path": "pages/tools/tools",
 			"style": {
-				"navigationBarTitleText": "%page.tools%"
+				"navigationBarTitleText": "工具"
 			}
 		},
 		{
 			"path": "pages/templates/templates",
 			"style": {
-				"navigationBarTitleText": "%page.templates%"
+				"navigationBarTitleText": "模版"
 			}
 		},
 		{
 			"path": "pages/user/user",
 			"style": {
-				"navigationBarTitleText": "%page.user%",
+				"navigationBarTitleText": "我的",
 				"navigationStyle": "custom"
 			}
 		}
@@ -38,6 +38,7 @@
 			"root": "pages_demo",
 			"pages": [
 				{ "path": "index", "style": { "navigationBarTitleText": "组件演示" } },
+				{ "path": "animate/animate", "style": { "navigationBarTitleText": "过渡动画" } },
 				{ "path": "button/button", "style": { "navigationBarTitleText": "按钮" } },
 				{ "path": "cell/cell", "style": { "navigationBarTitleText": "单元格" } },
 				{ "path": "dialog/dialog", "style": { "navigationBarTitleText": "对话框" } },
@@ -55,8 +56,8 @@
 				{ "path": "row/row", "style": { "navigationBarTitleText": "栅格布局" } },
 				{ "path": "card/card", "style": { "navigationBarTitleText": "卡片" } },
 				{ "path": "upload/upload", "style": { "navigationBarTitleText": "上传" } },
-				{ "path": "form/input", "style": { "navigationBarTitleText": "输入框 mms-input" } },
-				{ "path": "form/form", "style": { "navigationBarTitleText": "表单 mms-form" } },
+				{ "path": "form/input", "style": { "navigationBarTitleText": "输入框 m-input" } },
+				{ "path": "form/form", "style": { "navigationBarTitleText": "表单 m-form" } },
 				{ "path": "textarea/textarea", "style": { "navigationBarTitleText": "多行输入" } },
 				{ "path": "radio/radio", "style": { "navigationBarTitleText": "单选框" } },
 				{ "path": "checkbox/checkbox", "style": { "navigationBarTitleText": "多选框" } },
@@ -84,7 +85,7 @@
 				{ "path": "ext/swiper/swiper", "style": { "navigationBarTitleText": "轮播图" } },
 				{ "path": "ext/swipe-action/swipe-action", "style": { "navigationBarTitleText": "滑动操作" } },
 				{ "path": "ext/section/section", "style": { "navigationBarTitleText": "区块标题" } },
-				{ "path": "ext/wing-blank/wing-blank", "style": { "navigationBarTitleText": "左右留白" } },
+				{ "path": "ext/wing-blank/wing-blank", "style": { "navigationBarTitleText": "留白" } },
 				{ "path": "ext/richtext/richtext", "style": { "navigationBarTitleText": "富文本" } },
 				{ "path": "ext/rolling-news/rolling-news", "style": { "navigationBarTitleText": "滚动资讯" } },
 				{ "path": "ext/text/text", "style": { "navigationBarTitleText": "文本" } },
@@ -99,28 +100,38 @@
 				{ "path": "ext/notice-bar/notice-bar", "style": { "navigationBarTitleText": "通告栏" } },
 				{ "path": "ext/notice-vertical/notice-vertical", "style": { "navigationBarTitleText": "纵向通告" } },
 				{ "path": "ext/pagination/pagination", "style": { "navigationBarTitleText": "分页器" } },
-				{ "path": "ext/segmented-control/segmented-control", "style": { "navigationBarTitleText": "分段器" } }
+				{ "path": "ext/segmented-control/segmented-control", "style": { "navigationBarTitleText": "分段器" } },
+				{ "path": "ext/layout-helpers/layout-helpers", "style": { "navigationBarTitleText": "布局辅助" } },
+				{ "path": "ext/datetime-picker/datetime-picker", "style": { "navigationBarTitleText": "日期时间" } },
+				{ "path": "ext/app-update/app-update", "style": { "navigationBarTitleText": "应用更新" } },
+				{ "path": "ext/sticky-bottom/sticky-bottom", "style": { "navigationBarTitleText": "底部固定栏" } },
+				{ "path": "ext/screenshot/screenshot", "style": { "navigationBarTitleText": "区域截图" } },
+				{ "path": "ext/tips/tips", "style": { "navigationBarTitleText": "提示条 m-tips" } },
+				{ "path": "ext/loadmore/loadmore", "style": { "navigationBarTitleText": "加载更多" } },
+				{ "path": "ext/tree/tree", "style": { "navigationBarTitleText": "树形" } },
+				{ "path": "ext/wx-login/wx-login", "style": { "navigationBarTitleText": "微信登录按钮" } }
 			]
 		},
 		{
 			"root": "pages_Article",
 			"pages": [
-				{ "path": "articleList/articleList", "style": { "navigationBarTitleText": "%page.articleList%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
-				{ "path": "articleDetails/articleDetails", "style": { "navigationBarTitleText": "%page.articleDetails%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } }
+				{ "path": "articleList/articleList", "style": { "navigationBarTitleText": "文章列表", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white", "disableScroll": true } },
+				{ "path": "articleDetails/articleDetails", "style": { "navigationBarTitleText": "文章详情", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } }
 			]
 		},
 		{
 			"root": "pages_Me",
 			"pages": [
-				{ "path": "login/login", "style": { "navigationBarTitleText": "%page.login%", "navigationStyle": "custom" } },
-				{ "path": "login/weixinLoging", "style": { "navigationBarTitleText": "%page.login%", "navigationStyle": "custom" } },
-				{ "path": "register", "style": { "navigationBarTitleText": "%page.register%", "navigationStyle": "custom" } },
-				{ "path": "forgot-password/forgot-password", "style": { "navigationBarTitleText": "%page.forgotPassword%", "navigationStyle": "custom" } },
-				{ "path": "user_info/index", "style": { "navigationBarTitleText": "%page.userInfo%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
-				{ "path": "user_address/index", "style": { "navigationBarTitleText": "%page.userAddress%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
-				{ "path": "user_setting_address/user_setting_address", "style": { "navigationBarTitleText": "%page.address%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
-				{ "path": "about_me/about_me", "style": { "navigationBarTitleText": "%page.aboutMe%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
-				{ "path": "contact/contact", "style": { "navigationBarTitleText": "%page.contact%", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } }
+				{ "path": "login/login", "style": { "navigationBarTitleText": "登录", "navigationStyle": "custom" } },
+				{ "path": "login/weixinLoging", "style": { "navigationBarTitleText": "登录", "navigationStyle": "custom" } },
+				{ "path": "register", "style": { "navigationBarTitleText": "注册", "navigationStyle": "custom" } },
+				{ "path": "forgot-password/forgot-password", "style": { "navigationBarTitleText": "找回密码", "navigationStyle": "custom" } },
+				{ "path": "user_info/index", "style": { "navigationBarTitleText": "个人信息", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
+				{ "path": "user_address/index", "style": { "navigationBarTitleText": "收货地址", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
+				{ "path": "user_setting_address/user_setting_address", "style": { "navigationBarTitleText": "地址", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
+				{ "path": "about_me/about_me", "style": { "navigationBarTitleText": "关于我们", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
+				{ "path": "contact/contact", "style": { "navigationBarTitleText": "联系我们", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } },
+				{ "path": "cooperation/cooperation", "style": { "navigationBarTitleText": "商务合作", "navigationBarBackgroundColor": "#ff0844", "navigationBarTextStyle": "white" } }
 			]
 		}
 	],
@@ -132,25 +143,25 @@
 		"list": [
 			{
 				"pagePath": "pages/components/components",
-				"text": "%tabbar.components%",
+				"text": "组件",
 				"iconPath": "/static/tabbar/tab-components.png",
 				"selectedIconPath": "/static/tabbar/tab-components-active.png"
 			},
 			{
 				"pagePath": "pages/tools/tools",
-				"text": "%tabbar.tools%",
+				"text": "工具",
 				"iconPath": "/static/tabbar/tab-tools.png",
 				"selectedIconPath": "/static/tabbar/tab-tools-active.png"
 			},
 			{
 				"pagePath": "pages/templates/templates",
-				"text": "%tabbar.templates%",
+				"text": "模版",
 				"iconPath": "/static/tabbar/tab-templates.png",
 				"selectedIconPath": "/static/tabbar/tab-templates-active.png"
 			},
 			{
 				"pagePath": "pages/user/user",
-				"text": "%tabbar.user%",
+				"text": "我的",
 				"iconPath": "/static/tabbar/tab-user.png",
 				"selectedIconPath": "/static/tabbar/tab-user-active.png"
 			}
@@ -158,7 +169,7 @@
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "%app.name%",
+		"navigationBarTitleText": "mUnix",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 	},
