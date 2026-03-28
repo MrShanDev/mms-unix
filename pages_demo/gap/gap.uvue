@@ -1,0 +1,140 @@
+<template>
+	<view class="demo-page">
+		<view class="demo-section">
+			<text class="section-title">默认高度</text>
+			<text class="section-desc">不传 height 时默认为 20（单位 rpx）；背景默认透明。</text>
+			<view class="demo-strip">
+				<view class="demo-strip__block">
+					<text class="demo-label">上一段内容</text>
+				</view>
+				<m-gap></m-gap>
+				<view class="demo-strip__block">
+					<text class="demo-label">下一段内容（中间为透明 gap）</text>
+				</view>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">自定义高度 height</text>
+			<text class="section-desc">height 为数字或带单位的字符串（如 32、32rpx、16px），内部会规范为 CSS 高度。</text>
+			<view class="demo-strip">
+				<view class="demo-strip__block">
+					<text class="demo-label">height=12</text>
+				</view>
+				<m-gap :height="12" background="#ffe7ba"></m-gap>
+				<view class="demo-strip__block">
+					<text class="demo-label">height=24</text>
+				</view>
+				<m-gap :height="24" background="#d9f7be"></m-gap>
+				<view class="demo-strip__block">
+					<text class="demo-label">height=40</text>
+				</view>
+				<m-gap :height="40" background="#bae7ff"></m-gap>
+				<view class="demo-strip__block">
+					<text class="demo-label">height="48rpx"</text>
+				</view>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">背景色 background</text>
+			<text class="section-desc">用于区分占位区域或做浅色分隔带；与列表、卡片之间留白时常用浅色底。</text>
+			<view class="demo-strip">
+				<view class="demo-strip__block demo-strip__block--tight">
+					<text class="demo-label">区块 A</text>
+				</view>
+				<m-gap :height="28" background="#f0f5ff"></m-gap>
+				<view class="demo-strip__block demo-strip__block--tight">
+					<text class="demo-label">区块 B（中间为浅蓝 gap）</text>
+				</view>
+			</view>
+		</view>
+
+		<view class="demo-section">
+			<text class="section-title">页面级留白</text>
+			<text class="section-desc">在模块与模块之间插入 m-gap，比手写 margin 更统一、易维护。</text>
+			<view class="demo-card">
+				<text class="demo-card__title">模块一</text>
+			</view>
+			<m-gap :height="24" background="#f5f5f5"></m-gap>
+			<view class="demo-card demo-card--alt">
+				<text class="demo-card__title">模块二</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+</script>
+
+<style lang="scss">
+@import '../_demo-common.scss';
+
+.section-title {
+	margin-bottom: 16rpx;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.55;
+	margin-bottom: 20rpx;
+	display: block;
+}
+
+.demo-page {
+	min-height: 100vh;
+	background-color: #f5f5f5;
+	padding: 20rpx;
+	padding-bottom: 48rpx;
+}
+
+.demo-section {
+	background-color: #ffffff;
+	border-radius: 16rpx;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+}
+
+.demo-strip {
+	border-radius: 12rpx;
+	overflow: hidden;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #eeeeee;
+	padding: 16rpx;
+}
+
+.demo-strip__block {
+	padding: 12rpx 0;
+}
+
+.demo-strip__block--tight {
+	padding: 8rpx 0;
+}
+
+.demo-label {
+	font-size: 26rpx;
+	color: #666666;
+	display: block;
+}
+
+.demo-card {
+	background-color: #fff7e6;
+	border-radius: 8rpx;
+	padding: 24rpx;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #ffd591;
+}
+
+.demo-card--alt {
+	background-color: #e6f7ff;
+	border-color: #91caff;
+}
+
+.demo-card__title {
+	font-size: 28rpx;
+	color: #333333;
+}
+</style>

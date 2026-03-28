@@ -54,6 +54,9 @@
 				{ "path": "search/search", "style": { "navigationBarTitleText": "搜索" } },
 				{ "path": "grid/grid", "style": { "navigationBarTitleText": "宫格" } },
 				{ "path": "row/row", "style": { "navigationBarTitleText": "栅格布局" } },
+				{ "path": "col/col", "style": { "navigationBarTitleText": "栅格列" } },
+				{ "path": "gap/gap", "style": { "navigationBarTitleText": "间距块" } },
+				{ "path": "div/div", "style": { "navigationBarTitleText": "分割线" } },
 				{ "path": "card/card", "style": { "navigationBarTitleText": "卡片" } },
 				{ "path": "upload/upload", "style": { "navigationBarTitleText": "上传" } },
 				{ "path": "form/input", "style": { "navigationBarTitleText": "输入框 m-input" } },
@@ -107,8 +110,8 @@
 				{ "path": "ext/sticky-bottom/sticky-bottom", "style": { "navigationBarTitleText": "底部固定栏" } },
 				{ "path": "ext/screenshot/screenshot", "style": { "navigationBarTitleText": "区域截图" } },
 				{ "path": "ext/tips/tips", "style": { "navigationBarTitleText": "提示条 m-tips" } },
-				{ "path": "ext/loadmore/loadmore", "style": { "navigationBarTitleText": "加载更多" } },
-				{ "path": "ext/tree/tree", "style": { "navigationBarTitleText": "树形" } },
+				{ "path": "loadmore/loadmore", "style": { "navigationBarTitleText": "加载更多" } },
+				{ "path": "tree/tree", "style": { "navigationBarTitleText": "树形" } },
 				{ "path": "ext/wx-login/wx-login", "style": { "navigationBarTitleText": "微信登录按钮" } }
 			]
 		},

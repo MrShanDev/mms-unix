@@ -1,133 +1,98 @@
 <template>
 	<view class="demo-page">
 		<view class="demo-section">
-			<text class="section-title">使用说明</text>
-			<text class="section-desc">
-				将一行宽度分为 24 个栅格单位；每列用 span 表示占据的格数，同一行内各列 span 之和宜为 24。列宽按百分比计算（span÷24），随屏幕宽度变化。
-			</text>
-			<text class="section-desc">
-				mms-row 仅提供横向 flex 换行与 gutter：父级使用负边距拉开间距，子级 mms-col 在需要时设置 padding（一般为 gutter 的一半，单位 rpx），避免列内容贴边。
-			</text>
-			<text class="section-desc">
-				本实现未提供按断点（如 xs/sm）切换 span 的能力；若需响应式，可在页面内按窗口宽度自行切换 span。
-			</text>
+			<text class="section-title">基础栅格</text>
+			<text class="section-desc">整行宽度分为 24 份；单列默认占满一行（span=24）。</text>
+			<m-row>
+				<m-col>
+					<view class="cell cell--a">span=24（默认）</view>
+				</m-col>
+			</m-row>
 		</view>
 
 		<view class="demo-section">
-			<text class="section-title">基础（单列占满）</text>
-			<mms-row>
-				<mms-col :span="24">
-					<view class="demo-block demo-block--a">
-						<text class="demo-block-t">span=24</text>
-					</view>
-				</mms-col>
-			</mms-row>
+			<text class="section-title">混合列宽</text>
+			<text class="section-desc">多列 span 相加为 24 时占满一行，可任意拆分。</text>
+			<m-row>
+				<m-col :span="8">
+					<view class="cell cell--a">8</view>
+				</m-col>
+				<m-col :span="8">
+					<view class="cell cell--b">8</view>
+				</m-col>
+				<m-col :span="4">
+					<view class="cell cell--a">4</view>
+				</m-col>
+				<m-col :span="4">
+					<view class="cell cell--b">4</view>
+				</m-col>
+			</m-row>
 		</view>
 
 		<view class="demo-section">
-			<text class="section-title">两列等分</text>
-			<mms-row>
-				<mms-col :span="12">
-					<view class="demo-block demo-block--b">
-						<text class="demo-block-t">12</text>
-					</view>
-				</mms-col>
-				<mms-col :span="12">
-					<view class="demo-block demo-block--c">
-						<text class="demo-block-t">12</text>
-					</view>
-				</mms-col>
-			</mms-row>
+			<text class="section-title">栅格间隔</text>
+			<text class="section-desc">在 m-row 上设置 gutter（单位 rpx），列之间出现间距；需与 m-col 配合使用。</text>
+			<m-row :gutter="gutterDemo">
+				<m-col :span="12">
+					<view class="cell cell--a">gutter={{ gutterDemo }}，左半</view>
+				</m-col>
+				<m-col :span="12">
+					<view class="cell cell--b">右半</view>
+				</m-col>
+			</m-row>
+			<m-gap :height="20"></m-gap>
+			<m-row :gutter="gutterDemo">
+				<m-col :span="8">
+					<view class="cell cell--a">8</view>
+				</m-col>
+				<m-col :span="8">
+					<view class="cell cell--b">8</view>
+				</m-col>
+				<m-col :span="8">
+					<view class="cell cell--a">8</view>
+				</m-col>
+			</m-row>
 		</view>
 
 		<view class="demo-section">
-			<text class="section-title">混合宽度（8 + 8 + 4 + 4）</text>
-			<mms-row>
-				<mms-col :span="8">
-					<view class="demo-block demo-block--b">
-						<text class="demo-block-t">8</text>
-					</view>
-				</mms-col>
-				<mms-col :span="8">
-					<view class="demo-block demo-block--c">
-						<text class="demo-block-t">8</text>
-					</view>
-				</mms-col>
-				<mms-col :span="4">
-					<view class="demo-block demo-block--d">
-						<text class="demo-block-t">4</text>
-					</view>
-				</mms-col>
-				<mms-col :span="4">
-					<view class="demo-block demo-block--e">
-						<text class="demo-block-t">4</text>
-					</view>
-				</mms-col>
-			</mms-row>
-		</view>
-
-		<view class="demo-section">
-			<text class="section-title">左侧偏移（offset）</text>
-			<text class="section-desc">offset 为左侧空出的栅格数，再绘制当前列。</text>
-			<mms-row>
-				<mms-col :span="8" :offset="8">
-					<view class="demo-block demo-block--a">
-						<text class="demo-block-t">span=8 · offset=8</text>
-					</view>
-				</mms-col>
-			</mms-row>
-		</view>
-
-		<view class="demo-section">
-			<text class="section-title">栅格间距（gutter）</text>
-			<text class="section-desc">以下 gutter=16rpx，每列 padding=8rpx，与行负边距配合形成列间隙。</text>
-			<mms-row :gutter="16">
-				<mms-col :span="8" padding="8">
-					<view class="demo-block demo-block--b">
-						<text class="demo-block-t">8</text>
-					</view>
-				</mms-col>
-				<mms-col :span="8" padding="8">
-					<view class="demo-block demo-block--c">
-						<text class="demo-block-t">8</text>
-					</view>
-				</mms-col>
-				<mms-col :span="8" padding="8">
-					<view class="demo-block demo-block--d">
-						<text class="demo-block-t">8</text>
-					</view>
-				</mms-col>
-			</mms-row>
-		</view>
-
-		<view class="demo-section">
-			<text class="section-title">不等分（6 + 18）</text>
-			<mms-row :gutter="12">
-				<mms-col :span="6" padding="6">
-					<view class="demo-block demo-block--e">
-						<text class="demo-block-t">侧栏 6</text>
-					</view>
-				</mms-col>
-				<mms-col :span="18" padding="6">
-					<view class="demo-block demo-block--a">
-						<text class="demo-block-t">主区 18</text>
-					</view>
-				</mms-col>
-			</mms-row>
+			<text class="section-title">偏移</text>
+			<text class="section-desc">offset 为左侧空出的栅格数（按 24 栅格计算）。</text>
+			<m-row>
+				<m-col :span="8">
+					<view class="cell cell--a">span=8</view>
+				</m-col>
+				<m-col :span="8" :offset="8">
+					<view class="cell cell--b">span=8，offset=8</view>
+				</m-col>
+			</m-row>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
+	const gutterDemo = 16
 </script>
 
 <style lang="scss">
 @import '../_demo-common.scss';
 
+.section-title {
+	margin-bottom: 16rpx;
+}
+
+.section-desc {
+	font-size: 24rpx;
+	color: #888888;
+	line-height: 1.55;
+	margin-bottom: 20rpx;
+	display: block;
+}
+
 .demo-page {
 	min-height: 100vh;
 	background-color: #f5f5f5;
 	padding: 20rpx;
+	padding-bottom: 48rpx;
 }
 
 .demo-section {
@@ -137,62 +102,30 @@
 	margin-bottom: 24rpx;
 }
 
-.section-desc {
-	display: block;
-	font-size: 24rpx;
-	color: #888888;
-	line-height: 1.55;
-	margin-top: 12rpx;
-}
-
-.demo-block {
-	min-height: 88rpx;
+/* 演示块：仅用于区分区域，非组件默认样式 */
+.cell {
+	min-height: 72rpx;
 	border-radius: 8rpx;
+	padding: 16rpx;
+	font-size: 24rpx;
+	color: #333333;
 	display: flex;
-	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	box-sizing: border-box;
+	text-align: center;
 }
 
-.demo-block-t {
-	font-size: 26rpx;
-	color: #333333;
-	font-weight: bold;
-}
-
-.demo-block--a {
-	background-color: #e6f4ff;
-	border-width: 1rpx;
-	border-style: solid;
-	border-color: #91caff;
-}
-
-.demo-block--b {
+.cell--a {
 	background-color: #fff7e6;
 	border-width: 1rpx;
 	border-style: solid;
 	border-color: #ffd591;
 }
 
-.demo-block--c {
-	background-color: #f6ffed;
+.cell--b {
+	background-color: #e6f7ff;
 	border-width: 1rpx;
 	border-style: solid;
-	border-color: #b7eb8f;
-}
-
-.demo-block--d {
-	background-color: #fff0f6;
-	border-width: 1rpx;
-	border-style: solid;
-	border-color: #ffadd2;
-}
-
-.demo-block--e {
-	background-color: #f9f0ff;
-	border-width: 1rpx;
-	border-style: solid;
-	border-color: #d3adf7;
+	border-color: #91caff;
 }
 </style>

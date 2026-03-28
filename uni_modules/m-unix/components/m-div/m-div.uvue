@@ -1,5 +1,5 @@
 <template>
-	<view class="m-div" :class="getDividerClass" :style="{ backgroundColor: backgroundColor, height: height }">
+	<view class="m-div" :class="getDividerClass" :style="rootStyle">
 		<view v-if="contentPosition !== 'center'" class="m-div__content" :class="[`m-div__content--${contentPosition}`, textClass ? textClass : '']" :style="{ color: textColor, 'font-size': resolvedFontSize }">
 			<slot></slot>
 			<text v-if="text">{{ text }}</text>
@@ -54,9 +54,41 @@ export default {
 		}
 	},
 	computed: {
+		/** 是否有文案或默认插槽（与样式「断线」模式一致） */
+		hasTextContent(): boolean {
+			const t = this.text
+			if (t != null && ('' + t).length > 0) {
+				return true
+			}
+			const slot = this.$slots['default']
+			return slot != null
+		},
+		rootStyle(): UTSJSONObject {
+			if (this.hasTextContent) {
+				// 有文案：用顶边框画通栏线，避免仅透明背景导致线条消失；给足高度以免绝对定位文案被裁切
+				const lineColor = this.backgroundColor != null && ('' + this.backgroundColor).length > 0
+					? this.backgroundColor
+					: '#e4e7ed'
+				const style: UTSJSONObject = {}
+				style['borderTopWidth'] = '1rpx'
+				style['borderTopStyle'] = 'solid'
+				style['borderTopColor'] = lineColor
+				style['minHeight'] = '72rpx'
+				style['height'] = 'auto'
+				style['backgroundColor'] = 'transparent'
+				style['boxSizing'] = 'border-box'
+				return style
+			}
+			const style: UTSJSONObject = {}
+			if (this.backgroundColor != null && ('' + this.backgroundColor).length > 0) {
+				style['backgroundColor'] = this.backgroundColor
+			}
+			style['height'] = this.height
+			return style
+		},
 		getDividerClass() {
 			const classes: string[] = ['m-div']
-			if (this.text || this.$slots.default) {
+			if (this.hasTextContent) {
 				classes.push('m-div--has-text')
 			}
 			return classes.join(' ')
@@ -78,11 +110,12 @@ export default {
 		position: absolute;
 		background-color: #ffffff;
 		padding: 0 16rpx;
-		transform: translateY(-50%);
+		top: 50%;
 		color: #909399;
 
 		&.m-div__content--left {
 			left: 20rpx;
+			transform: translateY(-50%);
 		}
 
 		&.m-div__content--center {
@@ -92,6 +125,7 @@ export default {
 
 		&.m-div__content--right {
 			right: 20rpx;
+			transform: translateY(-50%);
 		}
 	}
 

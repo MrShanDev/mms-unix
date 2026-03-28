@@ -5,10 +5,17 @@
 </template>
 
 <script lang="uts">
+import { unref } from 'vue'
 import { parseCssNumber } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
 
 export default {
 	name: 'mCol',
+	inject: {
+		mRowGutter: {
+			from: 'mRowGutter',
+			default: 0
+		}
+	},
 	props: {
 		// 栅格占据的列数，总共24栅格
 		span: {
@@ -33,30 +40,62 @@ export default {
 	},
 	computed: {
 		getGutterClass() {
-			// 如果父row设置了gutter，需要添加padding-left
 			return 'm-col'
+		},
+		/** 父级 m-row 的 gutter（rpx），与负边距配套为列内左右各一半 */
+		rowGutterRpx(): number {
+			const raw = this.mRowGutter
+			if (raw == null) {
+				return 0
+			}
+			const v = unref(raw as any)
+			const n = Number(v)
+			if (n !== n || n <= 0) {
+				return 0
+			}
+			return n
 		},
 		getStyle() {
 			const style: UTSJSONObject = {}
 			let span = Number(this.span)
 			if (span > 24) span = 24
 			if (span < 1) span = 1
-			// 计算百分比宽度
 			const percent = (span / 24 * 100) + '%'
-			style.width = this.width || percent
+			// 父级 m-row 为 flex：仅用 width + float 会导致子项被当成 flex-basis:auto 撑满一行，需用 flex 固定占比
+			const wRaw = this.width
+			let customW = ''
+			if (typeof wRaw === 'number') {
+				customW = '' + wRaw
+			} else if (wRaw != null) {
+				customW = (wRaw as string).trim()
+			}
+			if (customW.length > 0) {
+				style['flex'] = '0 0 ' + customW
+			} else {
+				style['flex'] = '0 0 ' + percent
+			}
+			style['minWidth'] = '0'
+			style['maxWidth'] = '100%'
 			// 左侧偏移
 			const offsetNum = Number(this.offset)
 			if (offsetNum > 0) {
 				const offsetPercent = (offsetNum / 24 * 100) + '%'
 				style.marginLeft = offsetPercent
 			}
-			// 自定义padding
+			const halfGutter = this.rowGutterRpx / 2
+			// 自定义 padding（与 gutter 左右各一半叠加）
 			if (this.padding !== '' && this.padding != null) {
 				const p = parseCssNumber(this.padding as number | string)
 				if (p > 0) {
-					style.paddingLeft = p + 'rpx'
-					style.paddingRight = p + 'rpx'
+					style.paddingLeft = (halfGutter + p) + 'rpx'
+					style.paddingRight = (halfGutter + p) + 'rpx'
+				} else if (halfGutter > 0) {
+					style.paddingLeft = halfGutter + 'rpx'
+					style.paddingRight = halfGutter + 'rpx'
 				}
+			} else if (halfGutter > 0) {
+				style.paddingLeft = halfGutter + 'rpx'
+				style.paddingRight = halfGutter + 'rpx'
 			}
 			return style
 		}
@@ -66,7 +105,6 @@ export default {
 
 <style scoped lang="scss">
 .m-col {
-	float: left;
 	box-sizing: border-box;
 }
 </style>
