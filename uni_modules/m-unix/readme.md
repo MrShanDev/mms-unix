@@ -133,7 +133,75 @@ import { formatDate, debounce } from '@/uni_modules/m-unix/libs/utils.uts'
 import { request, http } from '@/uni_modules/m-unix/components/m-tools/Request.uts'
 ```
 
-**注意**：**`Request.uts`** 依赖宿主工程 **`@/common/config`** 等（如 **`baseUrl`**、业务约定），接入前请按在线文档配置 **`common/config`**，否则请求层无法正常编译或运行。
+### 业务配置：`@/common/config`（可选）
+
+工具层（**`Request.uts`**、**`Upload.uts`**、**`Storage.uts`**、**`Auth.uts`**、**`config.uts` / `mUi`**）以及 **`m-login`**、**`m-upload`**、**`m-update`**（版本号）等，统一通过包内 **`components/m-tools/ProjectConfig.uts`** 的 **`getHostProjectConfig()`** 读取配置。
+
+- **不配 `common/config`**：不注入即可；库内带有安全默认值（例如 **`baseUrl`**、各 API 路径可为空），工程可正常编译，仅实际发请求 / 自动上传时需自行传完整 URL 或运行时调用 **`injectMUnixHostProjectConfig`**。
+- **要配 `common/config`**：在业务工程中建 **`common/config.ts`（或 `.uts`）**，导出与下文「字段约定」一致的对象 **`config`**，并在 **任意** **`import '@/uni_modules/m-unix'`**（或会间接加载上述工具）之前完成 **注入**。
+
+#### 1. 入口注入（必须早于 `m-unix`）
+
+在 **`main.uts` 最顶部**先执行注入，再 `import mUnix`。推荐单独放一个文件（与本仓库示例一致）：
+
+**`inject-m-unix-host.uts`**（路径可自定，勿放进 `uni_modules` 内）
+
+```uts
+import { config } from '@/common/config'
+import { injectMUnixHostProjectConfig } from '@/uni_modules/m-unix/components/m-tools/ProjectConfig.uts'
+
+injectMUnixHostProjectConfig(config)
+```
+
+**`main.uts`**
+
+```uts
+import './inject-m-unix-host.uts'
+import App from './App.uvue'
+import { createSSRApp } from 'vue'
+import mUnix from '@/uni_modules/m-unix'
+
+export function createApp() {
+  const app = createSSRApp(App)
+  app.use(mUnix)
+  return { app }
+}
+```
+
+也可从插件主入口按需引用：**`injectMUnixHostProjectConfig`**、**`getHostProjectConfig`**、**`clearMUnixHostProjectConfig`** 已从 **`@/uni_modules/m-unix`**（`index.js`）再导出。
+
+#### 2. `common/config` 导出对象字段约定
+
+与 **`ProjectConfig.uts`** 中 **`MUnixHostProjectConfig`** / **`injectMUnixHostProjectConfig`** 可合并字段对齐即可；以下为常用业务侧结构说明（**未列字段可省略**，走库内默认）。
+
+| 字段 | 说明 |
+|------|------|
+| **`env`** | `'local' \| 'dev' \| 'prod'`，可与各环境 base 一起用于你在 TS 里算出 **`baseUrl`** |
+| **`localBaseUrl` / `devBaseUrl` / `prodBaseUrl`** | 各环境 API 根；是否使用由业务 **`config.ts` 自行算 **`baseUrl`** 决定 |
+| **`baseUrl`** | **必填（若要用默认请求 / 上传拼接）**：`Request`、`Upload`、**`getMUiConfig`** 里开发环境兜底等均依赖此项 |
+| **`storage.token` / `storage.userInfo`** | 本地存储 key，与 **`Storage.uts`**、登录态一致 |
+| **`loginRequiredPaths`** | 路径片段数组，供 **`needLogin`** 判断哪些页需登录 |
+| **`loginPagePath`** | 需前导 **`/`**，与 **`pages.json` 一致**；401 跳转、`checkLogin`、`m-login` 非微信端逻辑会用到 |
+| **`api.login.*`** | **`tokenLogin`**、**`codeGetOpenIdLogin`**、**`codeGetPhoneRegisterOrLogin`**，供 **`m-login`** 等 |
+| **`api.upload.image`** | **`m-upload`** 在 **`autoUpload`** 且未传 **`uploadUrl`** 时的相对路径 |
+| **`api.update.checkUpdate`** | 业务 **`checkUpdate`** 请求路径仍放在宿主 **`config`** 中；**`m-update`** 通过 **`check-update-fn`** 传入 **`(currentVersionCode) => Promise<ApiEnvelope>`**（与原先 **`mallApi.checkUpdate`** 返回结构一致：**`code` / `data`**），不传则 **`check()`** 仅告警、不请求（包内**不**再引用 **`@/common/api/mallApi`**） |
+| **`api.qrCodeImageApiBase`** | 二维码图接口根；与 **`getMUiConfig().qrCodeImageApiBase`** 合并链相关，可留空 |
+| **`configInfo`** | **`name` / `logo` / `desc` / `versionCode` / `versionName`** 等；**`m-login`** 可选 **`userAgreementArticleId`**、**`privacyPolicyArticleId`**（与示例工程 **`ConfigInfo`** 一致即可） |
+| **`mUi`** | 可选，与 **`uni_modules/m-unix/config.uts`** 中 **`MUiPartial`** 一致，用于主题与资源覆盖 |
+
+业务侧完整 TypeScript 示例可参考开源示例工程中的 **`common/config.ts`**（**`export const config`**）。
+
+#### 3. 运行时覆盖 / 调试
+
+- **`injectMUnixHostProjectConfig(obj)`**：将传入对象与库内默认合并后作为当前生效配置；**再次调用会以新入参重新合并**（后一次覆盖前一次的注入结果，适合切换环境）。
+- **`clearMUnixHostProjectConfig()`**：清空注入，恢复库内默认。
+- **`getProjectConfigInfo()`**（**`Ut.uts`**）：读取当前 **`configInfo`**，区别于 **`$m.configInfo()`**（与 **`getMUiConfig()`** 对齐的展示用对象）。
+
+#### 4. 包内源码约定（自检）
+
+**`uni_modules/m-unix`** 下 **`.uts`、`.uvue`、`index.js`** 的脚本中**不包含** **`import '@/common/config'`**、**`import '@/common/api/...'`**（含 **`mallApi`**）。业务接口与全局 **`config`** 仅在**宿主工程**中实现，通过 **`injectMUnixHostProjectConfig`** 或组件 props（例如 **`m-update`** 的 **`check-update-fn`**）接入。
+
+若使用 **`main.uts`** 中的 **`initI18n()`**，**`locale/index.uts`** 会 **`import '@/locale/zh-Hans.json'`** 等——需在宿主项目 **`locale/`** 下提供对应 JSON，与 **`common/config`** 无关。
 
 ## 组件列表
 
@@ -253,7 +321,7 @@ import { request, http } from '@/uni_modules/m-unix/components/m-tools/Request.u
 | 模块 | 说明 |
 |------|------|
 | `libs/utils.uts` | 常用工具函数 |
-| `components/m-tools/Request.uts` | 网络请求封装（依赖宿主 `@/common/config`） |
+| `components/m-tools/Request.uts` | 网络请求封装（默认 `getHostProjectConfig().baseUrl`，可选 `injectMUnixHostProjectConfig`） |
 | `components/m-tools/*` | 存储、认证、上传等（见目录） |
 
 ## 版权信息

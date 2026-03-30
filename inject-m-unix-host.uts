@@ -1,0 +1,8 @@
+/**
+ * 将宿主工程的 common/config 注入 m-unix（须在 main.uts 中先于 @/uni_modules/m-unix 引用）。
+ * 若项目不使用 common/config，可删除本文件及 main 中对它的 import，组件库将使用内置默认配置。
+ */
+import { config } from '@/common/config'
+import { injectMUnixHostProjectConfig } from '@/uni_modules/m-unix/components/m-tools/ProjectConfig.uts'
+
+injectMUnixHostProjectConfig(config)

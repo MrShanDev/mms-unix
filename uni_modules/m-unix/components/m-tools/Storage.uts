@@ -2,11 +2,16 @@
  * 全局存储工具 - 基于 uni.setStorageSync / uni.getStorageSync
  * auth 相关变更会触发 notifyAuthChange，供 useAuth 全局响应
  */
-import { config } from '@/common/config'
+import { getHostProjectConfig } from './ProjectConfig.uts'
 import { notifyAuthChange } from './AuthNotifier.uts'
 
-const tokenKey = config.storage.token
-const userInfoKey = config.storage.userInfo
+function tokenKey(): string {
+	return getHostProjectConfig().storage.token
+}
+
+function userInfoKey(): string {
+	return getHostProjectConfig().storage.userInfo
+}
 
 type AnyRecord = {
 	[key: string]: any
@@ -76,27 +81,27 @@ export const storage: StorageApi = {
 
 	// 快捷方法
 	getToken(): string {
-		const token = storageGet(tokenKey)
+		const token = storageGet(tokenKey())
 		return token != null ? (token as string) : ''
 	},
 
 	setToken(token: string): void {
-		storageSet(tokenKey, token)
+		storageSet(tokenKey(), token)
 		notifyAuthChange()
 	},
 
 	getUserInfo(): any | null {
-		return storageGet(userInfoKey)
+		return storageGet(userInfoKey())
 	},
 
 	setUserInfo(info: AnyRecord): void {
-		storageSet(userInfoKey, info)
+		storageSet(userInfoKey(), info)
 		notifyAuthChange()
 	},
 
 	clearAuth(): void {
-		storageRemove(tokenKey)
-		storageRemove(userInfoKey)
+		storageRemove(tokenKey())
+		storageRemove(userInfoKey())
 		notifyAuthChange()
 	},
 }

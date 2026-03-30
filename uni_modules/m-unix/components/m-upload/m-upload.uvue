@@ -47,7 +47,7 @@
 </template>
 
 <script lang="uts">
-import { config } from '@/common/config'
+import { getHostProjectConfig } from '@/uni_modules/m-unix/components/m-tools/ProjectConfig.uts'
 import { compressImagePath, pickUploadUrl, uploadFileRequest } from '@/uni_modules/m-unix/components/m-tools/Upload.uts'
 
 export default {
@@ -87,12 +87,12 @@ export default {
 			type: Array,
 			default: () => ['album', 'camera']
 		},
-		/** 选图后是否自动上传（需配置 uploadUrl 或 config.api.upload.image） */
+		/** 选图后是否自动上传（需 uploadUrl 或注入后 api.upload.image） */
 		autoUpload: {
 			type: Boolean,
 			default: false
 		},
-		/** 上传接口路径（相对 baseUrl）或完整 URL；空则使用 config.api.upload.image */
+		/** 上传接口路径（相对 baseUrl）或完整 URL；空则用 getHostProjectConfig().api.upload.image */
 		uploadUrl: {
 			type: String,
 			default: ''
@@ -107,7 +107,7 @@ export default {
 			type: Object,
 			default: () => ({})
 		},
-		/** 覆盖上传使用的 base（默认同 config.baseUrl / env） */
+		/** 覆盖上传使用的 base（默认 getHostProjectConfig().baseUrl） */
 		uploadBaseUrl: {
 			type: String,
 			default: ''
@@ -182,7 +182,7 @@ export default {
 			if (u != null && u !== '') {
 				return u
 			}
-			return config.api.upload.image
+			return getHostProjectConfig().api.upload.image
 		},
 		hasUploading(): boolean {
 			const list = this.resolvedFiles
@@ -290,7 +290,7 @@ export default {
 				}
 				const u = self.resolvedUploadUrl
 				if (u === '') {
-					uni.showToast({ title: '请配置 uploadUrl 或 config.api.upload.image', icon: 'none' })
+					uni.showToast({ title: '请配置 uploadUrl 或注入 api.upload.image', icon: 'none' })
 					return
 				}
 				self.$emit('upload-start', { count: compressed.length })

@@ -12,8 +12,7 @@
 </template>
 
 <script lang="uts">
-	import { config } from '@/common/config'
-	import { checkUpdate } from '@/common/api/mallApi'
+	import { getHostProjectConfig } from '@/uni_modules/m-unix/components/m-tools/ProjectConfig.uts'
 
 	/** 版本信息 */
 	type UpdateInfo = {
@@ -55,6 +54,14 @@
 			autoCheck: {
 				type: Boolean,
 				default: true
+			},
+			/**
+			 * 宿主实现：根据当前 versionCode 请求服务端是否有新版本，返回结构与原先 `checkUpdate` 一致（code / data）。
+			 * 不配 `common/config` 或未接后端时可不传；此时 `check` 仅 `console.warn` 后返回。
+			 */
+			checkUpdateFn: {
+				type: Function,
+				default: null
 			}
 		},
 		mounted() {
@@ -67,8 +74,14 @@
 			 * 主动检查更新
 			 */
 			check() {
-				const currentVersionCode = config.configInfo.versionCode || 0
-				checkUpdate(currentVersionCode).then(res => {
+				const fn = this.checkUpdateFn as
+					((currentVersionCode: number) => Promise<any>) | null
+				if (fn == null) {
+					console.warn('[m-update] 未传入 checkUpdateFn，已跳过检查更新')
+					return
+				}
+				const currentVersionCode = getHostProjectConfig().configInfo.versionCode || 0
+				fn(currentVersionCode).then(res => {
 					if (res.code == 0 && res.data != null) {
 						const data = res.data as UTSJSONObject
 						const hasUpdate = (data['hasUpdate'] as boolean) || false
@@ -115,11 +128,12 @@
 			 * - 小程序: 使用小程序更新管理器
 			 */
 			doUpdate() {
+				const ci = getHostProjectConfig().configInfo
 				// #ifdef APP-PLUS
 				if (this.updateInfo.apkUrl && this.updateInfo.apkUrl != '') {
 					plus.runtime.openURL(this.updateInfo.apkUrl!)
-				} else if (config.configInfo.appDownloadUrlAndroid) {
-					plus.runtime.openURL(config.configInfo.appDownloadUrlAndroid)
+				} else if (ci.appDownloadUrlAndroid != null && ci.appDownloadUrlAndroid !== '') {
+					plus.runtime.openURL(ci.appDownloadUrlAndroid!)
 				}
 				// #endif
 
@@ -131,8 +145,9 @@
 				// #endif
 
 				// #ifdef H5
-				if (config.configInfo.appDownloadUrl) {
-					window.open(config.configInfo.appDownloadUrl, '_blank')
+				const h5Url = ci.appDownloadUrl
+				if (h5Url != null && h5Url !== '') {
+					window.open(h5Url, '_blank')
 				}
 				// #endif
 

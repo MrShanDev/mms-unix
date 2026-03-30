@@ -1,8 +1,8 @@
 /**
  * 通用工具方法集合（含原 mUnix：$m 挂载、httpGet、登录态等）
  */
-import { config } from '@/common/config'
 import { LoginObject } from '@/uni_modules/m-unix/components/m-tools/LoginObject.uts'
+import { getHostProjectConfig } from '@/uni_modules/m-unix/components/m-tools/ProjectConfig.uts'
 import { R, StoreMemberVo } from '@/uni_modules/m-unix/components/m-tools/utype/type.uts'
 import { RunType, HttpStatus } from '@/uni_modules/m-unix/components/m-tools/uenum/SysEnum.uts'
 import { storage } from '@/uni_modules/m-unix/components/m-tools/Storage.uts'
@@ -27,8 +27,10 @@ export {
 	M_UI_BUILTIN_PLACEHOLDER_ARTICLE,
 }
 
-/** common/config 中 configInfo 快照（与 $m.configInfo() 函数区分） */
-export const projectConfigInfo = config.configInfo
+/** 当前宿主 configInfo（与 $m.configInfo() 函数区分；未 inject 时为库内默认） */
+export function getProjectConfigInfo() {
+	return getHostProjectConfig().configInfo
+}
 
 const tabBarPaths = [
 	'/pages/components/components',

@@ -1,3 +1,4 @@
+import './inject-m-unix-host.uts'
 // 引入根组件
 import App from './App.uvue'
 // 引入 Vue SSR 应用创建函数

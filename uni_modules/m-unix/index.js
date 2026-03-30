@@ -6,6 +6,11 @@ import mTools from './components/m-tools/Ut.uts'
 // 导出所有工具函数
 export * from './libs/utils.uts'
 export * from './components/m-tools/Request.uts'
+export {
+	injectMUnixHostProjectConfig,
+	getHostProjectConfig,
+	clearMUnixHostProjectConfig,
+} from './components/m-tools/ProjectConfig.uts'
 export { request }
 
 // 挂载到 uni / Vue：合并 Ut.uts 默认导出（含 configInfo、httpGet、login、href 等）

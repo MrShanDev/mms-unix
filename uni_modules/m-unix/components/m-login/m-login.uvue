@@ -91,7 +91,7 @@
 </template>
 
 <script lang="uts">
-	import { config } from '@/common/config'
+	import { getHostProjectConfig } from '@/uni_modules/m-unix/components/m-tools/ProjectConfig.uts'
 	import { StoreMemberVo } from '@/uni_modules/m-unix/components/m-tools/utype/type.uts'
 
 	export default {
@@ -133,7 +133,8 @@
 		},
 		created() {
 			const than = this
-			const ci = config.configInfo
+			const cfg = getHostProjectConfig()
+			const ci = cfg.configInfo
 			const aid = ci.userAgreementArticleId
 			const pid = ci.privacyPolicyArticleId
 			than.configInfo = {
@@ -141,7 +142,7 @@
 				agreementId: aid != null && aid.length > 0 ? aid : '',
 				privacyId: pid != null && pid.length > 0 ? pid : ''
 			}
-			than.$m.httpGet(config.api.login.tokenLogin, {}).then((res : StoreMemberVo) => {
+			than.$m.httpGet(cfg.api.login.tokenLogin, {}).then((res : StoreMemberVo) => {
 				this.$m.login(res)
 				than.hiddenPopup()
 			}).catch((_e : any) => {
@@ -150,7 +151,7 @@
 				uni.login({
 					provider: 'weixin',
 					success: function (loginRes) {
-						than.$m.httpGet(config.api.login.codeGetOpenIdLogin, {
+						than.$m.httpGet(cfg.api.login.codeGetOpenIdLogin, {
 							code: loginRes.code
 						}).then((rese : StoreMemberVo) => {
 							than.$m.login(rese)
@@ -169,7 +170,7 @@
 				}
 				const currentPage = pages[pages.length - 1]
 				const pagePath = currentPage.route as string
-				const loginTarget = config.loginPagePath
+				const loginTarget = cfg.loginPagePath
 				let loginPathNorm = loginTarget
 				if (loginPathNorm.length > 0 && loginPathNorm.charAt(0) == '/') {
 					loginPathNorm = loginPathNorm.substring(1)
@@ -229,6 +230,7 @@
 					than.showAgreementDialog = true
 					return
 				}
+				const cfg = getHostProjectConfig()
 				uni.login({
 					provider: 'weixin',
 					success: function (loginRes) {
@@ -237,7 +239,7 @@
 						than.weixinInfo.encryptedData = e.encryptedData
 						let mid = uni.getStorageSync('mId')
 						than.weixinInfo.mId = (mid == null || mid == '') ? 0 : mid
-						than.$m.httpGet(config.api.login.codeGetPhoneRegisterOrLogin, than.weixinInfo).then((data : StoreMemberVo) => {
+						than.$m.httpGet(cfg.api.login.codeGetPhoneRegisterOrLogin, than.weixinInfo).then((data : StoreMemberVo) => {
 							than.$m.login(data)
 							than.hiddenPopup()
 							than.$m.toast('登录成功!')

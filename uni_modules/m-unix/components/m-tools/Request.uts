@@ -2,7 +2,7 @@
  * 统一请求工具
  * 支持灵活配置：响应码、错误提示、Token、登录跳转等
  */
-import { config } from '@/common/config'
+import { getHostProjectConfig } from './ProjectConfig.uts'
 import { storage } from './Storage.uts'
 import { uploadFileRequest } from './Upload.uts'
 
@@ -33,7 +33,7 @@ export type RequestOptions = {
 	data?: AnyRecord
 	/** 请求头 */
 	header?: AnyRecord
-	/** 基础地址，默认使用 config.baseUrl */
+	/** 基础地址，默认使用 getHostProjectConfig().baseUrl */
 	baseUrl?: string
 	/** 超时时间（毫秒），默认 30000 */
 	timeout?: number
@@ -159,7 +159,7 @@ export function request<T = any>(options: RequestOptions): Promise<ApiResponse<T
 	}
 
 	// 构建请求地址
-	const base = baseUrl ?? config.baseUrl
+	const base = baseUrl ?? getHostProjectConfig().baseUrl
 	let fullUrl = buildUrl(url, base)
 
 	// GET 请求参数拼接到 URL
@@ -186,7 +186,9 @@ export function request<T = any>(options: RequestOptions): Promise<ApiResponse<T
 	// 确保这些值不为 null
 	const finalSuccessCodes = successCodes ?? DEFAULT_SUCCESS_CODES
 	const finalUnauthorizedCodes = unauthorizedCodes ?? DEFAULT_UNAUTHORIZED_CODES
-	const finalLoginPage = loginPage ?? DEFAULT_LOGIN_PAGE
+	const hpLogin = getHostProjectConfig().loginPagePath
+	const finalLoginPage =
+		loginPage ?? (hpLogin.length > 0 ? hpLogin : DEFAULT_LOGIN_PAGE)
 
 	return new Promise((resolve, reject) => {
 		uni.request({

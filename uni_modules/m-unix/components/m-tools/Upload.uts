@@ -1,7 +1,7 @@
 /**
- * 图片压缩与 multipart 上传（与 Request 共用 config / storage，不依赖 request()）
+ * 图片压缩与 multipart 上传（与 Request 共用 getHostProjectConfig().baseUrl 与 Storage，不依赖 request()）
  */
-import { config } from '@/common/config'
+import { getHostProjectConfig } from './ProjectConfig.uts'
 import { storage } from './Storage.uts'
 
 export type AnyRecord = {
@@ -21,7 +21,7 @@ export type UploadFileOptions = {
 	/** 表单字段名，需与后端一致 */
 	name?: string
 	formData?: AnyRecord
-	/** 覆盖 baseUrl（默认使用 config.baseUrl，即按 env 解析后的地址） */
+	/** 覆盖 baseUrl（默认使用 getHostProjectConfig().baseUrl） */
 	baseUrl?: string
 	withToken?: boolean
 	header?: AnyRecord
@@ -35,7 +35,7 @@ function resolveUploadBase(override?: string): string {
 	if (override != null && override !== '') {
 		return override
 	}
-	return config.baseUrl
+	return getHostProjectConfig().baseUrl
 }
 
 function buildUploadFullUrl(path: string, baseOverride?: string): string {

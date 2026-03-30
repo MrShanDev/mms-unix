@@ -1,3 +1,43 @@
+## 1.2.7（2026-03-30）
+#### 示例工程
+
+- **`pages_demo/ext/app-update/app-update.uvue`**：按 **`m-update`** 新 API 传入 **`check-update-fn`**（**`@/common/api/mallApi`** · **`checkUpdate`**），文案说明与宿主对接方式一致。
+
+#### 文档
+
+- **`readme.md`**：**「包内源码约定」** 与工具注释中 **`getHostProjectConfig()`** 表述已齐备；本版以发版号与插件市场同步为主。
+## 1.2.6（2026-03-30）
+#### 配置与工具（不强制 `@/common/config`）
+
+- **`components/m-tools/ProjectConfig.uts`**：宿主配置桥接；**`injectMUnixHostProjectConfig`** / **`getHostProjectConfig`** / **`clearMUnixHostProjectConfig`**；未注入时使用库内默认（含 **`baseUrl` 空串**、默认可本地存储 key、**`configInfo`** 内置展示名与 Logo 路径等），**`m-login`** 所需的 **`userAgreementArticleId` / `privacyPolicyArticleId`** 随 **`configInfo`** 合并。
+- **`Request.uts`**、**`Storage.uts`**、**`Auth.uts`**、**`Upload.uts`**、**`config.uts`**（**`mUi`** / **`getMUiConfig`**）、**`Ut.uts`**、**`m-login`**、**`m-upload`**：改为读取 **`getHostProjectConfig()`**，包内**不再**直接 **`import '@/common/config'`**。
+- **`m-update`**：版本号与 **`doUpdate`** 下载地址仍来自 **`getHostProjectConfig().configInfo`**；**移除**对 **`@/common/api/mallApi`** 的引用，新增 **`check-update-fn`**（宿主传入与原先 **`checkUpdate`** 相同签名的方法）；未传入时 **`check()`** 仅 **`console.warn`**、不发起请求。
+- **`Ut.uts`**：**`projectConfigInfo`** 改为 **`getProjectConfigInfo()`**（若业务曾引用常量请改为函数调用）。
+- **`Auth.uts`**：**`checkLogin` / `needLogin`** 与 **`Request.uts`** 未传登录页时，优先 **`loginPagePath`**，否则兜底 **`/pages_Me/login/login`**。
+- **`index.js`**：再导出 **`injectMUnixHostProjectConfig`**、**`getHostProjectConfig`**、**`clearMUnixHostProjectConfig`**。
+
+#### 文档
+
+- **`readme.md`**：新增 **「业务配置：`@/common/config`（可选）」**，说明入口注入顺序、**`common/config` 字段约定表**、运行时 API；**`m-update`** 以 **`check-update-fn`** 对接宿主检查更新实现；补充 **「包内源码约定」**（无 **`@/common/config`** / **`@/common/api`** 硬依赖，**`initI18n`** 与 **`@/locale`** 例外说明）。
+- **注释与提示文案**：**`Request.uts`**、**`Upload.uts`**、**`config.uts`**、**`m-upload`** 中与旧 **`config.`** 表述对齐为 **`getHostProjectConfig()`** / 注入说明，避免与未导入的 **`config`** 混淆。
+
+#### 示例工程（本仓库）
+
+- 根目录 **`inject-m-unix-host.uts`**；**`main.uts`** 顶部 **`import './inject-m-unix-host.uts'`**（早于 **`mUnix`**），与现有 **`common/config.ts`** 行为对齐。
+## 1.2.5（2026-03-30）
+#### 模版 / 演示
+
+- **`pages/templates/forum-feed`**：演示 **头像与帖子配图** 使用 **`https://picsum.photos/seed/{seed}/{w}/{h}`**（每条、每张 **seed** 不同，画面有差异；**需联网**）；顶部提示已说明联网与业务替换方式。
+- **`m-unix-doc/forum-feed.md`**：数据说明与上图源约定同步。
+
+#### 分包与入口
+
+- **已移除** **`pages_demo/feed-post`** 及 **`pages.json`** 中对应注册；**`m-feed-post`** 仍通过 **模版 · 论坛动态** 页面展示。
+- **「组件」Tab · 业务示例**：保留 **微信登录**；不包含 **信息流帖子** 独立演示入口。
+
+#### 文案与包说明
+
+- **`m-wx-login`**、**`m-login`**、**`readme.md`**、**`package.json` · `description`** 等与 **微信 / 微信小程序** 相关的默认文案、端能力描述，与当前工程保持一致（供与 **1.2.4** 条目对照时以本版为准）。
 ## 1.2.4（2026-03-30）
 #### 新增
 
@@ -179,6 +219,10 @@ Logo 完善回复显示
 ---
 
 ## 3. 历史版本
+
+### 1.2.5（2026-03-31）
+
+见本文 **文首 §1.2.5**（forum-feed 随机示例图、演示入口与微信文案对齐；**`package.json` → 1.2.5**）。
 
 ### 1.2.3（2026-03-29）
 
