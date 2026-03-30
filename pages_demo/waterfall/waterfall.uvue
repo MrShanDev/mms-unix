@@ -1,35 +1,46 @@
 <template>
 	<view class="page-root">
 		<view class="demo-head">
-			<text class="section-title">m-waterfall</text>
+			<text class="section-title">瀑布流 · 商城双列示例</text>
 			<text class="section-desc">
-				双列瀑布流：App 端走原生 waterflow；H5、小程序等为双列 scroll-view 兜底。列表项可提供 flowHeight（rpx）在非 App 且 layoutType=2 时参与列高估算。
+				商品卡封面高度错落形成 masonry。默认「按高度平衡」：非 App 下按 flowHeight 与主轴间距把新卡片放进当前更矮的一列，触底时左右列总高度更接近；轮流分列仅作对照，列表底容易一高一矮。
 			</text>
 			<view class="demo-actions">
-				<m-button type="primary" btnSize="small" @tap="setLayout(1)">兜底·轮流分列</m-button>
-				<m-button btnSize="small" @tap="setLayout(2)">兜底·按高度平衡</m-button>
+				<m-button btnSize="small" @tap="setLayout(1)">兜底·轮流分列</m-button>
+				<m-button type="primary" btnSize="small" @tap="setLayout(2)">兜底·按高度平衡</m-button>
 			</view>
-			<text class="layout-hint">当前 layoutType={{ layoutType }}（仅非 App 生效；App 由原生排布）</text>
+			<text class="layout-hint">layoutType={{ layoutType }} · 首屏 {{ list.length }} 条</text>
 		</view>
 		<m-waterfall
 			class="wf-body"
 			:list-data="list"
 			:column-count="2"
-			row-gap="12rpx"
+			row-gap="16rpx"
 			column-gap="12rpx"
-			left-gap="16rpx"
-			right-gap="16rpx"
-			background-color="#f0f0f0"
-			border-radius="12rpx"
+			left-gap="12rpx"
+			right-gap="12rpx"
+			background-color="#f5f5f5"
+			border-radius="0"
 			:layout-type="layoutType"
 			lower-threshold="80"
 			@scrolltolower="onScrollToLower"
 		>
 			<template #default="{ item, index }">
-				<view class="wf-card" :style="cardStyle(item)">
-					<text class="wf-card__title">{{ item.title }}</text>
-					<text class="wf-card__desc">{{ item.desc }}</text>
-					<text class="wf-card__meta">#{{ index }} · h={{ item.flowHeight }}rpx</text>
+				<view class="goods-card" @tap="onCard(item)">
+					<image
+						class="goods-card__cover"
+						:src="item.cover"
+						mode="aspectFill"
+						:style="coverStyle(item)"
+					></image>
+					<view class="goods-card__body">
+						<text class="goods-card__name">{{ item.title }}</text>
+						<view class="goods-card__row">
+							<text class="goods-card__price">{{ item.price }}</text>
+							<text v-if="item.tag !== ''" class="goods-card__tag">{{ item.tag }}</text>
+						</view>
+						<text class="goods-card__sub">{{ item.sub }}</text>
+					</view>
 				</view>
 			</template>
 		</m-waterfall>
@@ -39,29 +50,70 @@
 <script setup lang="uts">
 import { ref } from 'vue'
 
-type WfItem = {
+type GoodsItem = {
 	id: string
 	title: string
-	desc: string
+	price: string
+	sub: string
+	tag: string
+	cover: string
+	/** 封面区高度 rpx，故意拉大梯度以形成明显错落 */
+	coverHeight: number
+	/** 兜底 layoutType=2 时估算整卡高度 */
 	flowHeight: number
 }
 
-const layoutType = ref(1)
+/** 默认 2：兜底时底部对齐更好；1 为严格左右轮流 */
+const layoutType = ref(2)
 
-const list = ref<WfItem[]>(buildSeed(0, 14))
+/** 封面高度：仍错落，但跨度收敛，便于平衡算法对齐列底 */
+const coverHeightsPool = [220, 340, 260, 360, 240, 320, 280, 350, 250, 330, 270, 310]
 
-function buildSeed(offset: number, count: number): WfItem[] {
-	const heights = [140, 180, 110, 200, 160, 130, 190, 150]
-	const arr: WfItem[] = []
+const titles = [
+	'轻薄防晒外套',
+	'法式复古连衣裙',
+	'透气跑步鞋',
+	'纯棉长袖打底',
+	'通勤托特包',
+	'儿童连帽卫衣',
+	'钛保温杯 480ml',
+	'懒人沙发套',
+	'蓝牙降噪耳机',
+	'实木置物架',
+	'护肤精华露',
+	'进口芝士脆饼',
+]
+
+const list = ref<GoodsItem[]>(buildGoods(0, 12))
+
+function buildGoods(offset: number, count: number): GoodsItem[] {
+	const arr: GoodsItem[] = []
+	/* 封面以下文案区 + 与 row-gap 相当的余量，略大于真实高度可避免低估导致列失衡 */
+	const bodyExtra = 178
 	for (let i = 0; i < count; i++) {
 		const idx = offset + i
-		const h = heights[idx % heights.length] as number
+		const h = coverHeightsPool[idx % coverHeightsPool.length] as number
+		const w = 320 + (idx % 5) * 24
+		const ih = Math.floor(h * 0.85) + (idx % 3) * 40
+		const cover =
+			'https://picsum.photos/seed/mmswf' +
+			idx +
+			'/' +
+			w +
+			'/' +
+			ih
+		const yen = 59 + (idx * 17) % 240
+		const cent = (idx * 7) % 100
 		arr.push({
-			id: 'wf-' + idx,
-			title: '卡片 ' + (idx + 1),
-			desc: '示例描述，用于演示瀑布流占位高度差异。',
-			flowHeight: h,
-		} as WfItem)
+			id: 'g-' + idx,
+			title: titles[idx % titles.length] as string,
+			price: '¥' + yen + '.' + (cent < 10 ? '0' + cent : '' + cent),
+			sub: idx % 3 === 0 ? '自营 · 次日达' : idx % 3 === 1 ? '旗舰店' : '满 199 减 30',
+			tag: idx % 4 === 0 ? '热卖' : idx % 4 === 1 ? '新品' : '',
+			cover: cover,
+			coverHeight: h,
+			flowHeight: h + bodyExtra,
+		} as GoodsItem)
 	}
 	return arr
 }
@@ -70,22 +122,27 @@ function setLayout(t: number) {
 	layoutType.value = t
 }
 
-function cardStyle(item: WfItem): UTSJSONObject {
+function coverStyle(item: GoodsItem): UTSJSONObject {
 	const st: UTSJSONObject = {}
-	const h = item.flowHeight
+	const h = item.coverHeight
 	if (h != null && h > 0) {
-		st['minHeight'] = h + 'rpx'
+		st['height'] = h + 'rpx'
 	}
+	st['width'] = '100%'
 	return st
+}
+
+function onCard(item: GoodsItem) {
+	uni.showToast({ title: item.title, icon: 'none', duration: 1200 })
 }
 
 function onScrollToLower() {
 	const n = list.value.length
-	if (n >= 40) {
-		uni.showToast({ title: '暂无更多（演示上限）', icon: 'none' })
+	if (n >= 48) {
+		uni.showToast({ title: '演示已满', icon: 'none' })
 		return
 	}
-	list.value = list.value.concat(buildSeed(n, 6))
+	list.value = list.value.concat(buildGoods(n, 8))
 }
 </script>
 
@@ -97,7 +154,7 @@ function onScrollToLower() {
 	flex-direction: column;
 	flex: 1;
 	height: 100%;
-	background-color: #ffffff;
+	background-color: #f5f5f5;
 }
 
 .demo-head {
@@ -106,6 +163,7 @@ function onScrollToLower() {
 	border-bottom-width: 1rpx;
 	border-bottom-style: solid;
 	border-bottom-color: #eeeeee;
+	background-color: #ffffff;
 }
 
 .section-title {
@@ -140,33 +198,61 @@ function onScrollToLower() {
 	width: 100%;
 }
 
-.wf-card {
+.goods-card {
 	background-color: #ffffff;
 	border-radius: 12rpx;
-	padding: 20rpx;
+	overflow: hidden;
 	border-width: 1rpx;
 	border-style: solid;
-	border-color: #e8e8e8;
+	border-color: #f0f0f0;
 	box-sizing: border-box;
 }
 
-.wf-card__title {
-	font-size: 28rpx;
-	font-weight: bold;
+.goods-card__cover {
+	width: 100%;
+	display: block;
+	background-color: #ececec;
+}
+
+.goods-card__body {
+	padding: 16rpx 14rpx 18rpx;
+}
+
+.goods-card__name {
+	font-size: 26rpx;
 	color: #333333;
+	line-height: 1.35;
 	display: block;
+	margin-bottom: 10rpx;
+	/* 两行省略由各端支持情况决定，此处不强制 webkit */
+}
+
+.goods-card__row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	flex-wrap: wrap;
 	margin-bottom: 8rpx;
 }
 
-.wf-card__desc {
-	font-size: 24rpx;
-	color: #666666;
-	line-height: 1.4;
-	display: block;
-	margin-bottom: 8rpx;
+.goods-card__price {
+	font-size: 30rpx;
+	font-weight: bold;
+	color: #ff0844;
+	margin-right: 12rpx;
 }
 
-.wf-card__meta {
+.goods-card__tag {
+	font-size: 20rpx;
+	color: #ff0844;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: rgba(255, 8, 68, 0.45);
+	padding: 2rpx 8rpx;
+	border-radius: 4rpx;
+}
+
+.goods-card__sub {
 	font-size: 22rpx;
 	color: #999999;
 	display: block;

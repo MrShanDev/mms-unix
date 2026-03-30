@@ -26,6 +26,20 @@
 			}
 		},
 		{
+			"path": "pages/templates/chat-room/chat-room",
+			"style": {
+				"navigationBarTitleText": "聊天室模版",
+				"disableScroll": true
+			}
+		},
+		{
+			"path": "pages/templates/forum-feed/forum-feed",
+			"style": {
+				"navigationBarTitleText": "论坛动态模版",
+				"disableScroll": true
+			}
+		},
+		{
 			"path": "pages/user/user",
 			"style": {
 				"navigationBarTitleText": "我的",

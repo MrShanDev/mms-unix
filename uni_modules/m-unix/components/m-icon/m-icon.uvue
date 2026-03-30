@@ -159,6 +159,9 @@ function getIconChar(name: string): string {
 	if (name === 'film') return '\ue69b'
 	// 字库无 good-filling，与 fabulous（点赞）共用字形
 	if (name === 'fabulous' || name === 'good-filling') return '\ue69c'
+	// 与 iconfont.json / m-icon.uts 命名对齐（旧版 getIconChar 未收录时会渲染为空）
+	if (name === 'like') return '\ue720'
+	if (name === 'like-fill') return '\ue71f'
 	if (name === 'elipsis') return '\ue690'
 	if (name === 'location') return '\ue6c0'
 	if (name === 'wallet') return '\ue6a6'
@@ -166,6 +169,12 @@ function getIconChar(name: string): string {
 	// 字库无独立购物车：layers（icon-layers）层叠形，与商城 shop 区分
 	if (name === 'layers') return '\ue6ad'
 	if (name === 'cart' || name === 'shopping-cart' || name === 'trolley') return '\ue6ad'
+	/* 与 iconfont 字库 m-icon.uts 一致，避免使用旧名称时渲染为空 */
+	if (name === 'imface') return '\ue728'
+	if (name === 'imkeyboard') return '\ue727'
+	if (name === 'immore') return '\ue726'
+	if (name === 'imvoice') return '\ue725'
+	if (name === 'video') return '\ue64b'
 	return ''
 }
 

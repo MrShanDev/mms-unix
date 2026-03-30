@@ -1,0 +1,381 @@
+<template>
+	<view class="page">
+		<scroll-view class="page-scroll" scroll-y>
+			<view class="page-inner">
+				<view class="page-tip">
+					<text class="page-tip__text"
+						>演示配图与头像是按 seed 生成的随机示例图（需联网加载）；视频地址请在业务中自行配置。点赞 / 收藏为 v-model；点「评论」或某条评论可发表内容。</text>
+				</view>
+
+				<m-feed-post
+					v-for="item in feedList"
+					:key="item.id"
+					:post-key="item.id"
+					:avatar="item.avatar"
+					:nickname="item.nickname"
+					:time-label="item.timeLabel"
+					:content="item.content"
+					:image-urls="item.imageUrls"
+					:video-src="item.videoSrc"
+					v-model:liked="item.liked"
+					v-model:collected="item.collected"
+					v-model:like-count="item.likeCount"
+					v-model:liker-names="item.likerNames"
+					:comment-count="item.commentCount"
+					:comments="item.comments"
+					@avatar-tap="onAvatarTap(item)"
+					@content-tap="onContentTap(item)"
+					@image-tap="onImageTap"
+					@comment="onOpenComment(item)"
+					@comment-reply="onCommentReply"
+					@collect="onCollectToast(item)"
+				></m-feed-post>
+				<view class="page-scroll-pad"></view>
+			</view>
+		</scroll-view>
+
+		<view v-if="commentTargetId !== ''" class="comment-dock">
+			<view class="comment-dock__bar">
+				<text class="comment-dock__cancel" @tap="closeCommentComposer">取消</text>
+				<text v-if="replyToAuthor !== ''" class="comment-dock__hint">回复 {{ replyToAuthor }}</text>
+			</view>
+			<view class="comment-dock__editor">
+				<view class="comment-dock__input-wrap">
+					<m-input
+						v-model="commentDraft"
+						label=""
+						placeholder="写评论…"
+						:input-border="false"
+						:border-bottom="false"
+						background-color="transparent"
+						padding="8rpx 16rpx"
+						:radius="8"
+						confirm-type="send"
+						:clearable="true"
+						@confirm="submitComment"
+					></m-input>
+				</view>
+				<m-button type="danger" btnSize="mini" class="comment-dock__send" @tap="submitComment">发送</m-button>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { ref } from 'vue'
+
+	type FeedCommentLine = {
+		id: string
+		author: string
+		replyTo: string
+		text: string
+	}
+
+	type FeedPostModel = {
+		id: string
+		avatar: string
+		nickname: string
+		timeLabel: string
+		content: string
+		imageUrls: string[]
+		videoSrc: string
+		liked: boolean
+		likeCount: number
+		commentCount: number
+		collected: boolean
+		likerNames: string[]
+		comments: FeedCommentLine[]
+	}
+
+	/** 随机示例图（固定 seed 保证同帖刷新稳定；不同 seed 之间画面不同） */
+	function picRandom(seed: string, w: number, h: number): string {
+		return 'https://picsum.photos/seed/' + seed + '/' + w.toString() + '/' + h.toString()
+	}
+
+	const feedList = ref<FeedPostModel[]>([
+		{
+			id: 'p1',
+			avatar: picRandom('forum-av-p1', 120, 120),
+			nickname: '阿 Uni',
+			timeLabel: '30 分钟前',
+			content: '单图动态示例：周末晨跑，天气不错。',
+			imageUrls: [picRandom('forum-p1-i0', 800, 600)],
+			videoSrc: '',
+			liked: false,
+			likeCount: 12,
+			commentCount: 2,
+			collected: false,
+			likerNames: ['小林', '阿 Uni', '俱乐部'],
+			comments: [
+				{ id: 'p1-c1', author: '小林', replyTo: '', text: '配速多少？' },
+				{ id: 'p1-c2', author: '阿 Uni', replyTo: '小林', text: '五分半左右～' },
+			],
+		},
+		{
+			id: 'p2',
+			avatar: picRandom('forum-av-p2', 120, 120),
+			nickname: '文档组',
+			timeLabel: '1 小时前',
+			content: '多图宫格（2 张）：发布会现场。',
+			imageUrls: [picRandom('forum-p2-i0', 600, 600), picRandom('forum-p2-i1', 600, 600)],
+			videoSrc: '',
+			liked: true,
+			likeCount: 128,
+			commentCount: 1,
+			collected: true,
+			likerNames: ['产品', '设计', '研发', '我'],
+			comments: [{ id: 'p2-c1', author: '产品', replyTo: '', text: '第二张光线真好。' }],
+		},
+		{
+			id: 'p3',
+			avatar: picRandom('forum-av-p3', 120, 120),
+			nickname: '影像志',
+			timeLabel: '昨天 18:06',
+			content: '九图 + 折叠：最后一张叠加剩余数量（演示超出 9 张时的蒙层）。',
+			imageUrls: [
+				picRandom('forum-p3-i0', 400, 400),
+				picRandom('forum-p3-i1', 400, 400),
+				picRandom('forum-p3-i2', 400, 400),
+				picRandom('forum-p3-i3', 400, 400),
+				picRandom('forum-p3-i4', 400, 400),
+				picRandom('forum-p3-i5', 400, 400),
+				picRandom('forum-p3-i6', 400, 400),
+				picRandom('forum-p3-i7', 400, 400),
+				picRandom('forum-p3-i8', 400, 400),
+				picRandom('forum-p3-i9', 400, 400),
+				picRandom('forum-p3-i10', 400, 400),
+			],
+			videoSrc: '',
+			liked: false,
+			likeCount: 2400,
+			commentCount: 0,
+			collected: false,
+			likerNames: [],
+			comments: [],
+		},
+		{
+			id: 'p4',
+			avatar: picRandom('forum-av-p4', 120, 120),
+			nickname: '短视频',
+			timeLabel: '3 天前',
+			content: '单视频示例请在业务中传入 videoSrc；此处留空仅演示布局。',
+			imageUrls: [],
+			videoSrc: '',
+			liked: false,
+			likeCount: 42,
+			commentCount: 1,
+			collected: false,
+			likerNames: ['观众甲'],
+			comments: [{ id: 'p4-c1', author: '观众甲', replyTo: '', text: '清晰度可以。' }],
+		},
+	])
+
+	const commentTargetId = ref('')
+	const commentDraft = ref('')
+	const replyToAuthor = ref('')
+	const commentIdSeq = ref(500)
+
+	function findIndex(id: string): number {
+		for (let i = 0; i < feedList.value.length; i++) {
+			if (feedList.value[i].id === id) {
+				return i
+			}
+		}
+		return -1
+	}
+
+	function onAvatarTap(item: FeedPostModel) {
+		uni.showToast({ title: '头像：' + item.nickname, icon: 'none' })
+	}
+
+	function onContentTap(item: FeedPostModel) {
+		uni.showToast({ title: '正文：' + item.id, icon: 'none' })
+	}
+
+	function onImageTap(postKey: string, idx: number) {
+		const i = findIndex(postKey)
+		if (i < 0) {
+			return
+		}
+		const item = feedList.value[i]
+		if (item.imageUrls == null || item.imageUrls.length === 0) {
+			return
+		}
+		let current = ''
+		if (idx >= 0 && idx < item.imageUrls.length) {
+			current = item.imageUrls[idx]
+		}
+		uni.previewImage({
+			urls: item.imageUrls,
+			current: current,
+		})
+	}
+
+	function onOpenComment(item: FeedPostModel) {
+		commentTargetId.value = item.id
+		replyToAuthor.value = ''
+		commentDraft.value = ''
+	}
+
+	function onCommentReply(postKey: string, _commentId: string, author: string) {
+		const i = findIndex(postKey)
+		if (i < 0) {
+			return
+		}
+		commentTargetId.value = postKey
+		replyToAuthor.value = author
+		commentDraft.value = ''
+	}
+
+	function closeCommentComposer() {
+		commentTargetId.value = ''
+		commentDraft.value = ''
+		replyToAuthor.value = ''
+	}
+
+	function onCollectToast(item: FeedPostModel) {
+		uni.showToast({ title: item.collected ? '已收藏' : '已取消收藏', icon: 'none' })
+	}
+
+	function submitComment() {
+		const pid = commentTargetId.value
+		if (pid === '') {
+			return
+		}
+		const raw = commentDraft.value
+		let text = ''
+		if (raw != null) {
+			text = raw.trim()
+		}
+		if (text === '') {
+			uni.showToast({ title: '请输入评论', icon: 'none' })
+			return
+		}
+		const i = findIndex(pid)
+		if (i < 0) {
+			return
+		}
+		const row = feedList.value[i]
+		const nid = 'c-' + commentIdSeq.value.toString()
+		commentIdSeq.value = commentIdSeq.value + 1
+		const reply = replyToAuthor.value
+		const nextLine: FeedCommentLine = {
+			id: nid,
+			author: '我',
+			replyTo: reply,
+			text: text,
+		}
+		const prev = row.comments
+		const merged: FeedCommentLine[] = []
+		if (prev != null) {
+			for (let j = 0; j < prev.length; j++) {
+				merged.push(prev[j])
+			}
+		}
+		merged.push(nextLine)
+		feedList.value[i] = {
+			id: row.id,
+			avatar: row.avatar,
+			nickname: row.nickname,
+			timeLabel: row.timeLabel,
+			content: row.content,
+			imageUrls: row.imageUrls,
+			videoSrc: row.videoSrc,
+			liked: row.liked,
+			likeCount: row.likeCount,
+			commentCount: row.commentCount + 1,
+			collected: row.collected,
+			likerNames: row.likerNames,
+			comments: merged,
+		}
+		closeCommentComposer()
+	}
+</script>
+
+<style lang="scss">
+	.page {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-height: 100%;
+		background-color: #f5f5f5;
+	}
+
+	.page-scroll {
+		flex: 1;
+		height: 0;
+	}
+
+	.page-inner {
+		padding: 24rpx;
+		padding-bottom: 12rpx;
+	}
+
+	.page-scroll-pad {
+		height: 280rpx;
+		width: 100%;
+	}
+
+	.page-tip {
+		background-color: #fff9f0;
+		border-radius: 12rpx;
+		padding: 20rpx;
+		margin-bottom: 20rpx;
+		border-width: 1rpx;
+		border-style: solid;
+		border-color: #ffe7c2;
+	}
+
+	.page-tip__text {
+		font-size: 24rpx;
+		color: #ad6800;
+		line-height: 1.5;
+	}
+
+	.comment-dock {
+		flex-shrink: 0;
+		background-color: #ffffff;
+		border-top-width: 1rpx;
+		border-top-style: solid;
+		border-top-color: #e8e8e8;
+		padding-bottom: env(safe-area-inset-bottom);
+	}
+
+	.comment-dock__bar {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		padding: 12rpx 24rpx 0;
+	}
+
+	.comment-dock__cancel {
+		font-size: 28rpx;
+		color: #576b95;
+	}
+
+	.comment-dock__hint {
+		font-size: 24rpx;
+		color: #999999;
+		margin-left: 24rpx;
+		flex: 1;
+	}
+
+	.comment-dock__editor {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		padding: 16rpx 24rpx 20rpx;
+	}
+
+	.comment-dock__input-wrap {
+		flex: 1;
+		min-width: 0;
+		background-color: #f5f5f5;
+		border-radius: 12rpx;
+		margin-right: 16rpx;
+	}
+
+	.comment-dock__send {
+		flex-shrink: 0;
+	}
+</style>

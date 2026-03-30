@@ -1,3 +1,18 @@
+## 1.2.4（2026-03-30）
+#### 新增
+
+- **`m-feed-post`**：信息流单条帖子（多图/视频、互动栏、赞名单与评论列表）；**`v-model:liked` / `v-model:collected` / `v-model:like-count` / `v-model:liker-names`**；事件 **`like`、`comment`、`comment-reply`、`collect`** 等；赞图标 **`fabulous`**。
+- **演示**：**`pages_demo/feed-post`**；**`pages.json`** 导航标题 **信息流帖子 m-feed-post**。
+#### 调整
+
+- **`m-wx-login`**：默认 **`text`** 为 **「一键登录」**；注释用语改为宿主小程序。
+- **`m-login`**：宿主侧未对接时的提示改为 **「当前宿主请对接业务登录接口」**。
+- **`package.json`**：**`version`** **1.2.4**；**`keywords`** 去除 **`mms`**；**`description`** 端能力表述改为 **小程序宿主 / Web**。
+- **`readme.md`**：**`m-feed-post`** 表项；端能力表述、`m-wx-login` 表项用语更新。
+#### 文档
+
+- **`m-unix-doc/`**：**`m-feed-post.md`**（API 与 v-model）、**`README.md`** 索引、**`forum-feed.md`** 与本地静态资源约定。
+- **`version/doc`**：**`lib-1.2.4.md`**、**`app-1.0.2.md`**（演示工程 **MMS-Unix** 1.0.2，与 **`configInfo.versionName`** 对齐）。
 ## 1.2.3（2026-03-27）
 #### 变更（文档与元数据）
 

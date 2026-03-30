@@ -146,6 +146,7 @@ import { request, http } from '@/uni_modules/m-unix/components/m-tools/Request.u
 | m-row | 栅格行 |
 | m-col | 栅格列 |
 | m-card | 卡片容器 |
+| m-feed-post | 信息流单条帖子 |
 | m-cell | 单元格 |
 | m-cell-group | 单元格分组 |
 | m-gap | 占位间距 |

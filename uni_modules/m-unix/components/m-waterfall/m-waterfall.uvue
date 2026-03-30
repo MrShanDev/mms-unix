@@ -299,6 +299,7 @@ export default {
 			}
 			const mode = Number(this.layoutType)
 			if (mode === 2) {
+				const gapPx = this.mainGapPx
 				const heights: number[] = []
 				for (let i = 0; i < n; i++) {
 					heights.push(0)
@@ -309,11 +310,18 @@ export default {
 					const hpx = this.parseToPx(hrpx)
 					let pick = 0
 					for (let c = 1; c < n; c++) {
-						if (heights[c] < heights[pick]) {
+						const hc = heights[c] as number
+						const hp = heights[pick] as number
+						if (hc < hp) {
+							pick = c
+						} else if (hc === hp && cols[c].length < cols[pick].length) {
 							pick = c
 						}
 					}
-					heights[pick] = heights[pick] + hpx
+					if (cols[pick].length > 0) {
+						heights[pick] = (heights[pick] as number) + gapPx
+					}
+					heights[pick] = (heights[pick] as number) + hpx
 					cols[pick].push({
 						key: this.itemKey(item, index),
 						item: item,

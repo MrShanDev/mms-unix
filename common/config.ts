@@ -46,8 +46,8 @@ export const config: AppConfig = {
 		name: 'mUnix',
 		logo: '/uni_modules/m-unix/static/m-app-logo.png',
 		desc: 'uni-app 组件库',
-		versionCode: 2,
-		versionName: '1.0.1',
+		versionCode: 3,
+		versionName: '1.0.2',
 	},
 }
 
@@ -93,7 +93,7 @@ type AppConfig = {
 	storage: StorageConfig
 	/** 需要登录才能访问的页面路径（不含 pages/ 前缀） */
 	loginRequiredPaths: string[]
-	/** token 失效等非微信端跳转的登录页路径（与 pages.json 一致，需前导 /） */
+	/** token 失效等需跳转登录页的路径（与 pages.json 一致，需前导 /） */
 	loginPagePath: string
 	/** API 接口路径配置 */
 	api: ApiConfig

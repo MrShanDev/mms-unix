@@ -1,0 +1,629 @@
+<template>
+	<view class="chat-page">
+		<scroll-view
+			id="chat-scroll"
+			class="chat-scroll"
+			scroll-y
+			:scroll-with-animation="true"
+			:scroll-into-view="scrollIntoView"
+		>
+			<view class="chat-scroll__inner">
+				<view class="chat-tip">
+					<text class="chat-tip__text">以下为演示数据；表情 / 相册 / 视频为本地选择与展示，接入业务时替换为上传与消息类型。</text>
+				</view>
+				<view
+					v-for="msg in messages"
+					:key="msg.id"
+					:id="'msg-' + msg.id"
+					class="msg-row"
+					:class="msg.self ? 'msg-row--self' : 'msg-row--other'"
+				>
+					<image
+						v-if="!msg.self"
+						class="msg-avatar"
+						:src="avatarOther"
+						mode="aspectFill"
+					></image>
+					<view class="msg-bubble-wrap">
+						<view
+							class="msg-bubble"
+							:class="[
+								msg.self ? 'msg-bubble--self' : 'msg-bubble--other',
+								msg.kind !== 'text' ? 'msg-bubble--media' : '',
+							]"
+						>
+							<text v-if="msg.kind === 'text'" class="msg-bubble__text">{{ msg.text }}</text>
+							<image
+								v-else-if="msg.kind === 'image'"
+								class="msg-bubble__image"
+								:src="msg.mediaSrc"
+								mode="widthFix"
+								@tap="previewImage(msg.mediaSrc)"
+							></image>
+							<video
+								v-else-if="msg.kind === 'video'"
+								class="msg-bubble__video"
+								:src="msg.mediaSrc"
+								controls
+								object-fit="contain"
+							></video>
+						</view>
+						<text class="msg-meta">{{ msg.time }}</text>
+					</view>
+					<image
+						v-if="msg.self"
+						class="msg-avatar"
+						:src="avatarSelf"
+						mode="aspectFill"
+					></image>
+				</view>
+				<view id="chat-bottom-anchor" class="chat-bottom-anchor"></view>
+			</view>
+		</scroll-view>
+
+		<view class="chat-composer">
+			<view class="chat-composer__body">
+				<view class="chat-composer__tools-row">
+					<view class="chat-composer__tools">
+						<view
+							class="chat-icon-btn"
+							:class="{ 'chat-icon-btn--on': showEmojiPanel }"
+							@tap="toggleEmojiPanel"
+						>
+							<m-icon name="smile" size="38rpx" color="#4a4a4c"></m-icon>
+						</view>
+						<view class="chat-icon-btn" @tap="pickImage">
+							<m-icon name="picture" size="38rpx" color="#4a4a4c"></m-icon>
+						</view>
+						<view class="chat-icon-btn" @tap="pickVideo">
+							<m-icon name="film" size="38rpx" color="#4a4a4c"></m-icon>
+						</view>
+					</view>
+				</view>
+				<view class="chat-composer__editor">
+					<view class="chat-composer__input-shell">
+						<m-input
+							v-model="draft"
+							label=""
+							placeholder="说点什么…"
+							:input-border="false"
+							:border-bottom="false"
+							background-color="transparent"
+							padding="8rpx 20rpx"
+							:radius="36"
+							confirm-type="send"
+							:clearable="true"
+							@confirm="send"
+						></m-input>
+					</view>
+					<m-button type="danger" btnSize="mini" class="chat-composer__send" @tap="send">发送</m-button>
+				</view>
+			</view>
+			<view v-if="showEmojiPanel" class="chat-emoji-panel">
+				<scroll-view class="chat-emoji-scroll" scroll-y>
+					<view class="chat-emoji-grid">
+						<view
+							v-for="(emoji, idx) in emojiList"
+							:key="'e-' + idx.toString()"
+							class="chat-emoji-cell"
+							@tap="insertEmoji(emoji)"
+						>
+							<text class="chat-emoji-char">{{ emoji }}</text>
+						</view>
+					</view>
+				</scroll-view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { ref, nextTick, onMounted } from 'vue'
+
+type ChatMsgKind = 'text' | 'image' | 'video'
+
+type ChatMsg = {
+	id: string
+	self: boolean
+	kind: ChatMsgKind
+	text: string
+	mediaSrc: string
+	time: string
+}
+
+/** 演示用头像；接入业务时换为会话成员头像 URL */
+const avatarOther =
+	'https://api.dicebear.com/7.x/notionists/png?seed=mUnixOther&size=128'
+const avatarSelf =
+	'https://api.dicebear.com/7.x/notionists/png?seed=mUnixSelf&size=128'
+
+const draft = ref('')
+const messages = ref<ChatMsg[]>(seedMessages())
+const scrollIntoView = ref('')
+const showEmojiPanel = ref(false)
+
+/* 常用表情（Unicode），点击插入输入框 */
+const emojiList: string[] = [
+	'😀',
+	'😃',
+	'😄',
+	'😁',
+	'😅',
+	'😂',
+	'🤣',
+	'😊',
+	'🙂',
+	'😉',
+	'😍',
+	'🥰',
+	'😘',
+	'😋',
+	'😛',
+	'🤔',
+	'😎',
+	'😭',
+	'😡',
+	'👍',
+	'👎',
+	'👏',
+	'🙏',
+	'🎉',
+	'❤️',
+	'🔥',
+	'✨',
+	'⭐',
+	'💯',
+	'✅',
+	'❌',
+	'🌹',
+	'🍀',
+	'☕',
+	'🍻',
+	'🎂',
+	'🎁',
+	'📷',
+	'📎',
+]
+
+function pad2(n: number): string {
+	if (n < 10) {
+		return '0' + n
+	}
+	return '' + n
+}
+
+function nowTimeLabel(): string {
+	const d = new Date()
+	return pad2(d.getHours()) + ':' + pad2(d.getMinutes())
+}
+
+function seedMessages(): ChatMsg[] {
+	const t = nowTimeLabel()
+	return [
+		{
+			id: 'm0',
+			self: false,
+			kind: 'text',
+			text: '您好，这里是演示会话，支持文字、表情、相册图片与本地视频预览。',
+			mediaSrc: '',
+			time: t,
+		} as ChatMsg,
+		{
+			id: 'm1',
+			self: true,
+			kind: 'text',
+			text: '了解，我试一下底部工具栏。',
+			mediaSrc: '',
+			time: t,
+		} as ChatMsg,
+		{
+			id: 'm2',
+			self: false,
+			kind: 'text',
+			text: '工具条含安全区；选图选视频依赖系统相册与 uni 媒体 API，各端字段差异已在代码里归一。',
+			mediaSrc: '',
+			time: t,
+		} as ChatMsg,
+	]
+}
+
+function nextId(): string {
+	return 'm' + Date.now().toString() + '-' + Math.floor(Math.random() * 1000).toString()
+}
+
+function scrollToBottom() {
+	scrollIntoView.value = ''
+	nextTick(() => {
+		scrollIntoView.value = 'chat-bottom-anchor'
+	})
+}
+
+function normalizeChooseImagePaths(res: any): string[] {
+	let tempFiles = res.tempFiles as any[] | null
+	if (tempFiles == null || tempFiles.length === 0) {
+		const paths = res.tempFilePaths as string[] | null
+		if (paths != null) {
+			return paths
+		}
+		return []
+	}
+	const out: string[] = []
+	for (let i = 0; i < tempFiles.length; i++) {
+		const f = tempFiles[i]
+		const p = f.path as string | null
+		if (p != null && p.length > 0) {
+			out.push(p)
+		}
+	}
+	return out
+}
+
+function normalizeVideoPath(res: any): string {
+	let path = res.tempFilePath as string | null
+	if (path != null && path.length > 0) {
+		return path
+	}
+	const tp = res.tempFilePaths as string[] | null
+	if (tp != null && tp.length > 0) {
+		return tp[0]
+	}
+	return ''
+}
+
+function toggleEmojiPanel() {
+	showEmojiPanel.value = !showEmojiPanel.value
+}
+
+function insertEmoji(emoji: string) {
+	draft.value = draft.value + emoji
+}
+
+function previewImage(src: string) {
+	if (src.length === 0) {
+		return
+	}
+	uni.previewImage({
+		urls: [src],
+		current: src,
+	})
+}
+
+function pickImage() {
+	showEmojiPanel.value = false
+	uni.chooseImage({
+		count: 1,
+		sizeType: ['compressed', 'original'],
+		sourceType: ['album', 'camera'],
+		success: (res) => {
+			const paths = normalizeChooseImagePaths(res as any)
+			if (paths.length === 0) {
+				uni.showToast({ title: '未获取到图片', icon: 'none' })
+				return
+			}
+			messages.value = messages.value.concat([
+				{
+					id: nextId(),
+					self: true,
+					kind: 'image',
+					text: '',
+					mediaSrc: paths[0],
+					time: nowTimeLabel(),
+				} as ChatMsg,
+			])
+			nextTick(() => {
+				scrollToBottom()
+			})
+		},
+	})
+}
+
+function pickVideo() {
+	showEmojiPanel.value = false
+	uni.chooseVideo({
+		sourceType: ['album', 'camera'],
+		success: (res) => {
+			const path = normalizeVideoPath(res as any)
+			if (path.length === 0) {
+				uni.showToast({ title: '未获取到视频', icon: 'none' })
+				return
+			}
+			messages.value = messages.value.concat([
+				{
+					id: nextId(),
+					self: true,
+					kind: 'video',
+					text: '',
+					mediaSrc: path,
+					time: nowTimeLabel(),
+				} as ChatMsg,
+			])
+			nextTick(() => {
+				scrollToBottom()
+			})
+		},
+	})
+}
+
+async function send() {
+	const raw = draft.value.trim()
+	if (raw.length === 0) {
+		uni.showToast({ title: '请输入内容', icon: 'none' })
+		return
+	}
+	messages.value = messages.value.concat([
+		{
+			id: nextId(),
+			self: true,
+			kind: 'text',
+			text: raw,
+			mediaSrc: '',
+			time: nowTimeLabel(),
+		} as ChatMsg,
+	])
+	draft.value = ''
+	await nextTick()
+	scrollToBottom()
+}
+
+onMounted(() => {
+	nextTick(() => {
+		scrollToBottom()
+	})
+})
+</script>
+
+<style lang="scss">
+.chat-page {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	height: 100%;
+	background-color: #ededed;
+}
+
+.chat-scroll {
+	flex: 1;
+	min-height: 0;
+	width: 100%;
+}
+
+.chat-scroll__inner {
+	padding: 24rpx 24rpx 32rpx;
+	box-sizing: border-box;
+}
+
+.chat-tip {
+	margin-bottom: 24rpx;
+	padding: 16rpx 20rpx;
+	background-color: rgba(255, 255, 255, 0.9);
+	border-radius: 12rpx;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #e0e0e0;
+}
+
+.chat-tip__text {
+	font-size: 22rpx;
+	color: #888888;
+	line-height: 1.45;
+}
+
+.msg-row {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	margin-bottom: 20rpx;
+	width: 100%;
+	gap: 16rpx;
+}
+
+.msg-row--other {
+	justify-content: flex-start;
+}
+
+.msg-row--self {
+	justify-content: flex-end;
+}
+
+.msg-avatar {
+	width: 72rpx;
+	height: 72rpx;
+	border-radius: 36rpx;
+	flex-shrink: 0;
+	background-color: #e5e5e5;
+}
+
+.msg-bubble-wrap {
+	max-width: 62%;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.msg-row--self .msg-bubble-wrap {
+	align-items: flex-end;
+}
+
+.msg-bubble {
+	padding: 18rpx 22rpx;
+	border-radius: 16rpx;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.msg-bubble--media {
+	padding: 0;
+	background-color: transparent !important;
+	border-width: 0 !important;
+}
+
+.msg-bubble--other {
+	background-color: #ffffff;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #e8e8e8;
+}
+
+.msg-bubble--self {
+	background-color: #ff0844;
+}
+
+.msg-bubble__text {
+	font-size: 28rpx;
+	line-height: 1.45;
+	color: #333333;
+}
+
+.msg-bubble--self .msg-bubble__text {
+	color: #ffffff;
+}
+
+.msg-bubble__image {
+	display: block;
+	width: 420rpx;
+	max-width: 100%;
+	border-radius: 16rpx;
+	vertical-align: top;
+}
+
+.msg-bubble__video {
+	display: block;
+	width: 420rpx;
+	max-width: 100%;
+	height: 236rpx;
+	border-radius: 16rpx;
+	background-color: #000000;
+}
+
+.msg-meta {
+	font-size: 20rpx;
+	color: #b0b0b0;
+	margin-top: 6rpx;
+	padding-left: 8rpx;
+	padding-right: 8rpx;
+}
+
+.chat-bottom-anchor {
+	height: 1rpx;
+	width: 100%;
+}
+
+.chat-composer {
+	flex-shrink: 0;
+	background-color: #e8e8ea;
+	border-top-width: 1rpx;
+	border-top-style: solid;
+	border-top-color: rgba(0, 0, 0, 0.07);
+	padding-bottom: env(safe-area-inset-bottom);
+	box-sizing: border-box;
+}
+
+.chat-composer__body {
+	padding: 14rpx 22rpx 16rpx;
+	box-sizing: border-box;
+}
+
+.chat-composer__tools-row {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	padding-bottom: 12rpx;
+}
+
+.chat-composer__tools {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 6rpx;
+	flex-shrink: 0;
+	padding: 6rpx 10rpx;
+	background-color: rgba(255, 255, 255, 0.82);
+	border-radius: 999rpx;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: rgba(255, 255, 255, 0.95);
+}
+
+.chat-icon-btn {
+	width: 62rpx;
+	height: 62rpx;
+	border-radius: 999rpx;
+	background-color: transparent;
+	border-width: 0;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.chat-icon-btn--on {
+	background-color: rgba(255, 8, 68, 0.1);
+}
+
+.chat-composer__editor {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 16rpx;
+	min-height: 0;
+	width: 100%;
+}
+
+.chat-composer__input-shell {
+	flex: 1;
+	min-width: 0;
+	background-color: #ffffff;
+	border-radius: 42rpx;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: rgba(0, 0, 0, 0.06);
+	overflow: hidden;
+	box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+}
+
+.chat-composer__send {
+	align-self: center;
+}
+
+.chat-emoji-panel {
+	margin-left: 16rpx;
+	margin-right: 16rpx;
+	margin-bottom: 12rpx;
+	border-radius: 20rpx;
+	overflow: hidden;
+	background-color: #fdfdfd;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: rgba(0, 0, 0, 0.05);
+	box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.04);
+}
+
+.chat-emoji-scroll {
+	max-height: 280rpx;
+	width: 100%;
+	background-color: transparent;
+}
+
+.chat-emoji-grid {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	padding: 20rpx 14rpx 28rpx;
+	box-sizing: border-box;
+}
+
+.chat-emoji-cell {
+	width: 12.5%;
+	padding: 10rpx 0;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	border-radius: 12rpx;
+}
+
+.chat-emoji-char {
+	font-size: 46rpx;
+	line-height: 1.2;
+}
+</style>
