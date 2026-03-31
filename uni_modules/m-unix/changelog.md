@@ -1,16 +1,13 @@
-## 1.2.9（2026-03-31）
-#### 说明（示例工程 · 对接 mms-api-unix）
-
-- 仓库内 **`docs/mms-api-unix-接口适配.md`**：与主仓 **`mms-api-unix`** 的路径、模块前缀约定说明。
-- **`common/config.ts`**：默认 **`baseUrl`** 指向演示 **`https://demo.mmsadmin.cn/prod-api`**（无尾斜杠）；**`api.login`** → **`/api/member/v1/token-login`**、**`code-open-id-login`**、**`code-phone-register-or-login`**；**`api.update.checkUpdate`** → **`/api/app/v1/upgrade-check`**；**`api.upload.image`** → **`/api/base/v1/uploads`**（multipart 字段 **`file`**，与 **`m-upload`** / **`Upload.uts`** 默认一致）。
-- **`common/api/mallApi.uts`**：广告、省市区、短信、会员登录/地址/资料、文章列表/详情等改为 **`/api/{模块}/v1/...`**；**`checkUpdate`** 携带 Query **`type`**（**`APP-IOS`** 为 **1**，否则为 **2**），并保留 **`currentVersionCode`** 便于网关兼容；**`tokenLogin` / `weixinLogin`** 使用 **`config.api.login.*`**。**藏品 / 订单 / 合同**等后端未在 **mms-api-unix** 落地的接口保留旧路径并注释，需自建网关或微服务。
-- **`common/api/auth.uts`**：示例请求改为 **`/api/member/v1/*`**、**`/api/base/v1/sms-code`**。
-- **`config.uts`**（包内）：**`apiDevelopmentBase` / `apiProductionBase`** 默认值与上述演示根一致（未注入宿主时 **`getMUiConfig`** 兜底）。
-
+## 1.2.10（2026-03-31）
 #### 文档
 
-- **`readme.md`**：**`common/config`** 说明处补充 **mms-api-unix** 适配文档索引；**预览**区 **H5 / 小程序** 演示码使用 **`uni_modules/m-unix/static/`** 资源与统一尺寸展示。
-- **工具页**：**`pages/tools/tools`** 在 **`<script setup>`** 中轻提示改为 **`Ut.msg`**，避免 **`this.$m`** 不可用报错。
+- **`readme.md`**：预览区 **H5 / 微信小程序** 演示码改为 **COS 等 HTTPS 直链**，并说明 **公有读**、**防盗链** 与裂图排查；**「图标字体（m-icon / iconfont）」** 接入说明（**`static/iconfont`**、**`loadFontFace`**、**`mp.scss`**、**`name` / `size` / `color`**）。文首 **「## 文档」** 随版本保持索引更新。
+
+#### 修复
+
+- **`m-login.uvue`**：**`getPhone`** 内补充 **`getHostProjectConfig()`**，修复 **`cfg` 未定义**（微信取号成功回调闭包作用域）。
+
+> 更早版本见下文 **§3 已发布版本**（含 **1.2.9** · mms-api-unix 示例对接等）。
 
 <p align="center">
   <img src="https://sxpcwlkj-test.oss-accelerate.aliyuncs.com/mmsMall/upload/69c63fc0f176d6c9a798a194.png" alt="mUnix" width="72" height="72" />
@@ -28,7 +25,6 @@
 > 发版前：将本节并入 **§3** 新版本章节，并同步提升 `package.json` 的 **`version`**。
 
 ---
-
 ## 1. 组件库信息
 
 | 项目 | 说明 |
@@ -65,6 +61,16 @@
 ---
 
 ## 3. 已发布版本
+
+### 1.2.10（2026-04-01）
+
+#### 文档
+
+- **`readme.md`**：预览区 **H5 / 微信小程序** 演示码使用 **HTTPS 直链**（腾讯云 COS 等）；补充 **COS 公有读 / 防盗链** 说明；完善 **「图标字体（m-icon）」** 与文首文档索引。
+
+#### 修复
+
+- **`components/m-login/m-login.uvue`**：**`getPhone`** 内 **`const cfg = getHostProjectConfig()`**，消除 **`cfg` 未定义** 编译告警。
 
 ### 1.2.9（2026-04-01）
 

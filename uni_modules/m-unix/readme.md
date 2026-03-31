@@ -8,7 +8,7 @@
 
 ## 说明
 
-**mUnix**（包目录 `uni_modules/m-unix`，插件 ID **`m-unix`**）是面向 **uni-app x** 的自研 UI 方案：脚本为 **UTS**，页面与组件为 **uvue**，提供 **`m-*` 组件**、**`m-tools` 工具**与 **`mUi` 主题配置**，可在 **App / 微信小程序 / H5** 等端按需接入。
+**mmsUnix**（包目录 `uni_modules/m-unix`，插件 ID **`m-unix`**）是面向 **uni-app x** 的自研 UI 方案：脚本为 **UTS**，页面与组件为 **uvue**，提供 **`m-*` 组件**、**`m-tools` 工具**与 **`mUi` 主题配置**，可在 **App / 微信小程序 / H5** 等端按需接入。
 
 版本号、变更记录与联系方式以包内 **`package.json`**、**[`changelog.md`](./changelog.md)** 为准，与 [DCloud 插件市场](https://ext.dcloud.net.cn/plugin?name=m-unix) 展示同步维护。
 
@@ -39,29 +39,32 @@
 
 ### 线上演示（H5 / 微信小程序）
 
-图源 **`uni_modules/m-unix/static/`**（与下方 `readme` 相对路径一致）。**H5** 对齐 [unix.mmsadmin.cn](https://unix.mmsadmin.cn/#/) 线上工程；**小程序** 请使用微信扫一扫。补充说明见 [在线文档 · 在线演示](https://mmsadmin.cn/mms-unix/README.html)。
+**H5** 与 [unix.mmsadmin.cn](https://unix.mmsadmin.cn/#/) 线上工程对齐；**小程序** 官方太阳码与说明见 [在线文档 · 在线演示](https://mmsadmin.cn/mms-unix/README.html)。  
+下列二维码使用**公网 HTTPS 直链**（示例为腾讯云 COS；与下方预览图所用 OSS 同理），在 GitHub / Gitee / 插件市场等查看 **README** 时一般均可显示；须保证 **对象公有读**，且 COS **防盗链** 未拦截对应站点。
 
-<!-- 使用固定宽高保证两码视觉大小一致；部分平台会忽略 img 的 style -->
+<!-- H5：指向 unix 部署；小程序：指向文档页（太阳码以在线文档内图片为准，此处仅为直达文档的备用码） -->
 <p align="center">
   <table>
     <tr>
       <td align="center" valign="top" style="padding: 0 24px;">
         <a href="https://unix.mmsadmin.cn/#/" title="打开 H5 演示">
-          <img src="./static/code.png" width="200" height="200" alt="H5 演示二维码" style="display:block;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.08);object-fit:contain;background:#fff;" />
+          <img src="https://lhym-1301608033.cos.ap-chengdu.myqcloud.com/mms/upload/69cb8100127a65964cfe9c2d.png" width="200" height="200" alt="H5 演示二维码（unix.mmsadmin.cn）" style="display:block;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.08);object-fit:contain;background:#fff;" />
         </a>
         <p align="center"><strong>H5</strong><br />
         <sub><a href="https://unix.mmsadmin.cn/#/">unix.mmsadmin.cn</a></sub></p>
       </td>
       <td align="center" valign="top" style="padding: 0 24px;">
-        <a href="https://mmsadmin.cn/mms-unix/README.html" title="文档 · 在线演示">
-          <img src="./static/mms-unix-mp-demo-qr.jpg" width="200" height="200" alt="微信小程序演示码" style="display:block;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.08);object-fit:contain;background:#fff;" />
+        <a href="https://mmsadmin.cn/mms-unix/README.html" title="打开在线文档 · 小程序演示码">
+          <img src="https://lhym-1301608033.cos.ap-chengdu.myqcloud.com/mms/upload/69cb8114127a65964cfe9c2e.jpg" width="200" height="200" alt="微信小程序演示太阳码" style="display:block;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.08);object-fit:contain;background:#fff;" />
         </a>
         <p align="center"><strong>微信小程序</strong><br />
-        <sub>AppID 见 <code>manifest.json</code> · <code>mp-weixin</code></sub></p>
+        <sub>太阳码见 <a href="https://mmsadmin.cn/mms-unix/README.html">在线文档</a>；亦可自托管 <code>static/*.jpg</code></sub></p>
       </td>
     </tr>
   </table>
 </p>
+
+若图片仍不显示，请检查 COS 权限与防盗链，或直接点击表格内 **链接** 打开 H5 / 在线文档；本地仓库也可将二维码放入 **`uni_modules/m-unix/static/`** 使用相对路径（仅在逐文件路径正确时有效）。
 
 以下为运行效果示意（多端以实际为准）：
 
