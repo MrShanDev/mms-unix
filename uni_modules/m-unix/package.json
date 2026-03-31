@@ -2,7 +2,7 @@
   "id": "m-unix",
   "name": "mUnix",
   "displayName": "mUnix · uni-app-x 基础组件库",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "面向 uni-app x 的自研 UI 组件库：UTS + uvue，含常用组件、m-tools 工具与主题配置（mUi），支持 App / 微信小程序 / H5 等端。",
   "keywords": [
     "m-unix",

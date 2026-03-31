@@ -22,16 +22,16 @@
 
 ## 文档
 
-- **在线文档（站点）**：<https://mmsadmin.cn/m-unix/README.html>
+- **在线文档（站点）**：<https://mmsadmin.cn/mms-unix/README.html>
 - **更新日志（权威）**：本目录 **[`changelog.md`](./changelog.md)**（与 `package.json` 的 `version` 一致）
-- **源码与 Issue**：<https://gitee.com/mmsAdmin/m-unix>
+- **源码与 Issue**：<https://gitee.com/mmsAdmin/mms-unix>
 
 ## 链接
 
 - [DCloud 插件市场 · m-unix](https://ext.dcloud.net.cn/plugin?name=m-unix)（亦支持 `?id=m-unix`）
 - [组件说明站点首页](https://mmsadmin.cn/m-unix/README.html)
-- [Gitee 开源仓库](https://gitee.com/mmsAdmin/m-unix)
-- [问题反馈（Gitee Issues）](https://gitee.com/mmsAdmin/m-unix/issues)
+- [Gitee 开源仓库](https://gitee.com/mmsAdmin/mms-unix)
+- [问题反馈（Gitee Issues）](https://gitee.com/mmsAdmin/mms-unix/issues)
 
 ## 预览
 
@@ -53,7 +53,7 @@
 ## 快速上手
 
 1. 在 **`pages.json`** 中配置 **easycom**（规则见下「easycom」；与示例工程一致时可复制即用）。
-2. 在 **`main.uts`** 中用 **`createSSRApp`** 创建应用并执行 **`app.use(mUnix)`**（会注册全局组件并挂载 **`uni.$m`** / **`this.$m`**，一般**不必**再调 **`mount$m()`**）。
+2. 在 **`main.uts`** 中用 **`createSSRApp`** 创建应用并执行 **`app.use(mUnix)`**（会注册全局组件并通过 **`Vue.config.globalProperties.$m`** 挂载，组件内使用 **`this.$m`**，一般**不必**再调 **`mount$m()`**）。
 3. 在 **`App.uvue`** 中 **`@import`** **`index.scss`**（主题与工具类样式，建议保留）。
 
 详见下文「使用方法」。
@@ -101,8 +101,8 @@ export function createApp() {
 
 **说明**：
 
-- **`app.use(mUnix)`** 会执行包内 **`install`**：批量注册 **`m-*`** 全局组件，并将工具合并到 **`uni.$m`** 与 **`Vue.config.globalProperties.$m`**。
-- **`mUnix.mount$m()`** 仅向 **`uni.$m`** 注入工具；在已 **`app.use(mUnix)`** 的场景下通常**重复**，仅当**不使用** **`app.use`**、又需要 **`uni.$m`** 时可单独调用。
+- **`app.use(mUnix)`** 会执行包内 **`install`**：批量注册 **`m-*`** 全局组件，并将工具挂到 **`Vue.config.globalProperties.$m`**（**`this.$m`** / 模板 **`$m`**）。**不**再写入 **`uni.$m`**。
+- **`mUnix.mount$m()`** 已废弃（空实现，仅为兼容旧代码路径）；请始终使用 **`app.use(mUnix)`**。
 
 ### 可选：多语言（`initI18n`）
 
@@ -115,6 +115,46 @@ export function createApp() {
 ```scss
 @import '@/uni_modules/m-unix/index.scss';
 ```
+
+### 图标字体（`m-icon` / iconfont）
+
+**`m-icon`** 与部分组件（如 **`m-empty`** 默认空状态图标）使用 **`font-family: "iconfont"`** 的 **TTF 字库**。接入时除引入 **`index.scss`**（已包含 **`.iconfont`** 基础样式）外，还需保证工程内存在字体文件，并按端加载。
+
+#### 1. 放置字体文件
+
+将 **`iconfont.ttf`** 放到宿主工程 **`static/iconfont/iconfont.ttf`**（路径固定，与样式中的 **`url("/static/iconfont/iconfont.ttf")`** 一致）。字体文件须与包内 **`m-icon`** 中 **`getIconChar`** 的 Unicode 映射一致；若使用自建 iconfont，需同步维护映射或替换字库后更新 **`components/m-icon/m-icon.uvue`**。
+
+#### 2. App / H5：启动时 `loadFontFace`
+
+**小程序**下 **`uni.loadFontFace`** 对 **`/static`** 等地址限制较多，包内已通过 **`libs/css/mp.scss`** 的 **`@font-face`** 引用同一 TTF，**一般无需**在 **`App.uvue`** 再加载。  
+**非小程序**端请在 **`App.uvue`** 的 **`onLaunch`**（或等价入口）中调用 **`uni.loadFontFace`**，并与 **`#ifndef MP`** 条件编译配合，例如：
+
+```uts
+onLaunch(() => {
+  // #ifndef MP
+  uni.loadFontFace({
+    family: 'iconfont',
+    source: 'url("/static/iconfont/iconfont.ttf")',
+    success: () => {
+      console.log('图标字体加载成功')
+    },
+    fail: (err) => {
+      console.log('图标字体加载失败', err)
+    }
+  })
+  // #endif
+})
+```
+
+#### 3. 页面中使用
+
+在已配置 **easycom** 的前提下，直接使用 **`m-icon`**，**`name`** 为字库中已映射的名称（部分名称含别名，如 **`person`** 与 **`user`** 等价）：
+
+```uvue
+<m-icon name="search" color="#333333" size="20"></m-icon>
+```
+
+可用名称清单可参考本仓库 **`pages_demo/icon`** 演示页，或查看 **`components/m-icon/m-icon.uvue`** 内 **`getIconChar`** 映射。
 
 ### 按需引入组件
 

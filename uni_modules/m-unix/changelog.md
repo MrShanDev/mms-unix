@@ -1,3 +1,12 @@
+## 1.2.8（2026-03-30）
+#### Breaking（接入注意）
+
+- **`index.js`**：**`app.use(mUnix)`** 仅将工具挂到 **`Vue.config.globalProperties.$m`**（组件内 **`this.$m`** / 模板 **`$m`**），**不再**设置 **`uni.$m`**。**`mount$m()`** 改为空实现并标记废弃；若旧代码在非组件处使用 **`uni.$m`**，请改为 **`import`** 具体工具，或在可用上下文中取得 **`getCurrentInstance()`** 再访问 **`globalProperties.$m`**（视运行环境而定）。
+
+#### 文档
+
+- **`readme.md`**：快速上手与 **`app.use`** 说明与上述行为一致。
+
 ## 1.2.7（2026-03-30）
 #### 示例工程
 

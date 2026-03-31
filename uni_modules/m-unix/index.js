@@ -13,15 +13,14 @@ export {
 } from './components/m-tools/ProjectConfig.uts'
 export { request }
 
-// 挂载到 uni / Vue：合并 Ut.uts 默认导出（含 configInfo、httpGet、login、href 等）
+// 合并 Ut.uts 默认导出（含 configInfo、httpGet、login、href 等），仅通过 Vue globalProperties 暴露为 this.$m
 const $m = {
   ...utils,
   ...mTools,
 }
 
-export const mount$m = function() {
-  uni.$m = $m
-}
+/** @deprecated 请使用 app.use(mUnix)，在组件内通过 this.$m 访问（不再写入 uni.$m） */
+export const mount$m = function() {}
 
 // 批量注册全局组件
 const importFn = import.meta.glob('./components/m-*/m-*.uvue', { eager: true })
@@ -52,10 +51,7 @@ const install = (Vue) => {
     Vue.component(component.name, component)
   })
 
-  // 挂载到uni
-  uni.$m = $m
-
-  // 挂载到Vue全局属性
+  // 挂载到 Vue 全局属性（组件内 this.$m、模板中 $m）
   Vue.config.globalProperties.$m = $m
 }
 
