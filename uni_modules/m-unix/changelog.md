@@ -1,76 +1,18 @@
-## 1.2.8（2026-03-30）
-#### Breaking（接入注意）
+## 1.2.9（2026-03-31）
+#### 说明（示例工程 · 对接 mms-api-unix）
 
-- **`index.js`**：**`app.use(mUnix)`** 仅将工具挂到 **`Vue.config.globalProperties.$m`**（组件内 **`this.$m`** / 模板 **`$m`**），**不再**设置 **`uni.$m`**。**`mount$m()`** 改为空实现并标记废弃；若旧代码在非组件处使用 **`uni.$m`**，请改为 **`import`** 具体工具，或在可用上下文中取得 **`getCurrentInstance()`** 再访问 **`globalProperties.$m`**（视运行环境而定）。
-
-#### 文档
-
-- **`readme.md`**：快速上手与 **`app.use`** 说明与上述行为一致。
-
-## 1.2.7（2026-03-30）
-#### 示例工程
-
-- **`pages_demo/ext/app-update/app-update.uvue`**：按 **`m-update`** 新 API 传入 **`check-update-fn`**（**`@/common/api/mallApi`** · **`checkUpdate`**），文案说明与宿主对接方式一致。
+- 仓库内 **`docs/mms-api-unix-接口适配.md`**：与主仓 **`mms-api-unix`** 的路径、模块前缀约定说明。
+- **`common/config.ts`**：默认 **`baseUrl`** 指向演示 **`https://demo.mmsadmin.cn/prod-api`**（无尾斜杠）；**`api.login`** → **`/api/member/v1/token-login`**、**`code-open-id-login`**、**`code-phone-register-or-login`**；**`api.update.checkUpdate`** → **`/api/app/v1/upgrade-check`**；**`api.upload.image`** → **`/api/base/v1/uploads`**（multipart 字段 **`file`**，与 **`m-upload`** / **`Upload.uts`** 默认一致）。
+- **`common/api/mallApi.uts`**：广告、省市区、短信、会员登录/地址/资料、文章列表/详情等改为 **`/api/{模块}/v1/...`**；**`checkUpdate`** 携带 Query **`type`**（**`APP-IOS`** 为 **1**，否则为 **2**），并保留 **`currentVersionCode`** 便于网关兼容；**`tokenLogin` / `weixinLogin`** 使用 **`config.api.login.*`**。**藏品 / 订单 / 合同**等后端未在 **mms-api-unix** 落地的接口保留旧路径并注释，需自建网关或微服务。
+- **`common/api/auth.uts`**：示例请求改为 **`/api/member/v1/*`**、**`/api/base/v1/sms-code`**。
+- **`config.uts`**（包内）：**`apiDevelopmentBase` / `apiProductionBase`** 默认值与上述演示根一致（未注入宿主时 **`getMUiConfig`** 兜底）。
 
 #### 文档
 
-- **`readme.md`**：**「包内源码约定」** 与工具注释中 **`getHostProjectConfig()`** 表述已齐备；本版以发版号与插件市场同步为主。
-## 1.2.6（2026-03-30）
-#### 配置与工具（不强制 `@/common/config`）
+- **`readme.md`**：**`common/config`** 说明处补充 **mms-api-unix** 适配文档索引；**预览**区 **H5 / 小程序** 演示码使用 **`uni_modules/m-unix/static/`** 资源与统一尺寸展示。
+- **工具页**：**`pages/tools/tools`** 在 **`<script setup>`** 中轻提示改为 **`Ut.msg`**，避免 **`this.$m`** 不可用报错。
 
-- **`components/m-tools/ProjectConfig.uts`**：宿主配置桥接；**`injectMUnixHostProjectConfig`** / **`getHostProjectConfig`** / **`clearMUnixHostProjectConfig`**；未注入时使用库内默认（含 **`baseUrl` 空串**、默认可本地存储 key、**`configInfo`** 内置展示名与 Logo 路径等），**`m-login`** 所需的 **`userAgreementArticleId` / `privacyPolicyArticleId`** 随 **`configInfo`** 合并。
-- **`Request.uts`**、**`Storage.uts`**、**`Auth.uts`**、**`Upload.uts`**、**`config.uts`**（**`mUi`** / **`getMUiConfig`**）、**`Ut.uts`**、**`m-login`**、**`m-upload`**：改为读取 **`getHostProjectConfig()`**，包内**不再**直接 **`import '@/common/config'`**。
-- **`m-update`**：版本号与 **`doUpdate`** 下载地址仍来自 **`getHostProjectConfig().configInfo`**；**移除**对 **`@/common/api/mallApi`** 的引用，新增 **`check-update-fn`**（宿主传入与原先 **`checkUpdate`** 相同签名的方法）；未传入时 **`check()`** 仅 **`console.warn`**、不发起请求。
-- **`Ut.uts`**：**`projectConfigInfo`** 改为 **`getProjectConfigInfo()`**（若业务曾引用常量请改为函数调用）。
-- **`Auth.uts`**：**`checkLogin` / `needLogin`** 与 **`Request.uts`** 未传登录页时，优先 **`loginPagePath`**，否则兜底 **`/pages_Me/login/login`**。
-- **`index.js`**：再导出 **`injectMUnixHostProjectConfig`**、**`getHostProjectConfig`**、**`clearMUnixHostProjectConfig`**。
-
-#### 文档
-
-- **`readme.md`**：新增 **「业务配置：`@/common/config`（可选）」**，说明入口注入顺序、**`common/config` 字段约定表**、运行时 API；**`m-update`** 以 **`check-update-fn`** 对接宿主检查更新实现；补充 **「包内源码约定」**（无 **`@/common/config`** / **`@/common/api`** 硬依赖，**`initI18n`** 与 **`@/locale`** 例外说明）。
-- **注释与提示文案**：**`Request.uts`**、**`Upload.uts`**、**`config.uts`**、**`m-upload`** 中与旧 **`config.`** 表述对齐为 **`getHostProjectConfig()`** / 注入说明，避免与未导入的 **`config`** 混淆。
-
-#### 示例工程（本仓库）
-
-- 根目录 **`inject-m-unix-host.uts`**；**`main.uts`** 顶部 **`import './inject-m-unix-host.uts'`**（早于 **`mUnix`**），与现有 **`common/config.ts`** 行为对齐。
-## 1.2.5（2026-03-30）
-#### 模版 / 演示
-
-- **`pages/templates/forum-feed`**：演示 **头像与帖子配图** 使用 **`https://picsum.photos/seed/{seed}/{w}/{h}`**（每条、每张 **seed** 不同，画面有差异；**需联网**）；顶部提示已说明联网与业务替换方式。
-- **`m-unix-doc/forum-feed.md`**：数据说明与上图源约定同步。
-
-#### 分包与入口
-
-- **已移除** **`pages_demo/feed-post`** 及 **`pages.json`** 中对应注册；**`m-feed-post`** 仍通过 **模版 · 论坛动态** 页面展示。
-- **「组件」Tab · 业务示例**：保留 **微信登录**；不包含 **信息流帖子** 独立演示入口。
-
-#### 文案与包说明
-
-- **`m-wx-login`**、**`m-login`**、**`readme.md`**、**`package.json` · `description`** 等与 **微信 / 微信小程序** 相关的默认文案、端能力描述，与当前工程保持一致（供与 **1.2.4** 条目对照时以本版为准）。
-## 1.2.4（2026-03-30）
-#### 新增
-
-- **`m-feed-post`**：信息流单条帖子（多图/视频、互动栏、赞名单与评论列表）；**`v-model:liked` / `v-model:collected` / `v-model:like-count` / `v-model:liker-names`**；事件 **`like`、`comment`、`comment-reply`、`collect`** 等；赞图标 **`fabulous`**。
-- **演示**：**`pages_demo/feed-post`**；**`pages.json`** 导航标题 **信息流帖子 m-feed-post**。
-#### 调整
-
-- **`m-wx-login`**：默认 **`text`** 为 **「一键登录」**；注释用语改为宿主小程序。
-- **`m-login`**：宿主侧未对接时的提示改为 **「当前宿主请对接业务登录接口」**。
-- **`package.json`**：**`version`** **1.2.4**；**`keywords`** 去除 **`mms`**；**`description`** 端能力表述改为 **小程序宿主 / Web**。
-- **`readme.md`**：**`m-feed-post`** 表项；端能力表述、`m-wx-login` 表项用语更新。
-#### 文档
-
-- **`m-unix-doc/`**：**`m-feed-post.md`**（API 与 v-model）、**`README.md`** 索引、**`forum-feed.md`** 与本地静态资源约定。
-- **`version/doc`**：**`lib-1.2.4.md`**、**`app-1.0.2.md`**（演示工程 **MMS-Unix** 1.0.2，与 **`configInfo.versionName`** 对齐）。
-## 1.2.3（2026-03-27）
-#### 变更（文档与元数据）
-
-- **`package.json`**：**`version`** **1.2.3**，与插件市场发版及本文 §3 一致。
-- 文档与元数据实质内容同 **1.2.2**（见下节：readme 全量组件表、OSS Logo、**`repository`**、changelog、联系页等）；本版本为**发版号**递增，无新增代码或文档条目。
-## 1.2.2（2026-03-27）
-Logo 完善回复显示
 <p align="center">
-  <!-- 插件市场 README/changelog 顶部 Logo：须 HTTPS；建议与包内 logo.png 视觉一致 -->
   <img src="https://sxpcwlkj-test.oss-accelerate.aliyuncs.com/mmsMall/upload/69c63fc0f176d6c9a798a194.png" alt="mUnix" width="72" height="72" />
 </p>
 <p align="center"><strong>mUnix</strong> · uni-app x 组件库</p>
@@ -79,246 +21,138 @@ Logo 完善回复显示
 
 # mUnix 更新日志
 
-本文档位于 **`uni_modules/m-unix` 组件包根目录**（与 `package.json`、`readme.md`、`logo.png` 同级），用于：
+本文档位于 **`uni_modules/m-unix`** 根目录（与 `package.json`、`readme.md`、`logo.png` 同级），为组件库**权威变更记录**。**当前版本**以 `package.json` 的 **`version`** 为准。
 
-- 在 **DCloud 插件市场** 展示版本变更与使用说明；
-- 作为组件库 **唯一权威的变更记录**（**不依赖**工程内其它目录的 Markdown；历史与条目均以本文为准）。
+## [Unreleased]
 
-**当前版本号**以本目录 `package.json` 的字段 **`version`** 为准。
+> 发版前：将本节并入 **§3** 新版本章节，并同步提升 `package.json` 的 **`version`**。
 
 ---
+
 ## 1. 组件库信息
 
 | 项目 | 说明 |
 |------|------|
-| **名称** | m-unix（`m-` 前缀 UI 组件与工具） |
-| **定位** | 面向 **uni-app-x** 的基础组件库；脚本为 **UTS**，页面/组件为 **uvue** |
-| **包标识** | `package.json` 的 `id` / `name`：`mUnix`；目录：`uni_modules/m-unix` |
-| **关键词** | uni-app-x、components、uts、uvue、m-unix、mUnix（见 `package.json` 的 `keywords`） |
+| **名称** | m-unix（`m-` 前缀 UI 与工具） |
+| **定位** | 面向 **uni-app-x**；**UTS** + **uvue** |
+| **包标识** | 目录 `uni_modules/m-unix`；`package.json` 的 `id` / `name`：`mUnix` |
 | **出品** | **陕西品创网络** |
 
-### 1.1 在线文档（UI 组件库）
+### 1.1 链接
 
 | 类型 | 地址 |
 |------|------|
 | **组件说明（站点）** | <https://mmsadmin.cn/m-unix/README.html> |
-| **站点首页** | <https://mmsadmin.cn> |
-| **开源仓库** | <https://gitee.com/mmsAdmin/m-unix> |
-| **DCloud 插件市场** | <https://ext.dcloud.net.cn/plugin?id=m-unix>（亦支持 <https://ext.dcloud.net.cn/plugin?name=m-unix>） |
+| **开源仓库** | <https://gitee.com/mmsAdmin/mms-unix> |
+| **DCloud 插件市场** | <https://ext.dcloud.net.cn/plugin?id=m-unix> |
 
-> 插件 **ID** 为 **`m-unix`**；市场展示 README/changelog 顶部 Logo 请使用 **可公网访问的 HTTPS 图片**（当前为 OSS 静态地址，与包内 **`logo.png`** 建议保持同一视觉）。发布包内请保留同目录 **`logo.png`**，供插件市场列表图标使用。
-
-### 1.2 机构与联系方式
-
-以下为 **陕西品创网络** 对外信息（与整合本组件的 **App 内「关于我们」「联系我们」** 页面一致；以 App 内展示为准）。
+### 1.2 联系方式（陕西品创网络）
 
 | 类型 | 内容 |
 |------|------|
-| **机构** | 陕西品创网络 |
 | **邮箱** | sxpcwlkj@163.com |
-| **微信** | qq942879858（咨询与合作，可在 App「联系我们」内复制） |
-| **反馈渠道** | 插件市场评论、Gitee Issue、邮件 / 微信 |
-
-**说明**：使用本仓库示例工程时，路径 **`pages_Me/about_me/about_me`** 为「关于我们」，**`pages_Me/contact/contact`** 为「联系我们」，内含产品介绍、文档链接与联系方式。
+| **微信** | qq942879858 |
+| **反馈** | 插件市场评论、Gitee Issue、邮件 / 微信 |
 
 ---
 
 ## 2. 版本记录书写约定
 
-- **版本号**：遵循语义化版本（SemVer），与 `package.json` 的 `version` **同步更新**。
-- **日期**：格式 `YYYY-MM-DD`，与发版日一致（可与插件市场上架日相同）。
-- **条目分类**（按需选用）：
-  - **新增**：新组件、新 API、新样式能力等；
-  - **变更**：行为调整、不兼容说明、重命名、默认项变化等；
-  - **修复**：缺陷修复；
-  - **说明**：迁移提示、平台差异、与业务工程配合方式等。
-- **`[Unreleased]`**：开发中累积；**发版前**将本节内容合并到 **新版本标题**，清空或重建 `[Unreleased]`，并提升 `package.json` 的 `version`。
+- **版本号**：SemVer，与 `package.json` 的 `version` 同步。
+- **日期**：`YYYY-MM-DD`，与发版日一致。
+- **分类（按需）**：新增 / 变更 / 修复 / 说明。
 
 ---
 
-## [Unreleased]
+## 3. 已发布版本
 
-> 下一版本发版前：将本节并入新版本章节，并同步提升 `package.json` 的 `version`。
+### 1.2.9（2026-04-01）
 
-### 不兼容变更（品牌与命名）
+#### 说明（示例工程 · 对接 mms-api-unix）
 
-- **包目录**：`uni_modules/mms-unix` 重命名为 **`uni_modules/m-unix`**；`package.json` 的 **`id` / `name`** 为 **`mUnix`**。
-- **组件标签**：原 **`mms-*`** 全部改为 **`m-*`**（如 `m-button`、`m-icon`）；**easycom** 规则已同步为 `^m-(.*)`。
-- **工具目录**：**`m-tools`**（原 `mms-tools`）；全局 **`uni.$m` / `this.$m`**（原 `$mms`）；**`mount$m`**（原 `mount$mms`）。
-- **主题配置**：**`config.mUi`**、**`getMUiConfig` / `setMUiConfig`**（原 `mmsUi` / `getMmsUiConfig` 等）；常量 **`M_UI_*`**（原 `MMS_UI_*`）。
-- **样式入口**：主题工具类文件为 **`libs/css/m.scss`**（原 `mms.scss`）；库内占位图 **`m-app-logo.png`** 等（原 `mms-*.png` 文件名）。
+- 仓库内 **`docs/mms-api-unix-接口适配.md`**：与主仓 **`mms-api-unix`** 的路径、模块前缀约定说明。
+- **`common/config.ts`**：默认 **`baseUrl`** 指向演示 **`https://demo.mmsadmin.cn/prod-api`**（无尾斜杠）；**`api.login`** → **`/api/member/v1/token-login`**、**`code-open-id-login`**、**`code-phone-register-or-login`**；**`api.update.checkUpdate`** → **`/api/app/v1/upgrade-check`**；**`api.upload.image`** → **`/api/base/v1/uploads`**（multipart 字段 **`file`**，与 **`m-upload`** / **`Upload.uts`** 默认一致）。
+- **`common/api/mallApi.uts`**：广告、省市区、短信、会员登录/地址/资料、文章列表/详情等改为 **`/api/{模块}/v1/...`**；**`checkUpdate`** 携带 Query **`type`**（**`APP-IOS`** 为 **1**，否则为 **2**），并保留 **`currentVersionCode`** 便于网关兼容；**`tokenLogin` / `weixinLogin`** 使用 **`config.api.login.*`**。**藏品 / 订单 / 合同**等后端未在 **mms-api-unix** 落地的接口保留旧路径并注释，需自建网关或微服务。
+- **`common/api/auth.uts`**：示例请求改为 **`/api/member/v1/*`**、**`/api/base/v1/sms-code`**。
+- **`config.uts`**（包内）：**`apiDevelopmentBase` / `apiProductionBase`** 默认值与上述演示根一致（未注入宿主时 **`getMUiConfig`** 兜底）。
 
-### 说明（2026-03-27 迁移核对）
+#### 文档
 
-- 已对仓库做全文检索：`.uvue` / `.uts` / `.ts` / `pages.json` / `manifest.json` 等**运行时代码**中，**`mms-*`、`mms-unix`、`$mms`、`getMmsUiConfig` 等旧名已无残留**；**`version/doc`**、**`.cursor/skills`**、**`uni_modules/m-unix/docs`** 内文档与示例中的 **`MMS-UNIX`、`mms.scss`** 等表述已同步为当前命名。
-- 本节前 **「不兼容变更」** 条目中仍保留旧名，**仅作迁移对照**；第三方域名（如 **`mmsadmin.cn`**）、Gitee 组织名（**`mmsAdmin`**）等**未改**。
+- **`readme.md`**：**`common/config`** 说明处补充 **mms-api-unix** 适配文档索引；**预览**区 **H5 / 小程序** 演示码使用 **`uni_modules/m-unix/static/`** 资源与统一尺寸展示。
+- **工具页**：**`pages/tools/tools`** 在 **`<script setup>`** 中轻提示改为 **`Ut.msg`**，避免 **`this.$m`** 不可用报错。
 
-### 新增
+### 1.2.8（2026-03-31）
 
-- **全局样式**：`libs/css/animate.scss`（由 `index.scss` 引入），提供基于 `transition` 的淡入淡出、滑入、缩放及图标单次旋转等工具类（符合 ucss 不使用 `@keyframes` 的约定）。
-- **m-icon**：`getIconChar` 增加 **`wechat`** 名称映射，便于菜单与业务使用微信相关图标。
+#### Breaking（接入注意）
 
-### 变更（配置与主题 `mUi`）
+- **`app.use(mUnix)`** 仅将工具挂到 **`Vue.config.globalProperties.$m`**，**不再**设置 **`uni.$m`**。**`mount$m()`** 已废弃（空实现）。旧代码里 **`uni.$m`** 请改为 **按需 `import`**，或在合适上下文用 **`getCurrentInstance()`** 访问 **`globalProperties.$m`**（**`<script setup>`** 中勿用 **`this.$m`**）。
 
-- **`emptyDefaultImage` → `emptyDefaultIcon`**：`m-icon` 的 `name` 字符串，默认 `file-common-filling`；**m-empty** 默认空状态仅使用图标字体，不再依赖业务工程 `/static/img/empty-default.png`。
-- 移除未使用的 `serviceIconRead`、`serviceIconCertificate`、`serviceIconGroup`、`serviceIconAddress`、`serviceIconAbout`（类型与 `mUi` 已同步）。
-- 移除从未被组件读取的 **`primaryColor`**（主题色以 `libs/css/m.scss` 为准）；`demoCardThumb` 与 `cropperDemo` 合并为 **`demoImage`**；`appLogo` / 头像与文章占位默认使用 **本包 `static/`** 下内置资源，并导出 **`M_UI_BUILTIN_*`** 常量供 `<image @error>` 兜底。
+#### 文档
 
-### 变更（组件）
+- **`readme.md`**：与上述 **`$m`** 行为一致。
 
-- **m-picture-cropper**：默认 **`interactive: true`**，**`movable-area` + `movable-view`** 支持单指拖动、双指缩放；新增 **`scaleMin` / `scaleMax` / `panRoom`**；**「重置」**；**`cropper` / `viewChange`** 携带 **`x`、`y`、`scale`、`stageW`、`stageH`**；**`interactive: false`** 仍为静态示意。
-- **m-upload**：新增 **`columns`**（默认 **4**）、**`gap`**（默认 **20** rpx）；格子正方形布局等。
-- **m-code-input**：新增 **`boxSize`**、**`cellGap`** 等。
-- **m-vcode**：H5 / 新版 canvas 使用 **`createCanvasContextAsync`** 等；新增 **`mode`**（`text` | `math`）、**`verify(input)`** 等。
-- **m-dialog**：无标题时正文区样式与居中策略优化。
-- **m-countdown**：**`primary`**、**`type="cells"`**、**`format`** 占位符与 **`calendar`** 等能力扩展。
-- **m-tabs** / **m-segmented-control** / **m-notice-bar** / **m-wing-blank** / **m-richtext** 等：交互与样式能力对齐与增强（详见下列已发布版本中的对应条目，发版时可将本节精简合并）。
+### 1.2.7（2026-03-30）
 
-### 变更（组件修复）
+- **`pages_demo/ext/app-update/app-update.uvue`**：**`m-update`** 使用 **`check-update-fn`** 对接宿主 **`checkUpdate`**。
 
-- **m-update**：`m-dialog` 的 **`buttons`** 传入 **`updateButtons()`** 的返回值，避免将方法引用当作按钮配置。
-- **m-tree**：展开箭头使用 **`m-icon`**（`arrow-down` / `arrow-right`），替代非本库统一的 `<icon>` 标签。
+### 1.2.6（2026-03-30）
 
-### 说明
+#### 配置与工具（可选 `@/common/config`）
 
-- 若使用本仓库中的 **示例工程**：`pages_demo` 分包内已补充布局辅助、日期时间、应用更新、底部固定栏、截图、m-tips、加载更多、树形、微信登录等演示页；**仅用于集成演示**，是否随业务工程发布由项目自行决定。
+- **`ProjectConfig.uts`**：**`injectMUnixHostProjectConfig` / `getHostProjectConfig` / `clearMUnixHostProjectConfig`**；未注入时用库内默认。**`Request` / `Storage` / `Auth` / `Upload` / `config`（mUi）/ `Ut` / `m-login` / `m-upload`** 均读 **`getHostProjectConfig()`**，包内**不再** **`import '@/common/config'`**。
+- **`m-update`**：去掉对 **`@/common/api/mallApi`**；**`check-update-fn`** 由宿主传入；未传则 **`check()`** 不请求。
+- **`Ut.uts`**：**`projectConfigInfo`** → **`getProjectConfigInfo()`**。
+- **`index.js`**：再导出 **`injectMUnixHostProjectConfig`** 等。
+- **`readme.md`**：**业务配置（可选）**、字段表、**`m-update`** 对接说明、**包内源码约定**。
 
-### 变更（工程与小程序）
+#### 示例工程
 
-- **`pages.json` / `manifest.json`**：标题、tabBar、`name`、`description` 等改为**字面量中文**（与 `locale/zh-Hans.json` 对齐），**不再使用** `%page.xxx%`、`%app.name%` 等占位；**微信小程序**等端可正常展示。
-- **`manifest.json` · `mp-weixin`**：增加 **`lazyCodeLoading`: `requiredComponents`**（按需注入自定义组件）。
-- **全局样式 `uni.scss`**：宽屏（`min-width: 600px`）下对 **`.demo-page`、`.ext-page`** 限制 **`max-width: 430px`** 并居中，**H5 桌面预览**时避免 `rpx` 随视口拉满导致按钮等演示显得过大（真机窄屏不受影响）。
+- **`inject-m-unix-host.uts`** + **`main.uts`** 顶部优先 **`import`**，早于 **`mUnix`**。
 
-### 变更（m-banner-arc）
+### 1.2.5（2026-03-30）
 
-- **仅保留内凹弧**：移除外凸（`out`）相关绘制与 **`arcMode` / `arcOutTransform`** 等 API；**`top-convex` / `bottom-convex`** 仍解析为同边，按**凹**绘制以兼容旧写法。
-- 结构：**沿口容器** `m-banner-arc__edge--top/bottom` + **`m-banner-arc__arc--in`**；根节点形态类 **`m-banner-arc--variant-*-concave`**（及双弧 **`--variant-dual`**）。
-- 支持 **`height: auto`**（`min-height` 按弧高估算）；**无插槽**，演示页需在组件外包一层叠放文案。
+- **`pages/templates/forum-feed`**：示例图改为 **`picsum.photos`**（需联网）；**`m-unix-doc/forum-feed.md`** 同步。
+- 移除 **`pages_demo/feed-post`** 独立入口；**`m-feed-post`** 由模版页展示。
 
-### 变更（m-button）
+### 1.2.4（2026-03-30）
 
-- 默认与各 **`btnSize`** 档位**略收紧字号**（默认由 32rpx 调整为 **28rpx** 等）；**`mini` / `tiny`** 档位字号进一步下调（如 **18rpx / 12rpx**），与按钮高度更匹配。
-- **内联样式**使用 **`'font-size'`**（kebab-case）；非微信端 **`m-btn__inner`** 同步绑定字号，避免插槽内文字未继承。
-- **`getSize()`**：显式 **`size`** 与 **`btnSize`** 判断加固（`btnSize` 做 **trim + toLowerCase**），避免档位字号不随 `btnSize` 变化。
+- **新增 `m-feed-post`**（信息流帖子、多 v-model 与事件）；演示曾单独分包后于 **1.2.5** 收口至模版。
+- **`m-wx-login` / `m-login` / `readme` / `package.json`**：微信端文案与 **`keywords`** 等调整。
+- **文档**：**`m-unix-doc/m-feed-post.md`** 等。
 
-### 变更（多端内联样式）
+### 1.2.3（2026-03-27）
 
-- 凡 **`:style` / `UTSJSONObject`** 中表示字号的键，统一为 **`'font-size'`**（及 **`'font-weight'`** 等），避免部分端对驼峰 **`fontSize`** 忽略导致「各档位看起来一样大」。涉及 **`m-input`、`m-textarea`、`m-text`、`m-tabs`、`m-steps`、`m-picker`、`m-pagination`** 等多数带字号样式的组件；动态赋值使用 **`st['font-size']`**、**`st['font-weight']`**。
+- **仅发版号递增**：相对 **1.2.2** 无新增代码；文档与元数据同 **1.2.2**。
 
-### 修复（m-tools）
+### 1.2.2（2026-03-27）
 
-- **`httpGet`** 第三个参数由错误写法 **`showMgs ? :boolean`** 修正为 **`showMgs ?: boolean`**，避免编译到 H5 出现 **`Unexpected token .`** 等语法错误。
-- 请求超时分支中 **`requestTask?.abort()`** 改为 **`requestTask != null` 后 `abort()`**，减少可选链在个别运行环境的兼容性风险。
-
-### 变更（工程与元数据）
-
-- **`package.json`**：补充 **`license`、`author`、`homepage`、`repository`、`bugs`**，优化 **`description` / `keywords` / `displayName`**。
-- **`readme.md`**：包简介与 **`changelog.md`**、**`version`** 对齐说明。
-- **根目录 `index.html`**：增加 **`/static/logo.png`** 的 **favicon** 链接，减轻 H5 开发时默认 **`/favicon.ico` 404**。
-
-### 说明（项目规范）
-
-- **`.cursor/skills/mms-unix-coding-standards/SKILL.md`**：新增 **「内联样式 `:style`（多端一致）」**，约定 CSS 属性名使用 **kebab-case 字符串键**，与 **Vue 组件 props 驼峰**区分。
-
-### 修复（样式与规范）
-
-- 多处 **WXSS** 避免使用 **`*`** 等通用选择器（微信小程序不支持），改为 **`gap`** 或显式标签选择器。
-- 组件与 demo 中 **`m-button`** 文案使用**默认插槽**，勿使用不存在的 **`text`** prop。
-
----
-
-## 3. 历史版本
-
-### 1.2.5（2026-03-31）
-
-见本文 **文首 §1.2.5**（forum-feed 随机示例图、演示入口与微信文案对齐；**`package.json` → 1.2.5**）。
-
-### 1.2.3（2026-03-29）
-
-#### 变更（文档与元数据）
-
-- **`package.json`**：**`version`** **1.2.3**，与插件市场发版及本文 §3 一致。
-- 文档与元数据实质内容同 **1.2.2**（见下节：readme 全量组件表、OSS Logo、**`repository`**、changelog、联系页等）；本版本为**发版号**递增，无新增代码或文档条目。
-
----
-
-### 1.2.2（2026-03-28）
-
-#### 变更（文档与插件市场）
-
-本版本**仅文档与元数据**（含原计划在 **1.2.1** 分条说明的内容，现统一记入 **1.2.2**，不再单独拆版本）。
-
-- **`package.json`**：**`version`** **1.2.2**；**`repository`** 为合法 **`{ type, url }`**（**`https://gitee.com/mmsAdmin/m-unix.git`**），修正无效 **`[object Object]`** 等占位；**`keywords`** 格式整理；**`dcloudext.npmurl`** 为插件市场详情页链接。
-- **`readme.md`**：插件市场常用结构（说明、特点、链接、预览、安装、快速上手、使用方法、版权）；**使用方法**与示例工程一致（**`createSSRApp`**、**`pages.json` · easycom**、**`Request.uts`** / **`common/config`**、**`app.use`** / **`mount$m`**、可选 **`initI18n`**）；**组件列表**与 **`components`** 下全部 **`m-*`** 对齐并分类汇总；**预览**四张示意图（HTTPS）；文首 Logo **HTTPS OSS**（`69c63fc0f176d6c9a798a194.png`）。
-- **`readme.md` / `changelog.md` 文首**：与 §1.1 **DCloud 插件市场**、**`logo.png`** 及 OSS 展示说明一致。
-- **`changelog.md`**：恢复「文首 Logo → # 更新日志」顺序；§1.1、§3 与发版信息对齐。
-- **示例工程**：`pages_Me/contact/contact.uvue` 增加 **插件市场** 入口链接。
-- 无组件、工具或 API 行为变更。
-
----
+- **文档与元数据**：**`readme`** 全量组件表、HTTPS Logo、**`repository`**、市场结构、**`changelog`** 顺序与 **§1** 对齐；**无**组件 / API 行为变更。
 
 ### 1.2.0（2026-03-27）
 
-#### 新增
-
-- **m-swiper**：图片轮播；`list`、`imageKey` / `titleKey`、`showTitle`、指示器、`slidePadding`、`previousMargin` / `nextMargin`、`circular`、`v-model:current` 等。
-- **m-pagination**：分页器；`change` / `update:current`、自定义插槽等。
-- **m-segmented-control**：分段器；`update:current`、`click` / `change`。
-- **m-notice-vertical**：纵向可滚动长文通告容器。
-- 本包根目录 **`changelog.md`**：与插件市场、版本号同步维护。
-
-#### 变更
-
-- **m-notice-bar**：对齐常见通告能力（内容、跑马灯/单行、左右侧与点击、`params` 等）。
-- **m-rolling-news**：对象列表与 `prop`、`lines`、背景、右侧插槽、`change` 等。
-
-#### 修复
-
-- **m-tools**：`StoreMemberVo` 等类型的导入路径修正为包内 `components/m-tools/utype/type.uts`，避免解析失败。
-
----
+- **新增**：**`m-swiper`、`m-pagination`、`m-segmented-control`、`m-notice-vertical`**；本包 **`changelog.md`** 与市场同步维护。
+- **变更**：**`m-notice-bar`、`m-rolling-news`** 能力增强。
+- **修复**：**`m-tools`** 类型导入路径等。
 
 ### 1.1.1（2026-03-24）
 
-#### 变更
-
-- 默认主题色与工具类主色同步为 **`#ff0844`**（`config.uts`、`libs/css/m.scss`），与业务侧 `mUi` 推荐主色一致。
-
-#### 说明
-
-- 仍可通过 **`setMUiConfig`** 或业务 **`mUi`** 覆盖主色。
-
----
+- 默认主题色与 **`libs/css/m.scss`** 同步为 **`#ff0844`**（仍可由 **`mUi` / `setMUiConfig`** 覆盖）。
 
 ### 1.1.0（2026-03-23）
 
-#### 变更（ucss 兼容性）
-
-- 样式合并与裁剪：`flex.scss` / `utils.scss` / `color.scss` 并入 `common.scss`、`m.scss`；移除各端不支持的写法；横向 flex 显式 **`flex-direction: row`**。
-- **m-icon**：字体与 Unicode 映射重构；支持常用别名（如 `person` → `user`）。
-
-#### 新增
-
-- **m-cell-group**、**m-grid-item**。
-
-#### 修复
-
-- `index.js` 请求模块路径；`Request.uts` 空值判断；导出 `AnyRecord`；**m-grid** `column` 与 slot；**m-cell** `title` 等。
-
----
+- **样式**：`common.scss` / `m.scss` 整理，ucss 兼容；横向 flex 显式 **`flex-direction: row`**。
+- **`m-icon`**：字库与 Unicode 映射重构；别名（如 **`person` → `user`**）。
+- **新增**：**`m-cell-group`、`m-grid-item`**。
+- **修复**：**`index.js`** 路径、**`Request.uts`**、**`m-grid` / `m-cell`** 等。
 
 ### 1.0.0（2026-03-23）
 
-#### 新增
-
-- 首批 **m-*** 基础组件与 **m-tools** 工具（请求、存储、认证等）。
-- 全量 **uvue + UTS**，**`m-`** 前缀，面向小程序 / App / Web 多端。
+- 首批 **`m-*`** 与 **`m-tools`**；**uvue + UTS**，多端。
 
 ---
 
 ## 4. 维护检查清单（发版前）
 
-1. 将 **`[Unreleased]`** 内容整理为**新版本**小节，填写 **日期**。
-2. 更新 **`package.json`** 的 **`version`**，与本文新版本标题一致。
-3. 更新 **§1.1 在线文档**、**§1.2 联系方式**（若有变更）。
-4. 在 DCloud 插件市场提交或更新插件时，可将 **§1** 与 **§3 最新一节** 摘要到插件详情说明中。
+1. 将 **`[Unreleased]`** 并入新版本，填写日期。
+2. 更新 **`package.json`** 的 **`version`**，与本文 **§3** 新标题一致。
+3. 插件市场提交时可摘要 **§1** 与 **§3 最新一节**。

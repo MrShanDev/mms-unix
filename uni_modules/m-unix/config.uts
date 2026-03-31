@@ -67,8 +67,8 @@ export type MUiConfig = {
 
 const M_UI_DEFAULTS: MUiConfig = {
 	appName: 'mUnix',
-	apiDevelopmentBase: 'http://localhost:8070',
-	apiProductionBase: 'https://api.sxpcwlkj.cn',
+	apiDevelopmentBase: 'https://demo.mmsadmin.cn/prod-api',
+	apiProductionBase: 'https://demo.mmsadmin.cn/prod-api',
 	agreementRoute: '',
 	privacyRoute: '',
 	// 应用 Logo（关于页、工具类；合并链见文件头；默认用库内资源）

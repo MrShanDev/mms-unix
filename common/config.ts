@@ -4,9 +4,10 @@
  */
 
 
-/** 修改 env 或各环境地址后，需与此处保持一致 */
+/** 修改 env 或各环境地址后，需与此处保持一致。对接 mms-api-unix 见 `docs/mms-api-unix-接口适配.md` */
 const env: AppEnv = 'local'
-const localBaseUrl = 'http://localhost:8070'
+/** 演示环境 API 根（勿尾斜杠，与 Request 拼接 `/api/...`） */
+const localBaseUrl = 'https://demo.mmsadmin.cn/prod-api'
 const devBaseUrl = ''
 const prodBaseUrl = ''
 
@@ -28,15 +29,15 @@ export const config: AppConfig = {
 	// API 接口路径配置
 	api: {
 		login: {
-			tokenLogin: '/api/v1/login/tokenLogin',
-			codeGetOpenIdLogin: '/api/v1/login/codeGetOpenIdLogin',
-			codeGetPhoneRegisterOrLogin: '/api/v1/login/codeGetPhoneRegisterOrLogin',
+			tokenLogin: '/api/member/v1/token-login',
+			codeGetOpenIdLogin: '/api/member/v1/code-open-id-login',
+			codeGetPhoneRegisterOrLogin: '/api/member/v1/code-phone-register-or-login',
 		},
 		update: {
-			checkUpdate: '/api/v1/common/checkUpdate',
+			checkUpdate: '/api/app/v1/upgrade-check',
 		},
 		upload: {
-			image: '/api/v1/common/upload/image',
+			image: '/api/base/v1/uploads',
 		},
 		/** 留空则使用 m-unix 库内默认（演示用公网 qrserver）；正式请改为自建接口根地址 */
 		qrCodeImageApiBase: '',

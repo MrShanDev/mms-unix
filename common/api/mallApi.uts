@@ -1,20 +1,12 @@
 /**
- * 商城/托管 API - 使用统一请求工具
+ * 商城/会员等业务 API — 与 `mms-api-unix`（`/api/{模块}/v1/...`）对齐。
+ * 适配说明见仓库根目录 `docs/mms-api-unix-接口适配.md`。
  */
 import { config } from '@/common/config'
 import { request, ApiResponse, http, AnyRecord } from '@/uni_modules/m-unix/components/m-tools/Request.uts'
 
-// 商城 API 基础地址（与 env 解析后的 config.baseUrl 一致）
 const apiBase = config.baseUrl
 
-/**
- * 商城请求封装
- * @param path 接口路径
- * @param method 请求方法
- * @param data 请求数据
- * @param needLogin 是否需要登录（true 则未登录跳转登录页）
- * @param showError 是否显示错误提示
- */
 function mallApi<T = any>(
 	path: string,
 	method: 'GET' | 'POST',
@@ -34,9 +26,6 @@ function mallApi<T = any>(
 	})
 }
 
-/**
- * 公开接口（无需登录）
- */
 function publicApi<T = any>(
 	path: string,
 	method: 'GET' | 'POST',
@@ -55,22 +44,22 @@ function publicApi<T = any>(
 
 // ========== 公开接口（无需登录）==========
 
-/** 根据广告位编码查询广告 */
+/** 根据广告位编码查询广告；Query：`advertisingCode`，可选 `size` */
 export function selectByAdvertisingCode(params: UTSJSONObject) {
-	return publicApi('/v1/common/location/selectByAdvertisingCode', 'GET', params)
+	return publicApi('/api/ad/v1/by-code', 'GET', params)
 }
 
-/** 获取藏品列表 */
+/** 获取藏品列表（当前 mms-api-unix 未提供，需其它微服务或网关；保留旧路径便于自建网关转发） */
 export function collectionList(params: UTSJSONObject) {
 	return publicApi('/v1/collection/list', 'POST', params)
 }
 
-/** 获取文章列表 */
+/** 文章列表：GET，Query 与后端一致：`cateId`、`pageNum`、`pageSize` 等 */
 export function articleList(params: UTSJSONObject) {
-	return publicApi('/v1/article/articleList', 'POST', params)
+	return publicApi('/api/article/v1/articles', 'GET', params)
 }
 
-/** 商品列表（正在出售） */
+/** 商品列表（当前 mms-api-unix 未提供对应接口） */
 export function productListPage(params: UTSJSONObject) {
 	return publicApi('/api/v1/storeProduct/productList', 'GET', params)
 }
@@ -87,34 +76,49 @@ export function selectController(params: UTSJSONObject) {
 
 /** 文章详情 */
 export function articleDetails(id: string) {
-	return publicApi(`/v1/article/article/${id}`, 'GET')
+	return publicApi('/api/article/v1/articles/detail', 'GET', {
+		id: id
+	} as UTSJSONObject)
 }
 
 /** 区域列表（省市区） */
 export function storeToolAreaList(params?: UTSJSONObject) {
-	return publicApi('/v1/common/common/storeToolAreaList', 'GET', params)
+	return publicApi('/api/base/v1/store-tool-areas', 'GET', params)
 }
 
-/** 发送验证码 type: 1注册 2登录 3修改密码 */
+/** 发送短信验证码；Body：`phone`、`type`（1 注册 2 登录 … 见后端枚举） */
 export function mallSendSmsCode(params: UTSJSONObject) {
-	return publicApi('/v1/common/common/smsCode', 'POST', params)
+	return publicApi('/api/base/v1/sms-code', 'POST', params)
 }
 
-/** 账号注册 */
+/**
+ * 账号注册（若业务等同于「手机号 + 验证码注册并登录」，与 `phoneSmsLogin` 同为 `/api/member/v1/login`）
+ */
 export function accountRegister(params: UTSJSONObject) {
-	return publicApi('/v1/common/login/accountRegister', 'POST', params)
+	return publicApi('/api/member/v1/login', 'POST', params)
 }
 
 /** 找回密码 */
 export function findPassword(params: UTSJSONObject) {
-	return publicApi('/v1/common/login/findPassword', 'POST', params)
+	return publicApi('/api/member/v1/find-password', 'POST', params)
 }
 
-/** 检查版本更新 */
+/**
+ * 检查版本更新；GET `/api/app/v1/upgrade-check`，Query：`type`（1=iOS，2=Android，默认 2）。
+ * 仍附加 `currentVersionCode` 供网关或兼容旧后端。
+ */
 export function checkUpdate(currentVersionCode: number) {
-	return publicApi(config.api.update.checkUpdate, 'GET', {
-		currentVersionCode: currentVersionCode
-	} as UTSJSONObject)
+	let platformType = 2
+	// #ifdef APP-IOS
+	platformType = 1
+	// #endif
+	const q: UTSJSONObject = {
+		type: platformType
+	} as UTSJSONObject
+	if (currentVersionCode > 0) {
+		q['currentVersionCode'] = currentVersionCode
+	}
+	return publicApi(config.api.update.checkUpdate, 'GET', q)
 }
 
 // ========== 登录相关（无需跳转登录页）==========
@@ -122,7 +126,7 @@ export function checkUpdate(currentVersionCode: number) {
 /** token 登录（静默校验） */
 export function tokenLogin(params: UTSJSONObject) {
 	return request({
-		url: '/v1/common/login/tokenLogin',
+		url: config.api.login.tokenLogin,
 		method: 'GET',
 		data: params as AnyRecord,
 		baseUrl: apiBase,
@@ -135,7 +139,7 @@ export function tokenLogin(params: UTSJSONObject) {
 /** 微信手机号登录/注册 */
 export function weixinLogin(params: UTSJSONObject) {
 	return request({
-		url: '/v1/common/login/codeGetPhoneRegisterOrLogin',
+		url: config.api.login.codeGetPhoneRegisterOrLogin,
 		method: 'GET',
 		data: params as AnyRecord,
 		baseUrl: apiBase,
@@ -148,7 +152,7 @@ export function weixinLogin(params: UTSJSONObject) {
 /** 账号+密码登录 */
 export function mallAccountLogin(params: UTSJSONObject) {
 	return request({
-		url: '/v1/common/login/accountLogin',
+		url: '/api/member/v1/account-login',
 		method: 'POST',
 		data: params as AnyRecord,
 		baseUrl: apiBase,
@@ -161,7 +165,7 @@ export function mallAccountLogin(params: UTSJSONObject) {
 /** 手机号+验证码登录 */
 export function phoneSmsLogin(params: UTSJSONObject) {
 	return request({
-		url: '/v1/common/login/login',
+		url: '/api/member/v1/login',
 		method: 'POST',
 		data: params as AnyRecord,
 		baseUrl: apiBase,
@@ -173,7 +177,7 @@ export function phoneSmsLogin(params: UTSJSONObject) {
 
 // ========== 需登录接口 ==========
 
-/** 托管记录列表 */
+/** 托管记录列表（mms-api-unix 未提供） */
 export function myList(params: UTSJSONObject) {
 	return mallApi('/v1/collection/myList', 'POST', params, true)
 }
@@ -190,40 +194,40 @@ export function insert(params: UTSJSONObject) {
 
 /** 获取地址列表 */
 export function addressList(params?: UTSJSONObject) {
-	return mallApi('/v1/common/member/address/list', 'POST', params, true)
+	return mallApi('/api/member/v1/addresses/list', 'POST', params, true)
 }
 
 /** 地址详情 */
 export function addressDetail(id: string) {
-	return mallApi(`/v1/common/member/address/${id}`, 'GET', null, true)
+	return mallApi(`/api/member/v1/addresses/${id}`, 'GET', null, true)
 }
 
 /** 编辑地址 */
 export function addressEdit(params: UTSJSONObject) {
-	return mallApi('/v1/common/member/address/edit', 'POST', params, true)
+	return mallApi('/api/member/v1/addresses/edit', 'POST', params, true)
 }
 
 /** 新增地址 */
 export function addressInsert(params: UTSJSONObject) {
-	return mallApi('/v1/common/member/address/insert', 'POST', params, true)
+	return mallApi('/api/member/v1/addresses/insert', 'POST', params, true)
 }
 
 /** 删除地址 */
 export function deleteAddress(id: string) {
-	return mallApi(`/v1/common/member/address/delete/${id}`, 'GET', null, true)
+	return mallApi(`/api/member/v1/addresses/delete/${id}`, 'GET', null, true)
 }
 
 /** 更新用户信息 */
 export function updateMemberInfo(params: UTSJSONObject) {
-	return mallApi('/v1/common/member/updateMember', 'POST', params, true)
+	return mallApi('/api/member/v1/update-member', 'POST', params, true)
 }
 
-/** 订单支付 */
+/** 订单支付（mms-api-unix 未提供） */
 export function payOrderPlus(params: UTSJSONObject) {
 	return mallApi('/v1/common/order/payOrderPlus', 'GET', params, true)
 }
 
-// ========== 电子合同相关 ==========
+// ========== 电子合同相关（mms-api-unix 未提供） ==========
 
 /** 创建合同 - 立即签署 */
 export function createContract(params: UTSJSONObject) {

@@ -2,7 +2,7 @@
   <img src="https://sxpcwlkj-test.oss-accelerate.aliyuncs.com/mmsMall/upload/69c63fc0f176d6c9a798a194.png" alt="mUnix" width="96" height="96" />
 </p>
 
-### mUnix
+### mmsUnix
 
 ### 面向 uni-app x 的基础 UI 与工具库
 
@@ -36,6 +36,32 @@
 ## 预览
 
 在线文档中含组件说明与示例要点；本仓库示例工程 **`pages_demo`** 下为各组件演示页，可在 HBuilderX 中运行目标端查看效果。
+
+### 线上演示（H5 / 微信小程序）
+
+图源 **`uni_modules/m-unix/static/`**（与下方 `readme` 相对路径一致）。**H5** 对齐 [unix.mmsadmin.cn](https://unix.mmsadmin.cn/#/) 线上工程；**小程序** 请使用微信扫一扫。补充说明见 [在线文档 · 在线演示](https://mmsadmin.cn/mms-unix/README.html)。
+
+<!-- 使用固定宽高保证两码视觉大小一致；部分平台会忽略 img 的 style -->
+<p align="center">
+  <table>
+    <tr>
+      <td align="center" valign="top" style="padding: 0 24px;">
+        <a href="https://unix.mmsadmin.cn/#/" title="打开 H5 演示">
+          <img src="./static/code.png" width="200" height="200" alt="H5 演示二维码" style="display:block;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.08);object-fit:contain;background:#fff;" />
+        </a>
+        <p align="center"><strong>H5</strong><br />
+        <sub><a href="https://unix.mmsadmin.cn/#/">unix.mmsadmin.cn</a></sub></p>
+      </td>
+      <td align="center" valign="top" style="padding: 0 24px;">
+        <a href="https://mmsadmin.cn/mms-unix/README.html" title="文档 · 在线演示">
+          <img src="./static/mms-unix-mp-demo-qr.jpg" width="200" height="200" alt="微信小程序演示码" style="display:block;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.08);object-fit:contain;background:#fff;" />
+        </a>
+        <p align="center"><strong>微信小程序</strong><br />
+        <sub>AppID 见 <code>manifest.json</code> · <code>mp-weixin</code></sub></p>
+      </td>
+    </tr>
+  </table>
+</p>
 
 以下为运行效果示意（多端以实际为准）：
 
@@ -229,7 +255,7 @@ export function createApp() {
 | **`configInfo`** | **`name` / `logo` / `desc` / `versionCode` / `versionName`** 等；**`m-login`** 可选 **`userAgreementArticleId`**、**`privacyPolicyArticleId`**（与示例工程 **`ConfigInfo`** 一致即可） |
 | **`mUi`** | 可选，与 **`uni_modules/m-unix/config.uts`** 中 **`MUiPartial`** 一致，用于主题与资源覆盖 |
 
-业务侧完整 TypeScript 示例可参考开源示例工程中的 **`common/config.ts`**（**`export const config`**）。
+业务侧完整 TypeScript 示例可参考开源示例工程中的 **`common/config.ts`**（**`export const config`**）。若对接主仓 **`mms-api-unix`**，**`api.*` 路径与 Query/Body** 约定见工程内 **`docs/mms-api-unix-接口适配.md`**。
 
 #### 3. 运行时覆盖 / 调试
 
@@ -366,6 +392,6 @@ export function createApp() {
 
 ## 版权信息
 
-**mUnix（m-unix）** 遵循 **MIT** 开源协议：可自由用于商业或个人项目，保留许可证声明即可。
+**mmsUnix（m-unix）** 遵循 **MIT** 开源协议：可自由用于商业或个人项目，保留许可证声明即可。
 
 **出品**：陕西品创网络
