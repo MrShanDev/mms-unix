@@ -3,7 +3,7 @@
 		<view class="content">
 			<view class="about-inner">
 				<view class="logo-wrap">
-					<image class="logo-img" src="/static/logo.png" mode="aspectFit"></image>
+					<image class="logo-img" src="/uni_modules/m-unix/static/m-app-logo.png" mode="aspectFit"></image>
 				</view>
 				<text class="product-name">mUnix</text>
 				<text class="brand-line">陕西品创网络旗下产品</text>

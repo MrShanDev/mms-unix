@@ -4,7 +4,7 @@
 
 ## 模版与演示
 
-- **`pages/templates/forum-feed`**：**`m-feed-post`** + **`v-model`** 赞/收藏/计数/赞名单；底部 **`m-input`** 评论；配图 **`/static/logo.png`**，无外链演示依赖。
+- **`pages_demo/templates/forum-feed`**：**`m-feed-post`** + **`v-model`** 赞/收藏/计数/赞名单；底部 **`m-input`** 评论；示例图见 **`picsum.photos`**（需联网）或与模版约定一致。
 - **`pages_demo/feed-post`**：**m-feed-post** 双向绑定与事件演示；**`pages.json`** 已注册。
 - **「组件」Tab首页**：**业务示例** 增加 **信息流帖子**；**宿主登录**（原列表文案调整）。
 

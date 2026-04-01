@@ -28,12 +28,12 @@
 		{
 			title: '聊天室',
 			desc: '会话列表 + 输入区，基于 m-input / m-button',
-			path: '/pages/templates/chat-room/chat-room',
+			path: '/pages_demo/templates/chat-room/chat-room',
 		},
 		{
 			title: '论坛动态',
 			desc: '信息流模版：m-feed-post，v-model 同步赞与收藏，见 m-unix-doc',
-			path: '/pages/templates/forum-feed/forum-feed',
+			path: '/pages_demo/templates/forum-feed/forum-feed',
 		},
 		{ title: '文章列表', desc: '列表与导航到详情', path: '/pages_Article/articleList/articleList' },
 		{ title: '登录', desc: '账号 / 验证码登录', path: '/pages_Me/login/login' },

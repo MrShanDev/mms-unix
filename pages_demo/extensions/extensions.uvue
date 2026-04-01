@@ -32,6 +32,7 @@
 			items: [
 				{ name: '栅格布局', path: '/pages_demo/row/row' },
 				{ name: '吸顶', path: '/pages_demo/ext/sticky/sticky' },
+				{ name: '顶部返回', path: '/pages_demo/ext/top-back/top-back' },
 				{ name: '底部导航', path: '/pages_demo/ext/bottom-nav/bottom-nav' },
 				{ name: '布局辅助', path: '/pages_demo/ext/layout-helpers/layout-helpers' },
 				{ name: '底部固定栏', path: '/pages_demo/ext/sticky-bottom/sticky-bottom' }

@@ -26,20 +26,6 @@
 			}
 		},
 		{
-			"path": "pages/templates/chat-room/chat-room",
-			"style": {
-				"navigationBarTitleText": "聊天室模版",
-				"disableScroll": true
-			}
-		},
-		{
-			"path": "pages/templates/forum-feed/forum-feed",
-			"style": {
-				"navigationBarTitleText": "论坛动态模版",
-				"disableScroll": true
-			}
-		},
-		{
 			"path": "pages/user/user",
 			"style": {
 				"navigationBarTitleText": "我的",
@@ -52,6 +38,14 @@
 			"root": "pages_demo",
 			"pages": [
 				{ "path": "index", "style": { "navigationBarTitleText": "组件演示" } },
+				{
+					"path": "templates/chat-room/chat-room",
+					"style": { "navigationBarTitleText": "聊天室模版", "disableScroll": true }
+				},
+				{
+					"path": "templates/forum-feed/forum-feed",
+					"style": { "navigationBarTitleText": "论坛动态模版", "disableScroll": true }
+				},
 				{ "path": "animate/animate", "style": { "navigationBarTitleText": "过渡动画" } },
 				{ "path": "button/button", "style": { "navigationBarTitleText": "按钮" } },
 				{ "path": "cell/cell", "style": { "navigationBarTitleText": "单元格" } },
@@ -85,6 +79,10 @@
 				{ "path": "extensions/extensions", "style": { "navigationBarTitleText": "扩展组件索引" } },
 				{ "path": "ext/sticky/sticky", "style": { "navigationBarTitleText": "吸顶" } },
 				{ "path": "ext/bottom-nav/bottom-nav", "style": { "navigationBarTitleText": "底部导航" } },
+				{
+					"path": "ext/top-back/top-back",
+					"style": { "navigationBarTitleText": "顶部返回", "navigationStyle": "custom" }
+				},
 				{ "path": "ext/dropdown/dropdown", "style": { "navigationBarTitleText": "下拉列表" } },
 				{ "path": "ext/number-box/number-box", "style": { "navigationBarTitleText": "步进器" } },
 				{ "path": "ext/rate/rate", "style": { "navigationBarTitleText": "评分" } },

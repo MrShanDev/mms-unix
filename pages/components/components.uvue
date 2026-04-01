@@ -3,7 +3,7 @@
 	<scroll-view class="page-scroll" scroll-y :style="scrollViewStyle">
 		<view class="demo-container">
 		<view class="demo-header">
-			<image class="demo-logo" src="/static/logo.png" mode="aspectFit"></image>
+			<image class="demo-logo" src="/uni_modules/m-unix/static/m-app-logo.png" mode="aspectFit"></image>
 			<text class="demo-title">mUnix 组件演示</text>
 			<text class="demo-desc">按分类浏览，点击进入示例页</text>
 		</view>
@@ -155,6 +155,7 @@
 				{ name: '分割线', path: '/pages_demo/div/div', icon: 'minus-bold' },
 				{ name: '树形', path: '/pages_demo/tree/tree', icon: 'folder' },
 				{ name: '吸顶', path: '/pages_demo/ext/sticky/sticky', icon: 'layout-filling' },
+				{ name: '顶部返回', path: '/pages_demo/ext/top-back/top-back', icon: 'arrowleft' },
 				{ name: '底部导航', path: '/pages_demo/ext/bottom-nav/bottom-nav', icon: 'apps' },
 				{ name: '标签页', path: '/pages_demo/ext/tabs/tabs', icon: 'sorting' },
 				{ name: '布局辅助', path: '/pages_demo/ext/layout-helpers/layout-helpers', icon: 'column-horizontal' },
@@ -208,8 +209,8 @@
 			color: '#fa8c16',
 			items: [
 				{ name: '登录', path: '/pages_demo/login/login', icon: 'user' },
-				{ name: '聊天室模版', path: '/pages/templates/chat-room/chat-room', icon: 'message' },
-				{ name: '论坛动态模版', path: '/pages/templates/forum-feed/forum-feed', icon: 'fabulous' },
+				{ name: '聊天室模版', path: '/pages_demo/templates/chat-room/chat-room', icon: 'message' },
+				{ name: '论坛动态模版', path: '/pages_demo/templates/forum-feed/forum-feed', icon: 'fabulous' },
 				{ name: '应用更新', path: '/pages_demo/ext/app-update/app-update', icon: 'download' },
 				{ name: '微信登录', path: '/pages_demo/ext/wx-login/wx-login', icon: 'comment-filling' },
 			],
