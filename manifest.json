@@ -9,7 +9,7 @@
 	"quickapp": {},
 	/* 小程序特有相关 */
 	"mp-weixin": {
-		"appid": "wxb956cfa3db63209e",
+		"appid": "wx3b107d5edb6b0cc8",
 		"lazyCodeLoading": "requiredComponents",
 		"setting": {
 			"urlCheck": false,
