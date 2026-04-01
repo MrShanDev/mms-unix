@@ -1,4 +1,20 @@
-node_modules/
+# uni-app / HBuilderX
 unpackage/
 .hbuilderx/
+
+# 依赖（若根目录存在 package.json）
+node_modules/
+
+# 构建与缓存
+dist/
+**/dist/
+.vite/
+
+# 日志与本地
+*.log
 .DS_Store
+Thumbs.db
+
+# 本地环境
+.env.local
+.env.*.local
