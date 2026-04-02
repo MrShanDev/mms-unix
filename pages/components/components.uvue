@@ -4,7 +4,7 @@
 		<view class="demo-container">
 		<view class="demo-header">
 			<image class="demo-logo" src="/uni_modules/m-unix/static/m-app-logo.png" mode="aspectFit"></image>
-			<text class="demo-title">mUnix 组件演示</text>
+			<text class="demo-title">mmsUnix 组件演示</text>
 			<text class="demo-desc">按分类浏览，点击进入示例页</text>
 		</view>
 

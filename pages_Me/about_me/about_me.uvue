@@ -5,11 +5,11 @@
 				<view class="logo-wrap">
 					<image class="logo-img" src="/uni_modules/m-unix/static/m-app-logo.png" mode="aspectFit"></image>
 				</view>
-				<text class="product-name">mUnix</text>
+				<text class="product-name">mmsUnix</text>
 				<text class="brand-line">陕西品创网络旗下产品</text>
 				<view class="desc">
 					<text class="para">
-						mUnix 面向 uni-app x，提供可复用的 UI 组件、工具方法与示例工程，帮助团队在 App、小程序等端快速搭建一致、可维护的界面。
+						mmsUnix 面向 uni-app x，提供可复用的 UI 组件、工具方法与示例工程，帮助团队在 App、小程序等端快速搭建一致、可维护的界面。
 					</text>
 					<text class="para">
 						组件与页面遵循 UTS 强类型与项目内 ucss 约定，支持通过全局配置（如 common/config.ts 中的 mUi）统一替换 Logo、占位图、主题色等资源，便于品牌化落地。

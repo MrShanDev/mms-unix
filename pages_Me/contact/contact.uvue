@@ -8,7 +8,7 @@
 			</m-cell>
 			<m-cell title="组件文档" :border="true">
 				<template #right>
-					<m-link href="https://mmsadmin.cn/m-unix/README.html" text="mUnix" underline></m-link>
+					<m-link href="https://mmsadmin.cn/m-unix/README.html" text="mmsUnix" underline></m-link>
 				</template>
 			</m-cell>
 			<m-cell title="插件市场" :border="true">

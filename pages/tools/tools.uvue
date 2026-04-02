@@ -131,7 +131,7 @@
 	}
 
 	function onCopyDemo() {
-		copyToClipboard('mUnix 剪贴板示例')
+		copyToClipboard('mmsUnix 剪贴板示例')
 	}
 
 	function openDemoPage() {
