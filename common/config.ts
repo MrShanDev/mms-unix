@@ -4,7 +4,7 @@
  */
 
 
-/** 修改 env 或各环境地址后，需与此处保持一致。对接 mms-api-unix 见 `docs/mms-api-unix-接口适配.md` */
+/** 修改 env 或各环境地址后，需与此处保持一致。对接 mms-plus 全端开放 API（mms-open-api.jar）路径约定见仓库 mms-doc「网站模块 / 开放接口」专题。 */
 const env: AppEnv = 'local'
 /** 演示环境 API 根（勿尾斜杠，与 Request 拼接 `/api/...`） */
 const localBaseUrl = 'https://demo.mmsadmin.cn/prod-api'

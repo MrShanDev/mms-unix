@@ -1,6 +1,6 @@
 /**
- * 认证相关 API 示例 — 与 `mms-api-unix` `/api/member/v1`、`/api/base/v1` 对齐。
- * 请求体字段请以服务端 OpenAPI / 源码为准；详见 `docs/mms-api-unix-接口适配.md`。
+ * 认证相关 API 示例 — 与 **mms-open-api** `/api/member/v1`、`/api/base/v1` 对齐。
+ * 请求体字段请以服务端 OpenAPI / 源码为准；详见 mms-doc「开放接口」专题。
  */
 import { http, request } from '@/uni_modules/m-unix/components/m-tools/Request.uts'
 

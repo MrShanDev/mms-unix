@@ -258,7 +258,7 @@ export function createApp() {
 | **`configInfo`** | **`name` / `logo` / `desc` / `versionCode` / `versionName`** 等；**`m-login`** 可选 **`userAgreementArticleId`**、**`privacyPolicyArticleId`**（与示例工程 **`ConfigInfo`** 一致即可） |
 | **`mUi`** | 可选，与 **`uni_modules/m-unix/config.uts`** 中 **`MUiPartial`** 一致，用于主题与资源覆盖 |
 
-业务侧完整 TypeScript 示例可参考开源示例工程中的 **`common/config.ts`**（**`export const config`**）。若对接主仓 **`mms-api-unix`**，**`api.*` 路径与 Query/Body** 约定见工程内 **`docs/mms-api-unix-接口适配.md`**。
+业务侧完整 TypeScript 示例可参考开源示例工程中的 **`common/config.ts`**（**`export const config`**）。若对接主仓 **全端开放 API**（**`mms-plugins/mms-plugin-open-api`**，产物 **`mms-open-api.jar`**），**`api.*` 路径与 Query/Body** 约定以服务端 OpenAPI / 源码及 **mms-doc**「网站模块」为准。
 
 #### 3. 运行时覆盖 / 调试
 

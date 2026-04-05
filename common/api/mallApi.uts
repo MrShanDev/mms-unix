@@ -1,6 +1,6 @@
 /**
- * 商城/会员等业务 API — 与 `mms-api-unix`（`/api/{模块}/v1/...`）对齐。
- * 适配说明见仓库根目录 `docs/mms-api-unix-接口适配.md`。
+ * 商城/会员等业务 API — 与 mms-plus **mms-open-api**（`/api/{模块}/v1/...`）对齐。
+ * 适配说明见 mms-doc「网站模块 / 开放接口」及服务端约定。
  */
 import { config } from '@/common/config'
 import { request, ApiResponse, http, AnyRecord } from '@/uni_modules/m-unix/components/m-tools/Request.uts'
@@ -49,7 +49,7 @@ export function selectByAdvertisingCode(params: UTSJSONObject) {
 	return publicApi('/api/ad/v1/by-code', 'GET', params)
 }
 
-/** 获取藏品列表（当前 mms-api-unix 未提供，需其它微服务或网关；保留旧路径便于自建网关转发） */
+/** 获取藏品列表（当前 mms-open-api 未提供，需其它微服务或网关；保留旧路径便于自建网关转发） */
 export function collectionList(params: UTSJSONObject) {
 	return publicApi('/v1/collection/list', 'POST', params)
 }
@@ -59,7 +59,7 @@ export function articleList(params: UTSJSONObject) {
 	return publicApi('/api/article/v1/articles', 'GET', params)
 }
 
-/** 商品列表（当前 mms-api-unix 未提供对应接口） */
+/** 商品列表（当前 mms-open-api 未提供对应接口） */
 export function productListPage(params: UTSJSONObject) {
 	return publicApi('/api/v1/storeProduct/productList', 'GET', params)
 }
@@ -177,7 +177,7 @@ export function phoneSmsLogin(params: UTSJSONObject) {
 
 // ========== 需登录接口 ==========
 
-/** 托管记录列表（mms-api-unix 未提供） */
+/** 托管记录列表（mms-open-api 未提供） */
 export function myList(params: UTSJSONObject) {
 	return mallApi('/v1/collection/myList', 'POST', params, true)
 }
@@ -222,12 +222,12 @@ export function updateMemberInfo(params: UTSJSONObject) {
 	return mallApi('/api/member/v1/update-member', 'POST', params, true)
 }
 
-/** 订单支付（mms-api-unix 未提供） */
+/** 订单支付（mms-open-api 未提供） */
 export function payOrderPlus(params: UTSJSONObject) {
 	return mallApi('/v1/common/order/payOrderPlus', 'GET', params, true)
 }
 
-// ========== 电子合同相关（mms-api-unix 未提供） ==========
+// ========== 电子合同相关（mms-open-api 未提供） ==========
 
 /** 创建合同 - 立即签署 */
 export function createContract(params: UTSJSONObject) {
