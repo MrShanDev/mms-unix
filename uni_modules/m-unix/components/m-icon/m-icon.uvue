@@ -116,7 +116,7 @@ function getIconChar(name: string): string {
 	if (name === 'arrow-right') return '\ue66c'
 	if (name === 'browse') return '\ue66d'
 	if (name === 'bottom') return '\ue66e'
-	if (name === 'back' || name === 'arrow-left') return '\ue66f'
+	if (name === 'back' || name === 'arrow-left' || name === 'arrowleft') return '\ue66f'
 	if (name === 'arrow-left-circle') return '\ue672'
 	if (name === 'arrow-double-right') return '\ue673'
 	if (name === 'camera') return '\ue675'
