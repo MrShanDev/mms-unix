@@ -1,0 +1,365 @@
+<template>
+	<view class="inbox-page">
+		<view class="inbox-tabs">
+			<view
+				class="inbox-tab"
+				:class="activeTab === 0 ? 'inbox-tab--on' : ''"
+				@tap="setTab(0)"
+			>
+				<text class="inbox-tab__text">消息</text>
+			</view>
+			<view
+				class="inbox-tab"
+				:class="activeTab === 1 ? 'inbox-tab--on' : ''"
+				@tap="setTab(1)"
+			>
+				<text class="inbox-tab__text">好友</text>
+			</view>
+		</view>
+
+		<scroll-view v-if="activeTab === 0" class="inbox-scroll" scroll-y>
+			<view class="inbox-tip">
+				<text class="inbox-tip__text">以下为演示会话；点击条目进入私聊或群聊，接入业务后替换为接口数据。</text>
+			</view>
+			<view
+				v-for="s in sessions"
+				:key="s.id"
+				class="session-row"
+				@tap="openSession(s)"
+			>
+				<image class="session-avatar" :src="avatarUrl(s.peerSeed)" mode="aspectFill"></image>
+				<view class="session-main">
+					<view class="session-top">
+						<text class="session-title">{{ s.title }}</text>
+						<text class="session-time">{{ s.time }}</text>
+					</view>
+					<view class="session-bottom">
+						<view v-if="s.kind === 'group'" class="session-badge session-badge--group">
+							<text class="session-badge__text">群</text>
+						</view>
+						<text class="session-preview">{{ s.lastMsg }}</text>
+					</view>
+				</view>
+				<view v-if="s.unread > 0" class="session-unread">
+					<text class="session-unread__text">{{ s.unread > 99 ? '99+' : s.unread.toString() }}</text>
+				</view>
+			</view>
+		</scroll-view>
+
+		<scroll-view v-else class="inbox-scroll" scroll-y>
+			<view class="inbox-tip">
+				<text class="inbox-tip__text">点击好友发起私聊；在线状态为演示数据。</text>
+			</view>
+			<view v-for="f in friends" :key="f.id" class="friend-row" @tap="openFriendChat(f)">
+				<image class="friend-avatar" :src="avatarUrl(f.peerSeed)" mode="aspectFill"></image>
+				<view class="friend-main">
+					<text class="friend-name">{{ f.name }}</text>
+					<text class="friend-sub">{{ f.online ? '在线' : '离线' }}</text>
+				</view>
+				<m-icon name="arrow-right" size="28rpx" color="#cccccc"></m-icon>
+			</view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { ref } from 'vue'
+
+type SessionKind = 'p2p' | 'group'
+
+type SessionItem = {
+	id: string
+	kind: SessionKind
+	title: string
+	/** 用于生成头像的 seed，与聊天页一致 */
+	peerSeed: string
+	lastMsg: string
+	time: string
+	unread: number
+}
+
+type FriendItem = {
+	id: string
+	name: string
+	peerSeed: string
+	online: boolean
+}
+
+const activeTab = ref(0)
+
+const sessions: SessionItem[] = [
+	{
+		id: 's1',
+		kind: 'p2p',
+		title: '林晓',
+		peerSeed: 'friend-lin',
+		lastMsg: '好的，文档我今晚发你。',
+		time: '14:20',
+		unread: 2,
+	},
+	{
+		id: 's2',
+		kind: 'group',
+		title: '产品讨论组',
+		peerSeed: 'group-product',
+		lastMsg: '小王：下周版本排期再对一下',
+		time: '昨天',
+		unread: 0,
+	},
+	{
+		id: 's3',
+		kind: 'p2p',
+		title: '周工',
+		peerSeed: 'friend-zhou',
+		lastMsg: '[图片]',
+		time: '周二',
+		unread: 0,
+	},
+	{
+		id: 's4',
+		kind: 'group',
+		title: '前端内部分享',
+		peerSeed: 'group-fe',
+		lastMsg: '小李：回放链接已发群公告',
+		time: '10:08',
+		unread: 5,
+	},
+]
+
+const friends: FriendItem[] = [
+	{ id: 'f1', name: '林晓', peerSeed: 'friend-lin', online: true },
+	{ id: 'f2', name: '周工', peerSeed: 'friend-zhou', online: false },
+	{ id: 'f3', name: '阿杰', peerSeed: 'friend-jie', online: true },
+	{ id: 'f4', name: '陈默', peerSeed: 'friend-chen', online: false },
+]
+
+function avatarUrl(seed: string): string {
+	return 'https://api.dicebear.com/7.x/notionists/png?seed=' + encodeURIComponent(seed) + '&size=128'
+}
+
+function setTab(i: number) {
+	activeTab.value = i
+}
+
+function buildChatUrl(mode: SessionKind, title: string, seed: string): string {
+	const q =
+		'mode=' +
+		mode +
+		'&title=' +
+		encodeURIComponent(title) +
+		'&seed=' +
+		encodeURIComponent(seed)
+	return '/pages_demo/templates/chat-room/chat-room?' + q
+}
+
+function openSession(s: SessionItem) {
+	uni.navigateTo({ url: buildChatUrl(s.kind, s.title, s.peerSeed) })
+}
+
+function openFriendChat(f: FriendItem) {
+	uni.navigateTo({ url: buildChatUrl('p2p', f.name, f.peerSeed) })
+}
+</script>
+
+<style lang="scss">
+.inbox-page {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	height: 100%;
+	background-color: #ededed;
+}
+
+.inbox-tabs {
+	display: flex;
+	flex-direction: row;
+	background-color: #ffffff;
+	padding: 16rpx 24rpx 12rpx;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: #e8e8e8;
+}
+
+.inbox-tab {
+	flex: 1;
+	padding: 16rpx 0;
+	align-items: center;
+	justify-content: center;
+	border-radius: 12rpx;
+}
+
+.inbox-tab--on {
+	background-color: rgba(255, 8, 68, 0.08);
+}
+
+.inbox-tab__text {
+	font-size: 30rpx;
+	color: #333333;
+	font-weight: 500;
+}
+
+.inbox-tab--on .inbox-tab__text {
+	color: #ff0844;
+}
+
+.inbox-scroll {
+	flex: 1;
+	min-height: 0;
+	width: 100%;
+}
+
+.inbox-tip {
+	margin: 20rpx 24rpx 12rpx;
+	padding: 14rpx 18rpx;
+	background-color: rgba(255, 255, 255, 0.92);
+	border-radius: 12rpx;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #e0e0e0;
+}
+
+.inbox-tip__text {
+	font-size: 22rpx;
+	color: #888888;
+	line-height: 1.45;
+}
+
+.session-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 22rpx 24rpx;
+	background-color: #ffffff;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: #f0f0f0;
+}
+
+.session-avatar {
+	width: 96rpx;
+	height: 96rpx;
+	border-radius: 48rpx;
+	flex-shrink: 0;
+	background-color: #e5e5e5;
+}
+
+.session-main {
+	flex: 1;
+	min-width: 0;
+	margin-left: 20rpx;
+	display: flex;
+	flex-direction: column;
+}
+
+.session-top {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 8rpx;
+}
+
+.session-title {
+	font-size: 30rpx;
+	color: #333333;
+	font-weight: 500;
+}
+
+.session-time {
+	font-size: 22rpx;
+	color: #b0b0b0;
+	flex-shrink: 0;
+	margin-left: 12rpx;
+}
+
+.session-bottom {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	min-width: 0;
+}
+
+.session-badge {
+	padding: 2rpx 10rpx;
+	border-radius: 8rpx;
+	margin-right: 10rpx;
+	flex-shrink: 0;
+}
+
+.session-badge--group {
+	background-color: rgba(255, 8, 68, 0.12);
+}
+
+.session-badge__text {
+	font-size: 20rpx;
+	color: #ff0844;
+}
+
+.session-preview {
+	font-size: 26rpx;
+	color: #999999;
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	lines: 1;
+}
+
+.session-unread {
+	display: flex;
+	flex-direction: row;
+	min-width: 36rpx;
+	height: 36rpx;
+	padding-left: 10rpx;
+	padding-right: 10rpx;
+	border-radius: 18rpx;
+	background-color: #ff0844;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	margin-left: 12rpx;
+}
+
+.session-unread__text {
+	font-size: 22rpx;
+	color: #ffffff;
+}
+
+.friend-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 22rpx 24rpx;
+	background-color: #ffffff;
+	border-bottom-width: 1rpx;
+	border-bottom-style: solid;
+	border-bottom-color: #f0f0f0;
+}
+
+.friend-avatar {
+	width: 96rpx;
+	height: 96rpx;
+	border-radius: 48rpx;
+	flex-shrink: 0;
+	background-color: #e5e5e5;
+}
+
+.friend-main {
+	flex: 1;
+	margin-left: 20rpx;
+	display: flex;
+	flex-direction: column;
+}
+
+.friend-name {
+	font-size: 30rpx;
+	color: #333333;
+	font-weight: 500;
+	margin-bottom: 6rpx;
+}
+
+.friend-sub {
+	font-size: 24rpx;
+	color: #999999;
+}
+</style>

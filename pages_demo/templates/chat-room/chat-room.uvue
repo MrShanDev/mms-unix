@@ -9,7 +9,7 @@
 		>
 			<view class="chat-scroll__inner">
 				<view class="chat-tip">
-					<text class="chat-tip__text">以下为演示数据；表情 / 相册 / 视频为本地选择与展示，接入业务时替换为上传与消息类型。</text>
+					<text class="chat-tip__text">以下为演示数据；表情 / 相册 / 视频 / 语音为本地录制与展示，接入业务时替换为上传与消息类型。语音需麦克风权限。</text>
 				</view>
 				<view
 					v-for="msg in messages"
@@ -21,15 +21,19 @@
 					<image
 						v-if="!msg.self"
 						class="msg-avatar"
-						:src="avatarOther"
+						:src="otherAvatar(msg)"
 						mode="aspectFill"
 					></image>
 					<view class="msg-bubble-wrap">
+						<text
+							v-if="chatMode === 'group' && !msg.self && msg.senderName.length > 0"
+							class="msg-sender-label"
+						>{{ msg.senderName }}</text>
 						<view
 							class="msg-bubble"
 							:class="[
 								msg.self ? 'msg-bubble--self' : 'msg-bubble--other',
-								msg.kind !== 'text' ? 'msg-bubble--media' : '',
+								msg.kind === 'image' || msg.kind === 'video' ? 'msg-bubble--media' : '',
 							]"
 						>
 							<text v-if="msg.kind === 'text'" class="msg-bubble__text">{{ msg.text }}</text>
@@ -47,6 +51,16 @@
 								controls
 								object-fit="contain"
 							></video>
+							<view
+								v-else-if="msg.kind === 'voice'"
+								class="msg-voice"
+								:class="msg.self ? 'msg-voice--self' : ''"
+								@tap.stop="playVoice(msg)"
+							>
+								<!-- 使用 emoji，避免 imvoice 依赖 iconfont 子集在部分端不显示 -->
+								<text class="msg-voice__mark">🎤</text>
+								<text class="msg-voice__dur">{{ msg.text }}秒</text>
+							</view>
 						</view>
 						<text class="msg-meta">{{ msg.time }}</text>
 					</view>
@@ -78,25 +92,49 @@
 						<view class="chat-icon-btn" @tap="pickVideo">
 							<m-icon name="film" size="38rpx" color="#4a4a4c"></m-icon>
 						</view>
+						<view class="chat-icon-btn" @tap="toggleInputMode">
+							<text class="chat-mode-emoji">{{
+								inputMode === 'keyboard' ? '🎤' : '⌨️'
+							}}</text>
+						</view>
 					</view>
 				</view>
 				<view class="chat-composer__editor">
-					<view class="chat-composer__input-shell">
-						<m-input
-							v-model="draft"
-							label=""
-							placeholder="说点什么…"
-							:input-border="false"
-							:border-bottom="false"
-							background-color="transparent"
-							padding="8rpx 20rpx"
-							:radius="36"
-							confirm-type="send"
-							:clearable="true"
-							@confirm="send"
-						></m-input>
+					<view v-if="inputMode === 'keyboard'" class="chat-composer__editor-row">
+						<view class="chat-composer__input-shell">
+							<m-input
+								v-model="draft"
+								label=""
+								placeholder="说点什么…"
+								:input-border="false"
+								:border-bottom="false"
+								background-color="transparent"
+								padding="8rpx 20rpx"
+								:radius="36"
+								confirm-type="send"
+								:clearable="true"
+								@confirm="send"
+							></m-input>
+						</view>
+						<m-button type="danger" btnSize="mini" class="chat-composer__send" @tap="send">发送</m-button>
 					</view>
-					<m-button type="danger" btnSize="mini" class="chat-composer__send" @tap="send">发送</m-button>
+					<view v-else class="voice-hold-outer">
+						<view
+							class="voice-hold"
+							:class="{
+								'voice-hold--recording': isRecording,
+								'voice-hold--cancel': isRecording && recordWillCancel,
+							}"
+							@touchstart="onVoiceTouchStart"
+							@touchmove="onVoiceTouchMove"
+							@touchend="onVoiceTouchEnd"
+							@touchcancel="onVoiceTouchCancel"
+						>
+							<text class="voice-hold__text">{{
+								isRecording ? (recordWillCancel ? '松开 取消' : '松开 发送') : '按住 说话'
+							}}</text>
+						</view>
+					</view>
 				</view>
 			</view>
 			<view v-if="showEmojiPanel" class="chat-emoji-panel">
@@ -114,13 +152,22 @@
 				</scroll-view>
 			</view>
 		</view>
+
+		<view v-if="isRecording" class="voice-overlay" @touchmove.stop.prevent="noopTouch">
+			<view class="voice-overlay__hint">
+				<text class="voice-overlay__emoji">🎤</text>
+				<text class="voice-overlay__text">{{
+					recordWillCancel ? '松开手指，取消发送' : '手指上滑，取消发送'
+				}}</text>
+			</view>
+		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
-import { ref, nextTick, onMounted } from 'vue'
+import { ref, nextTick, onMounted, onUnmounted } from 'vue'
 
-type ChatMsgKind = 'text' | 'image' | 'video'
+type ChatMsgKind = 'text' | 'image' | 'video' | 'voice'
 
 type ChatMsg = {
 	id: string
@@ -129,18 +176,32 @@ type ChatMsg = {
 	text: string
 	mediaSrc: string
 	time: string
+	/** 群聊时对方消息展示昵称；私聊为空 */
+	senderName: string
 }
 
 /** 演示用头像；接入业务时换为会话成员头像 URL */
-const avatarOther =
-	'https://api.dicebear.com/7.x/notionists/png?seed=mUnixOther&size=128'
+const avatarOther = ref('https://api.dicebear.com/7.x/notionists/png?seed=mUnixOther&size=128')
 const avatarSelf =
 	'https://api.dicebear.com/7.x/notionists/png?seed=mUnixSelf&size=128'
 
+const chatMode = ref<'p2p' | 'group'>('p2p')
+
 const draft = ref('')
-const messages = ref<ChatMsg[]>(seedMessages())
+const messages = ref<ChatMsg[]>(seedMessagesDefault())
 const scrollIntoView = ref('')
 const showEmojiPanel = ref(false)
+
+/** 键盘输入 / 按住说话 */
+const inputMode = ref<'keyboard' | 'voice'>('keyboard')
+const isRecording = ref(false)
+const recordWillCancel = ref(false)
+const recordTouchStartY = ref(0)
+
+let recorderManager: any | null = null
+let voiceStopHandler: ((path: string, durMs: number) => void) | null = null
+let innerAudioCtx: any | null = null
+const playingVoiceId = ref('')
 
 /* 常用表情（Unicode），点击插入输入框 */
 const emojiList: string[] = [
@@ -197,7 +258,7 @@ function nowTimeLabel(): string {
 	return pad2(d.getHours()) + ':' + pad2(d.getMinutes())
 }
 
-function seedMessages(): ChatMsg[] {
+function seedMessagesDefault(): ChatMsg[] {
 	const t = nowTimeLabel()
 	return [
 		{
@@ -207,6 +268,7 @@ function seedMessages(): ChatMsg[] {
 			text: '您好，这里是演示会话，支持文字、表情、相册图片与本地视频预览。',
 			mediaSrc: '',
 			time: t,
+			senderName: '',
 		} as ChatMsg,
 		{
 			id: 'm1',
@@ -215,6 +277,7 @@ function seedMessages(): ChatMsg[] {
 			text: '了解，我试一下底部工具栏。',
 			mediaSrc: '',
 			time: t,
+			senderName: '',
 		} as ChatMsg,
 		{
 			id: 'm2',
@@ -223,8 +286,84 @@ function seedMessages(): ChatMsg[] {
 			text: '工具条含安全区；选图选视频依赖系统相册与 uni 媒体 API，各端字段差异已在代码里归一。',
 			mediaSrc: '',
 			time: t,
+			senderName: '',
 		} as ChatMsg,
 	]
+}
+
+function seedMessagesForMode(mode: 'p2p' | 'group'): ChatMsg[] {
+	const t = nowTimeLabel()
+	if (mode === 'group') {
+		return [
+			{
+				id: 'm0',
+				self: false,
+				kind: 'text',
+				text: '上午的需求评审改到下午 3 点，大家留意群公告。',
+				mediaSrc: '',
+				time: t,
+				senderName: '小王',
+			} as ChatMsg,
+			{
+				id: 'm1',
+				self: false,
+				kind: 'text',
+				text: '收到，我更新一下日程表。',
+				mediaSrc: '',
+				time: t,
+				senderName: '小李',
+			} as ChatMsg,
+			{
+				id: 'm2',
+				self: true,
+				kind: 'text',
+				text: '我这边没问题，准时参加。',
+				mediaSrc: '',
+				time: t,
+				senderName: '',
+			} as ChatMsg,
+		]
+	}
+	return [
+		{
+			id: 'm0',
+			self: false,
+			kind: 'text',
+			text: '在吗？有个问题想请教你一下。',
+			mediaSrc: '',
+			time: t,
+			senderName: '',
+		} as ChatMsg,
+		{
+			id: 'm1',
+			self: true,
+			kind: 'text',
+			text: '在的，请说。',
+			mediaSrc: '',
+			time: t,
+			senderName: '',
+		} as ChatMsg,
+		{
+			id: 'm2',
+			self: false,
+			kind: 'text',
+			text: '好的，那我整理成文档发你。',
+			mediaSrc: '',
+			time: t,
+			senderName: '',
+		} as ChatMsg,
+	]
+}
+
+function otherAvatar(msg: ChatMsg): string {
+	if (chatMode.value === 'group' && msg.senderName.length > 0) {
+		return (
+			'https://api.dicebear.com/7.x/notionists/png?seed=' +
+			encodeURIComponent(msg.senderName) +
+			'&size=128'
+		)
+	}
+	return avatarOther.value
 }
 
 function nextId(): string {
@@ -278,6 +417,222 @@ function insertEmoji(emoji: string) {
 	draft.value = draft.value + emoji
 }
 
+function noopTouch(_e: any) {}
+
+function toggleInputMode() {
+	showEmojiPanel.value = false
+	if (inputMode.value === 'keyboard') {
+		inputMode.value = 'voice'
+	} else {
+		inputMode.value = 'keyboard'
+	}
+}
+
+/** 当前运行环境是否提供录音管理器（H5 等常不可用，避免访问 undefined 报错） */
+function setupRecorder(): boolean {
+	if (recorderManager != null) {
+		return true
+	}
+	const uniAny = uni as any
+	if (typeof uniAny.getRecorderManager !== 'function') {
+		return false
+	}
+	let rm: any = null
+	try {
+		rm = uniAny.getRecorderManager()
+	} catch (_e) {
+		return false
+	}
+	if (rm == null) {
+		return false
+	}
+	recorderManager = rm
+	rm.onStop((res: any) => {
+		isRecording.value = false
+		let path = ''
+		let durMs = 0
+		const p = res.tempFilePath as string | null
+		if (p != null) {
+			path = p
+		}
+		const d = res.duration as number | null
+		if (d != null && d === d) {
+			durMs = d
+		}
+		if (voiceStopHandler != null) {
+			const fn = voiceStopHandler
+			voiceStopHandler = null
+			fn(path, durMs)
+		}
+	})
+	rm.onError((_err: any) => {
+		isRecording.value = false
+		voiceStopHandler = null
+		uni.showToast({ title: '录音失败', icon: 'none' })
+	})
+	return true
+}
+
+function onVoiceTouchStart(e: any) {
+	showEmojiPanel.value = false
+	if (!setupRecorder()) {
+		uni.showToast({
+			title: '当前环境不支持录音，请使用 App 或小程序',
+			icon: 'none',
+		})
+		return
+	}
+	const ts = e.touches as any[] | null
+	if (ts == null || ts.length === 0) {
+		return
+	}
+	const t0 = ts[0]
+	const y = t0.clientY as number
+	recordTouchStartY.value = y
+	recordWillCancel.value = false
+	isRecording.value = true
+	const rm = recorderManager as any
+	try {
+		rm.start({
+			duration: 60000,
+			format: 'mp3',
+			sampleRate: 44100,
+			numberOfChannels: 1,
+			encodeBitRate: 96000,
+		})
+	} catch (_e) {
+		isRecording.value = false
+		uni.showToast({ title: '无法开始录音', icon: 'none' })
+	}
+}
+
+function onVoiceTouchMove(e: any) {
+	if (!isRecording.value) {
+		return
+	}
+	const ts = e.touches as any[] | null
+	if (ts == null || ts.length === 0) {
+		return
+	}
+	const t0 = ts[0]
+	const y = t0.clientY as number
+	if (recordTouchStartY.value - y > 60) {
+		recordWillCancel.value = true
+	} else {
+		recordWillCancel.value = false
+	}
+}
+
+function finishVoiceRecord(cancelled: boolean) {
+	if (recorderManager == null) {
+		isRecording.value = false
+		voiceStopHandler = null
+		return
+	}
+	const rm = recorderManager as any
+	voiceStopHandler = (path: string, durMs: number) => {
+		if (cancelled) {
+			return
+		}
+		if (durMs < 1000) {
+			uni.showToast({ title: '说话时间太短', icon: 'none' })
+			return
+		}
+		if (path.length === 0) {
+			uni.showToast({ title: '未生成录音文件', icon: 'none' })
+			return
+		}
+		const sec = Math.max(1, Math.round(durMs / 1000))
+		messages.value = messages.value.concat([
+			{
+				id: nextId(),
+				self: true,
+				kind: 'voice',
+				text: '' + sec,
+				mediaSrc: path,
+				time: nowTimeLabel(),
+				senderName: '',
+			} as ChatMsg,
+		])
+		nextTick(() => {
+			scrollToBottom()
+		})
+	}
+	try {
+		rm.stop()
+	} catch (_e) {
+		isRecording.value = false
+		voiceStopHandler = null
+	}
+}
+
+function onVoiceTouchEnd(_e: any) {
+	if (!isRecording.value) {
+		return
+	}
+	const cancelled = recordWillCancel.value
+	recordWillCancel.value = false
+	finishVoiceRecord(cancelled)
+}
+
+function onVoiceTouchCancel(_e: any) {
+	if (!isRecording.value) {
+		return
+	}
+	recordWillCancel.value = false
+	finishVoiceRecord(true)
+}
+
+function ensureInnerAudio(): any | null {
+	if (innerAudioCtx != null) {
+		return innerAudioCtx
+	}
+	const uniAny = uni as any
+	if (typeof uniAny.createInnerAudioContext !== 'function') {
+		return null
+	}
+	let ctx: any = null
+	try {
+		ctx = uniAny.createInnerAudioContext()
+	} catch (_e) {
+		return null
+	}
+	if (ctx == null) {
+		return null
+	}
+	innerAudioCtx = ctx
+	ctx.onEnded(() => {
+		playingVoiceId.value = ''
+	})
+	ctx.onStop(() => {
+		playingVoiceId.value = ''
+	})
+	return ctx
+}
+
+function playVoice(msg: ChatMsg) {
+	if (msg.kind !== 'voice') {
+		return
+	}
+	if (msg.mediaSrc.length === 0) {
+		return
+	}
+	const ctx = ensureInnerAudio()
+	if (ctx == null) {
+		uni.showToast({ title: '当前环境无法播放语音', icon: 'none' })
+		return
+	}
+	if (playingVoiceId.value === msg.id) {
+		ctx.stop()
+		playingVoiceId.value = ''
+		return
+	}
+	ctx.stop()
+	ctx.src = msg.mediaSrc
+	playingVoiceId.value = msg.id
+	ctx.play()
+}
+
 function previewImage(src: string) {
 	if (src.length === 0) {
 		return
@@ -308,6 +663,7 @@ function pickImage() {
 					text: '',
 					mediaSrc: paths[0],
 					time: nowTimeLabel(),
+					senderName: '',
 				} as ChatMsg,
 			])
 			nextTick(() => {
@@ -335,6 +691,7 @@ function pickVideo() {
 					text: '',
 					mediaSrc: path,
 					time: nowTimeLabel(),
+					senderName: '',
 				} as ChatMsg,
 			])
 			nextTick(() => {
@@ -358,6 +715,7 @@ async function send() {
 			text: raw,
 			mediaSrc: '',
 			time: nowTimeLabel(),
+			senderName: '',
 		} as ChatMsg,
 	])
 	draft.value = ''
@@ -365,10 +723,74 @@ async function send() {
 	scrollToBottom()
 }
 
+onLoad((options: any) => {
+	let fromRoute = false
+	let titleDecoded = ''
+	let mode: 'p2p' | 'group' = 'p2p'
+	let seedStr = 'mUnixOther'
+	if (options != null) {
+		const mo = options['mode'] as string | null
+		const sd = options['seed'] as string | null
+		const ti = options['title'] as string | null
+		if (
+			(mo != null && mo.length > 0) ||
+			(sd != null && sd.length > 0) ||
+			(ti != null && ti.length > 0)
+		) {
+			fromRoute = true
+		}
+		if (mo != null && mo.length > 0) {
+			if (mo === 'group') {
+				mode = 'group'
+			} else {
+				mode = 'p2p'
+			}
+		}
+		if (ti != null && ti.length > 0) {
+			const t = decodeURIComponent(ti)
+			titleDecoded = t != null ? t : ''
+		}
+		if (sd != null && sd.length > 0) {
+			const s = decodeURIComponent(sd)
+			seedStr = s != null ? s : 'mUnixOther'
+		}
+	}
+	if (fromRoute) {
+		chatMode.value = mode
+		avatarOther.value =
+			'https://api.dicebear.com/7.x/notionists/png?seed=' +
+			encodeURIComponent(seedStr) +
+			'&size=128'
+		if (titleDecoded.length > 0) {
+			uni.setNavigationBarTitle({ title: titleDecoded })
+		}
+		messages.value = seedMessagesForMode(mode)
+	}
+	nextTick(() => {
+		scrollToBottom()
+	})
+})
+
 onMounted(() => {
 	nextTick(() => {
 		scrollToBottom()
 	})
+})
+
+onUnmounted(() => {
+	if (innerAudioCtx != null) {
+		try {
+			innerAudioCtx.stop()
+			innerAudioCtx.destroy()
+		} catch (_e) {}
+		innerAudioCtx = null
+	}
+	if (recorderManager != null) {
+		try {
+			recorderManager.stop()
+		} catch (_e) {}
+		recorderManager = null
+	}
 })
 </script>
 
@@ -433,6 +855,13 @@ onMounted(() => {
 	background-color: #e5e5e5;
 }
 
+.msg-sender-label {
+	font-size: 22rpx;
+	color: #888888;
+	margin-bottom: 6rpx;
+	padding-left: 4rpx;
+}
+
 .msg-bubble-wrap {
 	max-width: 62%;
 	display: flex;
@@ -493,6 +922,45 @@ onMounted(() => {
 	height: 236rpx;
 	border-radius: 16rpx;
 	background-color: #000000;
+}
+
+.msg-voice {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 12rpx;
+	min-width: 140rpx;
+	padding-top: 4rpx;
+	padding-bottom: 4rpx;
+}
+
+.msg-voice--self {
+	flex-direction: row-reverse;
+}
+
+.msg-voice__mark {
+	font-size: 32rpx;
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+.msg-voice__dur {
+	font-size: 28rpx;
+	color: #333333;
+}
+
+.msg-bubble--self .msg-voice__dur {
+	color: #ffffff;
+}
+
+.chat-mode-emoji {
+	font-size: 38rpx;
+	line-height: 1;
+}
+
+.voice-overlay__emoji {
+	font-size: 96rpx;
+	line-height: 1;
 }
 
 .msg-meta {
@@ -567,6 +1035,80 @@ onMounted(() => {
 	gap: 16rpx;
 	min-height: 0;
 	width: 100%;
+}
+
+.chat-composer__editor-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 16rpx;
+	min-height: 0;
+	width: 100%;
+}
+
+.voice-hold-outer {
+	flex: 1;
+	width: 100%;
+	min-height: 72rpx;
+}
+
+.voice-hold {
+	width: 100%;
+	min-height: 72rpx;
+	border-radius: 12rpx;
+	background-color: #ffffff;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: rgba(0, 0, 0, 0.06);
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.voice-hold--recording {
+	background-color: #d4d4d6;
+}
+
+.voice-hold--cancel {
+	background-color: #fa5151;
+}
+
+.voice-hold__text {
+	font-size: 28rpx;
+	color: #333333;
+}
+
+.voice-hold--cancel .voice-hold__text {
+	color: #ffffff;
+}
+
+.voice-overlay {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.45);
+	z-index: 1000;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.voice-overlay__hint {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 48rpx;
+}
+
+.voice-overlay__text {
+	margin-top: 24rpx;
+	font-size: 28rpx;
+	color: #ffffff;
+	text-align: center;
 }
 
 .chat-composer__input-shell {

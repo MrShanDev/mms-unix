@@ -27,8 +27,8 @@
 	const items: TemplateItem[] = [
 		{
 			title: '聊天室',
-			desc: '会话列表 + 输入区，基于 m-input / m-button',
-			path: '/pages_demo/templates/chat-room/chat-room',
+			desc: '消息 / 好友列表，私聊与群聊会话演示',
+			path: '/pages_demo/templates/chat-room/chat-inbox',
 		},
 		{
 			title: '论坛动态',

@@ -39,6 +39,10 @@
 			"pages": [
 				{ "path": "index", "style": { "navigationBarTitleText": "组件演示" } },
 				{
+					"path": "templates/chat-room/chat-inbox",
+					"style": { "navigationBarTitleText": "聊天", "disableScroll": true }
+				},
+				{
 					"path": "templates/chat-room/chat-room",
 					"style": { "navigationBarTitleText": "聊天室模版", "disableScroll": true }
 				},

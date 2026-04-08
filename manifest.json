@@ -69,6 +69,13 @@
 	"web": {
 		"router": {
 			"mode": ""
+		},
+		"sdkConfigs": {
+			"maps": {
+				"tencent": {
+					"key": ""
+				}
+			}
 		}
 	}
 }
