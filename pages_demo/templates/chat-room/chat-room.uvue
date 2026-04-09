@@ -54,12 +54,22 @@
 							<view
 								v-else-if="msg.kind === 'voice'"
 								class="msg-voice"
-								:class="msg.self ? 'msg-voice--self' : ''"
+								:class="[
+									msg.self ? 'msg-voice--self' : 'msg-voice--other',
+									playingVoiceId === msg.id ? 'msg-voice--playing' : '',
+								]"
+								:style="voiceBubbleStyle(msg)"
 								@tap.stop="playVoice(msg)"
 							>
-								<!-- 使用 emoji，避免 imvoice 依赖 iconfont 子集在部分端不显示 -->
-								<text class="msg-voice__mark">🎤</text>
-								<text class="msg-voice__dur">{{ msg.text }}秒</text>
+								<view class="msg-voice__inner">
+									<view class="msg-voice__waves">
+										<view class="msg-voice__bar"></view>
+										<view class="msg-voice__bar"></view>
+										<view class="msg-voice__bar"></view>
+										<view class="msg-voice__bar"></view>
+									</view>
+									<text class="msg-voice__dur">{{ msg.text }}秒</text>
+								</view>
 							</view>
 						</view>
 						<text class="msg-meta">{{ msg.time }}</text>
@@ -93,9 +103,13 @@
 							<m-icon name="film" size="38rpx" color="#4a4a4c"></m-icon>
 						</view>
 						<view class="chat-icon-btn" @tap="toggleInputMode">
-							<text class="chat-mode-emoji">{{
-								inputMode === 'keyboard' ? '🎤' : '⌨️'
-							}}</text>
+							<m-icon
+								v-if="inputMode === 'keyboard'"
+								name="telephone"
+								size="38rpx"
+								color="#4a4a4c"
+							></m-icon>
+							<m-icon v-else name="edit-filling" size="38rpx" color="#4a4a4c"></m-icon>
 						</view>
 					</view>
 				</view>
@@ -130,6 +144,12 @@
 							@touchend="onVoiceTouchEnd"
 							@touchcancel="onVoiceTouchCancel"
 						>
+							<m-icon
+								class="voice-hold__mic"
+								name="telephone"
+								size="36rpx"
+								:color="voiceHoldIconColor"
+							></m-icon>
 							<text class="voice-hold__text">{{
 								isRecording ? (recordWillCancel ? '松开 取消' : '松开 发送') : '按住 说话'
 							}}</text>
@@ -156,6 +176,11 @@
 		<view v-if="isRecording" class="voice-overlay" @touchmove.stop.prevent="noopTouch">
 			<view class="voice-overlay__hint">
 				<text class="voice-overlay__emoji">🎤</text>
+				<view class="voice-overlay__count-row">
+					<text class="voice-overlay__count-num">{{ recordRemainSec }}</text>
+					<text class="voice-overlay__count-unit">秒</text>
+				</view>
+				<text class="voice-overlay__sub">从 59 倒数至 0，到点自动发送</text>
 				<text class="voice-overlay__text">{{
 					recordWillCancel ? '松开手指，取消发送' : '手指上滑，取消发送'
 				}}</text>
@@ -165,7 +190,7 @@
 </template>
 
 <script setup lang="uts">
-import { ref, nextTick, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 
 type ChatMsgKind = 'text' | 'image' | 'video' | 'voice'
 
@@ -197,11 +222,27 @@ const inputMode = ref<'keyboard' | 'voice'>('keyboard')
 const isRecording = ref(false)
 const recordWillCancel = ref(false)
 const recordTouchStartY = ref(0)
+/** 麦克风已授权后才为 true；start() 须在触摸同步栈内调用，不能在 authorize 回调里调 */
+const recordPermissionReady = ref(false)
+/** 录音剩余秒数（自 59 起显示，倒数至 0 自动发送） */
+const recordRemainSec = ref(59)
 
 let recorderManager: any | null = null
+let recordCountdownTimer: any | null = null
 let voiceStopHandler: ((path: string, durMs: number) => void) | null = null
 let innerAudioCtx: any | null = null
 const playingVoiceId = ref('')
+
+/** 按住说话条左侧麦克风图标颜色（随录制/取消态变化） */
+const voiceHoldIconColor = computed((): string => {
+	if (isRecording.value && recordWillCancel.value) {
+		return '#ffffff'
+	}
+	if (isRecording.value) {
+		return '#333333'
+	}
+	return '#666666'
+})
 
 /* 常用表情（Unicode），点击插入输入框 */
 const emojiList: string[] = [
@@ -355,6 +396,65 @@ function seedMessagesForMode(mode: 'p2p' | 'group'): ChatMsg[] {
 	]
 }
 
+/** 用会话列表上的最后一条预览覆盖演示消息的最后一条，与 inbox 的 lastMsg 对齐 */
+function messagesWithListLastPreview(mode: 'p2p' | 'group', lastListPreview: string): ChatMsg[] {
+	const base = seedMessagesForMode(mode)
+	if (lastListPreview.length === 0) {
+		return base
+	}
+	const n = base.length
+	if (n === 0) {
+		return base
+	}
+	const t = nowTimeLabel()
+	const lastPrev = base[n - 1]
+	const out: ChatMsg[] = []
+	for (let i = 0; i < n - 1; i++) {
+		out.push(base[i])
+	}
+	if (mode === 'group') {
+		let colon = lastListPreview.indexOf('：')
+		const colonEn = lastListPreview.indexOf(':')
+		if (colon < 0 || (colonEn >= 0 && colonEn < colon)) {
+			colon = colonEn
+		}
+		if (colon > 0 && colon < lastListPreview.length - 1) {
+			const name = lastListPreview.substring(0, colon).trim()
+			const body = lastListPreview.substring(colon + 1).trim()
+			out.push({
+				id: lastPrev.id,
+				self: false,
+				kind: 'text',
+				text: body,
+				mediaSrc: '',
+				time: t,
+				senderName: name,
+			} as ChatMsg)
+		} else {
+			out.push({
+				id: lastPrev.id,
+				self: false,
+				kind: 'text',
+				text: lastListPreview.trim(),
+				mediaSrc: '',
+				time: t,
+				senderName: '',
+			} as ChatMsg)
+		}
+	} else {
+		out.push({
+			id: lastPrev.id,
+			self: false,
+			kind: 'text',
+			text: lastListPreview,
+			mediaSrc: '',
+			time: t,
+			senderName: '',
+		} as ChatMsg)
+	}
+	return out
+}
+
 function otherAvatar(msg: ChatMsg): string {
 	if (chatMode.value === 'group' && msg.senderName.length > 0) {
 		return (
@@ -423,9 +523,45 @@ function toggleInputMode() {
 	showEmojiPanel.value = false
 	if (inputMode.value === 'keyboard') {
 		inputMode.value = 'voice'
+		/* 预申请麦克风：authorize 在点击手势内完成，长按里才能同步 rm.start() */
+		warmRecordPermission()
 	} else {
 		inputMode.value = 'keyboard'
 	}
+}
+
+function warmRecordPermission() {
+	requestRecordAuth(() => {
+		recordPermissionReady.value = true
+	})
+}
+
+const RECORD_MAX_MS = 60000
+
+function clearRecordCountdown() {
+	if (recordCountdownTimer != null) {
+		try {
+			clearInterval(recordCountdownTimer as number)
+		} catch (_e) {}
+		recordCountdownTimer = null
+	}
+}
+
+function startRecordCountdown() {
+	clearRecordCountdown()
+	recordRemainSec.value = 59
+	recordCountdownTimer = setInterval(() => {
+		if (!isRecording.value) {
+			clearRecordCountdown()
+			return
+		}
+		recordRemainSec.value = recordRemainSec.value - 1
+		if (recordRemainSec.value <= 0) {
+			clearRecordCountdown()
+			/* 倒数至 0，自动停止并发送（非取消） */
+			finishVoiceRecord(false)
+		}
+	}, 1000)
 }
 
 /** 当前运行环境是否提供录音管理器（H5 等常不可用，避免访问 undefined 报错） */
@@ -448,6 +584,7 @@ function setupRecorder(): boolean {
 	}
 	recorderManager = rm
 	rm.onStop((res: any) => {
+		clearRecordCountdown()
 		isRecording.value = false
 		let path = ''
 		let durMs = 0
@@ -465,12 +602,107 @@ function setupRecorder(): boolean {
 			fn(path, durMs)
 		}
 	})
-	rm.onError((_err: any) => {
+	rm.onError((err: any) => {
+		clearRecordCountdown()
 		isRecording.value = false
 		voiceStopHandler = null
-		uni.showToast({ title: '录音失败', icon: 'none' })
+		let msg = '录音失败'
+		const em = err != null ? (err.errMsg as string | null) : null
+		if (em != null && em.length > 0) {
+			msg = em.length > 24 ? msg : em
+		}
+		uni.showToast({ title: msg, icon: 'none' })
 	})
 	return true
+}
+
+/** 微信小程序需声明 scope.record；未配置时 authorize 会失败 */
+function requestRecordAuth(onGranted: () => void) {
+	const uniAny = uni as any
+	if (typeof uniAny.getSetting !== 'function') {
+		onGranted()
+		return
+	}
+	uniAny.getSetting({
+		success: (res: any) => {
+			const auth = res.authSetting as UTSJSONObject | null
+			if (auth != null) {
+				const granted = auth['scope.record'] as boolean | null
+				if (granted === true) {
+					onGranted()
+					return
+				}
+				if (granted === false) {
+					uni.showModal({
+						title: '需要麦克风权限',
+						content: '请在设置中开启录音权限，以便发送语音消息。',
+						confirmText: '去设置',
+						success: (r: any) => {
+							if (r.confirm === true) {
+								uni.openSetting({})
+							}
+						},
+					})
+					return
+				}
+			}
+			if (typeof uniAny.authorize !== 'function') {
+				onGranted()
+				return
+			}
+			uniAny.authorize({
+				scope: 'scope.record',
+				success: () => {
+					onGranted()
+				},
+				fail: () => {
+					uni.showToast({ title: '需要授权麦克风才能录音', icon: 'none' })
+					/* App 等无微信式 scope，首次录音由系统弹窗，仍允许后续同步 start */
+					try {
+						const info = uni.getSystemInfoSync() as UTSJSONObject
+						const plat = '' + (info['uniPlatform'] != null ? info['uniPlatform'] : '')
+						if (plat !== 'mp-weixin') {
+							onGranted()
+						}
+					} catch (_e) {
+						onGranted()
+					}
+				},
+			})
+		},
+		fail: () => {
+			onGranted()
+		},
+	})
+}
+
+/**
+ * 尽量使用最简参数，避免部分基础库对 encodeBitRate/format 组合校验失败。
+ * 微信端默认一般为适合语音的编码。
+ */
+function getRecorderStartOptions(): any {
+	return {
+		duration: RECORD_MAX_MS,
+	}
+}
+
+/** 必须在 touchstart 同步调用，且应已 recordPermissionReady */
+function beginRecordingAtY(y: number) {
+	if (!setupRecorder()) {
+		return
+	}
+	recordTouchStartY.value = y
+	recordWillCancel.value = false
+	isRecording.value = true
+	const rm = recorderManager as any
+	try {
+		rm.start(getRecorderStartOptions())
+		startRecordCountdown()
+	} catch (_e) {
+		isRecording.value = false
+		clearRecordCountdown()
+		uni.showToast({ title: '无法开始录音', icon: 'none' })
+	}
 }
 
 function onVoiceTouchStart(e: any) {
@@ -488,22 +720,17 @@ function onVoiceTouchStart(e: any) {
 	}
 	const t0 = ts[0]
 	const y = t0.clientY as number
-	recordTouchStartY.value = y
-	recordWillCancel.value = false
-	isRecording.value = true
-	const rm = recorderManager as any
-	try {
-		rm.start({
-			duration: 60000,
-			format: 'mp3',
-			sampleRate: 44100,
-			numberOfChannels: 1,
-			encodeBitRate: 96000,
+	if (!recordPermissionReady.value) {
+		/* 未在「切到语音」时完成授权，补一次；start 仍须等下次触摸同步调用 */
+		warmRecordPermission()
+		uni.showToast({
+			title: '请等待麦克风授权后，再次按住说话',
+			icon: 'none',
+			duration: 2500,
 		})
-	} catch (_e) {
-		isRecording.value = false
-		uni.showToast({ title: '无法开始录音', icon: 'none' })
+		return
 	}
+	beginRecordingAtY(y)
 }
 
 function onVoiceTouchMove(e: any) {
@@ -524,6 +751,7 @@ function onVoiceTouchMove(e: any) {
 }
 
 function finishVoiceRecord(cancelled: boolean) {
+	clearRecordCountdown()
 	if (recorderManager == null) {
 		isRecording.value = false
 		voiceStopHandler = null
@@ -601,13 +829,33 @@ function ensureInnerAudio(): any | null {
 		return null
 	}
 	innerAudioCtx = ctx
+	try {
+		ctx.obeyMuteSwitch = false
+	} catch (_e) {}
 	ctx.onEnded(() => {
 		playingVoiceId.value = ''
 	})
 	ctx.onStop(() => {
 		playingVoiceId.value = ''
 	})
+	ctx.onError(() => {
+		playingVoiceId.value = ''
+		uni.showToast({ title: '语音播放失败', icon: 'none' })
+	})
 	return ctx
+}
+
+/** 仿微信：时长越长气泡略宽 */
+function voiceBubbleStyle(msg: ChatMsg): string {
+	let sec = 1
+	if (msg.text != null && msg.text.length > 0) {
+		const n = parseInt(msg.text, 10)
+		if (n === n && n > 0) {
+			sec = n
+		}
+	}
+	const w = Math.min(460, Math.max(160, 110 + sec * 24))
+	return 'min-width:' + w + 'rpx'
 }
 
 function playVoice(msg: ChatMsg) {
@@ -615,6 +863,7 @@ function playVoice(msg: ChatMsg) {
 		return
 	}
 	if (msg.mediaSrc.length === 0) {
+		uni.showToast({ title: '无可用语音', icon: 'none' })
 		return
 	}
 	const ctx = ensureInnerAudio()
@@ -623,14 +872,33 @@ function playVoice(msg: ChatMsg) {
 		return
 	}
 	if (playingVoiceId.value === msg.id) {
-		ctx.stop()
+		try {
+			ctx.stop()
+		} catch (_e) {}
 		playingVoiceId.value = ''
 		return
 	}
-	ctx.stop()
-	ctx.src = msg.mediaSrc
-	playingVoiceId.value = msg.id
-	ctx.play()
+	try {
+		ctx.stop()
+	} catch (_e) {}
+	const path = msg.mediaSrc
+	const msgId = msg.id
+	playingVoiceId.value = msgId
+	ctx.src = path
+	/* 小程序需在设置 src 后下一帧再 play，否则易失败 */
+	nextTick(() => {
+		setTimeout(() => {
+			if (playingVoiceId.value !== msgId) {
+				return
+			}
+			try {
+				ctx.play()
+			} catch (_e) {
+				playingVoiceId.value = ''
+				uni.showToast({ title: '播放失败', icon: 'none' })
+			}
+		}, 60)
+	})
 }
 
 function previewImage(src: string) {
@@ -728,10 +996,12 @@ onLoad((options: any) => {
 	let titleDecoded = ''
 	let mode: 'p2p' | 'group' = 'p2p'
 	let seedStr = 'mUnixOther'
+	let lastListPreview = ''
 	if (options != null) {
 		const mo = options['mode'] as string | null
 		const sd = options['seed'] as string | null
 		const ti = options['title'] as string | null
+		const lm = options['lastMsg'] as string | null
 		if (
 			(mo != null && mo.length > 0) ||
 			(sd != null && sd.length > 0) ||
@@ -754,6 +1024,10 @@ onLoad((options: any) => {
 			const s = decodeURIComponent(sd)
 			seedStr = s != null ? s : 'mUnixOther'
 		}
+		if (lm != null && lm.length > 0) {
+			const decodedLm = decodeURIComponent(lm)
+			lastListPreview = decodedLm != null ? decodedLm : ''
+		}
 	}
 	if (fromRoute) {
 		chatMode.value = mode
@@ -764,11 +1038,20 @@ onLoad((options: any) => {
 		if (titleDecoded.length > 0) {
 			uni.setNavigationBarTitle({ title: titleDecoded })
 		}
-		messages.value = seedMessagesForMode(mode)
+		if (lastListPreview.length > 0) {
+			messages.value = messagesWithListLastPreview(mode, lastListPreview)
+		} else {
+			messages.value = seedMessagesForMode(mode)
+		}
 	}
 	nextTick(() => {
 		scrollToBottom()
 	})
+})
+
+onShow(() => {
+	/* 从微信设置开启麦克风后返回，需重新拉取授权态 */
+	warmRecordPermission()
 })
 
 onMounted(() => {
@@ -778,6 +1061,8 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+	clearRecordCountdown()
+	recordRemainSec.value = 59
 	if (innerAudioCtx != null) {
 		try {
 			innerAudioCtx.stop()
@@ -928,34 +1213,87 @@ onUnmounted(() => {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 12rpx;
-	min-width: 140rpx;
-	padding-top: 4rpx;
-	padding-bottom: 4rpx;
+	padding: 14rpx 20rpx;
+	box-sizing: border-box;
 }
 
 .msg-voice--self {
+	justify-content: flex-end;
+}
+
+.msg-voice--other {
+	justify-content: flex-start;
+}
+
+.msg-voice__inner {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 16rpx;
+}
+
+.msg-voice--self .msg-voice__inner {
 	flex-direction: row-reverse;
 }
 
-.msg-voice__mark {
-	font-size: 32rpx;
-	line-height: 1;
-	flex-shrink: 0;
+.msg-voice__waves {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-end;
+	justify-content: flex-start;
+	height: 32rpx;
+	gap: 5rpx;
+}
+
+.msg-voice__bar {
+	width: 5rpx;
+	border-radius: 3rpx;
+	background-color: #555555;
+	height: 10rpx;
+}
+
+.msg-voice--playing .msg-voice__bar {
+	animation-name: chatVoiceWave;
+	animation-duration: 0.55s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: infinite;
+}
+
+.msg-voice--playing .msg-voice__bar:nth-child(1) {
+	animation-delay: 0s;
+}
+.msg-voice--playing .msg-voice__bar:nth-child(2) {
+	animation-delay: 0.08s;
+}
+.msg-voice--playing .msg-voice__bar:nth-child(3) {
+	animation-delay: 0.16s;
+}
+.msg-voice--playing .msg-voice__bar:nth-child(4) {
+	animation-delay: 0.24s;
+}
+
+.msg-bubble--self .msg-voice__bar {
+	background-color: rgba(255, 255, 255, 0.95);
+}
+
+@keyframes chatVoiceWave {
+	0%,
+	100% {
+		height: 10rpx;
+	}
+	50% {
+		height: 28rpx;
+	}
 }
 
 .msg-voice__dur {
-	font-size: 28rpx;
+	font-size: 26rpx;
 	color: #333333;
+	flex-shrink: 0;
 }
 
 .msg-bubble--self .msg-voice__dur {
 	color: #ffffff;
-}
-
-.chat-mode-emoji {
-	font-size: 38rpx;
-	line-height: 1;
 }
 
 .voice-overlay__emoji {
@@ -1054,20 +1392,27 @@ onUnmounted(() => {
 
 .voice-hold {
 	width: 100%;
-	min-height: 72rpx;
-	border-radius: 12rpx;
-	background-color: #ffffff;
+	min-height: 76rpx;
+	border-radius: 999rpx;
+	background-color: #f0f0f2;
 	border-width: 1rpx;
 	border-style: solid;
-	border-color: rgba(0, 0, 0, 0.06);
+	border-color: rgba(0, 0, 0, 0.08);
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
+	padding: 0 28rpx;
+	box-sizing: border-box;
+}
+
+.voice-hold__mic {
+	margin-right: 14rpx;
+	flex-shrink: 0;
 }
 
 .voice-hold--recording {
-	background-color: #d4d4d6;
+	background-color: #e5e5e8;
 }
 
 .voice-hold--cancel {
@@ -1104,8 +1449,37 @@ onUnmounted(() => {
 	padding: 48rpx;
 }
 
+.voice-overlay__count-row {
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	justify-content: center;
+	margin-top: 20rpx;
+}
+
+.voice-overlay__count-num {
+	font-size: 72rpx;
+	font-weight: 700;
+	color: #ffffff;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+}
+
+.voice-overlay__count-unit {
+	font-size: 30rpx;
+	color: rgba(255, 255, 255, 0.9);
+	margin-left: 8rpx;
+}
+
+.voice-overlay__sub {
+	margin-top: 12rpx;
+	font-size: 24rpx;
+	color: rgba(255, 255, 255, 0.75);
+	text-align: center;
+}
+
 .voice-overlay__text {
-	margin-top: 24rpx;
+	margin-top: 20rpx;
 	font-size: 28rpx;
 	color: #ffffff;
 	text-align: center;

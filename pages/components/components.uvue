@@ -189,6 +189,7 @@
 				{ name: '链接', path: '/pages_demo/ext/link/link', icon: 'link' },
 				{ name: '弧形横幅', path: '/pages_demo/ext/banner-arc/banner-arc', icon: 'top-filling' },
 				{ name: '图片裁剪', path: '/pages_demo/ext/cropper/cropper', icon: 'picture' },
+				{ name: '人脸取景相机', path: '/pages_demo/ext/face-camera/face-camera', icon: 'camera' },
 				{ name: '瀑布流', path: '/pages_demo/waterfall/waterfall', icon: 'column-vertical' },
 			],
 		},

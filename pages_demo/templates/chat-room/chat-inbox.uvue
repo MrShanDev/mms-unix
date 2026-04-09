@@ -87,7 +87,7 @@ type FriendItem = {
 
 const activeTab = ref(0)
 
-const sessions: SessionItem[] = [
+const sessions = ref<SessionItem[]>([
 	{
 		id: 's1',
 		kind: 'p2p',
@@ -124,7 +124,7 @@ const sessions: SessionItem[] = [
 		time: '10:08',
 		unread: 5,
 	},
-]
+])
 
 const friends: FriendItem[] = [
 	{ id: 'f1', name: '林晓', peerSeed: 'friend-lin', online: true },
@@ -141,23 +141,44 @@ function setTab(i: number) {
 	activeTab.value = i
 }
 
-function buildChatUrl(mode: SessionKind, title: string, seed: string): string {
-	const q =
+function buildChatUrl(mode: SessionKind, title: string, seed: string, lastMsg: string): string {
+	let q =
 		'mode=' +
 		mode +
 		'&title=' +
 		encodeURIComponent(title) +
 		'&seed=' +
 		encodeURIComponent(seed)
+	if (lastMsg.length > 0) {
+		q = q + '&lastMsg=' + encodeURIComponent(lastMsg)
+	}
 	return '/pages_demo/templates/chat-room/chat-room?' + q
 }
 
+/** 查看会话后清除未读角标（演示：内存状态，返回列表即保持已读） */
+function markSessionRead(s: SessionItem) {
+	s.unread = 0
+}
+
+function markP2pReadByPeerSeed(peerSeed: string) {
+	const list = sessions.value
+	for (let i = 0; i < list.length; i++) {
+		const it = list[i]
+		if (it.kind === 'p2p' && it.peerSeed === peerSeed) {
+			it.unread = 0
+			break
+		}
+	}
+}
+
 function openSession(s: SessionItem) {
-	uni.navigateTo({ url: buildChatUrl(s.kind, s.title, s.peerSeed) })
+	markSessionRead(s)
+	uni.navigateTo({ url: buildChatUrl(s.kind, s.title, s.peerSeed, s.lastMsg) })
 }
 
 function openFriendChat(f: FriendItem) {
-	uni.navigateTo({ url: buildChatUrl('p2p', f.name, f.peerSeed) })
+	markP2pReadByPeerSeed(f.peerSeed)
+	uni.navigateTo({ url: buildChatUrl('p2p', f.name, f.peerSeed, '') })
 }
 </script>
 

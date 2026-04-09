@@ -111,6 +111,10 @@
 				{ "path": "ext/link/link", "style": { "navigationBarTitleText": "链接" } },
 				{ "path": "ext/banner-arc/banner-arc", "style": { "navigationBarTitleText": "弧形横幅" } },
 				{ "path": "ext/cropper/cropper", "style": { "navigationBarTitleText": "图片裁剪" } },
+				{
+					"path": "ext/face-camera/face-camera",
+					"style": { "navigationBarTitleText": "人脸取景相机", "disableScroll": true }
+				},
 				{ "path": "ext/keyboard/keyboard", "style": { "navigationBarTitleText": "数字键盘" } },
 				{ "path": "ext/action-sheet/action-sheet", "style": { "navigationBarTitleText": "操作菜单" } },
 				{ "path": "ext/alert/alert", "style": { "navigationBarTitleText": "提醒弹框" } },

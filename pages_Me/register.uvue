@@ -164,6 +164,7 @@
 		background: linear-gradient(135deg, #ff0844 0%, #ff3d62 50%, #ff8a9e 100%);
 		padding: 180rpx 40rpx 0;
 		position: relative;
+		margin-bottom: 35rpx;
 	}
 	.nav-back {
 		position: absolute;

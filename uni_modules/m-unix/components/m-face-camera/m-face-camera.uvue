@@ -1,0 +1,301 @@
+<template>
+	<view class="m-face-camera">
+		<!-- #ifndef WEB -->
+		<view class="m-face-camera__stage" :style="stageStyle">
+			<camera
+				:id="camId"
+				class="m-face-camera__cam"
+				:device-position="devicePosition"
+				:flash="flash"
+				@error="onCamError"
+				@initdone="onCamInit"
+			></camera>
+			<view class="m-face-camera__overlay">
+				<slot name="guide">
+					<view v-if="showFaceGuide" class="m-face-camera__face-guide">
+						<view class="m-face-camera__guide-oval"></view>
+						<view class="m-face-camera__guide-vline"></view>
+						<view class="m-face-camera__guide-hline"></view>
+						<view class="m-face-camera__guide-chin"></view>
+					</view>
+				</slot>
+			</view>
+		</view>
+		<!-- #endif -->
+
+		<!-- #ifdef WEB -->
+		<view class="m-face-camera__web" :style="webPlaceholderStyle">
+			<text class="m-face-camera__web-t">Web 端无原生相机预览，请在 App 或微信小程序中查看。</text>
+		</view>
+		<!-- #endif -->
+
+		<view class="m-face-camera__hint">
+			<text class="m-face-camera__hint-text" :style="{ color: accentColor }">{{ hintText }}</text>
+		</view>
+
+		<!-- #ifndef WEB -->
+		<view class="m-face-camera__shutter-wrap" @tap="takePhoto">
+			<view class="m-face-camera__shutter-outer" :style="shutterOuterStyle">
+				<view class="m-face-camera__shutter-core" :style="shutterCoreStyle"></view>
+			</view>
+		</view>
+		<!-- #endif -->
+	</view>
+</template>
+
+<script lang="uts">
+export default {
+	name: 'mFaceCamera',
+	emits: ['photo', 'error', 'initdone'],
+	props: {
+		/** 与 camera 的 id 一致，多实例时请设不同值 */
+		camId: {
+			type: String,
+			default: 'mFaceCamera',
+		},
+		/** 前置/后置 */
+		devicePosition: {
+			type: String,
+			default: 'front',
+		},
+		flash: {
+			type: String,
+			default: 'off',
+		},
+		/** 取景框边长（rpx），正方形 */
+		previewSize: {
+			type: Number,
+			default: 680,
+		},
+		/** 提示语，对应设计稿「请平视摄像头」 */
+		hintText: {
+			type: String,
+			default: '请平视摄像头',
+		},
+		/** 主题强调色（提示文案、快门） */
+		accentColor: {
+			type: String,
+			default: '#FF836E',
+		},
+		/** 是否显示默认人脸辅助线（可用 slot guide 完全自定义） */
+		showFaceGuide: {
+			type: Boolean,
+			default: true,
+		},
+	},
+	computed: {
+		stageStyle(): UTSJSONObject {
+			const n = this.previewSize as number
+			const w = n.toString() + 'rpx'
+			return { width: w, height: w } as UTSJSONObject
+		},
+		webPlaceholderStyle(): UTSJSONObject {
+			const n = this.previewSize as number
+			const w = n.toString() + 'rpx'
+			return { width: w } as UTSJSONObject
+		},
+		shutterOuterStyle(): UTSJSONObject {
+			return { 'border-color': this.accentColor as string } as UTSJSONObject
+		},
+		shutterCoreStyle(): UTSJSONObject {
+			return { 'background-color': this.accentColor as string } as UTSJSONObject
+		},
+	},
+	methods: {
+		onCamError(e: any) {
+			this.$emit('error', e)
+		},
+		onCamInit(e: any) {
+			this.$emit('initdone', e)
+		},
+		takePhoto() {
+			// #ifndef WEB
+			const id = this.camId as string
+			let ctx: any = null
+			try {
+				ctx = uni.createCameraContext(id)
+			} catch (_e) {
+				ctx = null
+			}
+			if (ctx == null) {
+				return
+			}
+			const self = this
+			ctx.takePhoto({
+				quality: 'high',
+				success: (res: any) => {
+					let p = res.tempImagePath as string | null
+					if (p == null) {
+						const alt = res.tempPath as string | null
+						if (alt != null) {
+							p = alt
+						}
+					}
+					if (p != null && p.length > 0) {
+						self.$emit('photo', p)
+					}
+				},
+				fail: (err: any) => {
+					self.$emit('error', err)
+				},
+			})
+			// #endif
+		},
+	},
+}
+</script>
+
+<style scoped lang="scss">
+.m-face-camera {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 32rpx 24rpx 48rpx;
+	box-sizing: border-box;
+}
+
+.m-face-camera__stage {
+	position: relative;
+	border-radius: 16rpx;
+	border-width: 6rpx;
+	border-style: solid;
+	border-color: #ffffff;
+	box-shadow: 0 10rpx 36rpx rgba(0, 0, 0, 0.14);
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.m-face-camera__cam {
+	width: 100%;
+	height: 100%;
+}
+
+.m-face-camera__overlay {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	pointer-events: none;
+}
+
+.m-face-camera__face-guide {
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+.m-face-camera__guide-oval {
+	position: absolute;
+	left: 50%;
+	top: 46%;
+	width: 58%;
+	height: 70%;
+	transform: translate(-50%, -50%);
+	border-radius: 999px;
+	border-width: 4rpx;
+	border-style: solid;
+	border-color: rgba(255, 255, 255, 0.92);
+	box-sizing: border-box;
+}
+
+.m-face-camera__guide-vline {
+	position: absolute;
+	left: 50%;
+	top: 18%;
+	width: 0;
+	height: 64%;
+	transform: translateX(-50%);
+	border-left-width: 3rpx;
+	border-left-style: dashed;
+	border-left-color: rgba(255, 255, 255, 0.9);
+}
+
+.m-face-camera__guide-hline {
+	position: absolute;
+	left: 50%;
+	top: 34%;
+	width: 44%;
+	height: 0;
+	transform: translate(-50%, -50%);
+	border-top-width: 3rpx;
+	border-top-style: dashed;
+	border-top-color: rgba(255, 255, 255, 0.9);
+}
+
+.m-face-camera__guide-chin {
+	position: absolute;
+	left: 50%;
+	bottom: 24%;
+	width: 48%;
+	height: 72rpx;
+	transform: translateX(-50%);
+	border-bottom-width: 4rpx;
+	border-bottom-style: dashed;
+	border-bottom-color: rgba(255, 255, 255, 0.88);
+	border-radius: 0 0 160rpx 160rpx;
+}
+
+.m-face-camera__web {
+	display: flex;
+	flex-direction: column;
+	min-height: 400rpx;
+	align-items: center;
+	justify-content: center;
+	padding: 48rpx;
+	background-color: #f5f5f5;
+	border-radius: 16rpx;
+	box-sizing: border-box;
+}
+
+.m-face-camera__web-t {
+	font-size: 28rpx;
+	color: #666666;
+	line-height: 1.5;
+	text-align: center;
+}
+
+.m-face-camera__hint {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	margin-top: 40rpx;
+	margin-bottom: 48rpx;
+	padding: 0 24rpx;
+}
+
+.m-face-camera__hint-text {
+	font-size: 32rpx;
+	font-weight: 500;
+}
+
+.m-face-camera__shutter-wrap {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	padding: 16rpx;
+}
+
+.m-face-camera__shutter-outer {
+	width: 152rpx;
+	height: 152rpx;
+	border-radius: 999px;
+	border-width: 4rpx;
+	border-style: solid;
+	align-items: center;
+	justify-content: center;
+	display: flex;
+	flex-direction: row;
+	background-color: #ffffff;
+	box-sizing: border-box;
+}
+
+/* 内圈实色 + 外圈白底 + 最外描边，形成设计稿中的双层圆环快门 */
+.m-face-camera__shutter-core {
+	width: 100rpx;
+	height: 100rpx;
+	border-radius: 999px;
+}
+</style>

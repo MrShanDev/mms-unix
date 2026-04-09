@@ -65,7 +65,7 @@
 	}
 
 	.header {
-		background-color: #ff2727;
+		background-color: #ff0844;
 		border-radius: 16rpx;
 		padding: 36rpx 28rpx;
 		margin-bottom: 24rpx;

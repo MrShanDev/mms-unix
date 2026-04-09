@@ -1,0 +1,91 @@
+<template>
+	<view class="ext-page">
+		<scroll-view class="ext-scroll" scroll-y>
+			<view class="ext-section">
+				<text class="ext-title">m-face-camera</text>
+				<text class="ext-hint"
+					>人像取景组件：正方形预览框、白色人脸辅助线、提示文案与自定义快门样式。仅 App / 微信小程序等非 Web 端可用原生 camera；部分小程序工程若把 camera 包在自定义组件内编译异常，可将同款布局拷贝到页面内使用。</text>
+
+				<m-face-camera cam-id="faceCamDemo" @photo="onPhoto" @error="onCamErr"></m-face-camera>
+
+				<view v-if="lastPath.length > 0" class="ext-result">
+					<text class="ext-result-t">最近一次拍摄预览</text>
+					<image class="ext-result-img" :src="lastPath" mode="aspectFit"></image>
+				</view>
+			</view>
+			<view class="ext-footer-space"></view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+import { ref } from 'vue'
+
+const lastPath = ref('')
+
+function onPhoto(path: string) {
+	lastPath.value = path
+	uni.showToast({ title: '已拍照', icon: 'none' })
+}
+
+function onCamErr(_e: any) {
+	uni.showToast({ title: '相机调用失败', icon: 'none' })
+}
+</script>
+
+<style lang="scss">
+.ext-page {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	height: 100%;
+	background-color: #f6f6f6;
+}
+
+.ext-scroll {
+	flex: 1;
+	height: 0;
+}
+
+.ext-section {
+	padding: 24rpx;
+}
+
+.ext-title {
+	font-size: 36rpx;
+	font-weight: 600;
+	color: #333333;
+	margin-bottom: 16rpx;
+}
+
+.ext-hint {
+	font-size: 26rpx;
+	color: #666666;
+	line-height: 1.55;
+	margin-bottom: 24rpx;
+}
+
+.ext-result {
+	margin-top: 32rpx;
+	padding: 24rpx;
+	background-color: #ffffff;
+	border-radius: 12rpx;
+}
+
+.ext-result-t {
+	font-size: 28rpx;
+	color: #333333;
+	margin-bottom: 16rpx;
+}
+
+.ext-result-img {
+	width: 100%;
+	height: 360rpx;
+	background-color: #f0f0f0;
+	border-radius: 8rpx;
+}
+
+.ext-footer-space {
+	height: 48rpx;
+}
+</style>

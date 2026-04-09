@@ -27,30 +27,32 @@
 						</m-card>
 					</view>
 				</view>
-				<m-cell-group v-if="menuConfig.style === 'list'" :title="menuConfig.title" class="menu-group">
-					<m-cell
-						v-for="(item, index) in serviceBar"
-						:key="index"
-						:title="item.title"
-						:icon="item.iconName"
-						:isLink="true"
-						:border="index < serviceBar.length - 1"
-						@click="onServiceTap(item)"
-					></m-cell>
-				</m-cell-group>
-				<view v-else class="menu-grid-wrap menu-group">
-					<text class="menu-grid-title">{{ menuConfig.title }}</text>
-					<m-grid :column="menuConfig.gridColumns" :border="true">
-						<m-grid-item
+				<view class="menu-section">
+					<m-cell-group v-if="menuConfig.style === 'list'" :title="menuConfig.title">
+						<m-cell
 							v-for="(item, index) in serviceBar"
 							:key="index"
+							:title="item.title"
 							:icon="item.iconName"
-							:text="item.title"
-							iconColor="#ff0844"
-							iconSize="48rpx"
+							:isLink="true"
+							:border="index < serviceBar.length - 1"
 							@click="onServiceTap(item)"
-						></m-grid-item>
-					</m-grid>
+						></m-cell>
+					</m-cell-group>
+					<view v-else class="menu-grid-wrap">
+						<text class="menu-grid-title">{{ menuConfig.title }}</text>
+						<m-grid :column="menuConfig.gridColumns" :border="true">
+							<m-grid-item
+								v-for="(item, index) in serviceBar"
+								:key="index"
+								:icon="item.iconName"
+								:text="item.title"
+								iconColor="#ff0844"
+								iconSize="48rpx"
+								@click="onServiceTap(item)"
+							></m-grid-item>
+						</m-grid>
+					</view>
 				</view>
 			</view>
 		</scroll-view>
@@ -153,7 +155,9 @@
 
 .page-inner {
 	position: relative;
+	width: 100%;
 	padding-bottom: 160rpx;
+	box-sizing: border-box;
 }
 
 .header-banner {
@@ -215,8 +219,9 @@
 	color: #909399;
 }
 
-.menu-group {
-	margin: 0 24rpx;
+.menu-section {
+	margin: 24rpx 30rpx 40rpx;
+	box-sizing: border-box;
 }
 
 .menu-grid-wrap {
