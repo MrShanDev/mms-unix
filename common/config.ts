@@ -4,7 +4,7 @@
  */
 
 
-/** 修改 env 或各环境地址后，需与此处保持一致。对接 mms-plus 全端开放 API（mms-open-api.jar）路径约定见仓库 mms-doc「网站模块 / 开放接口」专题。 */
+/** 修改 env 或各环境地址后，需与此处保持一致。会员/文章等见 mms-doc「开放接口」；图片上传默认对接 **mms-plugin-c-base** 的 HOST_MVC（`/plugin/mms.plugin.c-base/base/v1/uploadImage`）。 */
 const env: AppEnv = 'local'
 /** 演示环境 API 根（勿尾斜杠，与 Request 拼接 `/api/...`） */
 const localBaseUrl = 'https://demo.mmsadmin.cn/prod-api'
@@ -37,7 +37,14 @@ export const config: AppConfig = {
 			checkUpdate: '/api/app/v1/upgrade-check',
 		},
 		upload: {
-			image: '/api/base/v1/uploads',
+			/**
+			 * 与 **mms-plugin-c-base** 对齐：`POST` multipart，表单字段名 **`file`**（与 `m-upload` 默认 `uploadName` 一致）。
+			 * 完整 URL = `baseUrl` + 本路径；成功响应为 `R`，`code` 200、`data` 为图片 URL 字符串。
+			 *
+			 * 鉴权：走管理端 Sa-Token，需权限 **`plugin:cbase:uploadImage`**（与 C 端会员 `Authorization` 通常不同）。
+			 * 若仅开放会员网关、无该权限，请改为网关上的开放上传地址（如历史形态 `/api/base/v1/uploads`）或自建 BFF。
+			 */
+			image: '/plugin/mms.plugin.c-base/base/v1/uploadImage',
 		},
 		/** 留空则使用 m-unix 库内默认（演示用公网 qrserver）；正式请改为自建接口根地址 */
 		qrCodeImageApiBase: '',
@@ -87,7 +94,7 @@ type AppConfig = {
 	prodBaseUrl: string
 	/**
 	 * 当前生效的 API 根（由 env 与上述三者解析得到）
-	 * Request / mallApi / 上传等默认使用此字段
+	 * Request / baseApi / 上传等默认使用此字段
 	 */
 	baseUrl: string
 	/** 存储 Key 配置 */
@@ -130,9 +137,9 @@ type ApiConfig = {
 		/** 检查版本更新 */
 		checkUpdate: string
 	}
-	/** 文件上传（multipart，字段名与组件 uploadName 一致） */
+	/** 文件上传（multipart，字段名与组件 uploadName 一致，默认与 c-base `uploadImage` 一致为 `file`） */
 	upload: {
-		/** 默认图片上传路径；组件未传 uploadUrl 且开启 autoUpload 时使用 */
+		/** 默认图片上传路径（相对 baseUrl）；未传 `uploadUrl` 且 `autoUpload` 时使用 */
 		image: string
 	}
 	/**

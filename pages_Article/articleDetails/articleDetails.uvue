@@ -11,7 +11,7 @@
 
 <script setup lang="uts">
 	import { ref } from 'vue'
-	import { articleDetails } from '@/common/api/mallApi'
+	import { articleDetails } from '@/common/api/baseApi'
 
 	const id = ref('')
 	const detail = ref<Record<string, any>>({})

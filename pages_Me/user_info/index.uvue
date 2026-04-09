@@ -62,7 +62,7 @@
 	import { ref, computed } from 'vue'
 	import { getMUiConfig } from '@/uni_modules/m-unix/config.uts'
 	import { storage } from '@/uni_modules/m-unix/components/m-tools/Storage.uts'
-	import { updateMemberInfo } from '@/common/api/mallApi'
+	import { updateMemberInfo } from '@/common/api/baseApi'
 	import { jumpTo } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
 
 	const defaultFace = computed((): string => getMUiConfig().avatarDefault)

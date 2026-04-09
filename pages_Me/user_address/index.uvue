@@ -32,7 +32,7 @@
 <script setup lang="uts">
 	import { ref } from 'vue'
 	import { jumpTo, msg } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
-	import { addressList as fetchAddressList, deleteAddress as deleteAddressApi } from '@/common/api/mallApi'
+	import { addressList as fetchAddressList, deleteAddress as deleteAddressApi } from '@/common/api/baseApi'
 
 	type AddressItem = {
 		id: string

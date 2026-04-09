@@ -56,9 +56,9 @@
 <script setup lang="uts">
 	import { ref, computed } from 'vue'
 	import { getMUiConfig } from '@/uni_modules/m-unix/config.uts'
-	import { articleList as fetchArticleListApi } from '@/common/api/mallApi.uts'
+	import { articleList as fetchArticleListApi } from '@/common/api/baseApi.uts'
 
-	/** 为 true 时使用本地模拟分页；改为 false 可接回 mallApi.articleList */
+	/** 为 true 时使用本地模拟分页；改为 false 可接回 baseApi.articleList */
 	const USE_MOCK_DATA = true
 
 	const articleList = ref<any[]>([])

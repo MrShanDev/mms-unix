@@ -10,7 +10,7 @@
 - **`m-icon`**：已含 **`like` / `like-fill`** 映射（沿用）；信息流赞展示以 **`fabulous`** 为准以匹配仓库字库。
 - **文档**：`m-unix-doc/m-feed-post.md`、`m-unix-doc/README.md` 索引；`forum-feed.md` 与模版数据改用本地静态资源说明。
 - **`package.json`**：**`version`** **1.2.4**；**`keywords`** 去除非统一关键词；**`description`** 端能力表述中性化。
-- **合规排查（本版触及范围）**：演示入口 **「宿主登录」**；`pages_demo/ext/wx-login` 标题与说明中性化；`config.ts` / `mallApi` 注释去品牌化。
+- **合规排查（本版触及范围）**：演示入口 **「宿主登录」**；`pages_demo/ext/wx-login` 标题与说明中性化；`config.ts` / `baseApi` 注释去品牌化。
 
 ## 说明
 

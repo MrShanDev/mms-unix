@@ -64,7 +64,7 @@
 	import { getMUiConfig } from '@/uni_modules/m-unix/config.uts'
 	import { jumpTo } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
 	import { storage } from '@/uni_modules/m-unix/components/m-tools/Storage.uts'
-	import { tokenLogin } from '@/common/api/mallApi'
+	import { tokenLogin } from '@/common/api/baseApi'
 	import { getUserServiceItems, getUserServiceMenuConfig } from './myServiceData'
 	import type { UserServiceItem } from './myServiceData'
 

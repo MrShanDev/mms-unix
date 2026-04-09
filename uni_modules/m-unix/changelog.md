@@ -78,8 +78,8 @@
 
 - 与主仓 **mms-plus / mms-open-api** 的路径、模块前缀约定见 **mms-doc**「网站模块 / 开放接口」。
 - **`common/config.ts`**：默认 **`baseUrl`** 指向演示 **`https://demo.mmsadmin.cn/prod-api`**（无尾斜杠）；**`api.login`** → **`/api/member/v1/token-login`**、**`code-open-id-login`**、**`code-phone-register-or-login`**；**`api.update.checkUpdate`** → **`/api/app/v1/upgrade-check`**；**`api.upload.image`** → **`/api/base/v1/uploads`**（multipart 字段 **`file`**，与 **`m-upload`** / **`Upload.uts`** 默认一致）。
-- **`common/api/mallApi.uts`**：广告、省市区、短信、会员登录/地址/资料、文章列表/详情等改为 **`/api/{模块}/v1/...`**；**`checkUpdate`** 携带 Query **`type`**（**`APP-IOS`** 为 **1**，否则为 **2**），并保留 **`currentVersionCode`** 便于网关兼容；**`tokenLogin` / `weixinLogin`** 使用 **`config.api.login.*`**。**藏品 / 订单 / 合同**等后端未在 **mms-open-api** 落地的接口保留旧路径并注释，需自建网关或微服务。
-- **`common/api/auth.uts`**：示例请求改为 **`/api/member/v1/*`**、**`/api/base/v1/sms-code`**。
+- **`common/api/baseApi.uts`**（合并原 **`mallApi`** + **`auth`**）：按 **基础（免登录）/ 登录会话 / 便捷强类型 / 业务（需登录）** 分组；路径与行为同原 **`mallApi`**。**`checkUpdate`** 仍带 **`type`**（**`APP-IOS`** 为 **1**）及 **`currentVersionCode`**；**`tokenLogin` / `weixinLogin`** 使用 **`config.api.login.*`**。原 **`auth.uts`** 中 **`loginByCode`、`logout`** 等迁入 **「便捷方法」**。
+- ~~**`common/api/mallApi.uts`** / **`auth.uts`**~~：已移除，请改引 **`baseApi.uts`**。
 - **`config.uts`**（包内）：**`apiDevelopmentBase` / `apiProductionBase`** 默认值与上述演示根一致（未注入宿主时 **`getMUiConfig`** 兜底）。
 
 #### 文档
@@ -106,7 +106,7 @@
 #### 配置与工具（可选 `@/common/config`）
 
 - **`ProjectConfig.uts`**：**`injectMUnixHostProjectConfig` / `getHostProjectConfig` / `clearMUnixHostProjectConfig`**；未注入时用库内默认。**`Request` / `Storage` / `Auth` / `Upload` / `config`（mUi）/ `Ut` / `m-login` / `m-upload`** 均读 **`getHostProjectConfig()`**，包内**不再** **`import '@/common/config'`**。
-- **`m-update`**：去掉对 **`@/common/api/mallApi`**；**`check-update-fn`** 由宿主传入；未传则 **`check()`** 不请求。
+- **`m-update`**：去掉对 **`@/common/api/baseApi`** 的包内引用；**`check-update-fn`** 由宿主传入；未传则 **`check()`** 不请求。
 - **`Ut.uts`**：**`projectConfigInfo`** → **`getProjectConfigInfo()`**。
 - **`index.js`**：再导出 **`injectMUnixHostProjectConfig`** 等。
 - **`readme.md`**：**业务配置（可选）**、字段表、**`m-update`** 对接说明、**包内源码约定**。

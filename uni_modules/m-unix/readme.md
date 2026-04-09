@@ -253,7 +253,7 @@ export function createApp() {
 | **`loginPagePath`** | 需前导 **`/`**，与 **`pages.json` 一致**；401 跳转、`checkLogin`、`m-login` 非微信端逻辑会用到 |
 | **`api.login.*`** | **`tokenLogin`**、**`codeGetOpenIdLogin`**、**`codeGetPhoneRegisterOrLogin`**，供 **`m-login`** 等 |
 | **`api.upload.image`** | **`m-upload`** 在 **`autoUpload`** 且未传 **`uploadUrl`** 时的相对路径 |
-| **`api.update.checkUpdate`** | 业务 **`checkUpdate`** 请求路径仍放在宿主 **`config`** 中；**`m-update`** 通过 **`check-update-fn`** 传入 **`(currentVersionCode) => Promise<ApiEnvelope>`**（与原先 **`mallApi.checkUpdate`** 返回结构一致：**`code` / `data`**），不传则 **`check()`** 仅告警、不请求（包内**不**再引用 **`@/common/api/mallApi`**） |
+| **`api.update.checkUpdate`** | 业务 **`checkUpdate`** 请求路径仍放在宿主 **`config`** 中；**`m-update`** 通过 **`check-update-fn`** 传入 **`(currentVersionCode) => Promise<ApiEnvelope>`**（与原先 **`baseApi.checkUpdate`** 返回结构一致：**`code` / `data`**），不传则 **`check()`** 仅告警、不请求（包内**不**再引用 **`@/common/api/baseApi`**） |
 | **`api.qrCodeImageApiBase`** | 二维码图接口根；与 **`getMUiConfig().qrCodeImageApiBase`** 合并链相关，可留空 |
 | **`configInfo`** | **`name` / `logo` / `desc` / `versionCode` / `versionName`** 等；**`m-login`** 可选 **`userAgreementArticleId`**、**`privacyPolicyArticleId`**（与示例工程 **`ConfigInfo`** 一致即可） |
 | **`mUi`** | 可选，与 **`uni_modules/m-unix/config.uts`** 中 **`MUiPartial`** 一致，用于主题与资源覆盖 |
@@ -268,7 +268,7 @@ export function createApp() {
 
 #### 4. 包内源码约定（自检）
 
-**`uni_modules/m-unix`** 下 **`.uts`、`.uvue`、`index.js`** 的脚本中**不包含** **`import '@/common/config'`**、**`import '@/common/api/...'`**（含 **`mallApi`**）。业务接口与全局 **`config`** 仅在**宿主工程**中实现，通过 **`injectMUnixHostProjectConfig`** 或组件 props（例如 **`m-update`** 的 **`check-update-fn`**）接入。
+**`uni_modules/m-unix`** 下 **`.uts`、`.uvue`、`index.js`** 的脚本中**不包含** **`import '@/common/config'`**、**`import '@/common/api/...'`**（含 **`baseApi`**）。业务接口与全局 **`config`** 仅在**宿主工程**中实现，通过 **`injectMUnixHostProjectConfig`** 或组件 props（例如 **`m-update`** 的 **`check-update-fn`**）接入。
 
 若使用 **`main.uts`** 中的 **`initI18n()`**，**`locale/index.uts`** 会 **`import '@/locale/zh-Hans.json'`** 等——需在宿主项目 **`locale/`** 下提供对应 JSON，与 **`common/config`** 无关。
 

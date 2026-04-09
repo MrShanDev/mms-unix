@@ -1,0 +1,317 @@
+/**
+ * 宿主业务 HTTP 统一出口。
+ *
+ * 与 mms-plus **全端开放 API** 对齐：HTTP 由 **`mms-plugins/mms-plugin-c-server`** 实现（Maven **`mms-plugin-server-api`**，产物 **`mms-open-api.jar`**，部署常与 **`mms-admin` 分进程**）；路径形态 **`/api/{模块}/v1/...`**。详见 mms-doc「网站模块 / 开放接口」。
+ *
+ * ## 分组说明
+ *
+ * 1. **基础能力（免登录）**：浏览类、验证码、注册/找回密码、版本检查等；请求带 token 时仍会带上，**不会因 401 自动跳转登录页**。
+ * 2. **登录与会话**：换取/校验登录态；**不**在 401 时跳转登录页（由页面自行处理）。
+ * 3. **便捷方法**：对 2 中接口的强类型薄封装，便于页面少拼 `UTSJSONObject`。
+ * 4. **业务功能（需登录）**：会员地址、资料、藏品、订单、合同等；**401/403 时跳转登录页**（见 `Request` 配置）。
+ */
+import { config } from '@/common/config'
+import { request, ApiResponse, AnyRecord } from '@/uni_modules/m-unix/components/m-tools/Request.uts'
+
+const apiBase = config.baseUrl
+
+/** 需登录：401/403 时跳转登录页 */
+function memberRequest<T = any>(
+	path: string,
+	method: 'GET' | 'POST',
+	data?: UTSJSONObject,
+	needLogin: boolean = true,
+	showError: boolean = true
+): Promise<ApiResponse<T>> {
+	return request<T>({
+		url: path,
+		method,
+		data: data as AnyRecord,
+		baseUrl: apiBase,
+		withToken: true,
+		showError,
+		redirectOnUnauthorized: needLogin,
+		unauthorizedCodes: [401, 403]
+	})
+}
+
+/** 免登录（可不登录）：不因 401 跳转；仍默认携带 token（若已登录） */
+function guestRequest<T = any>(
+	path: string,
+	method: 'GET' | 'POST',
+	data?: UTSJSONObject
+): Promise<ApiResponse<T>> {
+	return request<T>({
+		url: path,
+		method,
+		data: data as AnyRecord,
+		baseUrl: apiBase,
+		withToken: true,
+		showError: true,
+		redirectOnUnauthorized: false
+	})
+}
+
+// ---------------------------------------------------------------------------
+// 一、基础能力（免登录 / 可不登录，不因 401 跳转登录页）
+// ---------------------------------------------------------------------------
+
+/** 根据广告位编码查询广告；Query：`advertisingCode`，可选 `size` */
+export function selectByAdvertisingCode(params: UTSJSONObject) {
+	return guestRequest('/api/ad/v1/by-code', 'GET', params)
+}
+
+/** 文章列表：GET，Query：`cateId`、`pageNum`、`pageSize` 等 */
+export function articleList(params: UTSJSONObject) {
+	return guestRequest('/api/article/v1/articles', 'GET', params)
+}
+
+/** 文章详情 */
+export function articleDetails(id: string) {
+	return guestRequest('/api/article/v1/articles/detail', 'GET', {
+		id: id
+	} as UTSJSONObject)
+}
+
+/** 区域列表（省市区） */
+export function storeToolAreaList(params?: UTSJSONObject) {
+	return guestRequest('/api/base/v1/store-tool-areas', 'GET', params)
+}
+
+/** 发送短信验证码；Body：`phone`、`type`（1 注册 2 登录 … 见后端枚举） */
+export function mallSendSmsCode(params: UTSJSONObject) {
+	return guestRequest('/api/base/v1/sms-code', 'POST', params)
+}
+
+/**
+ * 账号注册（若业务等同于「手机号 + 验证码注册并登录」，与 `phoneSmsLogin` 同为 `/api/member/v1/login`）
+ */
+export function accountRegister(params: UTSJSONObject) {
+	return guestRequest('/api/member/v1/login', 'POST', params)
+}
+
+/** 找回密码 */
+export function findPassword(params: UTSJSONObject) {
+	return guestRequest('/api/member/v1/find-password', 'POST', params)
+}
+
+/**
+ * 检查版本更新；GET `config.api.update.checkUpdate`，Query：`type`（1=iOS，2=Android），可带 `currentVersionCode`。
+ */
+export function checkUpdate(currentVersionCode: number) {
+	let platformType = 2
+	// #ifdef APP-IOS
+	platformType = 1
+	// #endif
+	const q: UTSJSONObject = {
+		type: platformType
+	} as UTSJSONObject
+	if (currentVersionCode > 0) {
+		q['currentVersionCode'] = currentVersionCode
+	}
+	return guestRequest(config.api.update.checkUpdate, 'GET', q)
+}
+
+// ---------------------------------------------------------------------------
+// 二、登录与会话（不跳转登录页，由页面处理失败）
+// ---------------------------------------------------------------------------
+
+/**
+ * Token 静默校验 / 刷新会话信息；GET，可传经纬度等 Query（见后端约定）。
+ * @param params 可为空对象 `{}`
+ */
+export function tokenLogin(params: UTSJSONObject) {
+	return request({
+		url: config.api.login.tokenLogin,
+		method: 'GET',
+		data: params as AnyRecord,
+		baseUrl: apiBase,
+		withToken: true,
+		showError: false,
+		redirectOnUnauthorized: false
+	})
+}
+
+/** 微信手机号登录/注册 */
+export function weixinLogin(params: UTSJSONObject) {
+	return request({
+		url: config.api.login.codeGetPhoneRegisterOrLogin,
+		method: 'GET',
+		data: params as AnyRecord,
+		baseUrl: apiBase,
+		withToken: false,
+		showError: true,
+		redirectOnUnauthorized: false
+	})
+}
+
+/** 账号 + 密码登录（邮箱账号） */
+export function mallAccountLogin(params: UTSJSONObject) {
+	return request({
+		url: '/api/member/v1/account-login',
+		method: 'POST',
+		data: params as AnyRecord,
+		baseUrl: apiBase,
+		withToken: false,
+		showError: true,
+		redirectOnUnauthorized: false
+	})
+}
+
+/** 手机号 + 短信验证码登录 */
+export function phoneSmsLogin(params: UTSJSONObject) {
+	return request({
+		url: '/api/member/v1/login',
+		method: 'POST',
+		data: params as AnyRecord,
+		baseUrl: apiBase,
+		withToken: false,
+		showError: true,
+		redirectOnUnauthorized: false
+	})
+}
+
+/** 退出登录 */
+export function logout() {
+	return request({
+		url: '/api/member/v1/logout',
+		method: 'POST',
+		baseUrl: apiBase,
+		withToken: true,
+		showError: true,
+		redirectOnUnauthorized: false
+	})
+}
+
+// ---------------------------------------------------------------------------
+// 三、便捷方法（强类型，对应「二、登录与会话」及短信；少写 UTSJSONObject）
+// ---------------------------------------------------------------------------
+
+/** 手机号 + 短信验证码登录（`StoreMemberLoginPhoneBo`） */
+export function loginByCode(phone: string, code: string) {
+	const p = {} as UTSJSONObject
+	p['phone'] = phone
+	p['smsCode'] = code
+	return phoneSmsLogin(p)
+}
+
+/** 账号密码登录（`StoreMemberEmailLoginBo`：`email`、`password`） */
+export function loginByPassword(account: string, password: string) {
+	const p = {} as UTSJSONObject
+	p['email'] = account
+	p['password'] = password
+	return mallAccountLogin(p)
+}
+
+/** 发送短信验证码（`type` 与后端枚举一致） */
+export function sendSmsCode(phone: string, type: number) {
+	const p = {} as UTSJSONObject
+	p['phone'] = phone
+	p['type'] = type
+	return mallSendSmsCode(p)
+}
+
+/** 注册（字段以后端为准；常与登录同接口时优先 `loginByCode` / `phoneSmsLogin`） */
+export function register(params: {
+	phone: string
+	code: string
+	username: string
+	password: string
+}) {
+	const p = {} as UTSJSONObject
+	p['phone'] = params.phone
+	p['code'] = params.code
+	p['username'] = params.username
+	p['password'] = params.password
+	return accountRegister(p)
+}
+
+/** 找回密码（`StoreMemberSetPasswordBo`，字段以后端为准） */
+export function resetPassword(phone: string, code: string, password: string) {
+	const p = {} as UTSJSONObject
+	p['phone'] = phone
+	p['code'] = code
+	p['password'] = password
+	return findPassword(p)
+}
+
+// ---------------------------------------------------------------------------
+// 四、业务功能（需登录，401/403 跳转登录页）
+// ---------------------------------------------------------------------------
+
+/** 托管记录列表（**c-server** 未提供） */
+export function myList(params: UTSJSONObject) {
+	return memberRequest('/v1/collection/myList', 'POST', params, true)
+}
+
+/** 我的托管详情 */
+export function collectionDetailsMy(id: string) {
+	return memberRequest(`/v1/collection/my/${id}`, 'GET', null, true)
+}
+
+/** 新增藏品（托管申请） */
+export function insert(params: UTSJSONObject) {
+	return memberRequest('/v1/collection/insert', 'POST', params, true)
+}
+
+/** 地址列表 */
+export function addressList(params?: UTSJSONObject) {
+	return memberRequest('/api/member/v1/addresses/list', 'POST', params, true)
+}
+
+/** 地址详情 */
+export function addressDetail(id: string) {
+	return memberRequest(`/api/member/v1/addresses/${id}`, 'GET', null, true)
+}
+
+/** 编辑地址 */
+export function addressEdit(params: UTSJSONObject) {
+	return memberRequest('/api/member/v1/addresses/edit', 'POST', params, true)
+}
+
+/** 新增地址 */
+export function addressInsert(params: UTSJSONObject) {
+	return memberRequest('/api/member/v1/addresses/insert', 'POST', params, true)
+}
+
+/** 删除地址 */
+export function deleteAddress(id: string) {
+	return memberRequest(`/api/member/v1/addresses/delete/${id}`, 'GET', null, true)
+}
+
+/** 更新会员资料 */
+export function updateMemberInfo(params: UTSJSONObject) {
+	return memberRequest('/api/member/v1/update-member', 'POST', params, true)
+}
+
+/** 订单支付（**c-server** 未提供） */
+export function payOrderPlus(params: UTSJSONObject) {
+	return memberRequest('/v1/common/order/payOrderPlus', 'GET', params, true)
+}
+
+// --- 电子合同（**c-server** 未提供） ---
+
+/** 创建合同 - 立即签署 */
+export function createContract(params: UTSJSONObject) {
+	return memberRequest('/api/mall/contract/create', 'POST', params, true)
+}
+
+/** 查询订单签署状态 */
+export function getContractStatus(orderId: string) {
+	return memberRequest('/api/mall/contract/status', 'GET', { orderId: orderId } as UTSJSONObject, true)
+}
+
+/** 合同列表 */
+export function getContractList(params: UTSJSONObject) {
+	return memberRequest('/api/mall/contract/list', 'GET', params, true)
+}
+
+/** 合同详情 */
+export function getContractDetail(id: string) {
+	return memberRequest('/api/mall/contract/detail', 'GET', { id: id } as UTSJSONObject, true)
+}
+
+/** 下载合同 PDF 的完整 URL（GET，需登录态与后端一致） */
+export function downloadContractPdf(id: string): string {
+	return apiBase + '/api/mall/contract/download?id=' + id
+}

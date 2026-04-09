@@ -25,7 +25,7 @@
 
 <script setup lang="uts">
 	import { ref, watch } from 'vue'
-	import { storeToolAreaList } from '@/common/api/mallApi'
+	import { storeToolAreaList } from '@/common/api/baseApi'
 
 	const props = defineProps<{
 		visible: boolean

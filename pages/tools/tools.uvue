@@ -108,7 +108,7 @@
 	import { storage } from '@/uni_modules/m-unix/components/m-tools/Storage.uts'
 	import { notifyAuthChange } from '@/uni_modules/m-unix/components/m-tools/AuthNotifier.uts'
 	import { isLoggedIn, checkLogin } from '@/uni_modules/m-unix/components/m-tools/Auth.uts'
-	import { checkUpdate } from '@/common/api/mallApi.uts'
+	import { checkUpdate } from '@/common/api/baseApi.uts'
 
 	const demoStorageKey = 'm_tools_demo_kv'
 

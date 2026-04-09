@@ -4,7 +4,7 @@
 			<view class="demo-section">
 				<text class="section-title">应用更新（m-update）</text>
 				<text class="section-desc">
-					通过 checkUpdateFn 传入项目内检查更新方法（如 common/api/mallApi）。注入 common/config
+					通过 checkUpdateFn 传入项目内检查更新方法（如 common/api/baseApi）。注入 common/config
 					时可配置 versionCode 与下载地址。autoCheck=false 时不自动请求；点击下方按钮主动检查。无新版本时会触发 noUpdate。
 				</text>
 				<view class="demo-row">
@@ -26,7 +26,7 @@
 
 <script setup lang="uts">
 import { ref } from 'vue'
-import { checkUpdate } from '@/common/api/mallApi'
+import { checkUpdate } from '@/common/api/baseApi'
 
 const updRef = ref(null as any)
 const lastEvt = ref('')

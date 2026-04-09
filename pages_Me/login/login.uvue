@@ -103,7 +103,7 @@
 	import { ref } from 'vue'
 	import { storage } from '@/uni_modules/m-unix/components/m-tools/Storage.uts'
 	import { config } from '@/common/config'
-	import { phoneSmsLogin, mallAccountLogin, mallSendSmsCode } from '@/common/api/mallApi'
+	import { phoneSmsLogin, mallAccountLogin, mallSendSmsCode } from '@/common/api/baseApi'
 
 	const tabIndex = ref(0)
 	const phone = ref('')

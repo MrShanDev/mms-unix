@@ -45,7 +45,7 @@
 <script setup lang="uts">
 	import { ref } from 'vue'
 	import RegionPicker from '../components/region-picker/region-picker.uvue'
-	import { addressDetail, addressEdit, addressInsert } from '@/common/api/mallApi'
+	import { addressDetail, addressEdit, addressInsert } from '@/common/api/baseApi'
 
 	type FormData = {
 		id: string

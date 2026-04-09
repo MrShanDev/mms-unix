@@ -18,7 +18,7 @@
 m-unix/
 ├── common/
 │   ├── config.uts          # 全局配置（baseUrl、storage key 等）
-│   ├── api/               # API 接口定义
+│   ├── api/               # API：`baseApi`（基础/登录/业务，免登录与需登录分组）
 │   └── utils/
 │       ├── storage.uts     # 存储工具
 │       ├── request.uts    # 请求封装
@@ -42,6 +42,6 @@ m-unix/
 
 ## 开发说明
 
-- 当前登录/注册/找回密码可直接对接 `common/api/auth.uts` 中的接口调用
+- 业务 HTTP 统一从 `common/api/baseApi.uts` 引用（含 `loginByCode`、`phoneSmsLogin`、`mallSendSmsCode` 等；见文件内分组注释）
 - 会员中心各入口（收藏、订单、地址等）可根据业务需求进行扩展
 - TabBar 图标可替换为自定义图标
