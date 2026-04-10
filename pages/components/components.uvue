@@ -141,6 +141,7 @@
 				{ name: '倒计时', path: '/pages_demo/countdown/countdown', icon: 'time' },
 				{ name: '验证码倒计时', path: '/pages_demo/smsCountdown/smsCountdown', icon: 'time' },
 				{ name: '轮播图', path: '/pages_demo/ext/swiper/swiper', icon: 'picture' },
+				{ name: '短视频滑动', path: '/pages_demo/ext/scroll-video/scroll-video', icon: 'dynamic-filling' },
 				{ name: '二维码', path: '/pages_demo/qrcode/qrcode', icon: 'scanning' },
 				{ name: '水印', path: '/pages_demo/watermark/watermark', icon: 'lock' },
 			],

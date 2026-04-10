@@ -102,6 +102,10 @@
 				{ "path": "ext/skeleton/skeleton", "style": { "navigationBarTitleText": "骨架屏" } },
 				{ "path": "ext/steps/steps", "style": { "navigationBarTitleText": "步骤条" } },
 				{ "path": "ext/swiper/swiper", "style": { "navigationBarTitleText": "轮播图" } },
+				{
+					"path": "ext/scroll-video/scroll-video",
+					"style": { "navigationBarTitleText": "短视频滑动", "disableScroll": true, "navigationBarTextStyle": "white", "navigationBarBackgroundColor": "#000000" }
+				},
 				{ "path": "ext/swipe-action/swipe-action", "style": { "navigationBarTitleText": "滑动操作" } },
 				{ "path": "ext/section/section", "style": { "navigationBarTitleText": "区块标题" } },
 				{ "path": "ext/wing-blank/wing-blank", "style": { "navigationBarTitleText": "留白" } },

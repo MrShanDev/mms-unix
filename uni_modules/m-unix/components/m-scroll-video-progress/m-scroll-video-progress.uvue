@@ -1,0 +1,157 @@
+<template>
+	<view
+		class="m-scroll-video-progress"
+		:style="'width:' + barWidthPx + 'px;'"
+		@touchstart="onTouchStart"
+		@touchmove="onTouchMove"
+		@touchend="onTouchEnd"
+		@touchcancel="onTouchEnd"
+	>
+		<view class="m-scroll-video-progress__track" :style="trackStyle">
+			<view
+				class="m-scroll-video-progress__fill"
+				:style="'width: ' + fillWidth.toFixed(2) + 'px;'"
+			></view>
+		</view>
+	</view>
+</template>
+
+<script lang="uts">
+/** 底部拖拽进度条（与视频时长联动，拖拽时向父级上报，避免与竖滑冲突） */
+export default {
+	name: 'mScrollVideoProgress',
+	emits: ['changing', 'change', 'sliderEnd'],
+	props: {
+		min: {
+			type: Number,
+			default: 0
+		},
+		max: {
+			type: Number,
+			default: 0
+		},
+		step: {
+			type: Number,
+			default: 1
+		},
+		value: {
+			type: Number,
+			default: 0
+		},
+		barWidth: {
+			type: Number,
+			default: 300
+		},
+		height: {
+			type: Number,
+			default: 3
+		}
+	},
+	data() {
+		return {
+			startX: 0,
+			baseValue: 0,
+			dragValue: 0,
+			touchType: false
+		}
+	},
+	computed: {
+		barWidthPx(): number {
+			return this.barWidth as number
+		},
+		trackStyle(): string {
+			const h = this.touchType ? (this.height as number) * 10 : (this.height as number)
+			return 'height:' + h + 'rpx;'
+		},
+		fillWidth(): number {
+			const maxV = this.max as number
+			const w = this.barWidth as number
+			let v = this.value as number
+			if (this.touchType) {
+				v = this.dragValue
+			}
+			if (maxV <= 0) {
+				return 0
+			}
+			return v * (w / maxV)
+		}
+	},
+	methods: {
+		onTouchStart(e: TouchEvent) {
+			e.stopPropagation()
+			this.baseValue = this.value as number
+			this.dragValue = this.baseValue
+			if (e.touches.length > 0) {
+				const t = e.touches[0]
+				this.startX = t.pageX as number
+			}
+		},
+		onTouchMove(e: TouchEvent) {
+			e.preventDefault()
+			e.stopPropagation()
+			this.touchType = true
+			const maxV = this.max as number
+			const w = this.barWidth as number
+			if (maxV <= 0 || w <= 0 || e.touches.length === 0) {
+				return
+			}
+			const t = e.touches[0]
+			const pageX = t.pageX as number
+			const delta = pageX - this.startX
+			let v = this.baseValue + (delta / w) * maxV
+			const minV = this.min as number
+			const step = this.step as number
+			if (step > 0) {
+				v = Math.round(v / step) * step
+			}
+			if (v <= minV) {
+				v = minV
+			} else if (v >= maxV) {
+				v = maxV
+			}
+			this.dragValue = v
+			this.$emit('changing', v)
+		},
+		onTouchEnd(e: TouchEvent) {
+			if (this.touchType === false) {
+				return
+			}
+			e.preventDefault()
+			e.stopPropagation()
+			this.$emit('change', this.dragValue)
+			this.$emit('sliderEnd', this.dragValue)
+			this.startX = 0
+			this.touchType = false
+		}
+	}
+}
+</script>
+
+<style scoped lang="scss">
+.m-scroll-video-progress {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	height: 45rpx;
+	margin-left: 15px;
+	z-index: 5;
+
+	.m-scroll-video-progress__track {
+		width: 100%;
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		background-color: rgba(255, 255, 255, 0.2);
+		border-radius: 50rpx;
+		transition-duration: 300ms;
+		transition-property: height;
+	}
+
+	.m-scroll-video-progress__fill {
+		height: 100%;
+		/* 与 scroll-video_0.4 x-slider .x_slider_v 一致 */
+		background-color: rgba(255, 255, 255, 0.4);
+		border-radius: 50rpx;
+	}
+}
+</style>

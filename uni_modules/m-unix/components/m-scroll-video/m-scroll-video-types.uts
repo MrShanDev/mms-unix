@@ -1,0 +1,20 @@
+/** 短视频滑动列表单条数据（仿信息流：视频 + 侧栏互动） */
+export type MScrollVideoItem = {
+	src: string
+	description: string
+	poster?: string
+	objectFit?: string
+	userAvatar?: string | null
+	userName?: string | null
+	userFollow?: boolean | null
+	likeActive?: boolean | null
+	likeCount?: string | null
+	commentCount?: string | null
+	collectActive?: boolean | null
+	collectCount?: string | null
+}
+
+export type MScrollVideoActionPayload = {
+	type: string
+	index: number
+}

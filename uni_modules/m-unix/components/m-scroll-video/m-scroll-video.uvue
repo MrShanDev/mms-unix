@@ -1,0 +1,426 @@
+<template>
+	<view class="swiper_wrap" :style="fullScreen">
+		<view v-if="normalizedList.length === 0" class="m-scroll-video-empty">
+			<m-empty description="暂无短视频" />
+		</view>
+		<swiper v-else :style="fullScreen" :vertical="true" :duration="500" @change="onSwiperChange">
+			<swiper-item v-for="(item, index) in normalizedList" :key="index" :item-id="index">
+				<view class="swiper_slide_inner" :style="fullScreen">
+					<m-scroll-video-cell
+						ref="cells"
+						:video-dom-id="videoDomId(index)"
+						:index="index"
+						:full-screen="fullScreen"
+						:src="item.src"
+						:poster="posterStr(item)"
+						:object-fit="itemObjectFit(item)"
+						:progress-bar-width="progressBarWidth"
+						:slider-touch-type="sliderTouchType"
+						@update:slider-touch-type="setSliderTouch"
+					>
+						<template v-slot>
+							<text
+								class="name"
+								:class="{ on: sliderTouchType }"
+								@click="clickEventSend('userName', index)"
+							>{{ userNameText(item) }}</text>
+							<text
+								class="desc"
+								:class="{ on: sliderTouchType }"
+								@click="clickEventSend('description', index)"
+							>{{ item.description }}</text>
+						</template>
+					</m-scroll-video-cell>
+
+					<view class="interaction" :class="{ on: sliderTouchType }">
+						<view class="item">
+							<image
+								class="user_avatar"
+								:src="avatarSrc(item)"
+								mode="aspectFill"
+								@click="clickEventSend('userAvatar', index)"
+							></image>
+							<button
+								v-if="item.userFollow == null || item.userFollow == false"
+								class="follow"
+								size="mini"
+								type="primary"
+								@click="clickEventSend('userFollow', index)"
+							>
+								关注
+							</button>
+						</view>
+						<view class="item" @click="clickEventSend('like', index)">
+							<image
+								class="icon"
+								:src="likeIconSrc(item)"
+								mode="widthFix"
+							></image>
+							<text class="total">{{ item.likeCount == null ? '赞' : item.likeCount }}</text>
+						</view>
+						<view class="item" @click="clickEventSend('comment', index)">
+							<image class="icon" src="/static/scroll-video/chat.png" mode="widthFix"></image>
+							<text class="total">{{ item.commentCount == null ? '评论' : item.commentCount }}</text>
+						</view>
+						<view class="item" @click="clickEventSend('collect', index)">
+							<image
+								class="icon"
+								:src="collectIconSrc(item)"
+								mode="widthFix"
+							></image>
+							<text class="total">{{ item.collectCount == null ? '收藏' : item.collectCount }}</text>
+						</view>
+					</view>
+				</view>
+			</swiper-item>
+		</swiper>
+	</view>
+</template>
+
+<script lang="uts">
+import { type PropType } from 'vue'
+import type { ComponentPublicInstance } from 'vue'
+import MScrollVideoCell from '@/uni_modules/m-unix/components/m-scroll-video-cell/m-scroll-video-cell.uvue'
+import type { MScrollVideoItem, MScrollVideoActionPayload } from './m-scroll-video-types.uts'
+
+/** 必须使用以 / 开头的项目根路径；相对路径在 uni_modules 内会失效 */
+const STATIC_BASE = '/static/scroll-video/'
+
+/** 与 scroll-video_0.4 index 一致：竖滑、侧栏 PNG、事件名兼容 */
+export default {
+	name: 'mScrollVideo',
+	components: { MScrollVideoCell },
+	emits: ['change', 'action', 'clickEventListener', 'scrollVideoChang'],
+	props: {
+		list: {
+			type: Array as PropType<MScrollVideoItem[]>,
+			default(): MScrollVideoItem[] {
+				return []
+			}
+		},
+		/** 与原版 prop 名 videoList 对齐，未传 list 时可改用此项 */
+		videoList: {
+			type: Array as PropType<MScrollVideoItem[]>,
+			default(): MScrollVideoItem[] {
+				return []
+			}
+		},
+		width: {
+			type: Number,
+			default: 0
+		},
+		height: {
+			type: Number,
+			default: 0
+		},
+		instanceKey: {
+			type: String,
+			default: 'sv'
+		}
+	},
+	data() {
+		return {
+			current: 0,
+			timer: 0,
+			innerW: 0,
+			innerH: 0,
+			sliderTouchType: false
+		}
+	},
+	computed: {
+		normalizedList(): MScrollVideoItem[] {
+			const a = this.list as MScrollVideoItem[]
+			if (a.length > 0) {
+				return a
+			}
+			return this.videoList as MScrollVideoItem[]
+		},
+		fullScreen(): string {
+			const w = this.innerW as number
+			const h = this.innerH as number
+			return 'width:' + w + 'px;height:' + h + 'px;'
+		},
+		progressBarWidth(): number {
+			const w = this.innerW as number
+			if (w <= 30) {
+				return w
+			}
+			return w - 30
+		}
+	},
+	created() {
+		const si = uni.getSystemInfoSync()
+		let w = this.width as number
+		let h = this.height as number
+		if (w <= 0) {
+			this.innerW = si.windowWidth
+		} else {
+			this.innerW = w
+		}
+		if (h <= 0) {
+			this.innerH = si.windowHeight
+		} else {
+			this.innerH = h
+		}
+	},
+	mounted() {
+		this.syncLayoutFromWindow()
+		this.$nextTick(() => {
+			setTimeout(() => {
+				this.playCurrentIfReady()
+			}, 300)
+		})
+	},
+	methods: {
+		syncLayoutFromWindow() {
+			const wProp = this.width as number
+			const hProp = this.height as number
+			if (wProp > 0 && hProp > 0) {
+				return
+			}
+			const wi = uni.getWindowInfo()
+			let ww = wi.windowWidth as number
+			let wh = wi.windowHeight as number
+			if (ww == null || ww <= 0 || wh == null || wh <= 0) {
+				const si = uni.getSystemInfoSync()
+				if (ww == null || ww <= 0) {
+					ww = si.windowWidth
+				}
+				if (wh == null || wh <= 0) {
+					wh = si.windowHeight
+				}
+			}
+			if (wProp <= 0 && ww > 0) {
+				this.innerW = ww
+			}
+			if (hProp <= 0 && wh > 0) {
+				this.innerH = wh
+			}
+		},
+		videoDomId(index: number): string {
+			const key = this.instanceKey as string
+			return 'm-sv-' + key + '-' + index
+		},
+		posterStr(item: MScrollVideoItem): string {
+			const p = item.poster
+			if (p != null && ('' + p).length > 0) {
+				return '' + p
+			}
+			return ''
+		},
+		itemObjectFit(item: MScrollVideoItem): string {
+			const o = item.objectFit
+			if (o != null && ('' + o).length > 0) {
+				return '' + o
+			}
+			return 'cover'
+		},
+		userNameText(item: MScrollVideoItem): string {
+			const n = item.userName
+			if (n == null) {
+				return ''
+			}
+			return '' + n
+		},
+		avatarSrc(item: MScrollVideoItem): string {
+			const a = item.userAvatar
+			if (a != null && ('' + a).length > 0) {
+				return '' + a
+			}
+			return STATIC_BASE + 'default_avatar.png'
+		},
+		likeIconSrc(item: MScrollVideoItem): string {
+			if (item.likeActive == null || item.likeActive == false) {
+				return STATIC_BASE + 'like.png'
+			}
+			return STATIC_BASE + 'like_active.png'
+		},
+		collectIconSrc(item: MScrollVideoItem): string {
+			if (item.collectActive == null || item.collectActive == false) {
+				return STATIC_BASE + 'star.png'
+			}
+			return STATIC_BASE + 'star_active.png'
+		},
+		setSliderTouch(v: boolean) {
+			this.sliderTouchType = v
+		},
+		clickEventSend(type: string, index: number) {
+			const p = {
+				type: type,
+				index: index
+			} as MScrollVideoActionPayload
+			this.$emit('clickEventListener', p)
+			this.$emit('action', p)
+		},
+		playCurrentIfReady() {
+			const detail = this.$refs['cells'] as ComponentPublicInstance[]
+			if (detail == null) {
+				return
+			}
+			const len = detail.length
+			if (len === 0) {
+				return
+			}
+			const cur = this.current as number
+			if (cur >= 0 && cur < len) {
+				detail[cur].$callMethod('play')
+			}
+		},
+		onSwiperChange(res: any) {
+			const next = res.detail.current as number
+			clearTimeout(this.timer)
+			this.timer = setTimeout(() => {
+				const detail = this.$refs['cells'] as ComponentPublicInstance[]
+				if (detail == null) {
+					return
+				}
+				const len = detail.length
+				if (len === 0) {
+					return
+				}
+				const oldIdx = this.current as number
+				if (oldIdx < 0 || oldIdx >= len || next < 0 || next >= len) {
+					return
+				}
+				detail[oldIdx].$callMethod('setStarting', false)
+				detail[oldIdx].$callMethod('_stop', () => {
+					detail[next].$callMethod('play')
+					this.current = next
+					this.$emit('scrollVideoChang', next)
+					this.$emit('change', next)
+				})
+				detail[oldIdx].$callMethod('seek', 0)
+			}, 500)
+		},
+		play() {
+			const detail = this.$refs['cells'] as ComponentPublicInstance[]
+			if (detail == null) {
+				return
+			}
+			const cur = this.current as number
+			if (cur >= 0 && cur < detail.length) {
+				setTimeout(() => {
+					detail[cur].$callMethod('play')
+				}, 300)
+			}
+		},
+		pause() {
+			const detail = this.$refs['cells'] as ComponentPublicInstance[]
+			if (detail == null) {
+				return
+			}
+			const cur = this.current as number
+			if (cur >= 0 && cur < detail.length) {
+				detail[cur].$callMethod('pause')
+			}
+		}
+	}
+}
+</script>
+
+<style scoped lang="scss">
+.swiper_wrap {
+	position: relative;
+}
+
+.m-scroll-video-empty {
+	width: 100%;
+	height: 100%;
+	min-height: 200px;
+}
+
+.swiper_slide_inner {
+	position: relative;
+	/* 避免子层叠裁剪侧栏 */
+	overflow: visible;
+}
+
+/* 与 scroll-video_0.4 index 样式一致 */
+.name {
+	position: absolute;
+	color: #ffffff;
+	font-size: 36rpx;
+	font-weight: bold;
+	left: 15px;
+	bottom: 145rpx;
+	transition-duration: 200ms;
+	transition-property: opacity;
+}
+
+.name.on {
+	opacity: 0;
+}
+
+.desc {
+	position: absolute;
+	left: 15px;
+	bottom: 45rpx;
+	opacity: 0.8;
+	color: #ffffff;
+	font-size: 30rpx;
+	line-height: 1.3;
+	width: 60%;
+	z-index: 1;
+	transition-duration: 200ms;
+	transition-property: opacity;
+}
+
+.desc.on {
+	opacity: 0;
+}
+
+.interaction {
+	position: absolute;
+	right: 10rpx;
+	bottom: 65rpx;
+	width: 100rpx;
+	z-index: 20;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	transition-duration: 200ms;
+	transition-property: opacity;
+}
+
+.interaction.on {
+	opacity: 0;
+}
+
+.interaction .item {
+	position: relative;
+	margin: 22rpx 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.interaction .item .icon {
+	width: 66rpx;
+}
+
+.interaction .item .total {
+	margin-top: 8rpx;
+	font-size: 24rpx;
+	color: #ffffff;
+	font-weight: bold;
+}
+
+.user_avatar {
+	width: 90rpx;
+	height: 90rpx;
+	border-width: 8rpx;
+	border-style: solid;
+	border-color: #ffffff;
+	border-radius: 50%;
+	margin-bottom: 10rpx;
+}
+
+.follow {
+	position: absolute;
+	bottom: 0;
+	font-size: 12rpx;
+	width: 110rpx;
+	transform: scale(0.7, 0.8);
+}
+</style>

@@ -639,7 +639,9 @@ function requestRecordAuth(onGranted: () => void) {
 						confirmText: '去设置',
 						success: (r: any) => {
 							if (r.confirm === true) {
-								uni.openSetting({})
+								if (typeof uniAny.openSetting === 'function') {
+									uniAny.openSetting({})
+								}
 							}
 						},
 					})
@@ -659,8 +661,9 @@ function requestRecordAuth(onGranted: () => void) {
 					uni.showToast({ title: '需要授权麦克风才能录音', icon: 'none' })
 					/* App 等无微信式 scope，首次录音由系统弹窗，仍允许后续同步 start */
 					try {
-						const info = uni.getSystemInfoSync() as UTSJSONObject
-						const plat = '' + (info['uniPlatform'] != null ? info['uniPlatform'] : '')
+						const info = uni.getSystemInfoSync() as unknown as UTSJSONObject
+						const up = info['uniPlatform']
+						const plat = up != null ? '' + up : ''
 						if (plat !== 'mp-weixin') {
 							onGranted()
 						}

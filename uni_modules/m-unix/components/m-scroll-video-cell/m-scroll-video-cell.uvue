@@ -1,0 +1,233 @@
+<template>
+	<view class="x-video" :style="fullScreen">
+		<video
+			:id="videoDomId"
+			:style="fullScreen"
+			:loop="true"
+			:src="src"
+			:controls="true"
+			:autoplay="false"
+			:muted="muted"
+			:page-gesture="false"
+			:show-progress="true"
+			:show-fullscreen-btn="false"
+			:show-play-btn="true"
+			:show-center-play-btn="false"
+			:enable-progress-gesture="false"
+			:object-fit="objectFit"
+			:poster="poster"
+			@play="onPlay"
+			@pause="onPause"
+			@timeupdate="onTimeUpdate"
+			@waiting="onWaiting"
+		>
+			<view class="video_box" :style="fullScreen" @click="onVideoBoxTap">
+				<image
+					v-show="!isPlaying && isStarting"
+					class="icon_play"
+					src="/static/scroll-video/play.png"
+					mode="widthFix"
+				></image>
+				<view class="video_slider_time" v-show="sliderTouchType">
+					<text class="slider_time_text">{{ sliderChangingTime }}</text>
+					<text class="slider_time_text on"> / {{ convertSecondsToTime(duration) }}</text>
+				</view>
+			</view>
+		</video>
+		<slot></slot>
+		<m-scroll-video-progress
+			:min="0"
+			:max="duration"
+			:step="1"
+			:value="progressTime"
+			:bar-width="progressBarWidth"
+			@changing="onProgressChanging"
+			@change="onProgressChange"
+			@slider-end="onProgressEnd"
+		></m-scroll-video-progress>
+	</view>
+</template>
+
+<script lang="uts">
+import MScrollVideoProgress from '@/uni_modules/m-unix/components/m-scroll-video-progress/m-scroll-video-progress.uvue'
+
+/** 与 scroll-video_0.4 x-video 结构、属性、样式一致 */
+export default {
+	name: 'mScrollVideoCell',
+	components: { MScrollVideoProgress },
+	emits: ['update:sliderTouchType'],
+	props: {
+		sliderTouchType: {
+			type: Boolean,
+			default: false
+		},
+		videoDomId: {
+			type: String,
+			default: ''
+		},
+		index: {
+			type: Number,
+			default: 0
+		},
+		/** 与原版 fullScreen 一致 */
+		fullScreen: {
+			type: String,
+			default: ''
+		},
+		src: {
+			type: String,
+			default: ''
+		},
+		poster: {
+			type: String,
+			default: ''
+		},
+		muted: {
+			type: Boolean,
+			default: false
+		},
+		objectFit: {
+			type: String,
+			default: 'cover'
+		},
+		progressBarWidth: {
+			type: Number,
+			default: 300
+		}
+	},
+	data() {
+		return {
+			videoContext: null as VideoContext | null,
+			isStarting: false,
+			isPlaying: false,
+			progressTime: 0,
+			changingProgressTime: 0,
+			duration: 0
+		}
+	},
+	computed: {
+		sliderChangingTime(): string {
+			return this.convertSecondsToTime(this.changingProgressTime)
+		}
+	},
+	mounted() {
+		const id = this.videoDomId as string
+		if (id.length > 0) {
+			this.videoContext = uni.createVideoContext(id, this as any)
+		}
+	},
+	methods: {
+		onVideoBoxTap() {
+			if (this.isPlaying) {
+				this.pause()
+			} else {
+				this.play()
+			}
+		},
+		onPlay(_e: Event) {
+			if (!this.isStarting) {
+				this.setStarting(true)
+			}
+			this.isPlaying = true
+		},
+		onPause(_e: Event) {
+			this.isPlaying = false
+		},
+		onTimeUpdate(res: VideoTimeUpdateEvent) {
+			if (this.duration === 0) {
+				this.duration = Math.floor(res.detail.duration)
+			}
+			const st = this.sliderTouchType as boolean
+			if (!st) {
+				this.progressTime = Math.round(res.detail.currentTime)
+			}
+		},
+		onWaiting(_e: Event) {},
+		setStarting(flag: boolean) {
+			this.isStarting = flag
+		},
+		play() {
+			this.videoContext?.play()
+		},
+		pause() {
+			this.videoContext?.pause()
+		},
+		_stop(callback: () => void) {
+			this.videoContext?.stop()
+			callback()
+		},
+		seek(pos: number) {
+			this.videoContext?.seek(pos)
+		},
+		onProgressChanging(v: number) {
+			this.changingProgressTime = Math.floor(v)
+			this.$emit('update:sliderTouchType', true)
+		},
+		onProgressChange(v: number) {
+			this.progressTime = v
+			this.seek(v)
+			this.play()
+		},
+		onProgressEnd(_v: number) {
+			this.$emit('update:sliderTouchType', false)
+		},
+		convertSecondsToTime(seconds: number): string {
+			const s = Math.floor(seconds)
+			const hours = Math.floor(s / 3600)
+			const minutes = Math.floor((s % 3600) / 60)
+			const remainingSeconds = s % 60
+			const _minutes = minutes < 10 ? '0' + minutes : '' + minutes
+			const _remainingSeconds = remainingSeconds < 10 ? '0' + remainingSeconds : '' + remainingSeconds
+			if (hours === 0) {
+				return _minutes + ':' + _remainingSeconds
+			}
+			return '' + hours + ':' + _minutes + ':' + _remainingSeconds
+		}
+	}
+}
+</script>
+
+<style scoped lang="scss">
+.x-video {
+	position: relative;
+}
+
+.video_box {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	z-index: 2;
+	background-color: transparent;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 0 60rpx;
+}
+
+.icon_play {
+	width: 230rpx;
+	opacity: 0.65;
+}
+
+.video_slider_time {
+	position: absolute;
+	bottom: 15%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.slider_time_text {
+	color: #ffffff;
+	font-weight: bold;
+	font-size: 48rpx;
+}
+
+.slider_time_text.on {
+	opacity: 0.5;
+}
+</style>

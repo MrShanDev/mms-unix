@@ -1,0 +1,173 @@
+<template>
+	<view class="demo-page" :style="pageBoxStyle">
+		<m-scroll-video
+			v-if="ready"
+			:list="items"
+			:width="boxW"
+			:height="boxH"
+			instance-key="demo1"
+			@change="onIndexChange"
+			@action="onAction"
+		/>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { ref } from 'vue'
+	import type { MScrollVideoItem, MScrollVideoActionPayload } from '@/uni_modules/m-unix/components/m-scroll-video/m-scroll-video-types.uts'
+
+	/**
+	 * 演示视频：优先 DCloud 文档 CDN（国内可达）；国外示例站在国内常超时导致黑屏。
+	 * 业务请换自有 HTTPS 地址，并在 manifest 配置域名白名单（小程序）。
+	 */
+	const SAMPLE_MAIN = 'https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/2minute-demo.mp4'
+	/** 与 SAMPLE_MAIN 同源，避免第二条示例 404；需要两条不同片源时换业务地址即可 */
+	const SAMPLE_ALT = SAMPLE_MAIN
+
+	/** 封面：加载前可见，避免误以为「没画面」 */
+	function posterSeed(seed: string): string {
+		return 'https://picsum.photos/seed/' + seed + '/720/1280'
+	}
+
+	/** 演示头像 */
+	function avatarSeed(seed: string): string {
+		return 'https://picsum.photos/seed/' + seed + '/200/200'
+	}
+
+	const ready = ref(false)
+	const boxW = ref(0)
+	const boxH = ref(0)
+
+	const items = ref<MScrollVideoItem[]>([
+		{
+			src: SAMPLE_MAIN,
+			description: '示例①：上下滑动切换；默认静音便于自动起播',
+			poster: posterSeed('sv-p1'),
+			userName: '旅行日记',
+			userAvatar: avatarSeed('sv-like-1'),
+			userFollow: false,
+			likeActive: false,
+			likeCount: '328',
+			commentCount: '41',
+			collectActive: false,
+			collectCount: '7'
+		},
+		{
+			src: SAMPLE_ALT,
+			description: '示例②：已赞为实心红爱心；若视频仍黑屏请检查网络与域名白名单',
+			poster: posterSeed('sv-p2'),
+			userName: '城市夜景',
+			userAvatar: avatarSeed('sv-like-2'),
+			userFollow: false,
+			likeActive: true,
+			likeCount: '1.2万',
+			commentCount: '892',
+			collectActive: true,
+			collectCount: '306'
+		},
+		{
+			src: SAMPLE_MAIN,
+			description: '示例③：点击屏幕暂停/继续；拖底部进度条',
+			poster: posterSeed('sv-p3'),
+			userName: '美食探店',
+			userAvatar: avatarSeed('sv-like-3'),
+			userFollow: true,
+			likeActive: false,
+			likeCount: '9999',
+			commentCount: '56',
+			collectActive: false,
+			collectCount: '12'
+		},
+		{
+			src: SAMPLE_ALT,
+			description: '示例④：侧栏交互走 action 事件',
+			poster: posterSeed('sv-p4'),
+			userName: '运动打卡',
+			userAvatar: avatarSeed('sv-like-4'),
+			userFollow: null,
+			likeActive: true,
+			likeCount: '88',
+			commentCount: '3',
+			collectActive: false,
+			collectCount: '收藏'
+		},
+		{
+			src: SAMPLE_MAIN,
+			description: '示例⑤：未关注显示关注按钮',
+			poster: posterSeed('sv-p5'),
+			userName: '读书笔记',
+			userAvatar: avatarSeed('sv-like-5'),
+			userFollow: false,
+			likeActive: false,
+			likeCount: '2.3万',
+			commentCount: '1201',
+			collectActive: true,
+			collectCount: '540'
+		}
+	])
+
+	const pageBoxStyle = ref('width:100%;height:100%;background-color:#000000;')
+
+	onReady(() => {
+		const wi = uni.getWindowInfo()
+		let ww = wi.windowWidth as number
+		let wh = wi.windowHeight as number
+		if (ww == null || ww <= 0 || wh == null || wh <= 0) {
+			const si = uni.getSystemInfoSync()
+			if (ww == null || ww <= 0) {
+				ww = si.windowWidth
+			}
+			if (wh == null || wh <= 0) {
+				wh = si.windowHeight
+			}
+		}
+		boxW.value = ww
+		boxH.value = wh
+		pageBoxStyle.value = 'width:' + ww + 'px;height:' + wh + 'px;background-color:#000000;'
+		ready.value = true
+	})
+
+	function onIndexChange(index: number) {
+		console.log('[m-scroll-video] current index', index)
+	}
+
+	function onAction(p: MScrollVideoActionPayload) {
+		const t = p.type
+		const i = p.index
+		const row = items.value[i]
+		if (row == null) {
+			return
+		}
+		if (t === 'like') {
+			const next = !(row.likeActive === true)
+			row.likeActive = next
+			uni.showToast({ title: next ? '已点赞' : '取消赞', icon: 'none' })
+			return
+		}
+		if (t === 'collect') {
+			const next = !(row.collectActive === true)
+			row.collectActive = next
+			uni.showToast({ title: next ? '已收藏' : '已取消收藏', icon: 'none' })
+			return
+		}
+		if (t === 'comment') {
+			uni.showToast({ title: '评论：可在此打开评论面板', icon: 'none' })
+			return
+		}
+		if (t === 'userFollow') {
+			row.userFollow = true
+			uni.showToast({ title: '已关注', icon: 'none' })
+			return
+		}
+		if (t === 'userAvatar' || t === 'userName' || t === 'description') {
+			uni.showToast({ title: '点击：' + t, icon: 'none' })
+		}
+	}
+</script>
+
+<style lang="scss">
+	.demo-page {
+		display: flex;
+		flex-direction: column;
+	}
+</style>

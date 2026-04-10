@@ -73,6 +73,7 @@
 				{ name: '人脸取景相机', path: '/pages_demo/ext/face-camera/face-camera' },
 				{ name: '树形', path: '/pages_demo/tree/tree' },
 				{ name: '瀑布流', path: '/pages_demo/waterfall/waterfall' },
+				{ name: '短视频滑动', path: '/pages_demo/ext/scroll-video/scroll-video' },
 				{ name: '加载更多', path: '/pages_demo/loadmore/loadmore' }
 			]
 		},
