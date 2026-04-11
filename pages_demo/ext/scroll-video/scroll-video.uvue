@@ -2,6 +2,7 @@
 	<view class="demo-page" :style="pageBoxStyle">
 		<m-scroll-video
 			v-if="ready"
+			ref="svRef"
 			:list="items"
 			:width="boxW"
 			:height="boxH"
@@ -9,104 +10,547 @@
 			@change="onIndexChange"
 			@action="onAction"
 		/>
+
+		<m-bottom-popup
+			:show="commentPanelShow"
+			:height="commentPopupHeight"
+			background-color="#f7f8fa"
+			:radius="true"
+			:z-index="10001"
+			:mask-z-index="10000"
+			@close="closeCommentPanel"
+		>
+			<view class="cmt-panel">
+				<view class="cmt-panel__head">
+					<text class="cmt-panel__title">{{ commentTitleText }}</text>
+					<text class="cmt-panel__close" @click="closeCommentPanel">关闭</text>
+				</view>
+				<scroll-view class="cmt-panel__scroll" scroll-y :show-scrollbar="true">
+					<view v-if="currentComments.length === 0" class="cmt-panel__empty">
+						<text class="cmt-panel__empty-t">暂无评论，抢沙发</text>
+					</view>
+					<view
+						v-for="c in currentComments"
+						:key="c.id"
+						class="cmt-block"
+					>
+						<view class="cmt-row">
+							<image class="cmt-row__av" :src="c.avatar" mode="aspectFill"></image>
+							<view class="cmt-row__body">
+								<view class="cmt-row__main">
+									<text class="cmt-row__name">{{ c.author }}</text>
+									<text class="cmt-row__txt">{{ c.text }}</text>
+									<text class="cmt-row__reply-btn" @click.stop="startReplyToComment(c)">回复</text>
+								</view>
+							</view>
+							<view class="cmt-row__like" @tap.stop="toggleCommentLike(c)">
+								<m-icon
+									class="cmt-row__like-icon"
+									:name="c.liked ? 'favorite-filling' : 'heart'"
+									:color="c.liked ? '#fe2c55' : '#888888'"
+									:size="40"
+								></m-icon>
+								<text v-if="c.likeCount > 0" class="cmt-row__like-num">{{ formatLikeCount(c.likeCount) }}</text>
+							</view>
+						</view>
+						<view v-if="c.replies.length > 0" class="cmt-replies">
+							<view v-for="r in c.replies" :key="r.id" class="cmt-reply">
+								<image class="cmt-reply__av" :src="r.avatar" mode="aspectFill"></image>
+								<view class="cmt-reply__mid">
+									<text class="cmt-reply__name">{{ r.author }}</text>
+									<text class="cmt-reply__txt">{{ formatReplyText(r) }}</text>
+									<text class="cmt-reply__reply-btn" @click.stop="startReplyToReply(c, r)">回复</text>
+								</view>
+								<view class="cmt-reply__like" @tap.stop="toggleReplyLike(c, r)">
+									<m-icon
+										class="cmt-reply__like-icon"
+										:name="r.liked ? 'favorite-filling' : 'heart'"
+										:color="r.liked ? '#fe2c55' : '#888888'"
+										:size="36"
+									></m-icon>
+									<text v-if="r.likeCount > 0" class="cmt-reply__like-num">{{ formatLikeCount(r.likeCount) }}</text>
+								</view>
+							</view>
+						</view>
+					</view>
+					<view class="cmt-panel__pad"></view>
+				</scroll-view>
+				<view v-if="replyingTo != null" class="cmt-panel__reply-hint">
+					<text class="cmt-panel__reply-hint-t">回复 {{ replyingTo.author }}</text>
+					<text class="cmt-panel__reply-hint-x" @click="clearReplyTarget">取消</text>
+				</view>
+				<view class="cmt-panel__dock">
+					<view class="cmt-panel__input-wrap">
+						<m-input
+							v-model="commentDraft"
+							label=""
+							:placeholder="commentInputPlaceholder"
+							:input-border="false"
+							:border-bottom="false"
+							background-color="#ffffff"
+							padding="12rpx 20rpx"
+							:radius="32"
+							confirm-type="send"
+							:clearable="true"
+							@confirm="submitComment"
+						></m-input>
+					</view>
+					<m-button type="danger" btnSize="mini" class="cmt-panel__send" @click="submitComment">发送</m-button>
+				</view>
+			</view>
+		</m-bottom-popup>
 	</view>
 </template>
 
 <script setup lang="uts">
-	import { ref } from 'vue'
+	import { ref, computed } from 'vue'
+	import type { ComponentPublicInstance } from 'vue'
 	import type { MScrollVideoItem, MScrollVideoActionPayload } from '@/uni_modules/m-unix/components/m-scroll-video/m-scroll-video-types.uts'
 
-	/**
-	 * 演示视频：优先 DCloud 文档 CDN（国内可达）；国外示例站在国内常超时导致黑屏。
-	 * 业务请换自有 HTTPS 地址，并在 manifest 配置域名白名单（小程序）。
-	 */
-	const SAMPLE_MAIN = 'https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/2minute-demo.mp4'
-	/** 与 SAMPLE_MAIN 同源，避免第二条示例 404；需要两条不同片源时换业务地址即可 */
-	const SAMPLE_ALT = SAMPLE_MAIN
+	type SvReply = {
+		id: string
+		author: string
+		text: string
+		avatar: string
+		likeCount: number
+		liked: boolean
+		/** 被回复者昵称；主楼下的直接回复填主楼作者 */
+		replyToAuthor: string
+	}
 
-	/** 封面：加载前可见，避免误以为「没画面」 */
+	type SvComment = {
+		id: string
+		author: string
+		text: string
+		avatar: string
+		likeCount: number
+		liked: boolean
+		replies: SvReply[]
+	}
+
+	type ReplyTarget = {
+		commentId: string
+		author: string
+	}
+
+	const DEMO_VIDEO_SRC = 'https://nie.v.netease.com/r/video/20180724/6ee2c48b-cb57-4567-ba5e-ae638f893339.mp4'
+
 	function posterSeed(seed: string): string {
 		return 'https://picsum.photos/seed/' + seed + '/720/1280'
 	}
 
-	/** 演示头像 */
 	function avatarSeed(seed: string): string {
 		return 'https://picsum.photos/seed/' + seed + '/200/200'
+	}
+
+	function picAv(seed: string): string {
+		return 'https://picsum.photos/seed/' + seed + '-cmt/80/80'
+	}
+
+	let commentIdSeq = 0
+	function nextCommentId(): string {
+		commentIdSeq = commentIdSeq + 1
+		return 'sv-cmt-' + commentIdSeq.toString()
+	}
+
+	function formatLikeCount(n: number): string {
+		if (n >= 10000) {
+			const w = n / 10000.0
+			const s = w.toFixed(1)
+			return s + '万'
+		}
+		return n.toString()
+	}
+
+	function countAllForVideo(list: SvComment[] | null): number {
+		if (list == null) {
+			return 0
+		}
+		let t = 0
+		const n = list.length
+		for (let i = 0; i < n; i++) {
+			const c = list[i]
+			t = t + 1
+			const rs = c.replies
+			if (rs != null) {
+				t = t + rs.length
+			}
+		}
+		return t
+	}
+
+	function ensureReplies(c: SvComment): SvReply[] {
+		let rs = c.replies
+		if (rs == null) {
+			rs = []
+			c.replies = rs
+		}
+		return rs
+	}
+
+	function formatReplyText(r: SvReply): string {
+		const to = r.replyToAuthor
+		if (to != null && to.length > 0) {
+			return '回复 ' + to + '：' + r.text
+		}
+		return r.text
+	}
+
+	function toggleCommentLike(c: SvComment) {
+		const on = !(c.liked === true)
+		c.liked = on
+		let n = c.likeCount
+		if (on) {
+			n = n + 1
+		} else {
+			n = n - 1
+			if (n < 0) {
+				n = 0
+			}
+		}
+		c.likeCount = n
+	}
+
+	function toggleReplyLike(c: SvComment, r: SvReply) {
+		const on = !(r.liked === true)
+		r.liked = on
+		let n = r.likeCount
+		if (on) {
+			n = n + 1
+		} else {
+			n = n - 1
+			if (n < 0) {
+				n = 0
+			}
+		}
+		r.likeCount = n
+	}
+
+	function startReplyToComment(c: SvComment) {
+		replyingTo.value = { commentId: c.id, author: c.author }
+	}
+
+	function startReplyToReply(c: SvComment, r: SvReply) {
+		replyingTo.value = { commentId: c.id, author: r.author }
+	}
+
+	function clearReplyTarget() {
+		replyingTo.value = null
 	}
 
 	const ready = ref(false)
 	const boxW = ref(0)
 	const boxH = ref(0)
+	const commentPopupHeight = ref('520px')
+	const svRef = ref<ComponentPublicInstance | null>(null)
+
+	const commentPanelShow = ref(false)
+	const commentVideoIndex = ref(0)
+	const commentDraft = ref('')
+	const replyingTo = ref<ReplyTarget | null>(null)
+
+	const commentInputPlaceholder = computed((): string => {
+		if (replyingTo.value != null) {
+			return '回复 ' + replyingTo.value.author + '…'
+		}
+		return '善语结善缘，恶言伤人心…'
+	})
+
+	/** 每条视频的评论列表（与 items 下标对齐） */
+	const commentsPerVideo = ref<SvComment[][]>([
+		[
+			{
+				id: 's0-1',
+				author: '路人甲',
+				text: '第一条评论～',
+				avatar: picAv('sv-c0a'),
+				likeCount: 12,
+				liked: false,
+				replies: [
+					{
+						id: 's0-1-r1',
+						author: 'Demo用户',
+						text: '+1',
+						avatar: picAv('sv-c0r1'),
+						likeCount: 2,
+						liked: true,
+						replyToAuthor: '路人甲',
+					},
+				],
+			},
+			{
+				id: 's0-2',
+				author: 'Demo用户',
+				text: '滑动很顺',
+				avatar: picAv('sv-c0b'),
+				likeCount: 0,
+				liked: false,
+				replies: [],
+			},
+		],
+		[
+			{
+				id: 's1-1',
+				author: '夜跑党',
+				text: '已赞',
+				avatar: picAv('sv-c1a'),
+				likeCount: 56,
+				liked: false,
+				replies: [],
+			},
+		],
+		[
+			{
+				id: 's2-1',
+				author: '吃货',
+				text: '求地址',
+				avatar: picAv('sv-c2a'),
+				likeCount: 3,
+				liked: false,
+				replies: [
+					{
+						id: 's2-1-r1',
+						author: '博主',
+						text: '在简介里',
+						avatar: picAv('sv-c2b'),
+						likeCount: 0,
+						liked: false,
+						replyToAuthor: '吃货',
+					},
+				],
+			},
+			{
+				id: 's2-2',
+				author: '路人',
+				text: '同求',
+				avatar: picAv('sv-c2c'),
+				likeCount: 0,
+				liked: false,
+				replies: [],
+			},
+		],
+		[
+			{
+				id: 's3-1',
+				author: '运动君',
+				text: '加油',
+				avatar: picAv('sv-c3a'),
+				likeCount: 1,
+				liked: false,
+				replies: [],
+			},
+		],
+		[
+			{
+				id: 's4-1',
+				author: '书友',
+				text: '马克',
+				avatar: picAv('sv-c4a'),
+				likeCount: 0,
+				liked: false,
+				replies: [],
+			},
+			{
+				id: 's4-2',
+				author: '小编',
+				text: '感谢支持',
+				avatar: picAv('sv-c4b'),
+				likeCount: 8,
+				liked: false,
+				replies: [],
+			},
+		],
+	])
 
 	const items = ref<MScrollVideoItem[]>([
 		{
-			src: SAMPLE_MAIN,
-			description: '示例①：上下滑动切换；默认静音便于自动起播',
+			src: DEMO_VIDEO_SRC,
+			description: '示例①：点右侧评论打开面板，仿抖音底部抽屉',
 			poster: posterSeed('sv-p1'),
 			userName: '旅行日记',
 			userAvatar: avatarSeed('sv-like-1'),
 			userFollow: false,
 			likeActive: false,
 			likeCount: '328',
-			commentCount: '41',
+			commentCount: '2',
 			collectActive: false,
-			collectCount: '7'
+			collectCount: '7',
 		},
 		{
-			src: SAMPLE_ALT,
-			description: '示例②：已赞为实心红爱心；若视频仍黑屏请检查网络与域名白名单',
+			src: DEMO_VIDEO_SRC,
+			description: '示例②：发评论后条数与列表同步更新',
 			poster: posterSeed('sv-p2'),
 			userName: '城市夜景',
 			userAvatar: avatarSeed('sv-like-2'),
 			userFollow: false,
 			likeActive: true,
 			likeCount: '1.2万',
-			commentCount: '892',
+			commentCount: '1',
 			collectActive: true,
-			collectCount: '306'
+			collectCount: '306',
 		},
 		{
-			src: SAMPLE_MAIN,
-			description: '示例③：点击屏幕暂停/继续；拖底部进度条',
+			src: DEMO_VIDEO_SRC,
+			description: '示例③：打开评论时视频暂停，关闭后继续',
 			poster: posterSeed('sv-p3'),
 			userName: '美食探店',
 			userAvatar: avatarSeed('sv-like-3'),
 			userFollow: true,
 			likeActive: false,
 			likeCount: '9999',
-			commentCount: '56',
+			commentCount: '2',
 			collectActive: false,
-			collectCount: '12'
+			collectCount: '12',
 		},
 		{
-			src: SAMPLE_ALT,
-			description: '示例④：侧栏交互走 action 事件',
+			src: DEMO_VIDEO_SRC,
+			description: '示例④：侧栏其它按钮逻辑不变',
 			poster: posterSeed('sv-p4'),
 			userName: '运动打卡',
 			userAvatar: avatarSeed('sv-like-4'),
 			userFollow: null,
 			likeActive: true,
 			likeCount: '88',
-			commentCount: '3',
+			commentCount: '1',
 			collectActive: false,
-			collectCount: '收藏'
+			collectCount: '收藏',
 		},
 		{
-			src: SAMPLE_MAIN,
-			description: '示例⑤：未关注显示关注按钮',
+			src: DEMO_VIDEO_SRC,
+			description: '示例⑤：评论头像为演示图（需联网）',
 			poster: posterSeed('sv-p5'),
 			userName: '读书笔记',
 			userAvatar: avatarSeed('sv-like-5'),
 			userFollow: false,
 			likeActive: false,
 			likeCount: '2.3万',
-			commentCount: '1201',
+			commentCount: '2',
 			collectActive: true,
-			collectCount: '540'
-		}
+			collectCount: '540',
+		},
 	])
 
 	const pageBoxStyle = ref('width:100%;height:100%;background-color:#000000;')
+
+	const currentComments = ref<SvComment[]>([])
+
+	const commentTitleText = ref('评论0')
+
+	function syncCommentCountFromLists() {
+		const n = items.value.length
+		for (let i = 0; i < n; i++) {
+			const row = items.value[i]
+			const list = commentsPerVideo.value[i]
+			if (row != null && list != null) {
+				row.commentCount = countAllForVideo(list).toString()
+			}
+		}
+	}
+
+	function refreshCommentTitle() {
+		const i = commentVideoIndex.value
+		const list = commentsPerVideo.value[i]
+		const len = countAllForVideo(list)
+		commentTitleText.value = '评论 ' + len.toString()
+	}
+
+	function openCommentPanel(index: number) {
+		clearReplyTarget()
+		commentVideoIndex.value = index
+		const list = commentsPerVideo.value[index]
+		if (list != null) {
+			currentComments.value = list
+		} else {
+			currentComments.value = []
+		}
+		refreshCommentTitle()
+		commentPanelShow.value = true
+		const inst = svRef.value
+		if (inst != null) {
+			inst.$callMethod('pause')
+		}
+	}
+
+	function closeCommentPanel() {
+		clearReplyTarget()
+		commentPanelShow.value = false
+		const inst = svRef.value
+		if (inst != null) {
+			inst.$callMethod('play')
+		}
+	}
+
+	function submitComment() {
+		const raw = commentDraft.value.trim()
+		if (raw.length === 0) {
+			uni.showToast({ title: '请输入评论', icon: 'none' })
+			return
+		}
+		const i = commentVideoIndex.value
+		let list = commentsPerVideo.value[i]
+		if (list == null) {
+			list = []
+			commentsPerVideo.value[i] = list
+		}
+		const row = items.value[i]
+		let av = picAv('sv-me')
+		if (row != null && row.userAvatar != null && ('' + row.userAvatar).length > 0) {
+			av = '' + row.userAvatar
+		}
+		const nick = '我'
+		const rt = replyingTo.value
+		if (rt != null) {
+			let parent: SvComment | null = null
+			const ln = list.length
+			for (let k = 0; k < ln; k++) {
+				const it = list[k]
+				if (it != null && it.id === rt.commentId) {
+					parent = it
+					break
+				}
+			}
+			if (parent == null) {
+				uni.showToast({ title: '回复目标不存在', icon: 'none' })
+				return
+			}
+			const rep: SvReply = {
+				id: nextCommentId(),
+				author: nick,
+				text: raw,
+				avatar: av,
+				likeCount: 0,
+				liked: false,
+				replyToAuthor: rt.author,
+			}
+			ensureReplies(parent).push(rep)
+			currentComments.value = list
+			if (row != null) {
+				row.commentCount = countAllForVideo(list).toString()
+			}
+			refreshCommentTitle()
+			commentDraft.value = ''
+			clearReplyTarget()
+			uni.showToast({ title: '已回复', icon: 'none' })
+			return
+		}
+		const c: SvComment = {
+			id: nextCommentId(),
+			author: nick,
+			text: raw,
+			avatar: av,
+			likeCount: 0,
+			liked: false,
+			replies: [],
+		}
+		list.push(c)
+		currentComments.value = list
+		if (row != null) {
+			row.commentCount = countAllForVideo(list).toString()
+		}
+		refreshCommentTitle()
+		commentDraft.value = ''
+		uni.showToast({ title: '已发送', icon: 'none' })
+	}
 
 	onReady(() => {
 		const wi = uni.getWindowInfo()
@@ -123,12 +567,27 @@
 		}
 		boxW.value = ww
 		boxH.value = wh
+		const popH = Math.floor(wh * 0.62)
+		if (popH > 200) {
+			commentPopupHeight.value = popH.toString() + 'px'
+		}
 		pageBoxStyle.value = 'width:' + ww + 'px;height:' + wh + 'px;background-color:#000000;'
+		syncCommentCountFromLists()
 		ready.value = true
 	})
 
 	function onIndexChange(index: number) {
-		console.log('[m-scroll-video] current index', index)
+		if (commentPanelShow.value) {
+			clearReplyTarget()
+			commentVideoIndex.value = index
+			const list = commentsPerVideo.value[index]
+			if (list != null) {
+				currentComments.value = list
+			} else {
+				currentComments.value = []
+			}
+			refreshCommentTitle()
+		}
 	}
 
 	function onAction(p: MScrollVideoActionPayload) {
@@ -151,7 +610,7 @@
 			return
 		}
 		if (t === 'comment') {
-			uni.showToast({ title: '评论：可在此打开评论面板', icon: 'none' })
+			openCommentPanel(i)
 			return
 		}
 		if (t === 'userFollow') {
@@ -169,5 +628,238 @@
 	.demo-page {
 		display: flex;
 		flex-direction: column;
+	}
+
+	.cmt-panel {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		height: 100%;
+		box-sizing: border-box;
+	}
+
+	.cmt-panel__head {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		padding: 24rpx 28rpx 16rpx;
+		border-bottom-width: 1rpx;
+		border-bottom-style: solid;
+		border-bottom-color: #e5e5e5;
+		background-color: #ffffff;
+	}
+
+	.cmt-panel__title {
+		font-size: 32rpx;
+		font-weight: bold;
+		color: #111111;
+	}
+
+	.cmt-panel__close {
+		font-size: 28rpx;
+		color: #666666;
+	}
+
+	.cmt-panel__scroll {
+		flex: 1;
+		width: 100%;
+		height: 0;
+		background-color: #f7f8fa;
+	}
+
+	.cmt-panel__empty {
+		padding: 80rpx 32rpx;
+		align-items: center;
+	}
+
+	.cmt-panel__empty-t {
+		font-size: 28rpx;
+		color: #999999;
+	}
+
+	.cmt-block {
+		background-color: #ffffff;
+		border-bottom-width: 1rpx;
+		border-bottom-style: solid;
+		border-bottom-color: #f0f0f0;
+	}
+
+	.cmt-row {
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		padding: 20rpx 28rpx 12rpx;
+	}
+
+	.cmt-row__av {
+		width: 72rpx;
+		height: 72rpx;
+		border-radius: 50%;
+		flex-shrink: 0;
+		margin-right: 20rpx;
+	}
+
+	.cmt-row__body {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.cmt-row__main {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-width: 0;
+	}
+
+	.cmt-row__name {
+		font-size: 26rpx;
+		color: #666666;
+		margin-bottom: 8rpx;
+	}
+
+	.cmt-row__txt {
+		font-size: 30rpx;
+		color: #222222;
+		line-height: 1.45;
+	}
+
+	.cmt-row__reply-btn {
+		font-size: 26rpx;
+		color: #999999;
+		margin-top: 12rpx;
+	}
+
+	.cmt-row__like {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		flex-shrink: 0;
+		padding-left: 12rpx;
+		min-width: 56rpx;
+	}
+
+	.cmt-row__like-icon {
+		line-height: 1;
+	}
+
+	.cmt-row__like-num {
+		font-size: 22rpx;
+		color: #888888;
+		margin-top: 4rpx;
+	}
+
+	.cmt-replies {
+		padding-left: 108rpx;
+		padding-right: 28rpx;
+		padding-bottom: 16rpx;
+	}
+
+	.cmt-reply {
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		padding-top: 16rpx;
+	}
+
+	.cmt-reply__av {
+		width: 56rpx;
+		height: 56rpx;
+		border-radius: 50%;
+		flex-shrink: 0;
+		margin-right: 16rpx;
+	}
+
+	.cmt-reply__mid {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.cmt-reply__name {
+		font-size: 24rpx;
+		color: #888888;
+		margin-bottom: 6rpx;
+	}
+
+	.cmt-reply__txt {
+		font-size: 28rpx;
+		color: #333333;
+		line-height: 1.45;
+	}
+
+	.cmt-reply__reply-btn {
+		font-size: 24rpx;
+		color: #999999;
+		margin-top: 8rpx;
+	}
+
+	.cmt-reply__like {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		flex-shrink: 0;
+		padding-left: 8rpx;
+		min-width: 48rpx;
+	}
+
+	.cmt-reply__like-icon {
+		line-height: 1;
+	}
+
+	.cmt-reply__like-num {
+		font-size: 20rpx;
+		color: #888888;
+		margin-top: 2rpx;
+	}
+
+	.cmt-panel__reply-hint {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		padding: 8rpx 28rpx;
+		background-color: #f0f2f5;
+		border-top-width: 1rpx;
+		border-top-style: solid;
+		border-top-color: #e5e5e5;
+	}
+
+	.cmt-panel__reply-hint-t {
+		font-size: 26rpx;
+		color: #666666;
+	}
+
+	.cmt-panel__reply-hint-x {
+		font-size: 26rpx;
+		color: #fe2c55;
+	}
+
+	.cmt-panel__pad {
+		height: 24rpx;
+		width: 100%;
+	}
+
+	.cmt-panel__dock {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		padding: 16rpx 20rpx;
+		padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+		background-color: #ffffff;
+		border-top-width: 1rpx;
+		border-top-style: solid;
+		border-top-color: #e5e5e5;
+	}
+
+	.cmt-panel__input-wrap {
+		flex: 1;
+		min-width: 0;
+		margin-right: 16rpx;
+	}
+
+	.cmt-panel__send {
+		flex-shrink: 0;
 	}
 </style>

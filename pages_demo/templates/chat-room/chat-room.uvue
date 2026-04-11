@@ -700,12 +700,17 @@ function beginRecordingAtY(y: number) {
 	const rm = recorderManager as any
 	try {
 		rm.start(getRecorderStartOptions())
-		startRecordCountdown()
-	} catch (_e) {
-		isRecording.value = false
-		clearRecordCountdown()
-		uni.showToast({ title: '无法开始录音', icon: 'none' })
+	} catch (_e1) {
+		try {
+			rm.start({ duration: RECORD_MAX_MS })
+		} catch (_e2) {
+			isRecording.value = false
+			clearRecordCountdown()
+			uni.showToast({ title: '无法开始录音', icon: 'none' })
+			return
+		}
 	}
+	startRecordCountdown()
 }
 
 function onVoiceTouchStart(e: any) {
@@ -814,38 +819,42 @@ function onVoiceTouchCancel(_e: any) {
 	finishVoiceRecord(true)
 }
 
-function ensureInnerAudio(): any | null {
-	if (innerAudioCtx != null) {
-		return innerAudioCtx
+function destroyPlayingInnerAudio() {
+	if (innerAudioCtx == null) {
+		return
 	}
-	const uniAny = uni as any
-	if (typeof uniAny.createInnerAudioContext !== 'function') {
-		return null
-	}
-	let ctx: any = null
 	try {
-		ctx = uniAny.createInnerAudioContext()
-	} catch (_e) {
-		return null
-	}
-	if (ctx == null) {
-		return null
-	}
-	innerAudioCtx = ctx
-	try {
-		ctx.obeyMuteSwitch = false
+		innerAudioCtx.stop()
 	} catch (_e) {}
-	ctx.onEnded(() => {
-		playingVoiceId.value = ''
-	})
-	ctx.onStop(() => {
-		playingVoiceId.value = ''
-	})
-	ctx.onError(() => {
-		playingVoiceId.value = ''
-		uni.showToast({ title: '语音播放失败', icon: 'none' })
-	})
-	return ctx
+	try {
+		innerAudioCtx.destroy()
+	} catch (_e) {}
+	innerAudioCtx = null
+}
+
+/** App 绝对路径常需 file://；小程序 wxfile://、网络 URL 保持原样 */
+function normalizeVoicePlaySrc(raw: string): string {
+	const p = raw.trim()
+	if (p.length === 0) {
+		return ''
+	}
+	if (p.indexOf('://') >= 0) {
+		return p
+	}
+	try {
+		const si = uni.getSystemInfoSync() as unknown as UTSJSONObject
+		const up = si['uniPlatform']
+		const plat = up != null ? '' + up : ''
+		const isApp =
+			plat === 'app' ||
+			plat === 'app-android' ||
+			plat === 'app-ios' ||
+			plat === 'app-harmony'
+		if (isApp && p.startsWith('/')) {
+			return 'file://' + p
+		}
+	} catch (_e) {}
+	return p
 }
 
 /** 仿微信：时长越长气泡略宽 */
@@ -869,38 +878,99 @@ function playVoice(msg: ChatMsg) {
 		uni.showToast({ title: '无可用语音', icon: 'none' })
 		return
 	}
-	const ctx = ensureInnerAudio()
+	if (playingVoiceId.value === msg.id) {
+		destroyPlayingInnerAudio()
+		playingVoiceId.value = ''
+		return
+	}
+	destroyPlayingInnerAudio()
+	const uniAny = uni as any
+	if (typeof uniAny.createInnerAudioContext !== 'function') {
+		uni.showToast({ title: '当前环境无法播放语音', icon: 'none' })
+		return
+	}
+	let ctx: any = null
+	try {
+		ctx = uniAny.createInnerAudioContext()
+	} catch (_e) {
+		ctx = null
+	}
 	if (ctx == null) {
 		uni.showToast({ title: '当前环境无法播放语音', icon: 'none' })
 		return
 	}
-	if (playingVoiceId.value === msg.id) {
+	innerAudioCtx = ctx
+	try {
+		ctx.obeyMuteSwitch = false
+	} catch (_e) {}
+	try {
+		ctx.volume = 1
+	} catch (_e) {}
+	try {
+		ctx.autoplay = false
+	} catch (_e) {}
+	try {
+		ctx.sessionCategory = 'playback'
+	} catch (_e) {}
+	const msgId = msg.id
+	const playSrc = normalizeVoicePlaySrc(msg.mediaSrc)
+	if (playSrc.length === 0) {
+		innerAudioCtx = null
 		try {
-			ctx.stop()
-		} catch (_e) {}
-		playingVoiceId.value = ''
+			ctx.destroy()
+		} catch (_e2) {}
+		uni.showToast({ title: '无可用语音', icon: 'none' })
 		return
 	}
-	try {
-		ctx.stop()
-	} catch (_e) {}
-	const path = msg.mediaSrc
-	const msgId = msg.id
+	let playStarted = false
+	const tryPlay = () => {
+		if (playStarted) {
+			return
+		}
+		if (playingVoiceId.value !== msgId) {
+			return
+		}
+		playStarted = true
+		try {
+			ctx.play()
+		} catch (_e) {
+			playingVoiceId.value = ''
+			destroyPlayingInnerAudio()
+			uni.showToast({ title: '播放失败', icon: 'none' })
+		}
+	}
+	ctx.onEnded(() => {
+		playingVoiceId.value = ''
+		destroyPlayingInnerAudio()
+	})
+	ctx.onStop(() => {
+		playingVoiceId.value = ''
+	})
+	ctx.onError((err: any) => {
+		playingVoiceId.value = ''
+		destroyPlayingInnerAudio()
+		let em = '语音播放失败'
+		try {
+			if (err != null) {
+				const m = err.errMsg as string | null
+				if (m != null && m.length > 0 && m.length < 40) {
+					em = m
+				}
+			}
+		} catch (_e) {}
+		uni.showToast({ title: em, icon: 'none' })
+	})
+	if (typeof ctx.onCanplay === 'function') {
+		ctx.onCanplay(() => {
+			tryPlay()
+		})
+	}
 	playingVoiceId.value = msgId
-	ctx.src = path
-	/* 小程序需在设置 src 后下一帧再 play，否则易失败 */
+	ctx.src = playSrc
 	nextTick(() => {
 		setTimeout(() => {
-			if (playingVoiceId.value !== msgId) {
-				return
-			}
-			try {
-				ctx.play()
-			} catch (_e) {
-				playingVoiceId.value = ''
-				uni.showToast({ title: '播放失败', icon: 'none' })
-			}
-		}, 60)
+			tryPlay()
+		}, 160)
 	})
 }
 
@@ -1066,13 +1136,7 @@ onMounted(() => {
 onUnmounted(() => {
 	clearRecordCountdown()
 	recordRemainSec.value = 59
-	if (innerAudioCtx != null) {
-		try {
-			innerAudioCtx.stop()
-			innerAudioCtx.destroy()
-		} catch (_e) {}
-		innerAudioCtx = null
-	}
+	destroyPlayingInnerAudio()
 	if (recorderManager != null) {
 		try {
 			recorderManager.stop()

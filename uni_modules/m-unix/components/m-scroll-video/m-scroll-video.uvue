@@ -33,22 +33,21 @@
 					</m-scroll-video-cell>
 
 					<view class="interaction" :class="{ on: sliderTouchType }">
-						<view class="item">
-							<image
-								class="user_avatar"
-								:src="avatarSrc(item)"
-								mode="aspectFill"
-								@click="clickEventSend('userAvatar', index)"
-							></image>
-							<button
+						<view class="item item-avatar">
+							<view class="avatar-shell" @click="clickEventSend('userAvatar', index)">
+								<image
+									class="user_avatar"
+									:src="avatarSrc(item)"
+									mode="aspectFill"
+								></image>
+							</view>
+							<view
 								v-if="item.userFollow == null || item.userFollow == false"
-								class="follow"
-								size="mini"
-								type="primary"
-								@click="clickEventSend('userFollow', index)"
+								class="follow-pill"
+								@tap.stop="clickEventSend('userFollow', index)"
 							>
-								关注
-							</button>
+								<text class="follow-pill__plus">+</text>
+							</view>
 						</view>
 						<view class="item" @click="clickEventSend('like', index)">
 							<image
@@ -395,6 +394,11 @@ export default {
 	justify-content: center;
 }
 
+.interaction .item-avatar {
+	margin-top: 0;
+	margin-bottom: 8rpx;
+}
+
 .interaction .item .icon {
 	width: 66rpx;
 }
@@ -406,21 +410,46 @@ export default {
 	font-weight: bold;
 }
 
-.user_avatar {
-	width: 90rpx;
-	height: 90rpx;
-	border-width: 8rpx;
-	border-style: solid;
-	border-color: #ffffff;
+.avatar-shell {
+	padding: 3rpx;
 	border-radius: 50%;
-	margin-bottom: 10rpx;
+	background: linear-gradient(145deg, #ffffff 0%, #e8e8e8 45%, #ffffff 100%);
+	box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.35);
 }
 
-.follow {
-	position: absolute;
-	bottom: 0;
-	font-size: 12rpx;
-	width: 110rpx;
-	transform: scale(0.7, 0.8);
+.user_avatar {
+	width: 88rpx;
+	height: 88rpx;
+	border-radius: 50%;
+	/* 内圈与渐变环形成白边效果 */
+	border-width: 2rpx;
+	border-style: solid;
+	border-color: rgba(255, 255, 255, 0.95);
+}
+
+/* 抖音式：头像底部叠放圆形「+」关注 */
+.follow-pill {
+	margin-top: -20rpx;
+	width: 42rpx;
+	height: 42rpx;
+	border-radius: 50%;
+	background: linear-gradient(180deg, #ff4d6a 0%, #fe2c55 55%, #e01e40 100%);
+	border-width: 3rpx;
+	border-style: solid;
+	border-color: #ffffff;
+	box-shadow: 0 4rpx 12rpx rgba(254, 44, 85, 0.45);
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	z-index: 2;
+}
+
+.follow-pill__plus {
+	color: #ffffff;
+	font-size: 32rpx;
+	font-weight: bold;
+	line-height: 1;
+	margin-top: -4rpx;
 }
 </style>
