@@ -1,36 +1,45 @@
-# mUnix (m-unix)
+# mms-unix (mUnix / m-unix)
 
-#### Description
-本公司自己使用。
+English | [简体中文](README.md)
 
-#### Software Architecture
-Software architecture description
+`mms-unix` is a **uni-app-x** mobile project (UTS/uvue). It includes basic user flows such as login, registration, password reset, and a member center, plus shared request/auth/storage utilities.
 
-#### Installation
+---
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## Quick Start
 
-#### Instructions
+### Prerequisites (recommended)
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+- An IDE/toolchain that supports uni-app-x (e.g. HBuilderX)
+- A running backend API endpoint (configured via `baseUrl`)
 
-#### Contribution
+### Configure API base URL
 
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
+Update `baseUrl` in `common/config.uts` to point to your dev/test/prod backend environment.
 
+---
 
-#### Gitee Feature
+## Features
 
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+- **Login**: SMS code login and username/password login
+- **Register**: phone + code + username + password
+- **Forgot password**: reset by SMS code
+- **Member center**: avatar/profile + entries (favorites, orders, coupons, etc.)
+- **HTTP wrapper**: `common/utils/request.uts` wraps `uni.request`, supports token and redirects on 401
+- **Storage**: `common/utils/storage.uts` for token & user info
+- **Auth guard**: `common/utils/auth.uts` for login-required pages and return redirects
+
+---
+
+## Project Structure (high-level)
+
+```text
+m-unix/
+├── common/
+│   ├── config.uts
+│   ├── api/
+│   └── utils/
+├── pages/
+├── static/
+└── uni_modules/
+```
