@@ -18,6 +18,31 @@ type CellPart = {
 	text: string
 }
 
+type CountdownShortBreakdown = {
+	day: number
+	hour: number
+	minute: number
+	second: number
+}
+
+type CountdownLongBreakdown = {
+	y: number
+	M: number
+	d: number
+	h: number
+	m: number
+	s: number
+}
+
+type CountdownCellBreakdown = {
+	y: number
+	M: number
+	d: number
+	h: number
+	mi: number
+	s: number
+}
+
 export default {
 	name: 'mCountdown',
 	emits: ['change', 'finish', 'tap'],
@@ -172,7 +197,7 @@ export default {
 				return []
 			}
 			const fmt = this.format as string
-			let br: { y: number; M: number; d: number; h: number; mi: number; s: number }
+			let br: CountdownCellBreakdown
 			if (this.calendar === true) {
 				const lb = this.longBreakdown(this.remaining)
 				br = { y: lb.y, M: lb.M, d: lb.d, h: lb.h, mi: lb.m, s: lb.s }
@@ -241,7 +266,7 @@ export default {
 			return this.padZero(d)
 		},
 		/** 总秒数拆成：天(0~)、时(0~23)、分、秒（duration 模式） */
-		parseFormatShort(seconds: number) {
+		parseFormatShort(seconds: number): CountdownShortBreakdown {
 			let sec = seconds
 			const day = Math.floor(sec / (60 * 60 * 24))
 			sec = sec % (60 * 60 * 24)
@@ -257,7 +282,7 @@ export default {
 			}
 		},
 		/** 年=365天、月=30天、日、时、分、秒（calendar 模式，近似） */
-		longBreakdown(seconds: number) {
+		longBreakdown(seconds: number): CountdownLongBreakdown {
 			let s = seconds
 			const y = Math.floor(s / (365 * 24 * 3600))
 			s = s % (365 * 24 * 3600)
@@ -298,7 +323,7 @@ export default {
 		},
 		scanFormatToCells(
 			fmt: string,
-			br: { y: number; M: number; d: number; h: number; mi: number; s: number }
+			br: CountdownCellBreakdown
 		): CellPart[] {
 			const out: CellPart[] = []
 			let i = 0

@@ -13,7 +13,7 @@ export function isLoggedIn(): boolean {
 export function checkLogin(toPath?: string): boolean {
 	if (isLoggedIn()) return true
 	const lp = getHostProjectConfig().loginPagePath
-	const loginPath = lp.length > 0 ? lp : '/pages_Me/login/login'
+	const loginPath = lp.length > 0 ? lp : '/pages/login/login'
 	const url = toPath != null && toPath != ''
 		? loginPath + '?redirect=' + encodeURIComponent(toPath)
 		: loginPath

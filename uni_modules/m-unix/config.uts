@@ -87,11 +87,12 @@ const M_UI_DEFAULTS: MUiConfig = {
 
 let mUiRuntime: MUiPartial | null = null
 
-function trimStr(s: string | null | undefined): string {
+function trimStr(s: string | null): string {
 	if (s == null) {
 		return ''
 	}
-	return s.trim()
+	const value = s as string
+	return value
 }
 
 /** 依次取第一个非空字符串，否则返回 defaultVal */
@@ -117,30 +118,30 @@ function pickChain2(a: string, b: string, defaultVal: string): string {
 
 export function getMUiConfig(): MUiConfig {
 	const cfg = getHostProjectConfig()
-	const r = mUiRuntime != null ? mUiRuntime : ({} as MUiPartial)
+	const r = mUiRuntime
 	const mu = cfg.mUi
-	const f = mu != null ? (mu as MUiPartial) : ({} as MUiPartial)
+	const f = mu != null ? (mu as MUiPartial) : null
 	const ci = cfg.configInfo
 	const api = cfg.api
 	return {
-		appName: pickChain(trimStr(r.appName), trimStr(f.appName), trimStr(ci.name), M_UI_DEFAULTS.appName),
+		appName: pickChain(trimStr(r != null ? r.appName : null), trimStr(f != null ? f.appName : null), trimStr(ci.name), M_UI_DEFAULTS.appName),
 		apiDevelopmentBase: pickChain(
-			trimStr(r.apiDevelopmentBase),
-			trimStr(f.apiDevelopmentBase),
+			trimStr(r != null ? r.apiDevelopmentBase : null),
+			trimStr(f != null ? f.apiDevelopmentBase : null),
 			trimStr(cfg.baseUrl),
 			M_UI_DEFAULTS.apiDevelopmentBase
 		),
-		apiProductionBase: pickChain2(trimStr(r.apiProductionBase), trimStr(f.apiProductionBase), M_UI_DEFAULTS.apiProductionBase),
-		agreementRoute: pickChain2(trimStr(r.agreementRoute), trimStr(f.agreementRoute), M_UI_DEFAULTS.agreementRoute),
-		privacyRoute: pickChain2(trimStr(r.privacyRoute), trimStr(f.privacyRoute), M_UI_DEFAULTS.privacyRoute),
-		appLogo: pickChain(trimStr(r.appLogo), trimStr(f.appLogo), trimStr(ci.logo), M_UI_DEFAULTS.appLogo),
-		emptyDefaultIcon: pickChain2(trimStr(r.emptyDefaultIcon), trimStr(f.emptyDefaultIcon), M_UI_DEFAULTS.emptyDefaultIcon),
-		avatarDefault: pickChain2(trimStr(r.avatarDefault), trimStr(f.avatarDefault), M_UI_DEFAULTS.avatarDefault),
-		articlePlaceholder: pickChain2(trimStr(r.articlePlaceholder), trimStr(f.articlePlaceholder), M_UI_DEFAULTS.articlePlaceholder),
-		demoImage: pickChain2(trimStr(r.demoImage), trimStr(f.demoImage), M_UI_DEFAULTS.demoImage),
+		apiProductionBase: pickChain2(trimStr(r != null ? r.apiProductionBase : null), trimStr(f != null ? f.apiProductionBase : null), M_UI_DEFAULTS.apiProductionBase),
+		agreementRoute: pickChain2(trimStr(r != null ? r.agreementRoute : null), trimStr(f != null ? f.agreementRoute : null), M_UI_DEFAULTS.agreementRoute),
+		privacyRoute: pickChain2(trimStr(r != null ? r.privacyRoute : null), trimStr(f != null ? f.privacyRoute : null), M_UI_DEFAULTS.privacyRoute),
+		appLogo: pickChain(trimStr(r != null ? r.appLogo : null), trimStr(f != null ? f.appLogo : null), trimStr(ci.logo), M_UI_DEFAULTS.appLogo),
+		emptyDefaultIcon: pickChain2(trimStr(r != null ? r.emptyDefaultIcon : null), trimStr(f != null ? f.emptyDefaultIcon : null), M_UI_DEFAULTS.emptyDefaultIcon),
+		avatarDefault: pickChain2(trimStr(r != null ? r.avatarDefault : null), trimStr(f != null ? f.avatarDefault : null), M_UI_DEFAULTS.avatarDefault),
+		articlePlaceholder: pickChain2(trimStr(r != null ? r.articlePlaceholder : null), trimStr(f != null ? f.articlePlaceholder : null), M_UI_DEFAULTS.articlePlaceholder),
+		demoImage: pickChain2(trimStr(r != null ? r.demoImage : null), trimStr(f != null ? f.demoImage : null), M_UI_DEFAULTS.demoImage),
 		qrCodeImageApiBase: pickChain(
-			trimStr(r.qrCodeImageApiBase),
-			trimStr(f.qrCodeImageApiBase),
+			trimStr(r != null ? r.qrCodeImageApiBase : null),
+			trimStr(f != null ? f.qrCodeImageApiBase : null),
 			trimStr(api.qrCodeImageApiBase),
 			M_UI_DEFAULTS.qrCodeImageApiBase
 		),
@@ -149,7 +150,8 @@ export function getMUiConfig(): MUiConfig {
 
 /** 运行时覆盖（可多次调用，未传入的字段保留上次运行时值） */
 export function setMUiConfig(p: MUiPartial): void {
-	const cur = mUiRuntime != null ? mUiRuntime : ({} as MUiPartial)
+	const existing = mUiRuntime
+	const cur = existing != null ? existing : ({} as MUiPartial)
 	if (p.appName != null) {
 		cur.appName = p.appName
 	}

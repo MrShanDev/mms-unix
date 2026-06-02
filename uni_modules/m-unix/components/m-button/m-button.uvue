@@ -2,50 +2,80 @@
 	<!-- 微信快捷登录组件 -->
 	
 	<view class="m-button__wrap"
-		:class="[(width==='100%' || !width || width===true) && (!btnSize || btnSize===true)?'m-btn__flex-1':'',getShapeClass(shape, plain),!disabled?'m-button__hover':'']"
-		:style="{width: getWidth, height: getHeight, margin: margin}">
+		:class="[shouldFill ? 'm-btn__flex-1' : '',getShapeClass(shape, plain),!disabled?'m-button__hover':'']"
+		:style="wrapStyle">
 		<!-- #ifdef MP-WEIXIN -->
 		
 		<button class="m-btn" :class="[
-				plain ? 'm-' + type + '-outline' : 'm-btn-' + (type || 'primary'),
+				plain ? 'm-' + resolvedType(type) + '-outline' : 'm-btn-' + resolvedType(type),
 				getDisabledClass(disabled, type, plain),
 				getShapeClass(shape, plain),
 				bold ? 'm-text-bold' : '',
 				link ? 'm-btn__link' : ''
-			]" :style="{ width: getWidth, height: getHeight, lineHeight: getHeight, 'font-size': fontSizeCss, background:getBgColor(type,plain),color:getColor(type,plain),boxShadow:shadow?getShadow(type,plain):'none' }"
+		]" :style="buttonMergedStyle"
 			:loading="loading" :form-type="formType" :open-type="openType" :app-parameter="appParameter"
 			@getuserinfo="bindgetuserinfo" @getphonenumber="bindgetphonenumber" @contact="bindcontact"
 			@error="binderror" @chooseavatar="bindchooseavatar" @launchapp="bindlaunchapp" :disabled="disabled"
 			@tap="handleClick">
-			<slot></slot>
+			<text class="m-btn__text" :style="textMergedStyle"><slot></slot></text>
 		</button>
 		<!-- #endif -->
 		<!-- #ifndef MP-WEIXIN -->
 		<button class="m-btn" :class="[
-				plain ? 'm-' + type + '-outline' : 'm-btn-' + (type || 'primary'),
+				plain ? 'm-' + resolvedType(type) + '-outline' : 'm-btn-' + resolvedType(type),
 				getDisabledClass(disabled, type, plain),
 				getShapeClass(shape, plain),
 				bold ? 'm-text-bold' : '',
 				link ? 'm-btn__link' : '',
 				loading ? 'm-btn--loading' : ''
-			]" :style="{ width: getWidth, height: getHeight, lineHeight: getHeight, 'font-size': fontSizeCss, background:getBgColor(type,plain),color:getColor(type,plain),boxShadow:shadow?getShadow(type,plain):'none' }"
+		]" :style="buttonMergedStyle"
 			:form-type="formType" :disabled="disabled" @tap="handleClick">
-			<view class="m-btn__inner" :style="{ 'font-size': fontSizeCss }">
-				<m-loading v-if="loading" text="" size="14rpx" :color="loadingSpinnerColor" />
+			<view class="m-btn__inner" :style="innerMergedStyle">
+				<view v-if="loading" class="m-btn__loading" :style="loadingStyle">
+					<m-loading text="" size="14rpx" :color="loadingSpinnerColor" />
+				</view>
 				<slot></slot>
 			</view>
 		</button>
 		<!-- #endif -->
 		<view class="m-button__border" :class="[getShapeClass(shape, plain),getDisabledClass(disabled, type, plain)]"
-			:style="{borderColor:getBgColor(type)}" v-if="!link && plain"></view>
+			:style="borderMergedStyle" v-if="!link && plain"></view>
 	</view>
 	
 </template>
 
-<script lang="uts">
-	import {GlobalColor} from '@/uni_modules/m-unix/components/m-tools/utype/type.uts'
-	import { toCssLength } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
-	export default {
+	<script lang="uts">
+		import {GlobalColor} from '@/uni_modules/m-unix/components/m-tools/utype/type.uts'
+		import { toCssLength } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
+
+		function stringProp(value: any | null, fallback: string): string {
+			if (value == null) return fallback
+			const text = '' + value
+			return text !== '' ? text : fallback
+		}
+
+		function objectProp(value: any | null): UTSJSONObject {
+			if (value != null && typeof value === 'object') {
+				return value as UTSJSONObject
+			}
+			return new UTSJSONObject()
+		}
+
+		function colorByKey(colors: UTSJSONObject, key: string, fallback: string): string {
+			const value = colors[key]
+			return value != null && value !== '' ? stringProp(value, fallback) : fallback
+		}
+
+		function eventDetail(event: any | null): any {
+			if (event != null && typeof event === 'object') {
+				const target = event as UTSJSONObject
+				const detail = target['detail']
+				return detail != null ? detail : new UTSJSONObject()
+			}
+			return new UTSJSONObject()
+		}
+
+		export default {
 		name: 'mButton',
 		emits: ['click', 'getuserinfo', 'contact', 'getphonenumber', 'error','chooseavatar','launchapp'],
 		// #ifdef MP-WEIXIN
@@ -99,6 +129,61 @@
 				type: String as unknown as PropType<string>,
 				default: '0'
 			},
+			// 自定义背景色，优先于 type
+			bgColor: {
+				type: String as unknown as PropType<string>,
+				default: ''
+			},
+			// 自定义文字颜色，优先于 type
+			textColor: {
+				type: String as unknown as PropType<string>,
+				default: ''
+			},
+			// 自定义圆角
+			radius: {
+				type: String as unknown as PropType<string>,
+				default: ''
+			},
+			customStyle: {
+				type: Object as unknown as PropType<UTSJSONObject>,
+				default: () => ({})
+			},
+			buttonStyle: {
+				type: Object as unknown as PropType<UTSJSONObject>,
+				default: () => ({})
+			},
+			innerStyle: {
+				type: Object as unknown as PropType<UTSJSONObject>,
+				default: () => ({})
+			},
+			textStyle: {
+				type: Object as unknown as PropType<UTSJSONObject>,
+				default: () => ({})
+			},
+			borderColor: {
+				type: String as unknown as PropType<string>,
+				default: ''
+			},
+			borderWidth: {
+				type: String as unknown as PropType<string>,
+				default: '1px'
+			},
+			paddingX: {
+				type: String as unknown as PropType<string>,
+				default: '0'
+			},
+			paddingY: {
+				type: String as unknown as PropType<string>,
+				default: '0'
+			},
+			loadingGap: {
+				type: String as unknown as PropType<string>,
+				default: '8rpx'
+			},
+			loadingColor: {
+				type: String as unknown as PropType<string>,
+				default: ''
+			},
 			//形状 circle(圆角), square(默认方形)，rightAngle(平角)
 			shape: {
 				type: String as unknown as PropType<string>,
@@ -149,30 +234,36 @@
 			}
 		},
 		computed: {
-			getWidth() {
-				//medium 184*40 / small 120 40/ mini 58*32
-				let width = this.width;
+				getWidth(): string {
+					//medium 184*40 / small 120 40/ mini 58*32
+					let width = stringProp(this.width, '100%');
 				// console.log(this.btnSize)
-				if (this.btnSize) {
-					width = {
-						'medium': '368rpx',
-						'small': '240rpx',
-						'mini': '116rpx',
-						'tiny': '112rpx'
-					} [this.btnSize] || this.width
+				if (this.btnSize !== '') {
+					if (this.btnSize === 'medium') {
+						width = '368rpx'
+					} else if (this.btnSize === 'small') {
+						width = '240rpx'
+					} else if (this.btnSize === 'mini') {
+						width = '116rpx'
+					} else if (this.btnSize === 'tiny') {
+						width = '112rpx'
+					}
 				}
 				return width
 			},
-			getHeight() {
-				//medium 184*40 / small 120 40/ mini 58*32
-				let height = this.height  || '96rpx';
-				if (this.btnSize) {
-					height = {
-						'medium': '80rpx',
-						'small': '80rpx',
-						'mini': '64rpx',
-						'tiny': '48rpx'
-					} [this.btnSize] || '96rpx'
+				getHeight(): string {
+					//medium 184*40 / small 120 40/ mini 58*32
+					let height = stringProp(this.height, '') !== '' ? stringProp(this.height, '') : '96rpx';
+				if (this.btnSize !== '') {
+					if (this.btnSize === 'medium') {
+						height = '80rpx'
+					} else if (this.btnSize === 'small') {
+						height = '80rpx'
+					} else if (this.btnSize === 'mini') {
+						height = '64rpx'
+					} else if (this.btnSize === 'tiny') {
+						height = '48rpx'
+					}
 				}
 				return height
 			},
@@ -186,9 +277,9 @@
 				} else {
 					const s = ('' + sz).trim()
 					if (s.length > 0) {
-						const n = parseInt(s, 10)
+						const n = parseFloat(s)
 						if (!isNaN(n) && n !== 0) {
-							return n
+							return s
 						}
 					}
 				}
@@ -213,9 +304,71 @@
 			fontSizeCss(): string {
 				return toCssLength(this.getSize as number | string)
 			},
+				getRadius(): string {
+					return stringProp(this.radius, '6rpx')
+				},
+			shouldFill(): boolean {
+				return (this.width === '100%' || this.width === '') && this.height === '' && this.btnSize === ''
+			},
+			wrapStyle(): UTSJSONObject {
+				const st: UTSJSONObject = {
+					width: this.getWidth,
+					height: this.getHeight,
+						margin: stringProp(this.margin, '0')
+					}
+					Object.assign(st, objectProp(this.customStyle))
+				return st
+			},
+			buttonMergedStyle(): UTSJSONObject {
+				const st: UTSJSONObject = {
+					width: this.getWidth,
+					height: this.getHeight,
+					'line-height': '1',
+					'font-size': this.fontSizeCss,
+					background: this.getButtonBgColor(this.type as string, this.plain as boolean),
+					color: this.getButtonTextColor(this.type as string, this.plain as boolean),
+					'border-radius': this.getRadius,
+					'box-shadow': this.shadow ? this.getShadow(this.type as string, this.plain as boolean) : 'none',
+						'padding-left': stringProp(this.paddingX, '0'),
+						'padding-right': stringProp(this.paddingX, '0'),
+						'padding-top': stringProp(this.paddingY, '0'),
+						'padding-bottom': stringProp(this.paddingY, '0')
+					}
+					Object.assign(st, objectProp(this.buttonStyle))
+				return st
+			},
+			innerMergedStyle(): UTSJSONObject {
+				const st: UTSJSONObject = {
+					'font-size': this.fontSizeCss
+				}
+					Object.assign(st, objectProp(this.innerStyle))
+				return st
+			},
+			textMergedStyle(): UTSJSONObject {
+				const st: UTSJSONObject = {
+					'font-size': this.fontSizeCss,
+					color: this.getButtonTextColor(this.type as string, this.plain as boolean),
+					'line-height': '1'
+				}
+					Object.assign(st, objectProp(this.textStyle))
+				return st
+			},
+			borderMergedStyle(): UTSJSONObject {
+				return {
+						'border-color': stringProp(this.borderColor, '') !== '' ? stringProp(this.borderColor, '') : this.getBgColor(this.type as string, true),
+						'border-width': stringProp(this.borderWidth, '1px'),
+					'border-radius': this.getRadius
+				}
+			},
 			/** 非微信端 loading 小圆点与按钮字色一致 */
-			loadingSpinnerColor(): string {
-				return this.getColor(this.type as string, this.plain as boolean)
+				loadingSpinnerColor(): string {
+					const loadingText = stringProp(this.loadingColor, '')
+					return loadingText !== '' ? loadingText : stringProp(this.getColor(this.type as string, this.plain as boolean), '#ffffff')
+			},
+			loadingStyle(): UTSJSONObject {
+				return {
+						'margin-right': stringProp(this.loadingGap, '8rpx')
+				}
 			}
 		},
 		data() {
@@ -224,21 +377,28 @@
 			};
 		},
 		methods: {
+			resolvedType(type:any | null): string {
+				return stringProp(type, 'primary')
+			},
 			hexToRGB(hex:string) {
 				if (hex.length === 4) {
 					let text = hex.substring(1, 4);
 					hex = '#' + text + text;
 				}
 				let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-				return result ? {
-					r: parseInt(result[1], 16),
-					g: parseInt(result[2], 16),
-					b: parseInt(result[3], 16)
-				} : {};
+				if (result == null) {
+					return {}
+				}
+				return {
+					r: parseInt(stringProp(result[1], '00'), 16),
+					g: parseInt(stringProp(result[2], '00'), 16),
+					b: parseInt(stringProp(result[3], '00'), 16)
+				};
 			},
-		getColorByType(type:string, isText?:boolean, plain?:boolean) {
-			// 默认主题颜色
-			let color:any = ''
+			getColorByType(type:any | null, isText?:boolean, plain?:boolean): string {
+				const finalType = this.resolvedType(type)
+				// 默认主题颜色
+				let color = ''
 			const colors = {
 				'primary': '#5677fc',
 				'white': '#fff',
@@ -254,37 +414,45 @@
 				'gray-warning': '#f2f2f2',
 				'gray-green': '#f2f2f2'
 			}
-				if (isText) {
-					if (type && ~type.indexOf('gray-')) {
-						const tp = type.replace('gray-', '')
+				if (isText === true) {
+					if (finalType !== '' && finalType.indexOf('gray-') >= 0) {
+						const tp = finalType.replace('gray-', '')
 						if (tp in colors){
-							color = colors[tp]
+							color = colorByKey(colors, tp, '#fff')
 						}
-					} else if (type === 'white') {
+					} else if (finalType === 'white') {
 						color = '#333'
 					} else {
-						if (plain) {
-							color = colors[type]
+						if (plain === true) {
+							color = colorByKey(colors, finalType, '#fff')
 						} else {
 							color = '#fff'
 						}
 					}
 				} else {
-					color = colors[type] || colors.primary
+					color = colorByKey(colors, finalType, colorByKey(colors, 'primary', '#5677fc'))
 				}
 				return color;
 			},
-			getShadow(type:string, plain:boolean) {
-				const color = this.getColorByType(type)
-				if (plain || !color) return 'none';
+			getShadow(type:any | null, plain:boolean) {
+				const color = this.getColorByType(type, false, plain)
+				if (plain || color == null || color === '') return 'none';
 				const rgb = this.hexToRGB(color)
-				return `0 10rpx 14rpx 0 rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`
+				return `0 10rpx 14rpx 0 rgba(${rgb['r']}, ${rgb['g']}, ${rgb['b']}, 0.2)`
 			},
-			getBgColor(type:string, plain:boolean) {
-				return plain ? 'transparent' : this.getColorByType(type)
+			getBgColor(type:any | null, plain:boolean) {
+				return plain ? 'transparent' : this.getColorByType(type, false, plain)
 			},
-			getColor(type:string, plain:boolean) {
+			getColor(type:any | null, plain:boolean) {
 				return this.getColorByType(type, true, plain)
+			},
+			getButtonBgColor(type:any | null, plain:boolean) {
+				const bg = stringProp(this.bgColor, '')
+				return bg !== '' ? bg : this.getBgColor(type, plain)
+			},
+			getButtonTextColor(type:any | null, plain:boolean) {
+				const color = stringProp(this.textColor, '')
+				return color !== '' ? color : this.getColor(type, plain)
 			},
 			handleClick() {
 				if (this.disabled) return;
@@ -297,60 +465,50 @@
 					}, 200);
 				}
 				this.$emit('click', {
-					index: Number(this.index)
+					index: parseFloat('' + this.index)
 				});
 			},
-			bindgetuserinfo({
-				detail = {}
-			} = {}) {
-				this.$emit('getuserinfo', detail);
+			bindgetuserinfo(event: any | null) {
+				this.$emit('getuserinfo', eventDetail(event));
 			},
-			bindcontact({
-				detail = {}
-			} = {}) {
-				this.$emit('contact', detail);
+			bindcontact(event: any | null) {
+				this.$emit('contact', eventDetail(event));
 			},
-			bindgetphonenumber({
-				detail = {}
-			} = {}) {
-				this.$emit('getphonenumber', detail);
+			bindgetphonenumber(event: any | null) {
+				this.$emit('getphonenumber', eventDetail(event));
 			},
-			binderror({
-				detail = {}
-			} = {}) {
-				this.$emit('error', detail);
+			binderror(event: any | null) {
+				this.$emit('error', eventDetail(event));
 			},
-			bindchooseavatar({
-				detail = {}
-			} = {}) {
-				this.$emit('chooseavatar', detail);
+			bindchooseavatar(event: any | null) {
+				this.$emit('chooseavatar', eventDetail(event));
 			},
-			bindlaunchapp({
-				detail = {}
-			} = {}) {
-				this.$emit('launchapp', detail);
+			bindlaunchapp(event: any | null) {
+				this.$emit('launchapp', eventDetail(event));
 			},
-			getDisabledClass: function(disabled:boolean, type:string, plain:boolean) {
+			getDisabledClass: function(disabled:any | null, type:any | null, plain:any | null) {
 				let className = '';
-				if (disabled && type != 'white' && type.indexOf('-') == -1) {
+				const finalType = this.resolvedType(type)
+				if (disabled === true && finalType != 'white' && finalType.indexOf('-') == -1) {
 					let classVal = this.disabledGray ? 'm-gray-disabled' : 'm-dark-disabled';
-					className = plain ? 'm-dark-disabled-outline' : classVal;
+					className = plain === true ? 'm-dark-disabled-outline' : classVal;
 				}
 				return className;
 			},
-			getShapeClass: function(shape:string, plain:boolean) {
+			getShapeClass: function(shape:any | null, plain:any | null) {
 				let className = '';
-				if (shape == 'circle') {
-					className = plain ? 'm-outline-fillet' : 'm-fillet';
-				} else if (shape == 'rightAngle') {
-					className = plain ? 'm-outline-rightAngle' : 'm-rightAngle';
+				const finalShape = shape != null ? shape : 'square'
+				if (finalShape == 'circle') {
+					className = plain === true ? 'm-outline-fillet' : 'm-fillet';
+				} else if (finalShape == 'rightAngle') {
+					className = plain === true ? 'm-outline-rightAngle' : 'm-rightAngle';
 				}
 				return className;
 			},
-			getHoverClass: function(disabled:boolean, type:string, plain:boolean) {
+			getHoverClass: function(disabled:any | null, type:any | null, plain:any | null) {
 				let className = '';
-				if (!disabled) {
-					className = plain ? 'm-outline-hover' : 'm-' + (type || 'primary') + '-hover';
+				if (disabled !== true) {
+					className = plain === true ? 'm-outline-hover' : 'm-' + this.resolvedType(type) + '-hover';
 				}
 				return className;
 			}
@@ -363,18 +521,6 @@
 		position: relative;
 		overflow: visible;
 		box-sizing: border-box;
-	}
-
-	.m-button__hover:active::after {
-		content: '';
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		left: 0;
-		top: 0;
-		background-color: rgba(0, 0, 0, 0.15);
-		border-radius: 6rpx;
-		pointer-events: none;
 	}
 
 	/* button start*/
@@ -400,16 +546,18 @@
 		align-items: center;
 		justify-content: center;
 		width: 100%;
-		/* 子项间距：避免使用 * + *（微信小程序 WXSS 不支持通用选择器 *） */
-		gap: 12rpx;
+		height: 100%;
 	}
 
 	.m-btn--loading {
 		pointer-events: none;
 	}
 
-	.m-btn::after {
-		border: 0;
+	.m-btn__loading {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.m-btn__flex-1 {
@@ -456,15 +604,7 @@
 		border-radius: 220rpx !important;
 	}
 
-	.m-fillet::after {
-		border-radius: 220rpx !important;
-	}
-
 	.m-outline-fillet {
-		border-radius: 220rpx !important;
-	}
-
-	.m-outline-fillet::after {
 		border-radius: 220rpx !important;
 	}
 
@@ -473,19 +613,7 @@
 		border-radius: 0 !important;
 	}
 
-	.m-rightAngle::after {
-		border-radius: 0 !important;
-	}
-
 	.m-outline-rightAngle {
 		border-radius: 0 !important;
 	}
-
-	.m-outline-rightAngle::after {
-		border-radius: 0 !important;
-	}
-
-	.m-btn__link::after {
-		border: 0 !important;
-	}
-</style>
+	</style>

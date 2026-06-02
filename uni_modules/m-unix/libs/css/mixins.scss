@@ -6,31 +6,14 @@
  * 关键布局请用 view 包裹 + 专用 class 写 margin，勿仅依赖 *。
  */
 
-/// 单行 flex 主轴为 row：子元素右间距，最后一项清零（若 * 不生效请改为 class）
+/// 单行 flex 主轴为 row：App uvue 不稳定支持子选择器，保留空 mixin 避免输出关系选择器。
 @mixin m-flex-gap-row($size) {
-	& > * {
-		margin-right: $size;
-	}
-	& > *:last-child {
-		margin-right: 0;
-	}
 }
 
-/// 单列 flex 主轴为 column：子元素下间距，最后一项清零
+/// 单列 flex 主轴为 column：请在子元素 class 或内联样式上显式写 margin。
 @mixin m-flex-gap-column($size) {
-	& > * {
-		margin-bottom: $size;
-	}
-	& > *:last-child {
-		margin-bottom: 0;
-	}
 }
 
-/// flex-wrap 多行/多列：等价于 gap（$gap 为总间距，内部用一半做负边距抵消）
-/// 例：gap 16rpx → @include m-flex-gap-wrap(8rpx);
+/// flex-wrap 多行/多列：请在每个子项上显式写 margin，避免输出关系选择器。
 @mixin m-flex-gap-wrap($half) {
-	margin: -#{$half} -#{$half} 0 0;
-	& > * {
-		margin: $half $half 0 0;
-	}
 }

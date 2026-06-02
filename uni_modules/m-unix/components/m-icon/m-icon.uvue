@@ -210,7 +210,7 @@ export default {
 		iconStyle(): string {
 			let style = 'font-family:"iconfont";'
 			style += 'font-size:' + this.resolveFontSize() + ';'
-			if (this.color) {
+			if (this.color !== '') {
 				style += 'color:' + this.color + ';'
 			}
 			if (this.bold) {
@@ -258,7 +258,7 @@ export default {
 
 <style lang="scss">
 .m-icon {
-	display: inline-block;
+	display: flex;
 	line-height: 1;
 }
 </style>

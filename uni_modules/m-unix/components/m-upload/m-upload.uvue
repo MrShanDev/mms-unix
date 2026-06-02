@@ -2,6 +2,7 @@
 	<view class="m-upload" :style="uploadGridStyle">
 		<view
 			class="m-upload__item"
+			:style="uploadItemStyle"
 			v-for="(item, index) in resolvedFiles"
 			:key="index"
 		>
@@ -35,6 +36,7 @@
 			v-if="resolvedFiles.length < maxCount"
 			class="m-upload__add"
 			:class="{ 'm-upload__add--disabled': addDisabled }"
+			:style="uploadItemStyle"
 			@click="chooseImage"
 		>
 			<view class="m-upload__add-box">
@@ -156,17 +158,22 @@ export default {
 		}
 	},
 	computed: {
-		/** 由 columns、gap 生成每项宽度与间距 CSS 变量（ucss 对 gap 不稳定，用 margin） */
+		/** 根容器保留扩展入口；具体列宽由 uploadItemStyle 计算，避免 CSS var/calc。 */
 		uploadGridStyle(): UTSJSONObject {
+			return {}
+		},
+		uploadItemStyle(): UTSJSONObject {
 			const cRaw = this.columns as number
 			const g = this.gap as number
 			let cols = cRaw
 			if (cols < 1) {
 				cols = 1
 			}
-			const st: UTSJSONObject = {}
-			st['--mu-gap'] = g + 'rpx'
-			st['--mu-item-w'] = 'calc((100% - ' + (cols - 1) + ' * ' + g + 'rpx) / ' + cols + ')'
+			const st: UTSJSONObject = {
+				width: (100 / cols) + '%',
+				marginRight: g + 'rpx',
+				marginBottom: g + 'rpx'
+			}
 			return st
 		},
 		/** 保留列表项上的业务字段（如 id），仅约定使用 url / status / path / serverData */
@@ -474,13 +481,9 @@ export default {
 	flex-direction: row;
 	flex-wrap: wrap;
 	box-sizing: border-box;
-	/* 每项宽度由 uploadGridStyle 中 --mu-item-w 计算（一行 columns 个再换行） */
 
 	.m-upload__item {
 		position: relative;
-		width: var(--mu-item-w);
-		margin-right: var(--mu-gap);
-		margin-bottom: var(--mu-gap);
 		box-sizing: border-box;
 
 		.m-upload__item-inner {
@@ -545,9 +548,6 @@ export default {
 	}
 
 	.m-upload__add {
-		width: var(--mu-item-w);
-		margin-right: var(--mu-gap);
-		margin-bottom: var(--mu-gap);
 		box-sizing: border-box;
 	}
 

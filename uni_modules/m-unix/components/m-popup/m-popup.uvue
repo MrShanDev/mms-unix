@@ -17,7 +17,14 @@
 			]"
 			:style="contentStyle"
 		>
-			<view class="m-popup__content-inner" :class="{ 'm-popup--closeable': closeable }">
+			<view
+				class="m-popup__content-inner"
+				:class="{
+					'm-popup--closeable': closeable,
+					'm-popup--center-inner': position === 'center',
+					'm-popup--fullscreen-inner': position === 'fullscreen'
+				}"
+			>
 				<slot></slot>
 				<view class="m-popup__close" @tap="handleCloseClick" v-if="closeable">
 					<icon name="close" size="40" color="#c0c4cc"></icon>
@@ -113,11 +120,11 @@ export default {
 				zIndex: this.zIndex,
 				transitionDuration: durStr
 			}
-			// 左右侧：高度由样式 top:0 + bottom:0 拉满视口，不再套默认 maxHeight（避免 80vh 裁成「不满屏」）
+			// 左右侧：高度由样式 top:0 + bottom:0 拉满视口，不再套默认 maxHeight。
 			if (pos === 'left' || pos === 'right' || pos === 'fullscreen') {
 				style.maxHeight = '100%'
 			} else {
-				style.maxHeight = this.maxHeight + 'vh'
+				style.maxHeight = this.maxHeight + '%'
 			}
 			return style
 		}
@@ -205,158 +212,152 @@ export default {
 	right: 0;
 	bottom: 0;
 	pointer-events: none;
+}
 
-	.m-popup__content {
-		position: absolute;
-		background-color: #ffffff;
-		box-sizing: border-box;
-		pointer-events: auto;
-		overflow-y: auto;
-		transition-property: transform, opacity;
-		transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+.m-popup__content {
+	position: absolute;
+	background-color: #ffffff;
+	box-sizing: border-box;
+	pointer-events: auto;
+	overflow-y: auto;
+	transition-property: transform, opacity;
+	transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
 
-		&.m-popup--bottom {
-			bottom: var(--uni-safe-area-inset-bottom, 0px);
-			left: 0;
-			width: 100%;
-			transform: translateY(100%);
+.m-popup--bottom {
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	transform: translateY(100%);
+}
 
-			&.m-popup__content--show {
-				transform: translateY(0);
-			}
+.m-popup--bottom.m-popup__content--show {
+	transform: translateY(0);
+}
 
-			&.m-popup--round {
-				border-top-left-radius: 20rpx;
-				border-top-right-radius: 20rpx;
-			}
-		}
+.m-popup--bottom.m-popup--round {
+	border-top-left-radius: 20rpx;
+	border-top-right-radius: 20rpx;
+}
 
-		&.m-popup--center {
-			top: 50%;
-			left: 50%;
-			width: auto;
-			min-width: 520rpx;
-			max-width: 86%;
-			opacity: 0;
-			transform: translate(-50%, -46%) scale(0.94);
-			box-shadow: 0 12rpx 48rpx rgba(0, 0, 0, 0.12);
-			overflow-x: hidden;
+.m-popup--center {
+	top: 50%;
+	left: 50%;
+	width: auto;
+	min-width: 520rpx;
+	max-width: 86%;
+	opacity: 0;
+	transform: translate(-50%, -46%) scale(0.94);
+	box-shadow: 0 12rpx 48rpx rgba(0, 0, 0, 0.12);
+	overflow-x: hidden;
+}
 
-			&.m-popup__content--show {
-				opacity: 1;
-				transform: translate(-50%, -50%) scale(1);
-			}
+.m-popup--center.m-popup__content--show {
+	opacity: 1;
+	transform: translate(-50%, -50%) scale(1);
+}
 
-			&.m-popup--round {
-				border-radius: 20rpx;
-			}
+.m-popup--center.m-popup--round {
+	border-radius: 20rpx;
+}
 
-			/* 居中弹层：内边距与底部/侧边区分，避免插槽内容贴边 */
-			.m-popup__content-inner {
-				padding: 44rpx 48rpx 40rpx;
-			}
+.m-popup--top {
+	top: 0;
+	left: 0;
+	width: 100%;
+	transform: translateY(-100%);
+}
 
-			&.m-popup--closeable .m-popup__content-inner {
-				padding-top: 56rpx;
-			}
-		}
+.m-popup--top.m-popup__content--show {
+	transform: translateY(0);
+}
 
-		&.m-popup--top {
-			top: var(--uni-safe-area-inset-top, 0px);
-			left: 0;
-			width: 100%;
-			transform: translateY(-100%);
+.m-popup--top.m-popup--round {
+	border-bottom-left-radius: 20rpx;
+	border-bottom-right-radius: 20rpx;
+}
 
-			&.m-popup__content--show {
-				transform: translateY(0);
-			}
+.m-popup--left {
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 70%;
+	max-width: 600rpx;
+	transform: translateX(-100%);
+}
 
-			&.m-popup--round {
-				border-bottom-left-radius: 20rpx;
-				border-bottom-right-radius: 20rpx;
-			}
-		}
+.m-popup--left.m-popup__content--show {
+	transform: translateX(0);
+}
 
-		&.m-popup--left {
-			top: var(--uni-safe-area-inset-top, 0px);
-			left: 0;
-			bottom: var(--uni-safe-area-inset-bottom, 0px);
-			width: 70%;
-			max-width: 600rpx;
-			transform: translateX(-100%);
+.m-popup--left.m-popup--round {
+	border-top-right-radius: 20rpx;
+	border-bottom-right-radius: 20rpx;
+}
 
-			&.m-popup__content--show {
-				transform: translateX(0);
-			}
+.m-popup--right {
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: 70%;
+	max-width: 600rpx;
+	transform: translateX(100%);
+}
 
-			&.m-popup--round {
-				border-top-right-radius: 20rpx;
-				border-bottom-right-radius: 20rpx;
-			}
-		}
+.m-popup--right.m-popup__content--show {
+	transform: translateX(0);
+}
 
-		&.m-popup--right {
-			top: var(--uni-safe-area-inset-top, 0px);
-			right: 0;
-			bottom: var(--uni-safe-area-inset-bottom, 0px);
-			width: 70%;
-			max-width: 600rpx;
-			transform: translateX(100%);
+.m-popup--right.m-popup--round {
+	border-top-left-radius: 20rpx;
+	border-bottom-left-radius: 20rpx;
+}
 
-			&.m-popup__content--show {
-				transform: translateX(0);
-			}
+.m-popup--fullscreen {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	max-height: 100%;
+	background-color: transparent;
+	opacity: 0;
+	transform: scale(0.96);
+	border-radius: 0;
+	overflow: hidden;
+}
 
-			&.m-popup--round {
-				border-top-left-radius: 20rpx;
-				border-bottom-left-radius: 20rpx;
-			}
-		}
+.m-popup--fullscreen.m-popup__content--show {
+	opacity: 1;
+	transform: scale(1);
+}
 
-		/* 全屏层：弹屏广告、大图引导等；插槽区无默认内边距，由业务铺满 */
-		&.m-popup--fullscreen {
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			width: 100%;
-			height: 100%;
-			max-height: 100%;
-			background-color: transparent;
-			opacity: 0;
-			transform: scale(0.96);
-			border-radius: 0;
-			overflow: hidden;
+.m-popup__content-inner {
+	position: relative;
+	padding: 30rpx;
+	box-sizing: border-box;
+}
 
-			&.m-popup__content--show {
-				opacity: 1;
-				transform: scale(1);
-			}
+.m-popup--center-inner {
+	padding: 44rpx 48rpx 40rpx;
+}
 
-			.m-popup__content-inner {
-				padding: 0;
-				width: 100%;
-				height: 100%;
-				box-sizing: border-box;
-			}
+.m-popup--closeable {
+	padding-top: 56rpx;
+}
 
-			&.m-popup--closeable .m-popup__content-inner {
-				padding-top: 0;
-			}
-		}
-	}
+.m-popup--fullscreen-inner {
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+}
 
-	.m-popup__content-inner {
-		position: relative;
-		padding: 30rpx;
-		box-sizing: border-box;
-
-		.m-popup__close {
-			position: absolute;
-			top: 10rpx;
-			right: 10rpx;
-			padding: 10rpx;
-		}
-	}
+.m-popup__close {
+	position: absolute;
+	top: 10rpx;
+	right: 10rpx;
+	padding: 10rpx;
 }
 </style>

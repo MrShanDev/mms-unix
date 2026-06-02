@@ -12,8 +12,13 @@
 <script lang="uts">
 	import { toCssLength } from '@/uni_modules/m-unix/components/m-tools/Ut.uts'
 
+	type TipsOptions = {
+	  msg: string
+	  duration?: number
+	}
+
 	interface ToastRef {
-	  showTips: (options: { msg: string; duration?: number }) => void; // 属性名必须是 msg
+	  showTips: (options: TipsOptions) => void; // 属性名必须是 msg
 	}
 	export default {
 		name: 'mTips',
@@ -53,7 +58,7 @@
 			};
 		},
 		methods: {
-			showTips: function (options : { duration : number, msg : string }) {
+			showTips: function (options : TipsOptions) {
 				const { duration = 2000 } = options;
 				clearTimeout(this.timer);
 				this.show = true;
@@ -136,13 +141,11 @@
 
 	.m-bottomtips {
 		bottom: 120rpx;
-		-webkit-transform: translateX(-50%);
 		transform: translateX(-50%);
 	}
 
 	.m-centertips {
 		top: 50%;
-		-webkit-transform: translate(-50%, -50%);
 		transform: translate(-50%, -50%);
 	}
 </style>

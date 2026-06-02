@@ -94,6 +94,20 @@
 	import { getHostProjectConfig } from '@/uni_modules/m-unix/components/m-tools/ProjectConfig.uts'
 	import { StoreMemberVo } from '@/uni_modules/m-unix/components/m-tools/utype/type.uts'
 
+	type LoginDialogButton = {
+		text: string
+		color?: string
+	}
+
+	type LoginDialogClickEvent = {
+		index: number
+	}
+
+	type LoginPhoneEvent = {
+		iv: string
+		encryptedData: string
+	}
+
 	export default {
 
 		name: 'mLogin',
@@ -128,7 +142,7 @@
 				}, {
 					text: '同意并勾选',
 					color: '#586c94'
-				}] as Array<{ text: string; color?: string }>
+				}] as Array<LoginDialogButton>
 			}
 		},
 		created() {
@@ -216,7 +230,7 @@
 			onAgreementDialogShowUpdate(next : boolean) {
 				this.showAgreementDialog = next
 			},
-			onAgreementDialogClick(e : { index : number }) {
+			onAgreementDialogClick(e : LoginDialogClickEvent) {
 				if (e.index === 1) {
 					this.isAgree = true
 				}
@@ -224,7 +238,7 @@
 			onLoginAfterAgree() {
 				this.$m.toast('非微信端请对接业务登录接口')
 			},
-			getPhone(e : { iv : string, encryptedData : string }) {
+			getPhone(e : LoginPhoneEvent) {
 				const than = this
 				if (!than.isAgree) {
 					than.showAgreementDialog = true

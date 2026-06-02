@@ -21,7 +21,7 @@
 				:style="cellStyle(idx - 1)"
 			>
 				<view
-					v-if="password && charAt(idx - 1) !== ''"
+					v-if="shouldShowPasswordDot(idx - 1)"
 					class="m-code-input__pwd-dot"
 					:style="pwdDotStyle"
 				></view>
@@ -332,6 +332,9 @@ export default {
 				return ''
 			}
 			return s.charAt(i)
+		},
+		shouldShowPasswordDot(i: number): boolean {
+			return this.password === true && this.charAt(i) !== ''
 		},
 		cellStyle(i: number): UTSJSONObject {
 			const st: UTSJSONObject = {

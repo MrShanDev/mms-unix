@@ -13,9 +13,7 @@ function userInfoKey(): string {
 	return getHostProjectConfig().storage.userInfo
 }
 
-type AnyRecord = {
-	[key: string]: any
-}
+type AnyRecord = UTSJSONObject
 
 type StorageApi = {
 	get: (key: string) => any | null

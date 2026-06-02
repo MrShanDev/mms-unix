@@ -99,7 +99,7 @@ export default {
 
 <style scoped lang="scss">
 .m-price {
-	display: inline-flex;
+	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
 	align-items: baseline;
@@ -128,41 +128,59 @@ export default {
 
 /* 档位：符号 / 整数 / 小数（小数略小于整数，基线对齐） */
 .m-price--sm {
-	.m-price__symbol {
-		font-size: 22rpx;
-	}
-	.m-price__int,
-	.m-price__whole {
-		font-size: 32rpx;
-	}
-	.m-price__decimal {
-		font-size: 22rpx;
-	}
+}
+
+.m-price--sm .m-price__symbol {
+	font-size: 22rpx;
+}
+
+.m-price--sm .m-price__int {
+	font-size: 32rpx;
+}
+
+.m-price--sm .m-price__whole {
+	font-size: 32rpx;
+}
+
+.m-price--sm .m-price__decimal {
+	font-size: 22rpx;
 }
 
 .m-price--md {
-	.m-price__symbol {
-		font-size: 26rpx;
-	}
-	.m-price__int,
-	.m-price__whole {
-		font-size: 40rpx;
-	}
-	.m-price__decimal {
-		font-size: 26rpx;
-	}
+}
+
+.m-price--md .m-price__symbol {
+	font-size: 26rpx;
+}
+
+.m-price--md .m-price__int {
+	font-size: 40rpx;
+}
+
+.m-price--md .m-price__whole {
+	font-size: 40rpx;
+}
+
+.m-price--md .m-price__decimal {
+	font-size: 26rpx;
 }
 
 .m-price--lg {
-	.m-price__symbol {
-		font-size: 30rpx;
-	}
-	.m-price__int,
-	.m-price__whole {
-		font-size: 48rpx;
-	}
-	.m-price__decimal {
-		font-size: 30rpx;
-	}
+}
+
+.m-price--lg .m-price__symbol {
+	font-size: 30rpx;
+}
+
+.m-price--lg .m-price__int {
+	font-size: 48rpx;
+}
+
+.m-price--lg .m-price__whole {
+	font-size: 48rpx;
+}
+
+.m-price--lg .m-price__decimal {
+	font-size: 30rpx;
 }
 </style>

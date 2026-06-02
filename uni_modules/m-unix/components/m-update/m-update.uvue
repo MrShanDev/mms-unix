@@ -32,6 +32,10 @@
 		apkUrl?: string
 	}
 
+	type UpdateButtonClickEvent = {
+		index: number
+	}
+
 	export default {
 		name: 'mUpdate',
 		emits: ['update', 'noUpdate'],
@@ -80,19 +84,25 @@
 					console.warn('[m-update] 未传入 checkUpdateFn，已跳过检查更新')
 					return
 				}
-				const currentVersionCode = getHostProjectConfig().configInfo.versionCode || 0
+				const rawVersionCode = getHostProjectConfig().configInfo.versionCode
+				const currentVersionCode = rawVersionCode != null ? rawVersionCode : 0
 				fn(currentVersionCode).then(res => {
 					if (res.code == 0 && res.data != null) {
 						const data = res.data as UTSJSONObject
-						const hasUpdate = (data['hasUpdate'] as boolean) || false
+						const hasUpdate = data['hasUpdate'] === true
 						if (hasUpdate) {
 							this.updateInfo.hasUpdate = true
-							this.updateInfo.title = (data['title'] as string) || '发现新版本'
-							this.updateInfo.desc = (data['desc'] as string) || '修复已知问题，优化使用体验'
-							this.updateInfo.versionCode = (data['versionCode'] as number) || 0
-							this.updateInfo.versionName = (data['versionName'] as string) || ''
-							this.updateInfo.force = (data['force'] as boolean) || false
-							this.updateInfo.apkUrl = (data['apkUrl'] as string) || ''
+							const title = data['title'] as string
+							const desc = data['desc'] as string
+							const versionCode = data['versionCode'] as number
+							const versionName = data['versionName'] as string
+							const apkUrl = data['apkUrl'] as string
+							this.updateInfo.title = title != null && title !== '' ? title : '发现新版本'
+							this.updateInfo.desc = desc != null && desc !== '' ? desc : '修复已知问题，优化使用体验'
+							this.updateInfo.versionCode = versionCode != null ? versionCode : 0
+							this.updateInfo.versionName = versionName != null ? versionName : ''
+							this.updateInfo.force = data['force'] === true
+							this.updateInfo.apkUrl = apkUrl != null ? apkUrl : ''
 							this.showUpdateDialog = true
 						} else {
 							this.$emit('noUpdate')
@@ -106,7 +116,7 @@
 			/**
 			 * 处理更新按钮点击
 			 */
-			handleButtonClick(e: { index: number }) {
+			handleButtonClick(e: UpdateButtonClickEvent) {
 				if (this.updateInfo.force) {
 					// 强制更新，必须点击更新
 					this.doUpdate()
@@ -182,7 +192,7 @@
 }
 
 .m-update__desc {
-	display: block;
+	display: flex;
 	font-size: 28rpx;
 	color: #666;
 	line-height: 1.6;

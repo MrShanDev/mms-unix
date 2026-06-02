@@ -2,6 +2,7 @@
 	<view
 		class="m-text"
 		:class="{ 'm-text--block': block, 'm-text--hl': highlight && !disable }"
+		:hover-class="highlight && !disable ? 'm-text--pressed' : 'none'"
 		:style="wrapStyle"
 		@tap="onTap"
 	>
@@ -262,7 +263,7 @@ export default {
 	flex-shrink: 1;
 }
 
-.m-text--hl:active {
+.m-text--pressed {
 	opacity: 0.75;
 }
 </style>

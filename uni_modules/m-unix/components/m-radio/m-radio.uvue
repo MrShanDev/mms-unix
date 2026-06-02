@@ -205,7 +205,7 @@ export default {
 			}
 			const dir = g.direction as string
 			if (dir !== 'row') {
-				return {}
+				return { marginBottom: '28rpx' }
 			}
 			const st: UTSJSONObject = {}
 			st['marginTop'] = '0'

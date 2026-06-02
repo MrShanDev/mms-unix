@@ -2,6 +2,7 @@
 	<view
 		class="m-countdown-verify"
 		:class="{ 'm-countdown-verify--hover': hover }"
+		:hover-class="hover && !mergedDisabled ? 'm-countdown-verify--pressed' : 'none'"
 		:style="rootStyle"
 		@tap.stop="onTap"
 	>
@@ -291,7 +292,7 @@ export default {
 	flex-shrink: 0;
 }
 
-.m-countdown-verify--hover:active {
+.m-countdown-verify--pressed {
 	opacity: 0.75;
 }
 

@@ -9,14 +9,9 @@ import zhHans from '@/locale/zh-Hans.json'
 import en from '@/locale/en.json'
 
 // 语言包类型
-type Messages = {
-	[key: string]: string
-}
+type Messages = UTSJSONObject
 
-type LocaleMessages = {
-	'zh-Hans': Messages
-	'en': Messages
-}
+type LocaleMessages = UTSJSONObject
 
 /**
  * 初始化国际化
@@ -24,10 +19,9 @@ type LocaleMessages = {
  */
 export function initI18n(): void {
 	// 设置语言包
-	const localeData: LocaleMessages = {
-		'zh-Hans': zhHans as Messages,
-		'en': en as Messages
-	}
+	const localeData: LocaleMessages = {}
+	localeData['zh-Hans'] = zhHans as Messages
+	localeData['en'] = en as Messages
 	setAllMessages(localeData)
 	// 初始化语言
 	initLocale()

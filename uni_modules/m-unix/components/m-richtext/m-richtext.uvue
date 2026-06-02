@@ -176,7 +176,6 @@ export default {
 .m-richtext__clip {
 	width: 100%;
 	box-sizing: border-box;
-	-webkit-overflow-scrolling: touch;
 }
 
 .m-richtext {

@@ -1,6 +1,9 @@
 import { StorageEnum } from '@/uni_modules/m-unix/components/m-tools/uenum/SysEnum.uts'
 import { StoreMemberVo } from '@/uni_modules/m-unix/components/m-tools/utype/type.uts'
 import CacheUtil from "@/uni_modules/m-unix/components/m-tools/CacheUtil.uts"
+
+const memberInfoKey = '' + StorageEnum.MEMBER_INFO_KEY
+
 /**
  * 登录对象
  */
@@ -24,14 +27,14 @@ export class LoginObject {
 	 * 设置登录对象
 	 */
 	setMemberInfo(m : StoreMemberVo) : void {
-		CacheUtil.set(StorageEnum.MEMBER_INFO_KEY, m)
+		CacheUtil.set(memberInfoKey, m, null)
 	}
 	/**
 	 * 获取登录对象
 	 */
 	getMemberInfo() : StoreMemberVo | null {
 		try {
-			return CacheUtil.get<StoreMemberVo>(StorageEnum.MEMBER_INFO_KEY);
+			return CacheUtil.get<StoreMemberVo>(memberInfoKey, null);
 		} catch (e) {
 			console.log("get token error,`{}`", e)
 			return null;
@@ -47,7 +50,7 @@ export class LoginObject {
 	 * 退出
 	 */
 	logout(){
-		CacheUtil.remove(StorageEnum.MEMBER_INFO_KEY)
+		CacheUtil.remove(memberInfoKey)
 	}
 	/**
 	 * 是否登录

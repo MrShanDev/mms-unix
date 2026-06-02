@@ -4,10 +4,10 @@
 import { LoginObject } from '@/uni_modules/m-unix/components/m-tools/LoginObject.uts'
 import { getHostProjectConfig } from '@/uni_modules/m-unix/components/m-tools/ProjectConfig.uts'
 import { R, StoreMemberVo } from '@/uni_modules/m-unix/components/m-tools/utype/type.uts'
-import { RunType, HttpStatus } from '@/uni_modules/m-unix/components/m-tools/uenum/SysEnum.uts'
+import { RunType } from '@/uni_modules/m-unix/components/m-tools/uenum/SysEnum.uts'
 import { storage } from '@/uni_modules/m-unix/components/m-tools/Storage.uts'
-import { isLoggedIn, checkLogin, needLogin } from '@/uni_modules/m-unix/components/m-tools/Auth.uts'
-import { http, request } from '@/uni_modules/m-unix/components/m-tools/Request.uts'
+import { isLoggedIn as authIsLoggedIn, checkLogin as authCheckLogin, needLogin as authNeedLogin } from '@/uni_modules/m-unix/components/m-tools/Auth.uts'
+import { http, request, RequestOptions, ApiResponse } from '@/uni_modules/m-unix/components/m-tools/Request.uts'
 import { useAuth } from '@/uni_modules/m-unix/components/m-tools/useAuth.uts'
 import {
 	getMUiConfig,
@@ -27,26 +27,39 @@ export {
 	M_UI_BUILTIN_PLACEHOLDER_ARTICLE,
 }
 
+type MoneyUnitValue = {
+	num: string
+	unit: string
+}
+
+type MConfigInfoValue = {
+	development: string
+	production: string
+	name: string
+	logo: string
+	agreement: string
+	privacy: string
+}
+
+type ShowTipsOptions = {
+	msg: string
+	duration: number
+}
+
+type ShowTipsFunction = (options: ShowTipsOptions) => void
+
+function trimText(value: string): string {
+	return value.replace(/(^\s*)|(\s*$)/g, '')
+}
+
 /** 当前宿主 configInfo（与 $m.configInfo() 函数区分；未 inject 时为库内默认） */
 export function getProjectConfigInfo() {
 	return getHostProjectConfig().configInfo
 }
 
-const tabBarPaths = [
-	'/pages/components/components',
-	'/pages/tools/tools',
-	'/pages/templates/templates',
-	'/pages/user/user',
-]
-
 /** 跳转 - type: to=navigateTo, redirectTo=redirectTo */
 export function jumpTo(url: string, type: string = 'to') {
 	if (url == '') return
-	const path = url.split('?')[0]
-	if (tabBarPaths.indexOf(path) >= 0) {
-		uni.switchTab({ url })
-		return
-	}
 	if (type === 'redirectTo') {
 		uni.redirectTo({ url })
 	} else {
@@ -102,10 +115,10 @@ export function apiStop() {
 }
 
 /** 判空 */
-export function isEmpty(content: string | null | undefined): boolean {
-	if (content == null || content == undefined) return true
+export function isEmpty(content: string | null): boolean {
+	if (content == null) return true
 	const s = content as string
-	return typeof s === 'string' && s.trim() == ''
+	return trimText(s) == ''
 }
 
 /** 身份证验证 */
@@ -115,9 +128,9 @@ export function checkNumber(number: string): boolean {
 }
 
 /** 数值转单位（元/万/亿） */
-export function changeMoney(num: number): { num: string; unit: string } {
-	const n = Number(num)
-	if (n <= 1) return { num: String(n), unit: '元' }
+export function changeMoney(num: number): MoneyUnitValue {
+	const n = num
+	if (n <= 1) return { num: n.toString(), unit: '元' }
 	const units = ['元', '万', '亿', '万亿']
 	let curNum = n
 	let curUnit = units[0]
@@ -126,7 +139,7 @@ export function changeMoney(num: number): { num: string; unit: string } {
 		if (strNumSize(curNum) < 5) break
 		curNum = curNum / 10000
 	}
-	return { num: Number(curNum).toFixed(2), unit: curUnit }
+	return { num: curNum.toFixed(2), unit: curUnit }
 }
 function strNumSize(tempNum: number): number {
 	const s = tempNum.toString()
@@ -158,8 +171,8 @@ export function validateEmail(email: string): boolean {
 }
 
 /** 手机号脱敏 */
-export function maskPhoneNumber(phoneNumber: string | null | undefined): string {
-	if (phoneNumber == null || phoneNumber == undefined) return ''
+export function maskPhoneNumber(phoneNumber: string | null): string {
+	if (phoneNumber == null) return ''
 	return phoneNumber.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')
 }
 
@@ -185,8 +198,8 @@ export function toCssLength(value: number | string): string {
 	if (typeof value === 'number') {
 		return value + 'rpx'
 	}
-	const s = (value as string).trim()
-	if (s.length === 0) {
+	const s = trimText(value as string)
+	if (s.length <= 0) {
 		return '0rpx'
 	}
 	const len = s.length
@@ -287,7 +300,7 @@ function copyToClipboardUni(data: string, callback?: (success: boolean) => void)
  * @param callback 可选，成功或失败时回调
  */
 export function copyToClipboard(data: string, callback?: (success: boolean) => void) {
-	if (data == null || data.length === 0) {
+	if (data == null || data.length <= 0) {
 		if (callback != null) {
 			callback(false)
 		}
@@ -328,8 +341,8 @@ export function parseCssNumber(value: number | string): number {
 	if (typeof value === 'number') {
 		return value
 	}
-	const s = (value as string).trim()
-	if (s.length === 0) {
+	const s = trimText(value as string)
+	if (s.length <= 0) {
 		return 0
 	}
 	const len = s.length
@@ -344,10 +357,10 @@ export function parseCssNumber(value: number | string): number {
 
 // ========== 原 mUnix：$m 挂载对象（configInfo、httpGet、href 等）==========
 
-type HrefParams = object | boolean | string
+type HrefParams = UTSJSONObject | boolean | string
 
 /** 与 getMUiConfig 对齐，供 $m.httpGet、$m.configInfo() 使用 */
-const mConfigInfo = () => {
+const mConfigInfo = (): MConfigInfoValue => {
 	const c = getMUiConfig()
 	return {
 		development: c.apiDevelopmentBase,
@@ -362,13 +375,13 @@ const mConfigInfo = () => {
 /** 与 export function msg 区分：供 http 错误提示（默认 2s） */
 const mToastMsg = (text: string) => {
 	uni.showToast({
-		title: text || '出错啦~',
+		title: text !== '' ? text : '出错啦~',
 		icon: 'none',
 		duration: 2000,
 	})
 }
 
-function parseApiEnvelope<T>(raw: any): R<T> | null {
+function parseApiEnvelope<T>(raw: any | null): R<T> | null {
 	if (raw == null) {
 		return null
 	}
@@ -376,8 +389,8 @@ function parseApiEnvelope<T>(raw: any): R<T> | null {
 		return raw as R<T>
 	}
 	if (typeof raw === 'string') {
-		const s = raw.trim()
-		if (s.length === 0) {
+		const s = trimText(raw as string)
+		if (s.length <= 0) {
 			return null
 		}
 		try {
@@ -390,10 +403,10 @@ function parseApiEnvelope<T>(raw: any): R<T> | null {
 	throw new Error('无法解析的响应类型')
 }
 
-function httpStatusError(statusCode: number, resData: any): Error {
+function httpStatusError(statusCode: number, resData: any | null): Error {
 	let detail = ''
 	if (typeof resData === 'string') {
-		const s = resData.trim()
+		const s = trimText(resData as string)
 		if (s.length > 0) {
 			detail = s.length > 160 ? s.substring(0, 160) + '…' : s
 		}
@@ -405,35 +418,43 @@ function httpStatusError(statusCode: number, resData: any): Error {
 	return new Error(base)
 }
 
-const getReqUrl = () => {
-	const envConfig = {
-		development: mConfigInfo().development,
-		production: mConfigInfo().production,
+const getReqUrl = (): string => {
+	const envConfig = mConfigInfo()
+	const envName = process.env.NODE_ENV as string
+	if (envName === 'development') {
+		return envConfig.development
 	}
-	return (
-		envConfig[process.env.NODE_ENV] ||
-		(() => {
-			console.error(`未知环境: ${process.env.NODE_ENV}`)
-			return ''
-		})()
-	)
+	if (envName === 'production') {
+		return envConfig.production
+	}
+	console.error(`未知环境: ${process.env.NODE_ENV}`)
+	return ''
 }
 
-const showLoading = (title?: string, mask = true) => {
+const showLoading = (title?: string, mask?: boolean) => {
+	const finalMask = mask != null ? mask : true
 	uni.showLoading({
-		mask: mask,
-		title: title || '请稍候...',
+		mask: finalMask,
+		title: title != null && title !== '' ? title : '请稍候...',
 	})
 }
 
 const tools = {
-	configInfo: mConfigInfo,
-	getReqUrl,
-	msg: mToastMsg,
+	configInfo: () : MConfigInfoValue => {
+		return mConfigInfo()
+	},
+	getReqUrl: () : string => {
+		return getReqUrl()
+	},
+	msg: (text : string) : void => {
+		mToastMsg(text)
+	},
 	/**
 	 * 显示loading
 	 */
-	showLoading,
+	showLoading: (title ?: string, mask ?: boolean) : void => {
+		showLoading(title, mask)
+	},
 	/**
 	 * 关闭loading
 	 */
@@ -454,20 +475,26 @@ const tools = {
 	 * 获取ref对象
 	 */
 	getRef(than : any, name : string) {
-		let toastRef = than.$refs[name] as any;
+		const target = than as UTSJSONObject
+		const refs = target['$refs'] as UTSJSONObject
+		let toastRef = refs[name] as any;
 		return toastRef;
 	},
 	/**
 	 * 显示tips
-	 * this.$m.showTips(this,"toast","一般消息提示~")
+	 * 通过 ref 调用 toast 提示
 	 */
 	showTips(than : any, name : string, msg : string) {
-		let toastRef = than.$refs[name] as any;
-		let options = {
+		const target = than as UTSJSONObject
+		const refs = target['$refs'] as UTSJSONObject
+		let toastRef = refs[name] as any;
+		const toastObj = toastRef as UTSJSONObject
+		let options: ShowTipsOptions = {
 			msg: msg,
 			duration: 2000
 		};
-		toastRef.showTips(options);
+		const showTips = toastObj['showTips'] as ShowTipsFunction
+		showTips(options);
 	},
 	/**
 	 * 提示消息
@@ -477,9 +504,9 @@ const tools = {
 	 */
 	toast: (text : string, time ?: number, icon ?: boolean) => {
 		uni.showToast({
-			title: text || "出错啦~",
-			icon: icon ? 'success' : 'none',
-			duration: time || 2000
+			title: text !== '' ? text : "出错啦~",
+			icon: icon != null && icon ? 'success' : 'none',
+			duration: time != null && time > 0 ? time : 2000
 		})
 	},
 	/**
@@ -491,19 +518,23 @@ const tools = {
 	 * @param {Object} confirmColor 取消按钮的文字颜色
 	 * @param {Object} confirmText 确定按钮的文字
 	 */
-	modal: (title : string, content : string, showCancel : boolean, callback ?: any, confirmColor ?: string, confirmText ?: string) => {
+	modal: (title : string, content : string, showCancel : boolean, callback?: (confirmed: boolean) => void, confirmColor ?: string, confirmText ?: string) => {
 		uni.showModal({
-			title: title || '提示',
+			title: title !== '' ? title : '提示',
 			content: content,
 			showCancel: showCancel,
 			cancelColor: "#555",
-			confirmColor: confirmColor || "#5677fc",
-			confirmText: confirmText || "确定",
+			confirmColor: confirmColor != null && confirmColor !== '' ? confirmColor : "#5677fc",
+			confirmText: confirmText != null && confirmText !== '' ? confirmText : "确定",
 			success(res) {
 				if (res.confirm) {
-					callback && callback(true)
+					if (callback != null) {
+						callback(true)
+					}
 				} else {
-					callback && callback(false)
+					if (callback != null) {
+						callback(false)
+					}
 				}
 			}
 		})
@@ -530,7 +561,7 @@ const tools = {
 	},
 	getTitleBarHeight:():number=>{
 		  let systemInfo = uni.getSystemInfoSync()
-		  let statusBarHeight = systemInfo.statusBarHeight || 0
+		  let statusBarHeight = systemInfo.statusBarHeight != null ? systemInfo.statusBarHeight : 0
 		  let titleBarHeight = 0
 		
 		  // #ifdef MP-WEIXIN
@@ -558,39 +589,45 @@ const tools = {
 	 * isLogin：是否登录验证 默认不验证
 	 * target： 打开方式 默认 新窗口打开
 	 */
-	href(url : string, paramsOrVerify ?: HrefParams, isLogin : boolean = false, target : string = "_blank") {
+	href(url : string, paramsOrVerify ?: HrefParams, isLogin ?: boolean, target ?: string): void {
 		// 参数类型处理
-		let params : object = {};
+		let params : UTSJSONObject = {};
+		let finalIsLogin = isLogin != null ? isLogin : false;
+		let finalTarget = target != null && target !== '' ? target : "_blank";
 		if (typeof paramsOrVerify === 'boolean') {
-			isLogin = paramsOrVerify;
+			finalIsLogin = paramsOrVerify;
 		} else if (typeof paramsOrVerify === 'string') {
-			target = paramsOrVerify;
-		} else if (paramsOrVerify) {
+			finalTarget = paramsOrVerify;
+		} else if (paramsOrVerify != null) {
 			params = paramsOrVerify;
 		}
-		if (isLogin && !new LoginObject().isLogin()) {
+		if (finalIsLogin && !new LoginObject().isLogin()) {
 			uni.navigateTo({
 				url: '/pages/me/login'
 			})
-			return console.error('登录失效');
+			console.error('登录失效');
+			return
 		}
-		if (!url) return console.error('跳转路径不能为空');
+		if (url === '') {
+			console.error('跳转路径不能为空');
+			return
+		}
 
 		// 处理参数（自动编码）
-		const query = Object.keys(params).map(k =>
-			`${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`
-		).join('&');
+		const queryParts : string[] = []
+		for (const k in params) {
+			queryParts.push(`${encodeURIComponent(k)}=${encodeURIComponent('' + params[k])}`)
+		}
+		const query = queryParts.join('&');
 
-		const endUrl = url + (query ? `?${query}` : '');
+		const endUrl = url + (query.length > 0 ? `?${query}` : '');
 
 		// 自动选择跳转方式
 		try {
-			if (url.startsWith('/pages/tab/')) { // 假设Tab页路径包含 /tab/
-				uni.switchTab({ url: endUrl });
-			} else if (getCurrentPages().length >= 9) {
+			if (getCurrentPages().length >= 9) {
 				uni.redirectTo({ url: endUrl });
 			} else {
-				if (target === '_self') {
+				if (finalTarget === '_self') {
 					uni.redirectTo({url: endUrl});
 				} else {
 					uni.navigateTo({ url: endUrl,animationType:"slide-in-right"});
@@ -599,10 +636,12 @@ const tools = {
 		} catch (e) {
 			uni.showToast({ title: '跳转失败', icon: 'none' });
 		}
+		return
 	},
-	back(delta = 1) {
+	back(delta?: number) {
+		const finalDelta = delta != null ? delta : 1
 		console.log("Back")
-		uni.navigateBack({ delta,animationType:"slide-out-left" });
+		uni.navigateBack({ delta: finalDelta,animationType:"slide-out-left" });
 	},
 	upx2px(upx : number, def ?: number) {
 		return upx * 2
@@ -637,7 +676,7 @@ const tools = {
 	 * 去空格
 	 */
 	trim: function (value : string) {
-		return value.replace(/(^\s*)|(\s*$)/g, "");
+		return trimText(value);
 	},
 	/**
 	 * @param {Object} text 字符串
@@ -653,7 +692,7 @@ const tools = {
 	 * 格式化手机号码
 	 */
 	formatNumber: function (num : string) {
-		return num.length === 11 ? num.replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2') : num;
+		return num.length > 10 && num.length < 12 ? num.replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2') : num;
 	},
 	/**
 	 * @param {Object} money 金额
@@ -669,37 +708,38 @@ const tools = {
 	 * 日期格式化
 	 */
 	formatDate: function (formatStr : string, fdate : string) {
-		if (fdate) {
-			if (~fdate.indexOf('.')) {
+		if (fdate !== '') {
+			if (fdate.indexOf('.') >= 0) {
 				fdate = fdate.substring(0, fdate.indexOf('.'));
 			}
 			fdate = fdate.toString().replace('T', ' ').replace(/\-/g, '/');
-			var fTime, fStr = 'ymdhis';
-			if (!formatStr)
+			const fStr = 'ymdhis';
+			if (formatStr === '')
 				formatStr = "y-m-d h:i:s";
-			if (fdate)
+			let fTime: Date
+			if (fdate !== '')
 				fTime = new Date(fdate);
 			else
 				fTime = new Date();
-			var month = fTime.getMonth() + 1;
-			var day = fTime.getDate();
-			var hours = fTime.getHours();
-			var minu = fTime.getMinutes();
-			var second = fTime.getSeconds();
-			month = month < 10 ? '0' + month : month;
-			day = day < 10 ? '0' + day : day;
-			hours = hours < 10 ? ('0' + hours) : hours;
-			minu = minu < 10 ? '0' + minu : minu;
-			second = second < 10 ? '0' + second : second;
-			var formatArr = [
+			const month = fTime.getMonth() + 1;
+			const day = fTime.getDate();
+			const hours = fTime.getHours();
+			const minu = fTime.getMinutes();
+			const second = fTime.getSeconds();
+			const monthText = month < 10 ? '0' + month : month.toString();
+			const dayText = day < 10 ? '0' + day : day.toString();
+			const hoursText = hours < 10 ? ('0' + hours) : hours.toString();
+			const minuText = minu < 10 ? '0' + minu : minu.toString();
+			const secondText = second < 10 ? '0' + second : second.toString();
+			const formatArr = [
 				fTime.getFullYear().toString(),
-				month.toString(),
-				day.toString(),
-				hours.toString(),
-				minu.toString(),
-				second.toString()
+				monthText,
+				dayText,
+				hoursText,
+				minuText,
+				secondText
 			]
-			for (var i = 0; i < formatArr.length; i++) {
+			for (let i = 0; i < formatArr.length; i++) {
 				formatStr = formatStr.replace(fStr.charAt(i), formatArr[i]);
 			}
 			return formatStr;
@@ -721,10 +761,10 @@ const tools = {
 	 * @param {object} url 接口地址
 	 * @param {object} params 报文
 	 */
-	httpGet: <T>(url : string, params : any, showMgs ?: boolean) : Promise<T> => {
+	httpGet: (url : string, params : any, showMgs ?: boolean) : Promise<any> => {
 		return new Promise((resolve, reject) => {
 			let isTimeout = false;
-			let requestTask : any = null;
+			let requestTask : RequestTask | null = null;
 
 			// 显示加载状态
 			uni.showLoading({ title: '加载中', mask: true });
@@ -732,8 +772,9 @@ const tools = {
 			// 处理超时逻辑
 			const timeoutId = setTimeout(() => {
 				isTimeout = true;
-				if (requestTask != null) {
-					requestTask.abort()
+				const task = requestTask
+				if (task != null) {
+					task.abort()
 				}
 				uni.hideLoading();
 				mToastMsg("请求超时，请重试");
@@ -741,9 +782,14 @@ const tools = {
 			}, 5000);
 
 			// 构建查询字符串
-			const queryString = Object.keys(params)
-				.map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-				.join('&');
+			const queryParts : string[] = []
+			if (params != null) {
+				const paramsObj = params as UTSJSONObject
+				for (const key in paramsObj) {
+					queryParts.push(`${encodeURIComponent(key)}=${encodeURIComponent('' + paramsObj[key])}`)
+				}
+			}
+			const queryString = queryParts.join('&');
 			const finalUrl = `${getReqUrl()}${url}${url.includes('?') ? '&' : '?'}${queryString}`;
 
 			requestTask = uni.request({
@@ -758,31 +804,31 @@ const tools = {
 					clearTimeout(timeoutId);
 					uni.hideLoading();
 
-					if (res.statusCode === HttpStatus.SUCCESS) {
-						let response : R<T> | null = null
+					if (res.statusCode >= 200 && res.statusCode < 201) {
+						let response : R<any> | null = null
 						try {
-							response = parseApiEnvelope<T>(res.data)
+							response = parseApiEnvelope<any>(res.data)
 						} catch (e) {
-							const m = e instanceof Error ? e.message : String(e)
+							const m = e instanceof Error ? e.message : '' + e
 							reject(new Error(m))
 							return
 						}
-						if (!response) {
-							resolve(null as T)
+						if (response == null) {
+							resolve({})
 							return
 						}
 
 						// 处理权限问题
-						if (response.code === 403) {
+						if (response.code >= 403 && response.code < 404) {
 							reject(new Error(response.msg != null && response.msg.length > 0 ? response.msg : '请重新登录'));
 							return
 						}
 
 						// 处理业务成功状态
-						if (response.code === HttpStatus.SUCCESS) {
+						if (response.code >= 200 && response.code < 201) {
 							resolve(response.data);
 						} else {
-							if (showMgs) {
+							if (showMgs != null && showMgs) {
 								mToastMsg(response.msg != null && response.msg.length > 0 ? response.msg : '请求处理失败');
 							}
 							reject(new Error(response.msg != null ? response.msg : '请求处理失败'));
@@ -812,10 +858,10 @@ const tools = {
 	 * @param {object} url 接口地址
 	 * @param {object} params 报文
 	 */
-	httpPost: <T>(url : string, params : object) : Promise<T> => {
+	httpPost: (url : string, params : object) : Promise<any> => {
 		return new Promise((resolve, reject) => {
 			let isTimeout = false;
-			let requestTask : any = null;
+			let requestTask : RequestTask | null = null;
 
 			// 显示加载状态（与 GET 一致）
 			uni.showLoading({ title: '加载中', mask: true });
@@ -823,8 +869,9 @@ const tools = {
 			// 超时处理逻辑（5秒超时机制）
 			const timeoutId = setTimeout(() => {
 				isTimeout = true;
-				if (requestTask != null) {
-					requestTask.abort()
+				const task = requestTask
+				if (task != null) {
+					task.abort()
 				}
 				uni.hideLoading();
 				mToastMsg("请求超时，请重试");
@@ -848,26 +895,26 @@ const tools = {
 					clearTimeout(timeoutId);
 					uni.hideLoading();
 
-					if (res.statusCode === HttpStatus.SUCCESS) {
-						let response : R<T> | null = null
+					if (res.statusCode >= 200 && res.statusCode < 201) {
+						let response : R<any> | null = null
 						try {
-							response = parseApiEnvelope<T>(res.data)
+							response = parseApiEnvelope<any>(res.data)
 						} catch (e) {
-							const m = e instanceof Error ? e.message : String(e)
+							const m = e instanceof Error ? e.message : '' + e
 							reject(new Error(m))
 							return
 						}
-						if (!response) {
-							resolve(null as T)
+						if (response == null) {
+							resolve({})
 							return
 						}
 
-						if (response.code === 403) {
+						if (response.code >= 403 && response.code < 404) {
 							reject(new Error(response.msg != null && response.msg.length > 0 ? response.msg : '请重新登录'));
 							return
 						}
 
-						if (response.code === HttpStatus.SUCCESS) {
+						if (response.code >= 200 && response.code < 201) {
 							resolve(response.data);
 						} else {
 							mToastMsg(response.msg != null && response.msg.length > 0 ? response.msg : '请求处理失败');
@@ -897,10 +944,10 @@ const tools = {
 	 * @param {object} url 接口地址
 	 * @param {object} filePath 附件路径
 	 */
-	uploadFile: <T>(url : string, filePath : string) => {
-		showLoading()
+	uploadFile: (url : string, filePath : string) : Promise<any> => {
+		showLoading('请稍候...', true)
 		return new Promise((resolve, reject) => {
-			const uploadTask : UploadTask = uni.uploadFile({
+			uni.uploadFile({
 				url: getReqUrl() + url,
 				filePath: filePath,
 				name: 'imageFile',
@@ -909,9 +956,11 @@ const tools = {
 				},
 				success: function (res) {
 					uni.hideLoading()
-					let d : R<T> | null = null
+					let d : R<any> | null = null
 					try {
-						d = JSON.parse(res.data.replace(/\ufeff/g, "") || "{}") as R<T>
+						const cleanedData = res.data.replace(/\ufeff/g, "")
+						const jsonText = cleanedData !== "" ? cleanedData : "{}"
+						d = JSON.parse(jsonText) as R<any>
 					} catch (e) {
 						reject(e)
 						mToastMsg("上传响应解析失败");
@@ -925,7 +974,9 @@ const tools = {
 						let fileObj = d.data;
 						resolve(fileObj)
 					} else {
-						mToastMsg(res.msg);
+						const uploadMsg = d.msg != null && d.msg.length > 0 ? d.msg : '上传失败'
+						mToastMsg(uploadMsg)
+						reject(new Error(uploadMsg))
 					}
 				},
 				fail: function (res) {
@@ -942,33 +993,73 @@ const tools = {
 	storage: storage,
 
 	/** 认证工具 */
-	isLoggedIn: isLoggedIn,
-	checkLogin: checkLogin,
-	needLogin: needLogin,
+	isLoggedIn: () : boolean => {
+		return authIsLoggedIn()
+	},
+	checkLogin: (toPath ?: string) : boolean => {
+		return authCheckLogin(toPath)
+	},
+	needLogin: (path : string) : boolean => {
+		return authNeedLogin(path)
+	},
 
 	/** 请求工具 */
-	request: request,
+	request: (options : RequestOptions) : Promise<ApiResponse<any>> => {
+		return request<any>(options)
+	},
 	http: http,
 
 	/** 通用工具 */
-	jumpTo: jumpTo,
-	checkPhone: checkPhone,
-	get: get,
-	set: set,
-	jslog: jslog,
-	apiStart: apiStart,
-	apiStop: apiStop,
-	isEmpty: isEmpty,
-	checkNumber: checkNumber,
-	changeMoney: changeMoney,
-	timestampToDate: timestampToDate,
-	getTodayStartTimestamp: getTodayStartTimestamp,
-	validateEmail: validateEmail,
-	maskPhoneNumber: maskPhoneNumber,
-	generateOrderNumber: generateOrderNumber,
+	jumpTo: (url : string, type ?: string) : void => {
+		jumpTo(url, type != null && type !== '' ? type : 'to')
+	},
+	checkPhone: (phone : string) : boolean => {
+		return checkPhone(phone)
+	},
+	get: (key : string) : any | null => {
+		return get(key)
+	},
+	set: (key : string, value : any) : void => {
+		set(key, value)
+	},
+	jslog: (title : string, obj : any) : void => {
+		jslog(title, obj)
+	},
+	apiStart: () : void => {
+		apiStart()
+	},
+	apiStop: () : void => {
+		apiStop()
+	},
+	isEmpty: (content : string | null) : boolean => {
+		return isEmpty(content)
+	},
+	checkNumber: (number : string) : boolean => {
+		return checkNumber(number)
+	},
+	changeMoney: (num : number) : MoneyUnitValue => {
+		return changeMoney(num)
+	},
+	timestampToDate: (timestamp : number) : string => {
+		return timestampToDate(timestamp)
+	},
+	getTodayStartTimestamp: () : number => {
+		return getTodayStartTimestamp()
+	},
+	validateEmail: (email : string) : boolean => {
+		return validateEmail(email)
+	},
+	maskPhoneNumber: (phoneNumber : string | null) : string => {
+		return maskPhoneNumber(phoneNumber)
+	},
+	generateOrderNumber: () : string => {
+		return generateOrderNumber()
+	},
 
 	/** 响应式登录态 */
-	useAuth: useAuth,
+	useAuth: () : UTSJSONObject => {
+		return useAuth() as UTSJSONObject
+	},
 }
 
 export default tools

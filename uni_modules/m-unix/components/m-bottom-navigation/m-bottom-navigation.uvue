@@ -39,6 +39,7 @@
 				v-for="(sub, sidx) in subList"
 				:key="sidx"
 				class="m-bottom-navigation__sub-item"
+				:class="{ 'm-bottom-navigation__sub-item--last': sidx === subList.length - 1 }"
 				@tap="onSubTap(sidx, sub)"
 			>
 				<text class="m-bottom-navigation__sub-text" :style="{ color: subMenuColor, 'font-size': subMenuFontSize }">{{ subText(sub) }}</text>
@@ -340,7 +341,7 @@ export default {
 	border-bottom-color: #f0f0f0;
 }
 
-.m-bottom-navigation__sub-item:last-child {
+.m-bottom-navigation__sub-item--last {
 	border-bottom-width: 0;
 }
 

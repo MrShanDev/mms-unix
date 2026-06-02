@@ -526,13 +526,6 @@ export default {
 	touch-action: none;
 }
 
-/* 避免图标/文字子节点成为触摸目标，导致 touchmove 无法稳定派发到主按钮（H5 常见）；勿用 > *（微信小程序 WXSS 不支持通用选择器 *） */
-.m-fab__main--drag-pass > view,
-.m-fab__main--drag-pass > text,
-.m-fab__main--drag-pass > image {
-	pointer-events: none;
-}
-
 .m-fab__plus {
 	font-size: 64rpx;
 	line-height: 1;

@@ -13,7 +13,7 @@
 		@tap="handleClick"
 	>
 		<slot></slot>
-		<text v-if="text" class="m-tag__text">{{ text }}</text>
+		<text v-if="text" class="m-tag__text" :style="tagTextStyle">{{ text }}</text>
 		<m-icon
 			v-if="closable"
 			class="m-tag__close"
@@ -91,14 +91,85 @@ export default {
 	computed: {
 		mergedCustomStyle(): UTSJSONObject {
 			const style: UTSJSONObject = {}
-			if (this.color !== '') {
-				style.color = this.color
-			}
-			if (this.bgColor !== '') {
-				style.backgroundColor = this.bgColor
-			}
+			style['background-color'] = this.tagBgColor
+			style['color'] = this.tagTextColor
+			style['border-color'] = this.tagBorderColor
+			style['font-size'] = this.tagFontSize
 			Object.assign(style, this.customStyle)
 			return style
+		},
+		tagTextStyle(): UTSJSONObject {
+			return {
+				'font-size': this.tagFontSize,
+				'line-height': '1',
+				'color': this.tagTextColor
+			} as UTSJSONObject
+		},
+		tagFontSize(): string {
+			if (this.size === 'large') {
+				return '32rpx'
+			}
+			if (this.size === 'small') {
+				return '24rpx'
+			}
+			if (this.size === 'mini') {
+				return '20rpx'
+			}
+			return '28rpx'
+		},
+		tagBgColor(): string {
+			if (this.bgColor !== '') {
+				return this.bgColor
+			}
+			if (this.plain) {
+				return 'transparent'
+			}
+			if (this.type === 'primary') {
+				return '#409eff'
+			}
+			if (this.type === 'success') {
+				return '#67c23a'
+			}
+			if (this.type === 'warning') {
+				return '#e6a23c'
+			}
+			if (this.type === 'danger') {
+				return '#f56c6c'
+			}
+			if (this.type === 'info') {
+				return '#909399'
+			}
+			return '#f5f7fa'
+		},
+		tagBorderColor(): string {
+			if (this.type === 'primary') {
+				return '#409eff'
+			}
+			if (this.type === 'success') {
+				return '#67c23a'
+			}
+			if (this.type === 'warning') {
+				return '#e6a23c'
+			}
+			if (this.type === 'danger') {
+				return '#f56c6c'
+			}
+			if (this.type === 'info') {
+				return '#909399'
+			}
+			return '#dcdfe6'
+		},
+		tagTextColor(): string {
+			if (this.color !== '') {
+				return this.color
+			}
+			if (this.plain) {
+				return this.tagBorderColor
+			}
+			if (this.type === 'default') {
+				return '#606266'
+			}
+			return '#ffffff'
 		},
 		closeIconSize(): string {
 			if (this.size === 'mini') {
@@ -114,31 +185,7 @@ export default {
 		},
 		// 关闭图标与标签字色一致（避免父 view 的 color 未作用到 m-icon 内 text）
 		closeIconColor(): string {
-			if (this.color !== '') {
-				return this.color
-			}
-			if (this.plain) {
-				if (this.type === 'primary') {
-					return '#409eff'
-				}
-				if (this.type === 'success') {
-					return '#67c23a'
-				}
-				if (this.type === 'warning') {
-					return '#e6a23c'
-				}
-				if (this.type === 'danger') {
-					return '#f56c6c'
-				}
-				if (this.type === 'info') {
-					return '#909399'
-				}
-				return '#606266'
-			}
-			if (this.type === 'default') {
-				return '#606266'
-			}
-			return '#ffffff'
+			return this.tagTextColor
 		}
 	},
 	methods: {
@@ -158,119 +205,60 @@ export default {
 
 <style scoped lang="scss">
 .m-tag {
-	display: inline-flex;
+	display: flex;
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
 	box-sizing: border-box;
-	padding: 8rpx 16rpx;
+	padding: 12rpx 20rpx;
 	line-height: 1;
 	border-radius: 6rpx;
-
-	// 尺寸（须与 props 默认 medium 一致）
-	&.m-tag--large {
-		font-size: 32rpx;
-		padding: 16rpx 24rpx;
-	}
-	&.m-tag--medium {
-		font-size: 28rpx;
-		padding: 12rpx 20rpx;
-	}
-	&.m-tag--small {
-		font-size: 24rpx;
-		padding: 6rpx 14rpx;
-	}
-	&.m-tag--mini {
-		font-size: 20rpx;
-		padding: 4rpx 10rpx;
+	border-width: 1rpx;
+	border-style: solid;
+	border-color: #dcdfe6;
+	background-color: #f5f7fa;
+	color: #606266;
+	font-size: 28rpx;
+	flex-shrink: 0;
+	align-self: flex-start;
+	opacity: 1;
 	}
 
-	// 类型
-	&.m-tag--primary {
-		background-color: #409eff;
-		color: #ffffff;
-		border: 1rpx solid #409eff;
-	}
-	&.m-tag--success {
-		background-color: #67c23a;
-		color: #ffffff;
-		border: 1rpx solid #67c23a;
-	}
-	&.m-tag--warning {
-		background-color: #e6a23c;
-		color: #ffffff;
-		border: 1rpx solid #e6a23c;
-	}
-	&.m-tag--danger {
-		background-color: #f56c6c;
-		color: #ffffff;
-		border: 1rpx solid #f56c6c;
-	}
-	&.m-tag--info {
-		background-color: #909399;
-		color: #ffffff;
-		border: 1rpx solid #909399;
-	}
-	&.m-tag--default {
-		background-color: #f5f7fa;
-		color: #606266;
-		border: 1rpx solid #dcdfe6;
-	}
+.m-tag--large {
+	padding: 16rpx 24rpx;
+}
 
-	// 镂空
-	&.m-tag--plain {
-		background-color: transparent !important;
-	}
-	&.m-tag--plain.m-tag--primary {
-		color: #409eff;
-		border-color: #409eff;
-	}
-	&.m-tag--plain.m-tag--success {
-		color: #67c23a;
-		border-color: #67c23a;
-	}
-	&.m-tag--plain.m-tag--warning {
-		color: #e6a23c;
-		border-color: #e6a23c;
-	}
-	&.m-tag--plain.m-tag--danger {
-		color: #f56c6c;
-		border-color: #f56c6c;
-	}
-	&.m-tag--plain.m-tag--info {
-		color: #909399;
-		border-color: #909399;
-	}
-	&.m-tag--plain.m-tag--default {
-		color: #606266;
-		border-color: #dcdfe6;
-	}
+.m-tag--medium {
+	padding: 12rpx 20rpx;
+}
 
-	// 圆角
-	&.m-tag--round {
-		border-radius: 100rpx;
-	}
+.m-tag--small {
+	padding: 6rpx 14rpx;
+}
 
-	// 标记样式
-	&.m-tag--mark {
-		border: none;
-	}
+.m-tag--mini {
+	padding: 4rpx 10rpx;
+}
 
-	// 禁用
-	&.m-tag--disabled {
-		opacity: 0.5;
-	}
+.m-tag--round {
+	border-radius: 100rpx;
+}
 
-	.m-tag__text {
-		line-height: inherit;
-		font-size: inherit;
-		color: inherit;
-	}
+.m-tag--mark {
+	border-width: 0;
+}
 
-	.m-tag__close {
-		margin-left: 8rpx;
-		flex-shrink: 0;
-		opacity: 0.85;
-	}
+.m-tag--disabled {
+	opacity: 0.5;
+}
+
+.m-tag__text {
+	line-height: 1;
+}
+
+.m-tag__close {
+	margin-left: 8rpx;
+	flex-shrink: 0;
+	opacity: 0.85;
 }
 </style>

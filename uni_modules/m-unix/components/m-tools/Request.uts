@@ -4,14 +4,12 @@
  */
 import { getHostProjectConfig } from './ProjectConfig.uts'
 import { storage } from './Storage.uts'
-import { uploadFileRequest } from './Upload.uts'
+import { uploadFileRequest, UploadFileOptions, UploadApiResponse } from './Upload.uts'
 
 // ========== 类型定义 ==========
 
 /** 任意键值对 */
-export type AnyRecord = {
-	[key: string]: any
-}
+export type AnyRecord = UTSJSONObject
 
 /** 请求方法类型 */
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
@@ -54,7 +52,7 @@ export type RequestOptions = {
 	/** 未授权的响应码，默认 401 或 403 */
 	unauthorizedCodes?: number[]
 	/** 自定义错误码处理 */
-	onErrorCode?: (response: ApiResponse) => void
+	onErrorCode?: (response: ApiResponse<any>) => void
 }
 
 /** 快捷请求方法参数 */
@@ -69,7 +67,7 @@ type QuickRequestParams = {
 const DEFAULT_TIMEOUT = 30000
 const DEFAULT_SUCCESS_CODES = [0, 200]
 const DEFAULT_UNAUTHORIZED_CODES = [401, 403]
-const DEFAULT_LOGIN_PAGE = '/pages_Me/login/login'
+const DEFAULT_LOGIN_PAGE = '/pages/login/login'
 
 // ========== 工具函数 ==========
 
@@ -91,10 +89,32 @@ function buildQueryString(data: AnyRecord): string {
 	for (const key in data) {
 		const value = data[key]
 		if (value != null && value !== '') {
-			parts.push(key + '=' + encodeURIComponent(String(value)))
+			parts.push(key + '=' + encodeURIComponent('' + value))
 		}
 	}
 	return parts.length > 0 ? '?' + parts.join('&') : ''
+}
+
+function copyRequestOptions(url: string, method: HttpMethod, data: AnyRecord | null, options: RequestOptions | null): RequestOptions {
+	const next: RequestOptions = {
+		url,
+		method
+	}
+	if (data != null) next.data = data
+	if (options == null) return next
+	if (options.header != null) next.header = options.header
+	if (options.baseUrl != null) next.baseUrl = options.baseUrl
+	if (options.timeout != null) next.timeout = options.timeout
+	if (options.withToken != null) next.withToken = options.withToken
+	if (options.showError != null) next.showError = options.showError
+	if (options.showLoading != null) next.showLoading = options.showLoading
+	if (options.loadingText != null) next.loadingText = options.loadingText
+	if (options.redirectOnUnauthorized != null) next.redirectOnUnauthorized = options.redirectOnUnauthorized
+	if (options.loginPage != null) next.loginPage = options.loginPage
+	if (options.successCodes != null) next.successCodes = options.successCodes
+	if (options.unauthorizedCodes != null) next.unauthorizedCodes = options.unauthorizedCodes
+	if (options.onErrorCode != null) next.onErrorCode = options.onErrorCode
+	return next
 }
 
 /**
@@ -115,7 +135,7 @@ function hideLoadingModal(): void {
  * 显示错误提示
  */
 function showErrorToast(msg: string): void {
-	uni.showToast({ title: msg || '请求失败', icon: 'none' })
+	uni.showToast({ title: msg !== '' ? msg : '请求失败', icon: 'none' })
 }
 
 /**
@@ -155,7 +175,8 @@ export function request<T = any>(options: RequestOptions): Promise<ApiResponse<T
 
 	// 显示加载提示
 	if (showLoading) {
-		showLoadingModal(loadingText ?? '加载中...')
+		const finalLoadingTitle = loadingText != null && loadingText !== '' ? loadingText : '加载中...'
+		showLoadingModal(finalLoadingTitle)
 	}
 
 	// 构建请求地址
@@ -170,9 +191,12 @@ export function request<T = any>(options: RequestOptions): Promise<ApiResponse<T
 	}
 
 	// 构建请求头
-	const reqHeader: AnyRecord = {
-		'Content-Type': 'application/json',
-		...header
+	const reqHeader = new UTSJSONObject()
+	reqHeader['Content-Type'] = 'application/json'
+	if (header != null) {
+		for (const key in header) {
+			reqHeader[key] = header[key]
+		}
 	}
 
 	// 添加 Token
@@ -223,7 +247,7 @@ export function request<T = any>(options: RequestOptions): Promise<ApiResponse<T
 
 				// 自定义错误码处理
 				if (onErrorCode != null) {
-					onErrorCode(result)
+					onErrorCode(result as ApiResponse<any>)
 				}
 
 				// 显示错误提示
@@ -260,92 +284,108 @@ export function request<T = any>(options: RequestOptions): Promise<ApiResponse<T
  * GET 请求
  */
 export function get<T = any>(url: string, data?: AnyRecord, options?: RequestOptions): Promise<ApiResponse<T>> {
-	return request<T>({ url, method: 'GET', data, ...options })
+	return request<T>(copyRequestOptions(url, 'GET', data, options))
 }
 
 /**
  * POST 请求
  */
 export function post<T = any>(url: string, data?: AnyRecord, options?: RequestOptions): Promise<ApiResponse<T>> {
-	return request<T>({ url, method: 'POST', data, ...options })
+	return request<T>(copyRequestOptions(url, 'POST', data, options))
 }
 
 /**
  * PUT 请求
  */
 export function put<T = any>(url: string, data?: AnyRecord, options?: RequestOptions): Promise<ApiResponse<T>> {
-	return request<T>({ url, method: 'PUT', data, ...options })
+	return request<T>(copyRequestOptions(url, 'PUT', data, options))
 }
 
 /**
  * DELETE 请求
  */
 export function del<T = any>(url: string, data?: AnyRecord, options?: RequestOptions): Promise<ApiResponse<T>> {
-	return request<T>({ url, method: 'DELETE', data, ...options })
+	return request<T>(copyRequestOptions(url, 'DELETE', data, options))
 }
 
 /**
  * 公开请求（不需要登录）
  */
 export function publicRequest<T = any>(options: RequestOptions): Promise<ApiResponse<T>> {
-	return request<T>({ ...options, withToken: false, redirectOnUnauthorized: false })
+	const method = options.method != null ? options.method : 'GET'
+	const data = options.data != null ? options.data : null
+	const next = copyRequestOptions(options.url, method, data, options)
+	next.withToken = false
+	next.redirectOnUnauthorized = false
+	return request<T>(next)
 }
 
 /**
  * 静默请求（不显示任何提示）
  */
 export function silentRequest<T = any>(options: RequestOptions): Promise<ApiResponse<T>> {
-	return request<T>({ ...options, showError: false, redirectOnUnauthorized: false })
+	const method = options.method != null ? options.method : 'GET'
+	const data = options.data != null ? options.data : null
+	const next = copyRequestOptions(options.url, method, data, options)
+	next.showError = false
+	next.redirectOnUnauthorized = false
+	return request<T>(next)
 }
 
 /**
  * 带加载提示的请求
  */
 export function loadingRequest<T = any>(options: RequestOptions, loadingText?: string): Promise<ApiResponse<T>> {
-	return request<T>({ ...options, showLoading: true, loadingText: loadingText || '加载中...' })
+	const finalLoadingText = loadingText != null && loadingText !== '' ? loadingText : '加载中...'
+	const method = options.method != null ? options.method : 'GET'
+	const data = options.data != null ? options.data : null
+	const next = copyRequestOptions(options.url, method, data, options)
+	next.showLoading = true
+	next.loadingText = finalLoadingText
+	return request<T>(next)
 }
 
 // ========== HTTP 对象（链式调用风格） ==========
 
 export const http = {
 	/** GET 请求 */
-	get<T = any>(url: string, data?: AnyRecord, options?: RequestOptions): Promise<ApiResponse<T>> {
-		return get<T>(url, data, options)
+	get(url: string, data?: AnyRecord, options?: RequestOptions): Promise<ApiResponse<any>> {
+		return get<any>(url, data, options)
 	},
 
 	/** POST 请求 */
-	post<T = any>(url: string, data?: AnyRecord, options?: RequestOptions): Promise<ApiResponse<T>> {
-		return post<T>(url, data, options)
+	post(url: string, data?: AnyRecord, options?: RequestOptions): Promise<ApiResponse<any>> {
+		return post<any>(url, data, options)
 	},
 
 	/** PUT 请求 */
-	put<T = any>(url: string, data?: AnyRecord, options?: RequestOptions): Promise<ApiResponse<T>> {
-		return put<T>(url, data, options)
+	put(url: string, data?: AnyRecord, options?: RequestOptions): Promise<ApiResponse<any>> {
+		return put<any>(url, data, options)
 	},
 
 	/** DELETE 请求 */
-	delete<T = any>(url: string, data?: AnyRecord, options?: RequestOptions): Promise<ApiResponse<T>> {
-		return del<T>(url, data, options)
+	delete(url: string, data?: AnyRecord, options?: RequestOptions): Promise<ApiResponse<any>> {
+		return del<any>(url, data, options)
 	},
 
 	/** 公开请求（不需要登录） */
-	public<T = any>(options: RequestOptions): Promise<ApiResponse<T>> {
-		return publicRequest<T>(options)
+	public(options: RequestOptions): Promise<ApiResponse<any>> {
+		return publicRequest<any>(options)
 	},
 
 	/** 静默请求（不显示提示） */
-	silent<T = any>(options: RequestOptions): Promise<ApiResponse<T>> {
-		return silentRequest<T>(options)
+	silent(options: RequestOptions): Promise<ApiResponse<any>> {
+		return silentRequest<any>(options)
 	},
 
 	/** 带加载提示的请求 */
-	loading<T = any>(options: RequestOptions, loadingText?: string): Promise<ApiResponse<T>> {
-		return loadingRequest<T>(options, loadingText)
+	loading(options: RequestOptions, loadingText?: string): Promise<ApiResponse<any>> {
+		return loadingRequest<any>(options, loadingText)
 	},
 
 	/** multipart 上传单个文件（实现见 Upload.uts） */
-	upload<T = any>(options: any): Promise<any> {
-		return uploadFileRequest<T>(options)
+	upload(options: UploadFileOptions): Promise<UploadApiResponse<any>> {
+		return uploadFileRequest<any>(options)
 	}
 }
 

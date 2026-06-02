@@ -1,5 +1,5 @@
 <template>
-	<view class="m-grid-item" :class="{'m-grid-item--border': showItemBorder}" @click="handleClick">
+	<view class="m-grid-item" :class="{'m-grid-item--border': showItemBorder}" :style="itemStyle" @click="handleClick">
 		<view class="m-grid-item__content">
 			<slot name="icon">
 				<view v-if="icon" class="m-grid-item__icon">
@@ -25,6 +25,11 @@
 				from: 'mGridBorder',
 				default: null,
 				type: Boolean as unknown as PropType<boolean | null>
+			},
+			mGridColumn: {
+				from: 'mGridColumn',
+				default: 4,
+				type: Number as unknown as PropType<number>
 			}
 		},
 		props: {
@@ -71,6 +76,15 @@
 					return fromGrid as boolean
 				}
 				return this.border as boolean
+			},
+			itemStyle(): UTSJSONObject {
+				let col = this.mGridColumn as number
+				if (col <= 0) {
+					col = 4
+				}
+				return {
+					width: (100 / col) + '%'
+				}
 			}
 		},
 		methods: {
@@ -98,8 +112,6 @@
 	justify-content: center;
 	padding: 24rpx 16rpx;
 	box-sizing: border-box;
-	/* 与 m-grid 内 .m-grid__item 一致：继承父级 --col-num，按列数均分一行宽度 */
-	width: calc(100% / var(--col-num, 4));
 
 	.m-grid-item__content {
 		display: flex;

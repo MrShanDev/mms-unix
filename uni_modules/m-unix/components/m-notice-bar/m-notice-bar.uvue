@@ -280,11 +280,9 @@ export default {
 			}
 		},
 		marqueeTrackStyle(): UTSJSONObject {
-			const dur = this.duration as number
 			const fs = toCssLength(this.size as number | string)
 			const bold = this.bold as boolean
 			return {
-				animationDuration: dur + 's',
 				color: this.resolvedColor,
 				'font-size': fs,
 				'font-weight': bold ? 'bold' : 'normal'
@@ -335,8 +333,7 @@ export default {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
-	width: max-content;
-	animation: m-notice-marquee linear infinite;
+	width: 100%;
 }
 
 .m-notice-bar__dup {
@@ -351,7 +348,7 @@ export default {
 }
 
 .m-notice-bar__text {
-	line-height: inherit;
+	line-height: 1.6;
 }
 
 .m-notice-bar__content--single {
@@ -382,12 +379,4 @@ export default {
 	}
 }
 
-@keyframes m-notice-marquee {
-	0% {
-		transform: translateX(0);
-	}
-	100% {
-		transform: translateX(-50%);
-	}
-}
 </style>

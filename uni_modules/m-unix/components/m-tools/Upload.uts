@@ -4,9 +4,7 @@
 import { getHostProjectConfig } from './ProjectConfig.uts'
 import { storage } from './Storage.uts'
 
-export type AnyRecord = {
-	[key: string]: any
-}
+export type AnyRecord = UTSJSONObject
 
 export type UploadApiResponse<T = any> = {
 	code: number
@@ -123,9 +121,7 @@ export function uploadFileRequest<T = any>(options: UploadFileOptions): Promise<
 	}
 
 	const reqHeader: AnyRecord = {}
-	const keys = Object.keys(header)
-	for (let i = 0; i < keys.length; i++) {
-		const k = keys[i]
+	for (const k in header) {
 		reqHeader[k] = header[k]
 	}
 	if (withToken) {

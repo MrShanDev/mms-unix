@@ -1,9 +1,9 @@
 <template>
 	<view class="m-loading" :class="{'m-loading--full': full}">
-		<view class="m-loading__spinner" :class="animClass" :style="spinnerSizeStyle">
+		<view class="m-loading__spinner" :style="spinnerSizeStyle">
 			<text v-for="dot in dotKeys" :key="dot" class="m-loading__dot" :style="dotItemStyle(dot)"></text>
 		</view>
-		<text v-if="text" class="m-loading__text">{{ text }}</text>
+		<text v-if="text" class="m-loading__text" :style="textStyle">{{ text }}</text>
 	</view>
 </template>
 
@@ -45,9 +45,6 @@ export default {
 		}
 	},
 	computed: {
-		animClass() {
-			return this.anim ? 'm-loading__spinner--anim' : ''
-		},
 		hasCustomDotSize(): boolean {
 			const raw = (this.size as string).trim()
 			if (raw.length === 0) {
@@ -58,7 +55,9 @@ export default {
 		},
 		spinnerSizeStyle(): UTSJSONObject {
 			if (!this.hasCustomDotSize) {
-				return {} as UTSJSONObject
+				return {
+					height: '40rpx'
+				} as UTSJSONObject
 			}
 			const normalized = toCssLength(this.size as string)
 			const n = parseCssNumber(normalized)
@@ -76,7 +75,10 @@ export default {
 		},
 		dotSizeStyle(): UTSJSONObject {
 			if (!this.hasCustomDotSize) {
-				return {} as UTSJSONObject
+				return {
+					width: '16rpx',
+					height: '16rpx'
+				} as UTSJSONObject
 			}
 			const w = toCssLength(this.size as string)
 			return {
@@ -86,7 +88,9 @@ export default {
 		},
 		dotGapStyle(): UTSJSONObject {
 			if (!this.hasCustomDotSize) {
-				return {} as UTSJSONObject
+				return {
+					'margin-left': '16rpx'
+				} as UTSJSONObject
 			}
 			const normalized = toCssLength(this.size as string)
 			const n = parseCssNumber(normalized)
@@ -99,22 +103,33 @@ export default {
 			}
 			const g = Math.round(n * 0.5)
 			return {
-				marginLeft: g + unit
+				'margin-left': g + unit
+			} as UTSJSONObject
+		},
+		textStyle(): UTSJSONObject {
+			return {
+				color: this.color
 			} as UTSJSONObject
 		}
 	},
 	methods: {
 		dotItemStyle(dot: number): UTSJSONObject {
 			const base = this.dotSizeStyle as UTSJSONObject
+			const bg = this.color
 			if (dot <= 1) {
-				return base
+				return {
+					width: base['width'],
+					height: base['height'],
+					'background-color': bg
+				} as UTSJSONObject
 			}
 			const gapObj = this.dotGapStyle as UTSJSONObject
-			const ml = gapObj['marginLeft']
+			const ml = gapObj['margin-left']
 			const merged: UTSJSONObject = {
 				width: base['width'],
 				height: base['height'],
-				marginLeft: ml
+				'margin-left': ml,
+				'background-color': bg
 			}
 			return merged
 		}
@@ -128,62 +143,35 @@ export default {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	/* 圆点使用 currentColor，与 color 属性一致 */
-	color: v-bind(color);
-
-	&.m-loading--full {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		z-index: 999;
-		background-color: rgba(255, 255, 255, 0.8);
-	}
-
-	.m-loading__spinner {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		height: 40rpx;
-		/* 圆点间距：避免 * + *（微信小程序 WXSS 不支持通用选择器 *） */
-		gap: 16rpx;
-
-		.m-loading__dot {
-			width: 16rpx;
-			height: 16rpx;
-			border-radius: 50%;
-			background-color: currentColor;
-
-			&:nth-child(1) {
-				animation: m-loading 1s infinite ease-in-out 0s;
-			}
-			&:nth-child(2) {
-				animation: m-loading 1s infinite ease-in-out 0.2s;
-			}
-			&:nth-child(3) {
-				animation: m-loading 1s infinite ease-in-out 0.4s;
-			}
-		}
-
-		&.m-loading__spinner--anim {
-			animation-play-state: running;
-		}
-	}
-
-	.m-loading__text {
-		margin-top: 16rpx;
-		font-size: 28rpx;
-		color: v-bind(color);
-	}
 }
 
-@keyframes m-loading {
-	0%, 80%, 100% {
-		transform: scale(0);
-	}
-	40% {
-		transform: scale(1);
-	}
+.m-loading--full {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 999;
+	background-color: rgba(255, 255, 255, 0.8);
+}
+
+.m-loading__spinner {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	height: 40rpx;
+}
+
+.m-loading__dot {
+	width: 16rpx;
+	height: 16rpx;
+	border-radius: 50%;
+	background-color: #c0c4cc;
+}
+
+.m-loading__text {
+	margin-top: 16rpx;
+	font-size: 28rpx;
+	color: #c0c4cc;
 }
 </style>
