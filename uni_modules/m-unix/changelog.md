@@ -39,7 +39,7 @@
 | 类型 | 地址 |
 |------|------|
 | **组件说明（站点）** | <https://mmsadmin.cn/m-unix/README.html> |
-| **开源仓库** | <https://gitee.com/mmsAdmin/mms-unix> |
+| **开源仓库** | <https://gitee.com/LumeCode/mms-unix> |
 | **DCloud 插件市场** | <https://ext.dcloud.net.cn/plugin?id=m-unix> |
 
 ### 1.2 联系方式（陕西品创网络）
