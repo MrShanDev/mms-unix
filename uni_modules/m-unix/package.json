@@ -14,9 +14,9 @@
   "license": "MIT",
   "author": "陕西品创网络",
   "homepage": "https://mmsadmin.cn/m-unix/README.html",
-"repository": "https://gitee.com/LumeCode/mms-unix",
+"repository": "https://gitee.com/MrShanDev/mms-unix",
   "bugs": {
-    "url": "https://gitee.com/LumeCode/mms-unix/issues"
+    "url": "https://gitee.com/MrShanDev/mms-unix/issues"
   },
   "engines": {
     "HBuilderX": "^3.1.0",

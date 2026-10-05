@@ -24,14 +24,14 @@
 
 - **在线文档（站点）**：<https://mmsadmin.cn/mms-unix/README.html>
 - **更新日志（权威）**：本目录 **[`changelog.md`](./changelog.md)**（与 `package.json` 的 `version` 一致）
-- **源码与 Issue**：<https://gitee.com/LumeCode/mms-unix>
+- **源码与 Issue**：<https://gitee.com/MrShanDev/mms-unix>
 
 ## 链接
 
 - [DCloud 插件市场 · m-unix](https://ext.dcloud.net.cn/plugin?name=m-unix)（亦支持 `?id=m-unix`）
 - [组件说明站点首页](https://mmsadmin.cn/m-unix/README.html)
-- [Gitee 开源仓库](https://gitee.com/LumeCode/mms-unix)
-- [问题反馈（Gitee Issues）](https://gitee.com/LumeCode/mms-unix/issues)
+- [Gitee 开源仓库](https://gitee.com/MrShanDev/mms-unix)
+- [问题反馈（Gitee Issues）](https://gitee.com/MrShanDev/mms-unix/issues)
 
 ## 预览
 

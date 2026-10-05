@@ -6,7 +6,7 @@
    <h1>模块化管理系统</h1>
    <p>MMS · Modular Management System</p>
    <p><strong>mms-unix · uni-app x 移动端基座（登录 / 会员 / 请求封装）</strong></p>
-   <p><a href="https://mmsadmin.cn/">📘 在线文档 · mmsadmin.cn</a> · <a href="https://gitee.com/LumeCode/mms-unix">Gitee</a> · <a href="https://github.com/MrShanDev/mms-unix">GitHub</a> · <a href="https://ext.dcloud.net.cn/plugin?id=27396">DCloud 插件市场</a></p>
+   <p><a href="https://mmsadmin.cn/">📘 在线文档 · mmsadmin.cn</a> · <a href="https://gitee.com/MrShanDev/mms-unix">Gitee</a> · <a href="https://github.com/MrShanDev/mms-unix">GitHub</a> · <a href="https://ext.dcloud.net.cn/plugin?id=27396">DCloud 插件市场</a></p>
    <br/>
 </div>
 
